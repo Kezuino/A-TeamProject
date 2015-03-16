@@ -65,3 +65,4 @@ build/
 /.nb-gradle/private/
 /Pactales/.nb-gradle/private/
 /Pactales/.nb-gradle/profiles/private/
+.nb-gradle/profiles/private/aux-config
