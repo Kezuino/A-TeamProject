@@ -1,11 +1,11 @@
 package ATeamProject.Kezuino.com.github.SingePlayer;
 
+import ATeamProject.Kezuino.com.github.PactaleGame;
 import org.robovm.apple.foundation.NSAutoreleasePool;
 import org.robovm.apple.uikit.UIApplication;
 
 import com.badlogic.gdx.backends.iosrobovm.IOSApplication;
 import com.badlogic.gdx.backends.iosrobovm.IOSApplicationConfiguration;
-import ATeamProject.Kezuino.com.github.SingePlayer.PactaleGame;
 
 public class IOSLauncher extends IOSApplication.Delegate {
     @Override
