@@ -4,7 +4,7 @@ sourceCompatibility = '1.7'
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
 ext {
-	mainClassName = "ATeamProject.Kezuino.com.github.SingePlayer.IOSLauncher"
+	mainClassName = "ateamproject.kezuino.com.github.singleplayer.IOSLauncher"
 }
 
 // Extracts native libs (*.a) from the native-ios.jar and places them

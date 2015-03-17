@@ -1,4 +1,4 @@
-package ATeamProject.Kezuino.com.github;
+package ateamproject.kezuino.com.github;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;

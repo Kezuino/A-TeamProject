@@ -7,8 +7,8 @@ gwt {
     minHeapSize="1G"
 
     src = files(file("src/")) // Needs to be in front of "modules" below.
-    modules 'ATeamProject.Kezuino.com.github.SingePlayer.GdxDefinition'
-    devModules 'ATeamProject.Kezuino.com.github.SingePlayer.GdxDefinitionSuperdev'
+    modules 'ateamproject.kezuino.com.github.singleplayer.GdxDefinition'
+    devModules 'ateamproject.kezuino.com.github.singleplayer.GdxDefinitionSuperdev'
     project.webAppDirName = 'webapp'
 
     compiler {
