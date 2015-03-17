@@ -62,15 +62,13 @@ project(":ios") {
 project(":core") {
     apply plugin: "java"
 
-    sourceSets.test.java.srcDirs = ["src/test/java/"]
-
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
         compile "com.badlogicgames.gdx:gdx-box2d:$gdxVersion"
         compile "com.badlogicgames.box2dlights:box2dlights:$box2DLightsVersion"
         compile "com.badlogicgames.gdx:gdx-ai:$aiVersion"
 
-        compile 'junit:junit:4.+'
+        testCompile 'junit:junit:4.+'
     }
 }
 
