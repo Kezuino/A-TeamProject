@@ -27,9 +27,11 @@ public class Map {
     /**
      * Initializes a map with a 2D array filled with @see Node.
      *
+     * @param session    @see GameSession that will host this @see Map.
      * @param squareSize Width and height dimension length.
      */
-    public Map(int squareSize) {
+    public Map(GameSession session, int squareSize) {
+        gameSession = session;
         width = squareSize;
         height = squareSize;
 
@@ -39,10 +41,12 @@ public class Map {
     /**
      * Initializes a map with a 2D array filled with @see Node.
      *
-     * @param width  X dimension of the map.
-     * @param height Y dimension of the map.
+     * @param session @see GameSession that will host this @see Map.
+     * @param width   X dimension of the map.
+     * @param height  Y dimension of the map.
      */
-    public Map(int width, int height) {
+    public Map(GameSession session, int width, int height) {
+        gameSession = session;
         this.width = width;
         this.height = height;
 
@@ -100,8 +104,19 @@ public class Map {
      * @param direction
      */
     public Node getAdjecentNode(Node node, Direction direction) {
-        // TODO - implement Map.getAdjecentNode
-        throw new UnsupportedOperationException();
+        if (node == null) return null;
+        switch (direction) {
+            case Up:
+                return getNode(node.getX(), node.getY() - 1);
+            case Down:
+                return getNode(node.getX(), node.getY() + 1);
+            case Left:
+                return getNode(node.getX() - 1, node.getY());
+            case Right:
+                return getNode(node.getX() + 1, node.getY());
+            default:
+                return null;
+        }
     }
 
     private Node[][] nodes;
