@@ -11,6 +11,10 @@ public class Pactale extends GameObject {
 	private Portal Portal;
 	private Node Node;
 	private Collection<Projectile> Projectile;
+        
+        public Portal getPortal(){
+            return this.Portal;
+        }
 
 	public int getPlayerIndex() {
 		return this.playerIndex;
