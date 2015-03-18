@@ -10,7 +10,7 @@ public class Node {
 	private Item item;
 	private Enemy enemy;
 	private Pactale pactale;
-	private Collection<GameObject> GameObject;
+	private Collection<GameObject> gameObjects;
     private int x;
     private int y;
 
@@ -25,6 +25,7 @@ public class Node {
      * @param y
 	 */
 	public Node(Map map, int x, int y) {
+		gameObjects = new ArrayList<GameObject>();
         this.map = map;
         this.x = x;
         this.y = y;
@@ -115,4 +116,8 @@ public class Node {
     public int getY() {
         return y;
     }
+
+	public Collection<GameObject> getGameObjects() {
+		return gameObjects;
+	}
 }

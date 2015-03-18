@@ -4,22 +4,60 @@ import java.util.*;
 
 public class Map {
 
+    /**
+     * Returns the node count that this map has.
+     *
+     * @return Amount of nodes used by this map.
+     */
     public int getSize() {
-        return size;
+        return nodes.length;
     }
 
-    private int size;
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    private int width;
+    private int height;
 
     /**
      * Initializes a map with a 2D array filled with @see Node.
      *
-     * @param size Width and height dimension length.
+     * @param squareSize Width and height dimension length.
      */
-    public Map(int size) {
-        this.size = size;
+    public Map(int squareSize) {
+        width = squareSize;
+        height = squareSize;
 
+        resetNodes(squareSize, squareSize);
+    }
+
+    /**
+     * Initializes a map with a 2D array filled with @see Node.
+     *
+     * @param width  X dimension of the map.
+     * @param height Y dimension of the map.
+     */
+    public Map(int width, int height) {
+        this.width = width;
+        this.height = height;
+
+        resetNodes(width, height);
+    }
+
+    /**
+     * Resets the 2D array to the new dimensions.
+     *
+     * @param width  X dimension of the map.
+     * @param height Y dimension of the map.
+     */
+    protected void resetNodes(int width, int height) {
         // Fill 2D array with nodes.
-        nodes = new Node[size][size];
+        nodes = new Node[width][height];
         for (int y = 0; y < nodes.length; y++) {
             for (int x = 0; x < nodes[y].length; x++) {
                 nodes[y][x] = new Node(this, x, y);
@@ -32,63 +70,27 @@ public class Map {
      *
      * @param x
      * @param y
+     * @return Node if x and y are in-bounds. Null otherwise.
      */
     public Node getNode(int x, int y) {
-        if (x < size && y < size) {
+        if (x < width && y < height) {
             return this.nodes[x][y];
         }
         return null;
     }
 
     /**
-     * Will add a node that is "empty" at the given position, will return true or false based on the fact if the node could be added.
-     *
-     * @param position
-     */
-    public boolean addNode(Node position) {
-        // TODO - implement Map.addNode
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Will add a node that is a wall at the given position, will return true or false based on the fact if the node could be added.
-     *
-     * @param position
-     * @param wall
-     */
-    public boolean addNode(Node position, Wall wall) {
-        // TODO - implement Map.addNode
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Will add a node that contains a item at the given position, will return true or false based on the fact if the node could be added.
-     *
-     * @param position
-     * @param item
-     */
-    public boolean addNode(Node position, Item item) {
-        // TODO - implement Map.addNode
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * Add a gameobject and returns true if it succeeded.
-     *
-     * @param position
-     * @param gameObject
-     */
-    public boolean addGameObject(Node position, GameObject gameObject) {
-        // TODO - implement Map.addGameObject
-        throw new UnsupportedOperationException();
-    }
-
-    /**
      * Will return all gameobjects within a game.
      */
-    public GameObject getAllGameObjects() {
-        // TODO - implement Map.getAllGameObjects
-        throw new UnsupportedOperationException();
+    public List<GameObject> getAllGameObjects() {
+        List<GameObject> objs = new ArrayList<GameObject>();
+        for (int x = 0; x < width; x++) {
+            for (int y = 0; y < height; y++) {
+                Node node = getNode(x, y);
+                objs.addAll(node.getGameObjects());
+            }
+        }
+        return objs;
     }
 
     /**
