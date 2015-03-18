@@ -21,12 +21,13 @@ public class Projectile extends GameObject {
 		throw new UnsupportedOperationException();
 	}
 
-	/**
-	 * Will be called at the moment that the projectile has collided.
-	 * @param wall
-	 * @param direction
-	 */
-	public void collide(Wall wall, Direction direction) {
+        public boolean hasCollision(Direction direction) {
+        /**
+         * Will check if a colission has happened and returns a boolean
+         * accordingly.
+         *
+         * @param direction
+         */
 		// TODO - implement Projectile.collide
 		throw new UnsupportedOperationException();
 	}
