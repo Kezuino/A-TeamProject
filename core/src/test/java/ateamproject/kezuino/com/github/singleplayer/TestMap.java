@@ -12,7 +12,7 @@ public class TestMap {
         /**
          * Initializes a map with a 2D array filled with @see Node.
          */
-        Map map = new Map(20);
+        GameSession session = new GameSession(20);
         assertNotNull("Map should initialize node x:0 y:0.", map.getNode(0, 0));
         assertNotNull("Map should initialize node x:19 y:19.", map.getNode(19, 19));
 
