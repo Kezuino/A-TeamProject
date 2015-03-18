@@ -1,4 +1,4 @@
-package test.java.ateamproject.kezuino.com.github.singleplayer;
+package ateamproject.kezuino.com.github.singleplayer;
 
 
 import ateamproject.kezuino.com.github.singleplayer.Map;
