@@ -8,10 +8,6 @@ public class Map {
         return size;
     }
 
-    public void setSize(int size) {
-        this.size = size;
-    }
-
     private int size;
 
     /**
@@ -38,7 +34,10 @@ public class Map {
      * @param y
      */
     public Node getNode(int x, int y) {
-        return this.nodes[x][y];
+        if (x < size && y < size) {
+            return this.nodes[x][y];
+        }
+        return null;
     }
 
     /**

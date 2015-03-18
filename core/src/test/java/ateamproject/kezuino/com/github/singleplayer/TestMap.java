@@ -19,12 +19,9 @@ public class TestMap {
         /**
         * @param size Width and height dimension length.
         */
-        try {
-            map.getNode(19, 20);
-            map.getNode(20, 19);
-            map.getNode(20, 20);
-            fail("Nodes at position x:20 or y:20 should be out of bounds.");
-        } catch (IndexOutOfBoundsException ex) {
-        }
+        assertNull("Range is out of bounds and should be null.", map.getNode(map.getSize()-1, map.getSize()));
+        assertNull("Range is out of bounds and should be null.", map.getNode(map.getSize(), map.getSize()-1));
+        assertNull("Range is out of bounds and should be null.", map.getNode(map.getSize(), map.getSize()));
+
     }
 }
