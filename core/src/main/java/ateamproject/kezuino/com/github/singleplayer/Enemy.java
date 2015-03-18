@@ -12,7 +12,7 @@ public class Enemy extends GameObject {
 	private Pactale pactaleToFollow;
 	private Node Node;
 
-	public boolean isIsDead() {
+	public boolean isDead() {
 		return this.isDead;
 	}
 
@@ -20,7 +20,7 @@ public class Enemy extends GameObject {
 		this.isDead = dead;
 	}
 
-	public boolean isIsEdible() {
+	public boolean isEdible() {
 		return this.isEdible;
 	}
 
