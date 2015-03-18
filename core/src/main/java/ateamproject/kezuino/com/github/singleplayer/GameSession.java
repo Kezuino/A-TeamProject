@@ -3,7 +3,6 @@ package ateamproject.kezuino.com.github.singleplayer;
 import java.util.Date;
 
 public class GameSession {
-
 	private Date startTime;
 	private String pathToSkin;
 	private Map Map;
