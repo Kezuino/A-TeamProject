@@ -3,6 +3,9 @@ package ateamproject.kezuino.com.github.singleplayer;
 import com.badlogic.gdx.graphics.Color;
 
 public class Projectile extends GameObject {
+        public Pactale getPactal(){
+            return this.Pactale;
+        }
 
 	/**
 	 * Initializes a new projectile.
