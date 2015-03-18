@@ -15,6 +15,10 @@ public class GameSession {
     public String getPathToSkin() {
         return this.pathToSkin;
     }
+    
+    public Map getMap() {
+        return this.map;
+    }
 
     private GameSession() {
         startTime = new Date();
