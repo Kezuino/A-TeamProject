@@ -24,6 +24,10 @@ public abstract class GameObject {
 	public Direction getDirection() {
 		return this.direction;
 	}
+        
+        public void setDirection(Direction direction) {
+		this.direction = direction;
+	}
 
 	/**
 	 * Returns the node where the gameobject currently resides.
