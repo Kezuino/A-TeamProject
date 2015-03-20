@@ -119,6 +119,16 @@ public class Map {
         }
     }
 
+    /**
+     * Adds a @see GameObject to a position on this @see Map.
+     *
+     * @param object
+     */
+    public void addGameObject(int x, int y, GameObject object) {
+        object.setPosition(x, y);
+        object.setMap(this);
+    }
+
     private Node[][] nodes;
     private GameSession gameSession;
 

@@ -29,20 +29,18 @@ public class TestPactale {
          * @param walkingDirection
          */
         GameSession g = new GameSession(3);
-        Node position = new Node(g.getMap(), 1, 1);
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Left;
         Color color = new Color(1, 111, 11, 111);
         int lives = 3;
         int playerIndex = 2;
-        Pactale p = new Pactale(position, g.getMap(), lives, playerIndex, color, position, movementSpeed, walkingDirection);
+        Pactale p = new Pactale(g.getMap(), 1, 1, lives, color, movementSpeed, walkingDirection);
 
         Assert.assertEquals("Color needs to be equal", p.getColor(), color);
         Assert.assertEquals("Direction needs to be equal", p.getDirection(), walkingDirection);
         Assert.assertEquals("Lives needs to be equal", p.getLives(), lives);
         Assert.assertEquals("MovementSpeed needs to be equal", p.getMovementSpeed(), movementSpeed);
-        Assert.assertEquals("Node needs to be equal", p.getNode(), position);
-        Assert.assertEquals("PlayerIndex needs to be equal", p.getPlayerIndex(), playerIndex);
+        Assert.assertEquals("Node needs to be equal", p.getNode(), g.getMap().getNode(1, 1));
     }
 
     @Test
@@ -60,13 +58,11 @@ public class TestPactale {
          * Will remove all listed portals from this Pactale
          */
         GameSession g = new GameSession(3);
-        Node position = new Node(g.getMap(), 1, 1);
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Left;
         Color color = new Color(1, 111, 11, 111);
         int lives = 3;
-        int playerIndex = 2;
-        Pactale p = new Pactale(position, g.getMap(), lives, playerIndex, color, position, movementSpeed, walkingDirection);
+        Pactale p = new Pactale(g.getMap(), 1, 1, lives, color, movementSpeed, walkingDirection);
 
         Assert.assertNull("There needs to be no portal", p.getPortal());
         Assert.fail("Shoot a portal here");
@@ -89,7 +85,7 @@ public class TestPactale {
         Color color = new Color(1, 111, 11, 111);
         int lives = 3;
         int playerIndex = 2;
-        Pactale p = new Pactale(position, g.getMap(), lives, playerIndex, color, position, movementSpeed, walkingDirection);
+        Pactale p = new Pactale(g.getMap(), 1, 1, lives, color, movementSpeed, walkingDirection);
 
         Assert.assertEquals("The direction should equal the init value", Direction.Left, p.getDirection());
         Assert.assertNotEquals("The direction should not equal the init value", Direction.Up, p.getDirection());

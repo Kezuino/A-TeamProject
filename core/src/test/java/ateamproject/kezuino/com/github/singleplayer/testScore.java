@@ -9,6 +9,6 @@ package ateamproject.kezuino.com.github.singleplayer;
  *
  * @author Kez and Jules
  */
-public class testScore {
+public class TestScore {
     
 }

@@ -22,24 +22,24 @@ public class TestGameSession {
     
     @Before
     public void setUp() {
-        /*this.testSession = new GameSession("Filepath", 4);
-        try {
-            Field field = GameSession.class.getDeclaredField("Map");
-            field.setAccessible(true);
-            this.testMap = (Map) field.get(GameSession.class.getDeclaredField("Map"));
-            this.testMap.addGameObject(null, testPactale);
-        } catch(NoSuchFieldException | IllegalAccessException ex) {
-            
-        }*/
-        
-        
-        
-        //Field mapField = GameSession
-        //Node testNode = new Node(this.session);
-        
-        //this.testPactale = new Pactale();
-        
-        
+//        this.testSession = new GameSession(4);
+//        try {
+//            Field field = GameSession.class.getDeclaredField("Map");
+//            field.setAccessible(true);
+//            this.testMap = (Map) field.get(GameSession.class.getDeclaredField("Map"));
+//            Pactale p = new Pactale(3)
+//            this.testMap.getNode(2, 5).addGameObject()
+//        } catch(NoSuchFieldException | IllegalAccessException ex) {
+//        }
+//
+//
+//
+//        Field mapField =
+//        Node testNode = new Node(this.session);
+//
+//        this.testPactale = new Pactale();
+//
+//
     }
     
     @Test

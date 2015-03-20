@@ -3,11 +3,11 @@ package ateamproject.kezuino.com.github.singleplayer;
 import com.badlogic.gdx.graphics.Color;
 
 public abstract class GameObject {
-
+    private Map map;
 	private float movementSpeed;
 	private Color color;
 	private Direction direction;
-	private Node Node;
+	private Node node;
 
 	public float getMovementSpeed() {
 		return this.movementSpeed;
@@ -33,18 +33,30 @@ public abstract class GameObject {
 	 * Returns the node where the gameobject currently resides.
 	 */
 	public Node getNode() {
-		// TODO - implement GameObject.getNode
-		throw new UnsupportedOperationException();
+        return node;
 	}
 
 	/**
 	 * Creates a new gameobject
-	 * @param position
+	 * @param map that hosts this @see GameObject.
+     * @param x position of this @see GameObject on the @see Map.
 	 * @param movementSpeed
-	 * @param walkingDirection
+	 * @param direction
 	 * @param color
 	 */
-	public GameObject(Node position, float movementSpeed, Direction walkingDirection, Color color) {
-
+	public GameObject(Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
+        this.map = map;
+        this.node = map.getNode(x, y);
+        this.movementSpeed = movementSpeed;
+        this.direction = direction;
+        this.color = color;
 	}
+
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
+    public void setPosition(int x, int y) {
+        node = map.getNode(x, y);
+    }
 }

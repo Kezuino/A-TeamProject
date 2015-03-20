@@ -16,8 +16,9 @@ public class TestWall {
     
     @Test
     public void constructorValidation() {
-        
-        Map map = new Map(10,10);
+
+        GameSession session = new GameSession(10);
+        Map map = session.getMap();
         Node node = new Node(map, 1, 1);
         
         /**

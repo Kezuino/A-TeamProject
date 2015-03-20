@@ -1,10 +1,9 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-
-import ateamproject.kezuino.com.github.singleplayer.Map;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import static junit.framework.TestCase.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class TestMap {
     @Test
@@ -13,6 +12,7 @@ public class TestMap {
          * Initializes a map with a 2D array filled with @see Node.
          */
         GameSession session = new GameSession(20);
+        Map map = session.getMap();
         assertNotNull("Map should initialize node x:0 y:0.", map.getNode(0, 0));
         assertNotNull("Map should initialize node x:19 y:19.", map.getNode(19, 19));
 

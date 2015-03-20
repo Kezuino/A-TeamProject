@@ -6,9 +6,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
-import java.awt.Point;
-import java.lang.reflect.Field;
-import org.junit.Assert;
+
 import static org.junit.Assert.*;
 import org.junit.Test;
 
@@ -34,14 +32,14 @@ public class TestProjectile {
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Left;
         Color color = new Color(1, 111, 11, 111);
-        Pactale owner = new Pactale(position, g.getMap(), 3, 1, color, position, movementSpeed, walkingDirection);
+        Pactale owner = new Pactale(g.getMap(), 1, 1, 1, color, movementSpeed, walkingDirection);
 
-        Projectile p = new Projectile(owner, position, movementSpeed, walkingDirection, color);
+        Projectile p = new Projectile(g.getMap(), 1, 1, owner, movementSpeed, walkingDirection, color);
         assertEquals("The color needs to be set", p.getColor(), color);
         assertEquals("The direction needs to be set", p.getDirection(), walkingDirection);
         assertEquals("The movementspeed needs to be set", p.getMovementSpeed(), movementSpeed);
         assertEquals("The position needs to be set", p.getNode(), position);
-        assertEquals("The pactale needs to be set", p.getPactal(), owner);
+        assertEquals("The pactale needs to be set", p.getOwner(), owner);
     }
 
     @Test
@@ -58,9 +56,8 @@ public class TestProjectile {
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Right;
         Color color = new Color(1, 111, 11, 111);
-        Pactale owner = new Pactale(position, g.getMap(), 3, 1, color, position, movementSpeed, walkingDirection);
-
-        Projectile p = new Projectile(owner, position, movementSpeed, walkingDirection, color);
+        Pactale owner = new Pactale(g.getMap(), 1, 1, 1, color, movementSpeed, walkingDirection);
+        Projectile p = new Projectile(g.getMap(), 1, 1, owner, movementSpeed, walkingDirection, color);
         
         assertTrue("It needs to collide with the wall when it goes rights", p.hasCollision(Direction.Right));
         assertFalse("It needs not to collide with the wall when it goes down", p.hasCollision(Direction.Down));
