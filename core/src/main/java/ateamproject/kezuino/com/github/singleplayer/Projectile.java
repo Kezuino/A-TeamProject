@@ -3,31 +3,34 @@ package ateamproject.kezuino.com.github.singleplayer;
 import com.badlogic.gdx.graphics.Color;
 
 public class Projectile extends GameObject {
+    public Pactale getOwner() {
+        return this.owner;
+    }
 
-	/**
-	 * Initializes a new projectile.
-	 * @param owner
-	 * @param position
-	 * @param movementSpeed
-	 * @param walkingDirection
-	 * @param color
-	 */
-	public Projectile(Pactale owner, Node position, float movementSpeed, Direction walkingDirection, Color color) {
-		super(position, movementSpeed, walkingDirection, color);
-		// TODO - implement Projectile.Projectile
-		throw new UnsupportedOperationException();
-	}
+    /**
+     * Initializes a new projectile.
+     *
+     * @param owner         @see Pactale that fired this projectile.
+     * @param movementSpeed
+     * @param direction     orientation that the projectile has and is currently going towards.
+     * @param color
+     */
+    public Projectile(Map map, int x, int y, Pactale owner, float movementSpeed, Direction direction, Color color) {
+        super(map, x, y, movementSpeed, direction, color);
+        this.owner = owner;
+    }
 
-	/**
-	 * Will be called at the moment that the projectile has collided.
-	 * @param wall
-	 * @param direction
-	 */
-	public void collide(Wall wall, Direction direction) {
-		// TODO - implement Projectile.collide
-		throw new UnsupportedOperationException();
-	}
+    public boolean hasCollision(Direction direction) {
+        /**
+         * Will check if a colission has happened and returns a boolean
+         * accordingly.
+         *
+         * @param direction
+         */
+        // TODO - implement Projectile.collide
+        throw new UnsupportedOperationException();
+    }
 
-	private Pactale Pactale;
+    private Pactale owner;
 
 }

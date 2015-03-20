@@ -8,26 +8,26 @@ public class Wall {
 	private Node node;
 	private Collection<Portal> portal;
 
-	public HashMap<Portal, Direction> getPortals() {
-		return this.portals;
-	}
-
-	/**
+        /**
 	 * Initializes a wall at the position of the given node.
 	 * @param node
 	 */
 	public Wall(Node node) {
-		// TODO - implement Wall.Wall
-		throw new UnsupportedOperationException();
+            
+            // TODO - implement Wall.Wall
+            throw new UnsupportedOperationException();
 	}
-
+        
 	/**
-	 * 
+	 * Returns the portal on the wall object of the given direction
 	 * @param direction
+         * @return portal object if a portal exist on that direction, returns null
+         * if no portal is found on that direction
 	 */
 	public Portal getPortal(Direction direction) {
 		// TODO - implement Wall.getPortal
 		throw new UnsupportedOperationException();
+                
 	}
 
 	/**
@@ -47,6 +47,11 @@ public class Wall {
 	public boolean removePortal(Direction direction) {
 		// TODO - implement Wall.removePortal
 		throw new UnsupportedOperationException();
+	}
+        
+        
+	public HashMap<Portal, Direction> getPortals() {
+		return this.portals;
 	}
 
 }
