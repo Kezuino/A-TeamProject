@@ -4,33 +4,49 @@ import com.badlogic.gdx.graphics.Color;
 
 public class Enemy extends GameObject {
 
-	private boolean isDead;
-	private boolean isEdible;
+	private boolean Dead;
+	private boolean Edible;
 	/**
 	 * Can be null!
 	 */
 	private Pactale pactaleToFollow;
 	private Node Node;
 
-	public boolean isIsDead() {
-		return this.isDead;
+        /**
+         * 
+         * @return If the enemy is dead this will return true, if the enemy is still alive will return false
+         */
+	public boolean isDead() {
+		return this.Dead;
 	}
 
-	public void setIsDead(boolean dead) {
-		this.isDead = dead;
+        /**
+         * Sets the dead propertie of the enemy. If the enemy is dead it should be set to true, if the enemy is not dead should be false.
+         * @param dead Must be true or false, cannot be null
+         */
+	public void setDead(boolean dead) {
+		this.Dead = dead;
 	}
 
-	public boolean isIsEdible() {
-		return this.isEdible;
+        /**
+         * 
+         * @return True if the enemy is edible at the moment, false if the enemy is not edible.
+         */
+	public boolean isEdible() {
+		return this.Edible;
 	}
 
-	public void setIsEdible(boolean eatable) {
-		this.isEdible = eatable;
+        /**
+         * Sets wether the enemy is edible or not, the enemy is edible if true. The enemy is not edible if false
+         * @param eatable Boolean, cannot be null
+         */
+	public void setEdible(boolean eatable) {
+		this.Edible = eatable;
 	}
 
 	/**
-	 * Initializes an enemy.
-	 * @param pactaleToFollow
+	 * Initializes an enemy. Default isDead = False, isEatable = False.
+	 * @param pactaleToFollow Pactale object to follow, CAN BE NULL
 	 * @param position
 	 * @param map
 	 * @param spawningpoint
@@ -55,13 +71,17 @@ public class Enemy extends GameObject {
 
 	/**
 	 * Will move the enemy to a specific location.
-	 * @param position
+	 * @param position Node, cannot be null
 	 */
 	public void teleport(Node position) {
 		// TODO - implement Enemy.teleport
 		throw new UnsupportedOperationException();
 	}
 
+        /**
+         * 
+         * @return The pectale that this enemy follows. Can return null.
+         */
 	public Pactale getPactaleToFollow() {
 		return this.pactaleToFollow;
 	}

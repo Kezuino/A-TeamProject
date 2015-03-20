@@ -19,27 +19,46 @@ import static org.junit.Assert.*;
 public class TestEnemy {
     
     public TestEnemy() {
-    }
-    
-    @BeforeClass
-    public static void setUpClass() {
-    }
-    
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
+    }   
+  
     @Before
     public void setUp() {
+        
     }
     
-    @After
-    public void tearDown() {
+    	/**
+	 * Initializes an enemy. Default isDead = False, isEatable = False.
+	 * @param pactaleToFollow Pactale object to follow, CAN BE NULL
+	 * @param position
+	 * @param map
+	 * @param spawningpoint
+	 * @param parameter
+	 * @param movementSpeed
+	 * @param walkingDirection
+	 * @param color
+	 */
+    @Test
+    public void testConstructorEnemey(){
+        
     }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void testWrongConstructor(){
+        
+    }
+    
+    /**
+         * Sets the dead propertie of the enemy. If the enemy is dead it should be set to true, if the enemy is not dead should be false.
+         * @param dead Must be true or false, cannot be null
+         */
+    @Test
+    public void testSetIsDead(){
+        
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void testSetIsDeadNull(){
 
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @Test. For example:
-    //
-    // @Test
-    // public void hello() {}
+    }
 }
+
