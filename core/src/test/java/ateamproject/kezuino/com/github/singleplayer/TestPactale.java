@@ -65,7 +65,7 @@ public class TestPactale {
         Pactale p = new Pactale(g.getMap(), 1, 1, lives, color, movementSpeed, walkingDirection);
 
         Assert.assertNull("There needs to be no portal", p.getPortal());
-        Assert.fail("Shoot a portal here");
+        p.shootPortal();
         Assert.assertEquals("The newly added portal should match", new Integer(1), p.getPortal());
         p.removePortal();
         Assert.assertNull("There needs to be no portal", p.getPortal());
