@@ -37,7 +37,7 @@ public class TestProjectile {
         Projectile p = new Projectile(g.getMap(), 1, 1, owner, movementSpeed, walkingDirection, color);
         assertEquals("The color needs to be set", p.getColor(), color);
         assertEquals("The direction needs to be set", p.getDirection(), walkingDirection);
-        assertEquals("The movementspeed needs to be set", p.getMovementSpeed(), movementSpeed);
+        assertEquals("The movementspeed needs to be set", p.getMovementSpeed(), movementSpeed, 0.000005);
         assertEquals("The position needs to be set", p.getNode(), position);
         assertEquals("The pactale needs to be set", p.getOwner(), owner);
     }

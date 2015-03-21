@@ -39,7 +39,7 @@ public class TestPactale {
         Assert.assertEquals("Color needs to be equal", p.getColor(), color);
         Assert.assertEquals("Direction needs to be equal", p.getDirection(), walkingDirection);
         Assert.assertEquals("Lives needs to be equal", p.getLives(), lives);
-        Assert.assertEquals("MovementSpeed needs to be equal", p.getMovementSpeed(), movementSpeed);
+        Assert.assertEquals("MovementSpeed needs to be equal", p.getMovementSpeed(), movementSpeed, 0.000005);
         Assert.assertEquals("Node needs to be equal", p.getNode(), g.getMap().getNode(1, 1));
     }
 
