@@ -15,6 +15,7 @@ import org.junit.Test;
  */
 public class TestPactale {
 
+    @Test
     public void Pactale() {
         /**
          * Initialize a pactale
