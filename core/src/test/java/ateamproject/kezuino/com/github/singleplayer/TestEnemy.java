@@ -6,10 +6,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -19,6 +16,7 @@ import static org.junit.Assert.*;
  */
 public class TestEnemy {
 
+    GameSession session;
     Map map;
     Node spawn;
     Enemy enemy;
@@ -26,10 +24,11 @@ public class TestEnemy {
 
     @Before
     public void setUp() {
-        map = new Map(null, 40);
-        spawn = new Node(null, 10, 10);
+        session = new GameSession(20);
+        map = session.getMap();
+        spawn = map.getNode(19, 19);
         enemy = new Enemy(null, map, spawn, 100, Direction.Down, Color.BLACK);
-        teleportNode = new Node(null, 20, 20);
+        teleportNode = map.getNode(19, 19);
     }
 
     @Test
@@ -46,12 +45,12 @@ public class TestEnemy {
          * @param color
          */
         enemy = new Enemy(null, map, spawn, 100, Direction.Down, Color.BLACK);
-        assertEquals(null, enemy.getPactaleToFollow());
-        assertFalse(enemy.isDead());
-        assertFalse(enemy.isEdible());
-        assertEquals(spawn, enemy.getNode());
-        assertEquals(Direction.Down, enemy.getDirection());
-        assertEquals(Color.BLACK, enemy.getColor());
+        assertEquals("Enemy should not follow any object.", null, enemy.getObjectToFollow());
+        assertFalse("Enemy should not be dead.", enemy.isDead());
+        assertFalse("Enemy's status should not be edible.", enemy.isEdible());
+        assertEquals("Enemy should currently be on spawn because it has not moved and was just spawned.", spawn, enemy.getNode());
+        assertEquals("Enemy's default direction should be downward.", Direction.Down, enemy.getDirection());
+        assertEquals("Enemy's default color should be WHITE.", Color.WHITE, enemy.getColor());
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -71,8 +70,9 @@ public class TestEnemy {
          *
          * @param dead Must be true or false, cannot be null
          */
+        assertFalse("Enemy must not be dead.", enemy.isDead());
         enemy.setDead(true);
-        assertEquals(true, enemy.isDead());
+        assertTrue("Enemy must be dead.", enemy.isDead());
     }
 
     @Test
@@ -80,18 +80,21 @@ public class TestEnemy {
         /**
          * Will move a Enemy to its spawn and reset some of its properties.
          */
+        assertEquals("Enemy hasn't moved and should be on spawn.", spawn, enemy.getNode());
         enemy.setPosition(20, 20);
+        assertNotEquals("Enemy position has been moved and should not be on spawn.", spawn, enemy.getNode());
         enemy.respawn();
-        assertEquals(spawn, enemy.getNode());
+        assertEquals("Enemy has respawned and should be on spawn.", spawn, enemy.getNode());
     }
 
     @Test
-    public void testEnemeyTeleport() {
+    public void testEnemyTeleport() {
         /**
          * Will move the enemy to a specific location.
          *
          * @param position Node, cannot be null
          */
+
         enemy.teleport(teleportNode);
         assertEquals(teleportNode, enemy.getNode());
 

@@ -5,7 +5,7 @@ import java.util.*;
 public class Map {
 
     /**
-     * Returns the node count that this map has.
+     * Returns the {@link Node} count that this map has.
      *
      * @return Amount of nodes used by this map.
      */
@@ -13,21 +13,38 @@ public class Map {
         return nodes.length;
     }
 
+    /**
+     * X dimension of the size of this {@link Map}.
+     *
+     * @return number of {@link Node nodes} that this {@link Map} is in the X dimension.
+     */
     public int getWidth() {
         return width;
     }
 
+    /**
+     * Y dimension of the size of this {@link Map}.
+     *
+     * @return number of {@link Node nodes} that this {@link Map} is in the Y dimension.
+     */
     public int getHeight() {
         return height;
     }
 
+    /**
+     * X dimension of the size of this {@link Map}.
+     */
     private int width;
+
+    /**
+     * Y dimension of the size of this {@link Map}.
+     */
     private int height;
 
     /**
-     * Initializes a map with a 2D array filled with @see Node.
+     * Initializes a map with a 2D array filled with {@link Node nodes}.
      *
-     * @param session    @see GameSession that will host this @see Map.
+     * @param session    {@link GameSession} that will host this @see Map.
      * @param squareSize Width and height dimension length.
      */
     public Map(GameSession session, int squareSize) {
@@ -39,9 +56,9 @@ public class Map {
     }
 
     /**
-     * Initializes a map with a 2D array filled with @see Node.
+     * Initializes a {@link Map} with a 2D array filled with {@link Node nodes}.
      *
-     * @param session @see GameSession that will host this @see Map.
+     * @param session {@link GameSession} that will host this {@link Map}.
      * @param width   X dimension of the map.
      * @param height  Y dimension of the map.
      */
@@ -56,8 +73,8 @@ public class Map {
     /**
      * Resets the 2D array to the new dimensions.
      *
-     * @param width  X dimension of the map.
-     * @param height Y dimension of the map.
+     * @param width  X dimension of the {@link Map}.
+     * @param height Y dimension of the {@link Map}.
      */
     protected void resetNodes(int width, int height) {
         // Fill 2D array with nodes.
@@ -70,11 +87,11 @@ public class Map {
     }
 
     /**
-     * Will return a node if found, else it will return null.
+     * Will return a {@link Node} if found, else it will return null.
      *
-     * @param x
-     * @param y
-     * @return Node if x and y are in-bounds. Null otherwise.
+     * @param x position to get {@link Node} from.
+     * @param y position to get {@link Node} from.
+     * @return {@link Node} if {@code x} and {@code y} are in-bounds. Null otherwise.
      */
     public Node getNode(int x, int y) {
         if (x < width && y < height) {
@@ -84,7 +101,7 @@ public class Map {
     }
 
     /**
-     * Will return all gameobjects within a game.
+     * Will return all {@link GameObject gameobjects} within a game.
      */
     public List<GameObject> getAllGameObjects() {
         List<GameObject> objs = new ArrayList<GameObject>();
@@ -104,7 +121,8 @@ public class Map {
      * @param direction
      */
     public Node getAdjecentNode(Node node, Direction direction) {
-        if (node == null) return null;
+        if (node == null) throw new NullPointerException("Parameter node must not be null.");
+        if (direction == null) throw new NullPointerException("Parameter direction must not be null.");
         switch (direction) {
             case Up:
                 return getNode(node.getX(), node.getY() - 1);
@@ -120,9 +138,9 @@ public class Map {
     }
 
     /**
-     * Adds a @see GameObject to a position on this @see Map.
+     * Adds a {@link GameObject} to a position on this {@link Map}.
      *
-     * @param object
+     * @param object to add to a {@link Node} on this {@link Map}.
      */
     public void addGameObject(int x, int y, GameObject object) {
         object.setPosition(x, y);

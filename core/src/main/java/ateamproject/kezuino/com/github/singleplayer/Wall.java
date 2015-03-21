@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Wall {
 
-    private HashMap<Portal, Direction> portals;
+    private HashMap<Direction, Portal> portals;
     private Node node;
     private Collection<Portal> portal;
 
@@ -14,44 +14,59 @@ public class Wall {
      * @param node
      */
     public Wall(Node node) {
-
-        // TODO - implement Wall.Wall
-        throw new UnsupportedOperationException();
+        this.node = node;
     }
 
     /**
-     * Returns the portal on the wall object of the given direction
+     * Returns the {@link Portal} on the {@link Wall} on the side specified by {@code direction}.
      *
-     * @param direction
-     * @return portal object if a portal exist on that direction, returns null
-     * if no portal is found on that direction
+     * @param direction of the side of the {@link Wall} to get the {@link Portal} from.
+     * @return portal at the direction of the {@link Wall} or null.
      */
     public Portal getPortal(Direction direction) {
-        // TODO - implement Wall.getPortal
-        throw new UnsupportedOperationException();
-
+        if (!portals.containsKey(direction)) return null;
+        return portals.get(direction);
     }
 
     /**
-     * @param direction
-     * @param portal
+     * Sets a {@link Portal} to the side of the {@link Wall} specified by the {@code direction}.
+     *
+     * @param direction to set the {@link Portal} on.
+     * @param portal    to set on the side of the {@link Wall}.
      */
     public void setPortal(Direction direction, Portal portal) {
-        // TODO - implement Wall.setPortal
-        throw new UnsupportedOperationException();
+        portals.put(direction, portal);
     }
 
     /**
-     * @param direction
+     * Removes a {@link Portal} from the side of the {@link Wall} if it exists.
+     *
+     * @param direction of the side on the {@link Wall} to look for a {@link Portal} to remove.
+     * @return if true, removed a {@link Portal} from the {@link Wall}.
      */
     public boolean removePortal(Direction direction) {
-        // TODO - implement Wall.removePortal
-        throw new UnsupportedOperationException();
+        if (!portals.containsKey(direction)) return false;
+        portals.put(direction, null);
+        return true;
     }
 
 
-    public HashMap<Portal, Direction> getPortals() {
-        return this.portals;
+    /**
+     * Gets all the {@link Portal portals} on this {@link Wall}.
+     *
+     * @return list of {@link Portal portals} on this {@link Wall}.
+     */
+    public List<Portal> getPortals() {
+        return (List<Portal>) portals.values();
     }
 
+    /**
+     * Removes all the portals on this wall.
+     */
+    public void clear() {
+        for (Portal p : getPortals()) {
+
+        }
+        portals.clear();
+    }
 }

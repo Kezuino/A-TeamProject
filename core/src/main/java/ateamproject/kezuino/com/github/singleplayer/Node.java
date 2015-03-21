@@ -4,28 +4,40 @@ import java.util.*;
 
 public class Node {
 
-    private Node position;
-    private Map map;
-    private Wall wall;
-    private Item item;
-    private Enemy enemy;
-    private Pactale pactale;
-    private Collection<GameObject> gameObjects;
-    private int x;
-    private int y;
-
-    public Node getPosition() {
-        return this.position;
-    }
 
     /**
-     * Initializes a node in the given map at the specific point.
-     *
-     * @param map
-     * @param x
-     * @param y
+     * {@link Map} that contains this {@link Node}.
      */
-    public Node(Map map, int x, int y) {
+    private Map map;
+    /**
+     * {@link Wall} information that defines this {@link Node}.
+     */
+    private Wall wall;
+    /**
+     * {@link Item} that is on this {@link Node}.
+     */
+    private Item item;
+    /**
+     * All {@link GameObject GameObjects} on this {@link Node}.
+     */
+    private Collection<GameObject> gameObjects;
+    /**
+     * X position that this {@link Node} is on.
+     */
+    private int x;
+    /**
+     * Y position that this {@link Node} is on.
+     */
+    private int y;
+
+    /**
+     * Initializes a {@link Node} in the given {@link Map} at the specific position.
+     *
+     * @param map that contains the {@link Node}.
+     * @param x   position that the {@link Node} is at.
+     * @param y   position that the {@link Node} is at.
+     */
+    Node(Map map, int x, int y) {
         gameObjects = new ArrayList<GameObject>();
         this.map = map;
         this.x = x;
@@ -35,31 +47,30 @@ public class Node {
     /**
      * Gives a boolean value based on if the given object exists.
      *
-     * @param gameObject
+     * @param object to check if already exists on this {@link Node}.
      */
-    public boolean hasGameObject(GameObject gameObject) {
-        // TODO - implement Node.hasGameObject
-        throw new UnsupportedOperationException();
+    public boolean hasGameObject(GameObject object) {
+        return gameObjects.contains(object);
     }
 
     /**
-     * Adds a gameobject to a node an returns true if it succeeded.
+     * Adds a {@link GameObject} to a {@link Node} if it doesn't exist and returns true if it succeeded.
      *
-     * @param gameObject
+     * @param object to add to the {@link Node}.
      */
-    public boolean addGameObject(GameObject gameObject) {
-        // TODO - implement Node.addGameObject
-        throw new UnsupportedOperationException();
+    public boolean addGameObject(GameObject object) {
+        if (hasGameObject(object)) return false;
+        gameObjects.add(object);
+        return true;
     }
 
     /**
-     * Removes the given object and returns if succeeded.
+     * Removes the given {@link GameObject} and returns if succeeded.
      *
-     * @param gameObject
+     * @param object
      */
-    public boolean removeGameObject(GameObject gameObject) {
-        // TODO - implement Node.removeGameObject
-        throw new UnsupportedOperationException();
+    public boolean removeGameObject(GameObject object) {
+        return gameObjects.remove(object);
     }
 
     /**
@@ -68,18 +79,16 @@ public class Node {
      * @param item
      */
     public boolean setItem(Item item) {
-        // TODO - implement Node.setItem
-        throw new UnsupportedOperationException();
+        this.item = item;
+        return true;
     }
 
     /**
      * Removes the item and returns if succeeded.
-     *
-     * @param item
      */
-    public boolean removeItem(Item item) {
-        // TODO - implement Node.removeItem
-        throw new UnsupportedOperationException();
+    public boolean removeItem() {
+        this.item = null;
+        return true;
     }
 
     /**
@@ -88,42 +97,51 @@ public class Node {
      * @param wall
      */
     public boolean setWall(Wall wall) {
-        // TODO - implement Node.setWall
-        throw new UnsupportedOperationException();
+        this.wall = wall;
+        return true;
     }
 
     /**
      * Removes the wall and returns if succeeded.
      */
     public boolean removeWall() {
-        // TODO - implement Node.removeWall
-        throw new UnsupportedOperationException();
+        wall.clear();
+        this.wall = null;
+        return true;
     }
 
     /**
      * Returns the map from where the node currently resides.
      */
     public Map getMap() {
-        // TODO - implement Node.getMap
-        throw new UnsupportedOperationException();
+        return this.map;
     }
 
     /**
      * Gets the wall from a node
      */
     public Wall getWall() {
-        // TODO - implement Node.getWall
-        throw new UnsupportedOperationException();
+        return this.wall;
     }
 
     public int getX() {
         return x;
     }
 
+    /**
+     * X position of the this {@link Node}.
+     *
+     * @return X position of this {@link Node}.
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * Gets all the {@link GameObject GameObjects} that are on this {@link Node}.
+     *
+     * @return all {@link GameObject GameObjects} on this {@link Node}.
+     */
     public Collection<GameObject> getGameObjects() {
         return gameObjects;
     }

@@ -4,13 +4,22 @@ import com.badlogic.gdx.graphics.Color;
 
 public class Enemy extends GameObject {
 
-    private boolean Dead;
-    private boolean Edible;
     /**
-     * Can be null!
+     * If true, {@link Enemy} is currently dead and doesn't partake in the game until respawned.
      */
-    private Pactale pactaleToFollow;
-    private Node Node;
+    private boolean dead;
+    /**
+     * If true, {@link Enemy} can currently be eaten by a {@link Pactale}.
+     */
+    private boolean edible;
+    /**
+     * {@link GameObject} that this {@link Enemy} currently follows. Can be null.
+     */
+    private GameObject objectToFollow;
+    /**
+     * {@link Node} that this {@link Enemy} is currently on.
+     */
+    private Node node;
 
     /**
      * Will move a Enemy to its spawn and reset some of its properties.
@@ -24,7 +33,7 @@ public class Enemy extends GameObject {
      * @return If the enemy is dead this will return true, if the enemy is still alive will return false
      */
     public boolean isDead() {
-        return this.Dead;
+        return this.dead;
     }
 
     /**
@@ -33,14 +42,14 @@ public class Enemy extends GameObject {
      * @param dead Must be true or false, cannot be null
      */
     public void setDead(boolean dead) {
-        this.Dead = dead;
+        this.dead = dead;
     }
 
     /**
      * @return True if the enemy is edible at the moment, false if the enemy is not edible.
      */
     public boolean isEdible() {
-        return this.Edible;
+        return this.edible;
     }
 
     /**
@@ -49,39 +58,61 @@ public class Enemy extends GameObject {
      * @param eatable Boolean, cannot be null
      */
     public void setEdible(boolean eatable) {
-        this.Edible = eatable;
+        this.edible = eatable;
     }
 
     /**
-     * Initializes an enemy. Default isDead = False, isEatable = False.
+     * Initializes an {@link Enemy} which isn't dead and isn't currently edible.
      *
-     * @param pactaleToFollow  Pactale object to follow, CAN BE NULL
-     * @param map
-     * @param spawningpoint
-     * @param movementSpeed
-     * @param walkingDirection
-     * @param color
+     * @param objectToFollow {@link GameObject} to follow. Can be null.
+     * @param map            {@link Map} that this {@link Enemy} is currently in.
+     * @param x              X position of this {@link Enemy}.
+     * @param y              Y position of this {@link Enemy}.
+     * @param movementSpeed  Speed in seconds that it takes to move to another {@link Node}.
+     * @param direction      Direction that this {@link Enemy} is currently facing towards.
      */
-    public Enemy(Pactale pactaleToFollow, Map map, Node spawningpoint, float movementSpeed, Direction walkingDirection, Color color) {
-        super(map, spawningpoint.getX(), spawningpoint.getY(), movementSpeed, walkingDirection, color);
-        // TODO - implement Enemy.Enemy
-        throw new UnsupportedOperationException();
+    public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
+        super(map, x, y, movementSpeed, direction, color);
+        this.objectToFollow = objectToFollow;
     }
 
     /**
-     * Will move the enemy to a specific location.
+     * Initializes an {@link Enemy} which isn't dead and isn't currently edible with a default draw color of {@code Color.WHITE}.
      *
-     * @param position Node, cannot be null
+     * @param objectToFollow {@link GameObject} to follow. Can be null.
+     * @param map            {@link Map} that this {@link Enemy} is currently in.
+     * @param x              X position of this {@link Enemy}.
+     * @param y              Y position of this {@link Enemy}.
+     * @param movementSpeed  Speed in seconds that it takes to move to another {@link Node}.
+     * @param direction      Direction that this {@link Enemy} is currently facing towards.
      */
-    public void teleport(Node position) {
-        // TODO - implement Enemy.teleport
-        throw new UnsupportedOperationException();
+    public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction) {
+        this(objectToFollow, map, x, y, movementSpeed, direction, Color.WHITE);
     }
 
     /**
-     * @return The pectale that this enemy follows. Can return null.
+     * Will move the {@link Enemy} to a specific {@code position}.
+     *
+     * @param position {@link Node} to teleport to, cannot be null.
+     * @return True if teleport location is valid to be teleported to.
      */
-    public Pactale getPactaleToFollow() {
-        return this.pactaleToFollow;
+    public boolean teleport(Node position) {
+        if (node == null) return false;
+        if (!node.removeGameObject(this)) {
+            return false;
+        }
+        if (!position.addGameObject(this)) {
+            // Revert position back because we failed.
+            node.addGameObject(this);
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * @return {@link GameObject} that this {@link Enemy} follows. Can return null.
+     */
+    public GameObject getObjectToFollow() {
+        return this.objectToFollow;
     }
 }
