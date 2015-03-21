@@ -54,15 +54,4 @@ public class Pactale extends GameObject {
         // TODO - implement Pactale.removePortal
         throw new UnsupportedOperationException();
     }
-
-    /**
-     * Changes the direction of the movement of the pactale.
-     *
-     * @param direction
-     */
-    public void move(Direction direction) {
-        // TODO - implement Pactale.move
-        throw new UnsupportedOperationException();
-    }
-
 }
