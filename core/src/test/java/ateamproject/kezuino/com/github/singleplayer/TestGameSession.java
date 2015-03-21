@@ -6,20 +6,21 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import java.lang.reflect.Field;
+
 import static org.junit.Assert.*;
+
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- *
  * @author Kez and Jules
  */
 public class TestGameSession {
     private GameSession testSession;
     private Pactale testPactale;
     private Map testMap;
-    
-    
+
+
     @Before
     public void setUp() {
 //        this.testSession = new GameSession(4);
@@ -41,11 +42,11 @@ public class TestGameSession {
 //
 //
     }
-    
+
     @Test
     public void testFindPactale() {
         //assertNotNull("Map is null", this.testMap);
     }
 
-    
+
 }

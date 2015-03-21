@@ -8,10 +8,10 @@ package ateamproject.kezuino.com.github.singleplayer;
 import com.badlogic.gdx.graphics.Color;
 
 import static org.junit.Assert.*;
+
 import org.junit.Test;
 
 /**
- *
  * @author Jip
  */
 public class TestProjectile {
@@ -58,7 +58,7 @@ public class TestProjectile {
         Color color = new Color(1, 111, 11, 111);
         Pactale owner = new Pactale(g.getMap(), 1, 1, 1, color, movementSpeed, walkingDirection);
         Projectile p = new Projectile(g.getMap(), 1, 1, owner, movementSpeed, walkingDirection, color);
-        
+
         assertTrue("It needs to collide with the wall when it goes rights", p.hasCollision(Direction.Right));
         assertFalse("It needs not to collide with the wall when it goes down", p.hasCollision(Direction.Down));
         assertFalse("It needs not to collide with the wall when it goes up", p.hasCollision(Direction.Up));

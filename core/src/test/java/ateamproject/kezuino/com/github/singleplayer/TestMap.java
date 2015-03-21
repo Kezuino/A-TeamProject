@@ -17,10 +17,10 @@ public class TestMap {
         assertNotNull("Map should initialize node x:19 y:19.", map.getNode(19, 19));
 
         /**
-        * @param size Width and height dimension length.
-        */
-        assertNull("Range is out of bounds and should be null.", map.getNode(map.getSize()-1, map.getSize()));
-        assertNull("Range is out of bounds and should be null.", map.getNode(map.getSize(), map.getSize()-1));
+         * @param size Width and height dimension length.
+         */
+        assertNull("Range is out of bounds and should be null.", map.getNode(map.getSize() - 1, map.getSize()));
+        assertNull("Range is out of bounds and should be null.", map.getNode(map.getSize(), map.getSize() - 1));
         assertNull("Range is out of bounds and should be null.", map.getNode(map.getSize(), map.getSize()));
 
     }

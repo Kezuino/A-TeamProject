@@ -15,7 +15,7 @@ public class GameSession {
     public String getPathToSkin() {
         return this.pathToSkin;
     }
-    
+
     public Map getMap() {
         return this.map;
     }
@@ -27,7 +27,7 @@ public class GameSession {
     /**
      * Will create a new @see GameSession with the default skin.
      *
-     * @param width X dimension of the @see Map.
+     * @param width  X dimension of the @see Map.
      * @param height Y dimension of the @see Map.
      */
     public GameSession(int width, int height) {
