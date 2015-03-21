@@ -91,25 +91,6 @@ public class Enemy extends GameObject {
     }
 
     /**
-     * Will move the {@link Enemy} to a specific {@code position}.
-     *
-     * @param position {@link Node} to teleport to, cannot be null.
-     * @return True if teleport location is valid to be teleported to.
-     */
-    public boolean teleport(Node position) {
-        if (node == null) return false;
-        if (!node.removeGameObject(this)) {
-            return false;
-        }
-        if (!position.addGameObject(this)) {
-            // Revert position back because we failed.
-            node.addGameObject(this);
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * @return {@link GameObject} that this {@link Enemy} follows. Can return null.
      */
     public GameObject getObjectToFollow() {

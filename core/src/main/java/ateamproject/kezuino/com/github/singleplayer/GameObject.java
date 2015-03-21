@@ -4,6 +4,11 @@ import com.badlogic.gdx.graphics.Color;
 
 public abstract class GameObject {
     /**
+     * If true, all movement done by this {@link GameObject} will use interpolation to smoothly move it to an adjacent {@link Node}.
+     * If false, ignores interlopation and just waits based on the {link #movementSpeed} until it can {@link #move(Node)} again.
+     */
+    private boolean movementInterpolation;
+    /**
      * {@link Map} that contains this {@link GameObject}.
      */
     private Map map;
@@ -98,6 +103,7 @@ public abstract class GameObject {
         this.movementSpeed = movementSpeed;
         this.direction = direction;
         this.color = color;
+        this.movementInterpolation = false;
     }
 
     /**
@@ -109,14 +115,8 @@ public abstract class GameObject {
      * @param movementSpeed Speed in seconds that this {@link GameObject} takes to move to another adjacent {@link Node}.
      * @param direction     {@link Direction} that this {@link GameObject} is currently facing.
      */
-    public GameObject(Map map, int x, int y, float movementSpeed, Color color, Direction direction) {
-        this.map = map;
-        this.x = x;
-        this.y = y;
-        this.movementSpeed = movementSpeed;
-        this.color = color;
-        this.direction = direction;
-        this.color = Color.WHITE;
+    public GameObject(Map map, int x, int y, float movementSpeed, Direction direction) {
+        this(map, x, y, movementSpeed, direction, Color.WHITE);
     }
 
     /**
@@ -137,22 +137,45 @@ public abstract class GameObject {
      * @return
      */
     public boolean setPosition(int x, int y) {
+        // Pre-check if all input data is valid.
         if (map == null) return false;
+        Node currentNode = map.getNode(this.x, this.y);
         Node targetNode = map.getNode(x, y);
         if (targetNode == null) return false;
-        this.x = x;
-        this.y = y;
+
+        // Remove GameObject from current Node.
+        if (currentNode != null && !currentNode.removeGameObject(this)) {
+            return false;
+        }
+
+        // Add GameObject to new Node or revert if failing.
+        if (!targetNode.addGameObject(this)) {
+            // Revert position back because we failed.
+            if (currentNode != null) currentNode.addGameObject(this);
+            return false;
+        }
+
         return true;
+    }
+
+    /**
+     * Moves this {@link GameObject} to another adjacent {@link Node} based on the given {@code direction}.
+     * If {@link #movementInterpolation} is true, this movement should be pixel-perfectly smooth between the nodes.
+     * If {@link #movementInterpolation} is false, this movement should move immediately and wait until it can move again based on {@link #movementSpeed}.
+     *
+     * @param direction {@link Direction} to move in (to an adjacent {@link Node}).
+     */
+    public void moveAdjacent(Direction direction) {
+        throw new UnsupportedOperationException();
     }
 
     /**
      * Tries to move this {@link GameObject} to another {@link Node} using pathfinding based on the {@link #movementSpeed}.
      *
      * @param node {@link Node} to move towards.
+     * @see #moveAdjacent(Direction)
      */
     public void move(Node node) {
-        // TODO: Implement A* pathfinding to move this GameObject to another node based on the speed at which it can move between one node multiplied by the nodes it needs to pass.
-
         throw new UnsupportedOperationException();
     }
 }
