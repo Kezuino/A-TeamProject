@@ -22,6 +22,11 @@ public class Assets {
         BitmapFont font = new BitmapFont();
         font.setColor(Color.BLACK);
         fonts.put("default", font);
+        font = new BitmapFont();
+        font.setColor(Color.YELLOW);
+        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        font.setScale(0.9f);
+        fonts.put("fps", font);
 
         // Textures.
         manager.load("nodes/wall.png", Texture.class);

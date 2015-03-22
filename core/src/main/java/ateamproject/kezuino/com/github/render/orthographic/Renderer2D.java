@@ -16,18 +16,18 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 
-public class Renderer implements IRenderer {
+public class Renderer2D implements IRenderer {
     private SpriteBatch batch;
     private Map map;
-    private MapRenderer renderer;
+    private MapRenderer tileMapRenderer;
     private Camera camera;
     private TiledMap tiledMap;
 
-    public Renderer(Map map) {
+    public Renderer2D(Map map) {
         batch = new SpriteBatch();
         this.map = map;
         tiledMap = new TiledMap();
-        renderer = new OrthogonalTiledMapRenderer(tiledMap);
+        tileMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
 
         // Camera.
         camera = new Camera(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), map, 32);
@@ -78,11 +78,11 @@ public class Renderer implements IRenderer {
 
     @Override
     public void render() {
-        renderer.setView(camera);
-        renderer.render();
+        tileMapRenderer.setView(camera);
+        tileMapRenderer.render();
 
         batch.begin();
-        Assets.fonts.get("default").draw(batch, "Hey :D", -50, -50);
+        Assets.fonts.get("fps").draw(batch, "FPS " + String.valueOf(Gdx.graphics.getFramesPerSecond()), 0, camera.viewportHeight);
         batch.end();
     }
 }
