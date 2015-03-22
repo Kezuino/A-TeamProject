@@ -6,7 +6,11 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {
-		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
-		new LwjglApplication(new PactaleGame(), config);
+		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+        cfg.foregroundFPS = 60;
+        cfg.backgroundFPS = 30;
+        cfg.samples = 8;
+
+		new LwjglApplication(new PactaleGame(), cfg);
 	}
 }

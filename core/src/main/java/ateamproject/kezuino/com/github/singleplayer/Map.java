@@ -5,12 +5,49 @@ import java.util.*;
 public class Map {
 
     /**
+     * X dimension of the size of this {@link Map}.
+     */
+    private int width;
+    /**
+     * Y dimension of the size of this {@link Map}.
+     */
+    private int height;
+    private Nodes nodes;
+    private GameSession gameSession;
+
+    /**
+     * Initializes a map with a 2D array filled with {@link Node nodes}.
+     *
+     * @param session    {@link GameSession} that will host this @see Map.
+     * @param squareSize Width and height dimension length.
+     */
+    public Map(GameSession session, int squareSize) {
+        this(session, squareSize, squareSize);
+    }
+
+    /**
+     * Initializes a {@link Map} with a 2D array filled with {@link Node nodes}.
+     *
+     * @param session {@link GameSession} that will host this {@link Map}.
+     * @param width   X dimension of the map.
+     * @param height  Y dimension of the map.
+     */
+    public Map(GameSession session, int width, int height) {
+        gameSession = session;
+        this.width = width;
+        this.height = height;
+
+        nodes = new Nodes(width, height);
+        resetNodes(width, height);
+    }
+
+    /**
      * Returns the {@link Node} count that this map has.
      *
      * @return Amount of nodes used by this map.
      */
     public int getSize() {
-        return nodes.length;
+        return nodes.getLength();
     }
 
     /**
@@ -32,45 +69,6 @@ public class Map {
     }
 
     /**
-     * X dimension of the size of this {@link Map}.
-     */
-    private int width;
-
-    /**
-     * Y dimension of the size of this {@link Map}.
-     */
-    private int height;
-
-    /**
-     * Initializes a map with a 2D array filled with {@link Node nodes}.
-     *
-     * @param session    {@link GameSession} that will host this @see Map.
-     * @param squareSize Width and height dimension length.
-     */
-    public Map(GameSession session, int squareSize) {
-        gameSession = session;
-        width = squareSize;
-        height = squareSize;
-
-        resetNodes(squareSize, squareSize);
-    }
-
-    /**
-     * Initializes a {@link Map} with a 2D array filled with {@link Node nodes}.
-     *
-     * @param session {@link GameSession} that will host this {@link Map}.
-     * @param width   X dimension of the map.
-     * @param height  Y dimension of the map.
-     */
-    public Map(GameSession session, int width, int height) {
-        gameSession = session;
-        this.width = width;
-        this.height = height;
-
-        resetNodes(width, height);
-    }
-
-    /**
      * Resets the 2D array to the new dimensions.
      *
      * @param width  X dimension of the {@link Map}.
@@ -78,10 +76,9 @@ public class Map {
      */
     protected void resetNodes(int width, int height) {
         // Fill 2D array with nodes.
-        nodes = new Node[width][height];
-        for (int y = 0; y < nodes.length; y++) {
-            for (int x = 0; x < nodes[y].length; x++) {
-                nodes[y][x] = new Node(this, x, y);
+        for (int y = 0; y < nodes.getLength(); y++) {
+            for (int x = 0; x < nodes.getLength(1); x++) {
+                nodes.set(x, y, new Node(this, x, y));
             }
         }
     }
@@ -95,7 +92,7 @@ public class Map {
      */
     public Node getNode(int x, int y) {
         if (x < width && y < height) {
-            return this.nodes[x][y];
+            return nodes.get(x, y);
         }
         return null;
     }
@@ -147,7 +144,12 @@ public class Map {
         object.setMap(this);
     }
 
-    private Node[][] nodes;
-    private GameSession gameSession;
-
+    /**
+     * Gets an {@link java.util.Iterator} to iterate through all {@link Node nodes} in this {@link Map}.
+     *
+     * @return {@link java.util.Iterator} to iterate through all {@link Node nodes} in this {@link Map}.
+     */
+    public Nodes getNodes() {
+        return nodes;
+    }
 }

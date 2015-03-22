@@ -1,26 +1,34 @@
 package ateamproject.kezuino.com.github;
 
+import ateamproject.kezuino.com.github.render.IRenderer;
+import ateamproject.kezuino.com.github.render.orthographic.Renderer;
+import ateamproject.kezuino.com.github.singleplayer.GameSession;
+import ateamproject.kezuino.com.github.singleplayer.Node;
+import ateamproject.kezuino.com.github.singleplayer.Pactale;
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class PactaleGame extends ApplicationAdapter {
-    /**
-     * If false, game will stop and cannot be restarted.
-     */
-    boolean isRunning = true;
+import java.util.Iterator;
 
-    SpriteBatch batch;
+public class PactaleGame extends ApplicationAdapter {
+    private IRenderer renderer;
+    private GameSession session;
 
     @Override
     public void create() {
-        batch = new SpriteBatch();
+        Assets.create();
+        session = new GameSession(20);
+        renderer = new Renderer(session.getMap());
     }
 
     @Override
     public void render() {
-
+        update();
+        draw();
     }
 
     /**
@@ -34,11 +42,10 @@ public class PactaleGame extends ApplicationAdapter {
      * Draws the current state of the game logic.
      */
     public void draw() {
-        Gdx.gl.glClearColor(1, 10, 10, 5);
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        batch.begin();
-        // TODO: Draw game.
-        batch.end();
+        if (renderer != null) renderer.render();
     }
 }
