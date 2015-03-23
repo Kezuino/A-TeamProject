@@ -40,7 +40,7 @@ public class TestWall {
     @Test
     public void TestSetPortal() {
         Wall wall = new Wall(node);
-        Pactale pactale = new Pactale(node, map, 1, 1, Color.CLEAR, node, 1.1f, Direction.Right);
+        Pactale pactale = new Pactale(map, 1, 1, 1, Color.CLEAR, 1.1f, Direction.Right);
         
         // Left portal
         Portal portalL = new Portal(pactale, wall, Direction.Left);
@@ -65,7 +65,8 @@ public class TestWall {
     @Test
     public void RemovePortal() {
         Wall wall = new Wall(node);
-        Pactale pactale = new Pactale(node, map, 1, 1, Color.CLEAR, node, 1.1f, Direction.Right);
+        
+        Pactale pactale = new Pactale(map, 1, 1, 1, Color.CLEAR, 1.1f, Direction.Right);
         
         Portal portalL = new Portal(pactale, wall, Direction.Left);
         wall.setPortal(Direction.Left, portalL);
@@ -84,7 +85,7 @@ public class TestWall {
     @Test
     public void TestGetPortals() {
         Wall wall = new Wall(node);
-        Pactale pactale = new Pactale(node, map, 1, 1, Color.CLEAR, node, 1.1f, Direction.Right);
+        Pactale pactale = new Pactale(map, 1, 1, 1, Color.CLEAR, 1.1f, Direction.Right);
         
         Portal portalL = new Portal(pactale, wall, Direction.Left);
         wall.setPortal(Direction.Left, portalL);
