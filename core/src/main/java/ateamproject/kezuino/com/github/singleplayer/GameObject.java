@@ -105,7 +105,7 @@ public abstract class GameObject {
     }
 
     /**
-     * Initializes this {@link GameObject}.
+     * Initializes this {@link GameObject}. 
      *
      * @param map That hosts this {@link GameObject}.
      * @param x X position of this {@link GameObject}.
@@ -125,7 +125,7 @@ public abstract class GameObject {
         this.movementSpeed = movementSpeed;
         this.direction = direction;
         this.color = color;
-        this.movementInterpolation = false;
+        this.movementInterpolation = false;        
     }
 
     /**
@@ -160,7 +160,7 @@ public abstract class GameObject {
      *
      * @param x X position to set this {@link GameObject} to.
      * @param y Y position to set this {@link GameObject} to.
-     * @return
+     * @return True if succesfully changed the Position, false if it d
      */
     public boolean setPosition(int x, int y) {
         // Pre-check if all input data is valid.
