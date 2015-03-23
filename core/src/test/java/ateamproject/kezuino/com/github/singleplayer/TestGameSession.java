@@ -5,10 +5,8 @@
  */
 package ateamproject.kezuino.com.github.singleplayer;
 
-import java.lang.reflect.Field;
-
+import com.badlogic.gdx.graphics.Color;
 import static org.junit.Assert.*;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,35 +16,18 @@ import org.junit.Test;
 public class TestGameSession {
     private GameSession testSession;
     private Pactale testPactale;
-    private Map testMap;
-
 
     @Before
     public void setUp() {
-//        this.testSession = new GameSession(4);
-//        try {
-//            Field field = GameSession.class.getDeclaredField("Map");
-//            field.setAccessible(true);
-//            this.testMap = (Map) field.get(GameSession.class.getDeclaredField("Map"));
-//            Pactale p = new Pactale(3)
-//            this.testMap.getNode(2, 5).addGameObject()
-//        } catch(NoSuchFieldException | IllegalAccessException ex) {
-//        }
-//
-//
-//
-//        Field mapField =
-//        Node testNode = new Node(this.session);
-//
-//        this.testPactale = new Pactale();
-//
-//
+        this.testSession = new GameSession(4);
+        this.testPactale = new Pactale(this.testSession.getMap(), 0, 0, 3, Color.CLEAR, 0.1f, Direction.Left);
     }
 
+    /**
+     * Tests to retrieve a pactale playing in the currect gamesession
+     */
     @Test
     public void testFindPactale() {
-        //assertNotNull("Map is null", this.testMap);
+        assertSame("", this.testSession.getPlayer(0), this.testPactale);
     }
-
-
 }
