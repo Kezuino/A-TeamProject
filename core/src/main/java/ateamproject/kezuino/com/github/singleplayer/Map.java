@@ -84,7 +84,7 @@ public class Map {
     }
 
     /**
-     * Will return a {@link Node} if found, else it will return null.
+     * Returns a {@link Node} if found, else it will return null.
      *
      * @param x position to get {@link Node} from.
      * @param y position to get {@link Node} from.
@@ -98,7 +98,7 @@ public class Map {
     }
 
     /**
-     * Will return all {@link GameObject gameobjects} within a game.
+     * Returns all {@link GameObject gameobjects} within a game.
      */
     public List<GameObject> getAllGameObjects() {
         List<GameObject> objs = new ArrayList<GameObject>();
@@ -112,7 +112,7 @@ public class Map {
     }
 
     /**
-     * Will return a node which is in the direction of the given direction. Will return null if node does not exist.
+     * Returns a node which is in the direction of the given direction. Will return null if node does not exist.
      *
      * @param node
      * @param direction

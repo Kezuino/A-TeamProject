@@ -49,7 +49,8 @@ public class Nodes implements Iterable<Node> {
 
     /**
      * Changes the value in the 2d array by the x and y.
-     *  @param x    Dimension of the internal 2d node array.
+     *
+     * @param x    Dimension of the internal 2d node array.
      * @param y    Dimension of the internal 2d node array.
      * @param node Value to set on dimension.
      */

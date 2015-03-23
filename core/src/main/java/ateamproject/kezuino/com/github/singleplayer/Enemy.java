@@ -83,7 +83,7 @@ public class Enemy extends GameObject {
     }
 
     /**
-     * Sets wether the enemy is edible or not, the enemy is edible if true. The enemy is not edible if false
+     * Sets whether the enemy is edible or not, the enemy is edible if true. The enemy is not edible if false
      *
      * @param eatable Boolean, cannot be null
      */

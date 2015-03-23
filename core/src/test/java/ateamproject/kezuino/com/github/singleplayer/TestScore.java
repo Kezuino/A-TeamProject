@@ -29,8 +29,8 @@ public class TestScore {
     */
     @Test
     public void scoreVariable() {
-        this.testScore.inscrementScore(5);
+        this.testScore.incrementScore(5);
         assertEquals("Current session score should be equal to 5", 5, this.testScore.getScore());         
-        assertEquals("Current session score should be equal to 10", 10, this.testScore.inscrementScore(5));
+        assertEquals("Current session score should be equal to 10", 10, this.testScore.incrementScore(5));
     }
 }

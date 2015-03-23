@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Wall {
 
@@ -62,12 +63,25 @@ public class Wall {
     }
 
     /**
-     * Removes all the portals on this wall.
+     * Removes all {@link Portal portals} from this {@link Wall}.
      */
     public void clear() {
         for (Portal p : getPortals()) {
-
+            p.getOwner().removePortal();
         }
         portals.clear();
+    }
+
+    /**
+     * Removes all {@link Portal portals} in the given {@link Direction side} of the {@link Wall}.
+     *
+     * @param side {@link Direction side} of the {@link Wall} to remove the {@link Portal portals} from.
+     */
+    public void clearDirection(Direction side) {
+        if (side == null) throw new IllegalArgumentException("Parameter side must not be null.");
+        for (Portal p : getPortals().stream().filter(p2 -> p2.getDirection() == side).collect(Collectors.toList())) {
+            p.getOwner().removePortal();
+            portals.remove(p);
+        }
     }
 }

@@ -63,9 +63,9 @@ public class TestItem {
          */
         Item item = new Item("Small gold nugget", node);
         Point p = new Point(10, 10);
-        item.setOffSetPosition(p);
+        item.setOffsetPosition(p);
 
-        assertEquals("OffsetPosition of the item does not match!", p, item.getOffSetPosition());
+        assertEquals("OffsetPosition of the item does not match!", p, item.getOffsetPosition());
 
     }
 

@@ -3,9 +3,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 import com.badlogic.gdx.graphics.Color;
 
 public class Projectile extends GameObject {
-    public Pactale getOwner() {
-        return this.owner;
-    }
+    private Pactale owner;
 
     /**
      * Initializes a new projectile.
@@ -20,6 +18,10 @@ public class Projectile extends GameObject {
         this.owner = owner;
     }
 
+    public Pactale getOwner() {
+        return this.owner;
+    }
+
     public boolean hasCollision(Direction direction) {
         /**
          * Will check if a colission has happened and returns a boolean
@@ -30,7 +32,5 @@ public class Projectile extends GameObject {
         // TODO - implement Projectile.collide
         throw new UnsupportedOperationException();
     }
-
-    private Pactale owner;
 
 }

@@ -20,12 +20,12 @@ public class Node {
      */
     private Item item;
     /**
-     * X position that this {@link Node} is on.
+     * Gets the X position that this {@link Node} is on.
      */
     private int x;
 
     /**
-     * Y position that this {@link Node} is on.
+     * Gets the Y position that this {@link Node} is on.
      */
     private int y;
 
@@ -128,7 +128,7 @@ public class Node {
     }
 
     /**
-     * X position of the this {@link Node}.
+     * Gets the X position of this {@link Node}.
      *
      * @return X position of this {@link Node}.
      */
