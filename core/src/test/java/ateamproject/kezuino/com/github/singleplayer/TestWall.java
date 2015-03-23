@@ -5,48 +5,97 @@
  */
 package ateamproject.kezuino.com.github.singleplayer;
 
+import com.badlogic.gdx.graphics.Color;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
+import org.junit.Before;
 
 /**
  * @author Fatih
  */
 public class TestWall {
 
+    private Node node;    
+    private Map map;
+
+    
+    @Before
+    public void setup() {
+        GameSession session = new GameSession(10);
+        map = session.getMap();
+        node = new Node(map, 1, 1);
+    }
+    
     @Test
     public void constructorValidation() {
-
-        GameSession session = new GameSession(10);
-        Map map = session.getMap();
-        Node node = new Node(map, 1, 1);
-
         /**
          * Initializes a wall at the position of the given node.
          * @param node
          */
-
         Wall wall = new Wall(node);
-
-    }
-
-    @Test
-    public void TestGetPortal() {
-
+        assertNotNull(wall);
     }
 
     @Test
     public void TestSetPortal() {
-
+        Wall wall = new Wall(node);
+        Pactale pactale = new Pactale(node, map, 1, 1, Color.CLEAR, node, 1.1f, Direction.Right);
+        
+        // Left portal
+        Portal portalL = new Portal(pactale, wall, Direction.Left);
+        boolean succesL = wall.setPortal(Direction.Left, portalL);
+        assertTrue(succesL);
+        assertNotNull(wall.getPortal(Direction.Left));
+        
+        // Right portal
+        Portal portalR = new Portal(pactale, wall, Direction.Right);
+        boolean succesR = wall.setPortal(Direction.Right, portalR);
+        assertTrue(succesR);
+        assertNotNull(wall.getPortal(Direction.Right));
+        
+        // Left portal (again)
+        Portal portalFL = new Portal(pactale, wall, Direction.Left);
+        boolean FailL = wall.setPortal(Direction.Left, portalFL);
+        assertFalse(FailL);
+        
+        
     }
 
     @Test
     public void RemovePortal() {
-
+        Wall wall = new Wall(node);
+        Pactale pactale = new Pactale(node, map, 1, 1, Color.CLEAR, node, 1.1f, Direction.Right);
+        
+        Portal portalL = new Portal(pactale, wall, Direction.Left);
+        wall.setPortal(Direction.Left, portalL);
+        Portal portalR = new Portal(pactale, wall, Direction.Right);
+        wall.setPortal(Direction.Right, portalR);
+        
+        // existing portal
+        assertNotNull(wall.getPortal(Direction.Left));
+        assertTrue(wall.removePortal(Direction.Left));
+        assertNull(wall.getPortal(Direction.Left));
+        
+        // non existing portal
+        assertFalse(wall.removePortal(Direction.Down));
     }
 
     @Test
     public void TestGetPortals() {
-
+        Wall wall = new Wall(node);
+        Pactale pactale = new Pactale(node, map, 1, 1, Color.CLEAR, node, 1.1f, Direction.Right);
+        
+        Portal portalL = new Portal(pactale, wall, Direction.Left);
+        wall.setPortal(Direction.Left, portalL);
+        Portal portalR = new Portal(pactale, wall, Direction.Right);
+        wall.setPortal(Direction.Right, portalR);
+        
+        int count = 0;
+        for (Portal curportal : wall.getPortals()) {
+            count++;
+        }
+        
+        assertEquals(2, count);
     }
 }
