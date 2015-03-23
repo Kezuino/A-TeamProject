@@ -27,13 +27,15 @@ public class TestItem {
     
     @Test
     public void TestItemConstructor() {
-        Item item = new Item(node);
+        Item item = new Item("Small Dot/Item",node);
         assertNotNull(item);
+        
+        assertEquals("Small Dot/Item", item.getName());
     }
     
      @Test
     public void setName() {
-        
+        Item item = new Item("Small Dot/Item",node);
     }
     
      @Test
