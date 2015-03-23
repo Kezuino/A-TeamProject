@@ -30,7 +30,7 @@ public class TestPortal {
     }
     
     @Test
-    public void TestPortalConstructor() {
+    public void testPortalConstructor() {
      /**
      * Initializes a {@link Portal} from a specific {@link Pactale owner} on a {@link Direction side} of a {@link Wall}.
      *

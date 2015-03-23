@@ -40,6 +40,71 @@ public abstract class GameObject {
     private Direction direction;
 
     /**
+     * Initializes this {@link GameObject}.
+     *
+     * @param map           That hosts this {@link GameObject}.
+     * @param x             X position of this {@link GameObject}.
+     * @param y             Y position of this {@link GameObject}.
+     * @param movementSpeed Speed in seconds that this {@link GameObject} takes
+     *                      to move to another adjacent {@link Node}.
+     * @param direction     {@link Direction} that this {@link GameObject} is
+     *                      currently facing.
+     * @param color         {@link com.badlogic.gdx.graphics.Color} that this
+     *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject} will be
+     *                      drawn at.
+     */
+    public GameObject(Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
+        if (direction == null) throw new IllegalArgumentException("Parameter direction must not be null.");
+        if (color == null) throw new IllegalArgumentException("Parameter color must not be null.");
+        if (movementSpeed <= 0) throw new IllegalArgumentException("Parameter movementSpeed must be higher than 0.");
+        this.map = map;
+        this.map.addGameObject(x, y, this);
+        this.x = x;
+        this.y = y;
+        this.movementSpeed = movementSpeed;
+        this.direction = direction;
+        this.color = color;
+        this.movementInterpolation = false;
+    }
+
+    /**
+     * Initializes this {@link GameObject} with a default {@code Color.WHITE}
+     * color.
+     *
+     * @param map           That hosts this {@link GameObject}.
+     * @param x             X position of this {@link GameObject}.
+     * @param y             Y position of this {@link GameObject}.
+     * @param movementSpeed Speed in seconds that this {@link GameObject} takes
+     *                      to move to another adjacent {@link Node}.
+     * @param direction     {@link Direction} that this {@link GameObject} is
+     *                      currently facing.
+     */
+    public GameObject(Map map, int x, int y, float movementSpeed, Direction direction) {
+        this(map, x, y, movementSpeed, direction, Color.WHITE);
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public Map getMap() {
+        return map;
+    }
+
+    /**
+     * Moves this {@link GameObject} to a different {@link Map}.
+     *
+     * @param map {@link Map} to move this {@link GameObject} to.
+     */
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
+    /**
      * Gets the speed in seconds that it takes for this {@link GameObject} to
      * move to another adjacent {@link Node}.
      *
@@ -55,7 +120,7 @@ public abstract class GameObject {
      * move to another adjacent {@link Node}.
      *
      * @param movementSpeed Speed in seconds that it takes for this
-     * {@link GameObject} to move to another adjacent {@link Node}.
+     *                      {@link GameObject} to move to another adjacent {@link Node}.
      */
     public void setMovementSpeed(float movementSpeed) {
         this.movementSpeed = movementSpeed;
@@ -88,7 +153,7 @@ public abstract class GameObject {
      * facing towards.
      *
      * @param direction {@link Direction} that this {@link GameObject} is
-     * currently facing towards.
+     *                  currently facing towards.
      */
     public void setDirection(Direction direction) {
         this.direction = direction;
@@ -102,55 +167,6 @@ public abstract class GameObject {
             return null;
         }
         return map.getNode(x, y);
-    }
-
-    /**
-     * Initializes this {@link GameObject}. 
-     *
-     * @param map That hosts this {@link GameObject}.
-     * @param x X position of this {@link GameObject}.
-     * @param y Y position of this {@link GameObject}.
-     * @param movementSpeed Speed in seconds that this {@link GameObject} takes
-     * to move to another adjacent {@link Node}.
-     * @param direction {@link Direction} that this {@link GameObject} is
-     * currently facing.
-     * @param color {@link com.badlogic.gdx.graphics.Color} that this
-     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject} will be
-     * drawn at.
-     */
-    public GameObject(Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
-        this.map = map;
-        this.x = x;
-        this.y = y;
-        this.movementSpeed = movementSpeed;
-        this.direction = direction;
-        this.color = color;
-        this.movementInterpolation = false;        
-    }
-
-    /**
-     * Initializes this {@link GameObject} with a default {@code Color.WHITE}
-     * color.
-     *
-     * @param map That hosts this {@link GameObject}.
-     * @param x X position of this {@link GameObject}.
-     * @param y Y position of this {@link GameObject}.
-     * @param movementSpeed Speed in seconds that this {@link GameObject} takes
-     * to move to another adjacent {@link Node}.
-     * @param direction {@link Direction} that this {@link GameObject} is
-     * currently facing.
-     */
-    public GameObject(Map map, int x, int y, float movementSpeed, Direction direction) {
-        this(map, x, y, movementSpeed, direction, Color.WHITE);
-    }
-
-    /**
-     * Moves this {@link GameObject} to a different {@link Map}.
-     *
-     * @param map {@link Map} to move this {@link GameObject} to.
-     */
-    public void setMap(Map map) {
-        this.map = map;
     }
 
     /**
@@ -169,12 +185,12 @@ public abstract class GameObject {
         }
         Node currentNode = map.getNode(this.x, this.y);
         Node targetNode = map.getNode(x, y);
-        if (targetNode == null) {
+        if (targetNode == null || currentNode == null) {
             return false;
         }
 
         // Remove GameObject from current Node.
-        if (currentNode != null && !currentNode.removeGameObject(this)) {
+        if (!currentNode.removeGameObject(this)) {
             return false;
         }
 
@@ -186,6 +202,9 @@ public abstract class GameObject {
             }
             return false;
         }
+
+        this.x = x;
+        this.y = y;
 
         return true;
     }
@@ -199,25 +218,22 @@ public abstract class GameObject {
      * {@link #movementSpeed}.
      *
      * @param direction {@link Direction} to move in (to an adjacent
-     * {@link Node}).
+     *                  {@link Node}).
      */
     public void moveAdjacent(Direction direction) {
         if (direction == Direction.Up) {
             if (this.map.getNode(x, y--) != null) {
                 this.y--;
             }
-        }
-        else if (direction == Direction.Right) {
+        } else if (direction == Direction.Right) {
             if (this.map.getNode(x++, y) != null) {
                 this.x++;
             }
-        }
-        else if (direction == Direction.Down) {
+        } else if (direction == Direction.Down) {
             if (this.map.getNode(x, y++) != null) {
                 this.y++;
             }
-        }
-        else if (direction == Direction.Left) {
+        } else if (direction == Direction.Left) {
             if (this.map.getNode(x--, y) != null) {
                 this.x--;
             }

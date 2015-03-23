@@ -28,7 +28,7 @@ public class TestItem {
     }
 
     @Test
-    public void TestItemConstructor() {
+    public void testItemConstructor() {
         /**
          * Initializes a item at the given node.
          *
@@ -70,7 +70,7 @@ public class TestItem {
     }
 
     @Test
-    public void Testactivate() {
+    public void testActivate() {
         /**
          * the target who picks up this item activates the effect this item is
          * carrying

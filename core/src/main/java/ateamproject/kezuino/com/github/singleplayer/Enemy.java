@@ -16,17 +16,47 @@ public class Enemy extends GameObject {
      * {@link GameObject} that this {@link Enemy} currently follows. Can be null.
      */
     private GameObject objectToFollow;
+
     /**
-     * {@link Node} that this {@link Enemy} is currently on.
+     * {@link Node} that the {@link Enemy} spawned on.
      */
-    private Node node;
+    private Node respawnNode;
+
+    /**
+     * Initializes an {@link Enemy} which isn't dead and isn't currently edible.
+     *
+     * @param objectToFollow {@link GameObject} to follow. Can be null.
+     * @param map            {@link Map} that this {@link Enemy} is currently in.
+     * @param x              X position of this {@link Enemy}.
+     * @param y              Y position of this {@link Enemy}.
+     * @param movementSpeed  Speed in seconds that it takes to move to another {@link Node}.
+     * @param direction      Direction that this {@link Enemy} is currently facing towards.
+     */
+    public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
+        super(map, x, y, movementSpeed, direction, color);
+        this.objectToFollow = objectToFollow;
+        this.respawnNode = map.getNode(x, y);
+    }
+
+    /**
+     * Initializes an {@link Enemy} which isn't dead and isn't currently edible with a default draw color of {@code Color.WHITE}.
+     *
+     * @param objectToFollow {@link GameObject} to follow. Can be null.
+     * @param map            {@link Map} that this {@link Enemy} is currently in.
+     * @param x              X position of this {@link Enemy}.
+     * @param y              Y position of this {@link Enemy}.
+     * @param movementSpeed  Speed in seconds that it takes to move to another {@link Node}.
+     * @param direction      Direction that this {@link Enemy} is currently facing towards.
+     */
+    public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction) {
+        this(objectToFollow, map, x, y, movementSpeed, direction, Color.WHITE);
+    }
 
     /**
      * Will move a Enemy to its spawn and reset some of its properties.
      */
     public void respawn() {
-        // TODO - implement Enemy.respawn
-        throw new UnsupportedOperationException();
+        setPosition(respawnNode.getX(), respawnNode.getY());
     }
 
     /**
@@ -59,35 +89,6 @@ public class Enemy extends GameObject {
      */
     public void setEdible(boolean eatable) {
         this.edible = eatable;
-    }
-
-    /**
-     * Initializes an {@link Enemy} which isn't dead and isn't currently edible.
-     *
-     * @param objectToFollow {@link GameObject} to follow. Can be null.
-     * @param map            {@link Map} that this {@link Enemy} is currently in.
-     * @param x              X position of this {@link Enemy}.
-     * @param y              Y position of this {@link Enemy}.
-     * @param movementSpeed  Speed in seconds that it takes to move to another {@link Node}.
-     * @param direction      Direction that this {@link Enemy} is currently facing towards.
-     */
-    public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
-        super(map, x, y, movementSpeed, direction, color);
-        this.objectToFollow = objectToFollow;
-    }
-
-    /**
-     * Initializes an {@link Enemy} which isn't dead and isn't currently edible with a default draw color of {@code Color.WHITE}.
-     *
-     * @param objectToFollow {@link GameObject} to follow. Can be null.
-     * @param map            {@link Map} that this {@link Enemy} is currently in.
-     * @param x              X position of this {@link Enemy}.
-     * @param y              Y position of this {@link Enemy}.
-     * @param movementSpeed  Speed in seconds that it takes to move to another {@link Node}.
-     * @param direction      Direction that this {@link Enemy} is currently facing towards.
-     */
-    public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction) {
-        this(objectToFollow, map, x, y, movementSpeed, direction, Color.WHITE);
     }
 
     /**

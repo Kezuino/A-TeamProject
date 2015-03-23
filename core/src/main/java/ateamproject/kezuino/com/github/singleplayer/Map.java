@@ -140,6 +140,7 @@ public class Map {
      * @param object to add to a {@link Node} on this {@link Map}.
      */
     public void addGameObject(int x, int y, GameObject object) {
+        getNode(x, y).addGameObject(object);
         object.setPosition(x, y);
         object.setMap(this);
     }

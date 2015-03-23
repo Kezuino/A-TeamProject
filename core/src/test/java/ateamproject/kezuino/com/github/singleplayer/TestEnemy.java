@@ -44,7 +44,7 @@ public class TestEnemy {
          * @param walkingDirection
          * @param color
          */
-        enemy = new Enemy(null, map, spawn.getX(), spawn.getY(), 100, Direction.Down, Color.BLACK);
+        enemy = new Enemy(null, map, spawn.getX(), spawn.getY(), 100, Direction.Down);
         assertEquals("Enemy should not follow any object.", null, enemy.getObjectToFollow());
         assertFalse("Enemy should not be dead.", enemy.isDead());
         assertFalse("Enemy's status should not be edible.", enemy.isEdible());
@@ -81,7 +81,7 @@ public class TestEnemy {
          * Will move a Enemy to its spawn and reset some of its properties.
          */
         assertEquals("Enemy hasn't moved and should be on spawn.", spawn, enemy.getNode());
-        enemy.setPosition(20, 20);
+        assertTrue("Movement must succeed.", enemy.setPosition(15, 14));
         assertNotEquals("Enemy position has been moved and should not be on spawn.", spawn, enemy.getNode());
         enemy.respawn();
         assertEquals("Enemy has respawned and should be on spawn.", spawn, enemy.getNode());
@@ -94,7 +94,7 @@ public class TestEnemy {
          *
          * @param position Node, cannot be null
          */
-        enemy.move(teleportNode);
+        enemy.setPosition(teleportNode.getX(), teleportNode.getY());
         assertEquals(teleportNode, enemy.getNode());
     }
 }

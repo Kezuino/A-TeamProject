@@ -7,27 +7,23 @@ public class Node {
      * {@link Map} that contains this {@link Node}.
      */
     private final Map map;
-    
-    /**
-     * {@link Wall} information that defines this {@link Node}.
-     */
-    private Wall wall;
-    
-    /**
-     * {@link Item} that is on this {@link Node}.
-     */
-    private Item item;
-    
     /**
      * All {@link GameObject GameObjects} on this {@link Node}.
      */
     private final Collection<GameObject> gameObjects;
-    
+    /**
+     * {@link Wall} information that defines this {@link Node}.
+     */
+    private Wall wall;
+    /**
+     * {@link Item} that is on this {@link Node}.
+     */
+    private Item item;
     /**
      * X position that this {@link Node} is on.
      */
     private int x;
-    
+
     /**
      * Y position that this {@link Node} is on.
      */
@@ -147,5 +143,15 @@ public class Node {
      */
     public Collection<GameObject> getGameObjects() {
         return gameObjects;
+    }
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "x=" + x +
+                ", y=" + y +
+                ", wall=" + wall +
+                ", item=" + item +
+                '}';
     }
 }

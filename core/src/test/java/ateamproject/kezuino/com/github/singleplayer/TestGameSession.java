@@ -24,11 +24,11 @@ public class TestGameSession {
     }
 
     /**
-     * Tests to retrieve a pactale playing in the currect gamesession
+     * Tests to retrieve a Pactale playing in the current GameSession
      */
     @Test
     public void testFindPactale() {
-        assertSame("The (only) pactale in the game session does not equal the test pactale added to the map", this.testSession.getPlayer(0), this.testPactale);
+        assertSame("The (only) Pactale in the game session isn't the same Pactale added to the map.", this.testSession.getPlayer(0), this.testPactale);
     }
     
     @Test
