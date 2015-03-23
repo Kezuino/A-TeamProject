@@ -39,6 +39,14 @@ public class TestWall {
 
     @Test
     public void TestSetPortal() {
+        
+          /**
+     * Sets a {@link Portal} to the side of the {@link Wall} specified by the {@code direction}.
+     *
+     * @param direction to set the {@link Portal} on.
+     * @param portal    to set on the side of the {@link Wall}.
+     */
+        
         Wall wall = new Wall(node);
         Pactale pactale = new Pactale(map, 1, 1, 1, Color.CLEAR, 1.1f, Direction.Right);
         
