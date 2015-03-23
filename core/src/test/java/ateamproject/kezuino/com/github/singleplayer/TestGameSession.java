@@ -30,4 +30,9 @@ public class TestGameSession {
     public void testFindPactale() {
         assertSame("The (only) pactale in the game session does not equal the test pactale added to the map", this.testSession.getPlayer(0), this.testPactale);
     }
+    
+    @Test
+    public void testGetStartDate() {
+        
+    }
 }
