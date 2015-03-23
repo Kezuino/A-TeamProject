@@ -10,9 +10,9 @@ public class Wall {
     private Collection<Portal> portal;
 
     /**
-     * Initializes a wall at the position of the given node.
+     * Initializes a {@link Wall} at the position of the given {@link Node}.
      *
-     * @param node
+     * @param node {@link Node} that this {@link Wall} should be set on.
      */
     public Wall(Node node) {
         this.node = node;
