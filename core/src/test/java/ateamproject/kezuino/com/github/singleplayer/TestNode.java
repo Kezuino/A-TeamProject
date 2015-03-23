@@ -33,7 +33,7 @@ public class TestNode {
         this.testEnemy = new Enemy(this.testPactale, this.testSession.getMap(), 3, 1, 0.1f, Direction.Right);
         
         this.nodeForItem = new Node(this.testSession.getMap(), 0, 8);
-        this.testItem = new Item(this.nodeForItem);
+        this.testItem = new Item("Item Name",this.nodeForItem);
 
         this.nodeForWall = new Node(this.testSession.getMap(), 1, 10);
         this.testWall = new Wall(this.nodeForWall);
