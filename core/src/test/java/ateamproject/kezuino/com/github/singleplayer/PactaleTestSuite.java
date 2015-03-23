@@ -14,6 +14,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
     TestEnemy.class,
     TestGameSession.class,
+    TestScore.class,
     TestMap.class,
     TestPactale.class,
     TestProjectile.class,
