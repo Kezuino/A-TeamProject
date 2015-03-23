@@ -3,28 +3,31 @@ package ateamproject.kezuino.com.github.singleplayer;
 import java.util.*;
 
 public class Node {
-
-
     /**
      * {@link Map} that contains this {@link Node}.
      */
     private final Map map;
+    
     /**
      * {@link Wall} information that defines this {@link Node}.
      */
     private Wall wall;
+    
     /**
      * {@link Item} that is on this {@link Node}.
      */
     private Item item;
+    
     /**
      * All {@link GameObject GameObjects} on this {@link Node}.
      */
     private final Collection<GameObject> gameObjects;
+    
     /**
      * X position that this {@link Node} is on.
      */
     private int x;
+    
     /**
      * Y position that this {@link Node} is on.
      */
