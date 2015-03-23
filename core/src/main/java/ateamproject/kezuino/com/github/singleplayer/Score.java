@@ -13,8 +13,9 @@ public class Score {
         return this.gameSession;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public int inscrementScore(int score) {
+        this.score += score;
+        return this.score;
     }
 
     /**
@@ -25,5 +26,4 @@ public class Score {
     public Score(GameSession session) {
         this.gameSession = session;
     }
-
 }
