@@ -14,8 +14,8 @@ public class Item {
      *
      * @param node
      */
-    public Item(Node node) {
-        // TODO - implement Item.Item
+    public Item(String name,Node node) {
+        this.name = name;
         this.node = node;
     }
 
