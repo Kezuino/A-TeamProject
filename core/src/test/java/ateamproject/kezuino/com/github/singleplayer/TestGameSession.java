@@ -28,6 +28,6 @@ public class TestGameSession {
      */
     @Test
     public void testFindPactale() {
-        assertSame("", this.testSession.getPlayer(0), this.testPactale);
+        assertSame("The (only) pactale in the game session does not equal the test pactale added to the map", this.testSession.getPlayer(0), this.testPactale);
     }
 }
