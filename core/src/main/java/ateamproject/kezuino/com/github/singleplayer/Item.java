@@ -18,6 +18,11 @@ public class Item {
     public Item(String name,Node node) {
         this.name = name;
         this.node = node;
+        
+        // standaard offset toevoegen?
+        // node = 33x33
+        // small dot  = ? ( 10x10 )  > off set top 11 left 11
+        // big dot    = ? ( 20x20 )  > off set top 6  left  6
     }
 
     /**
