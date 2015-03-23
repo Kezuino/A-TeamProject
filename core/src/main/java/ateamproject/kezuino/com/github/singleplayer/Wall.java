@@ -34,8 +34,9 @@ public class Wall {
      * @param direction to set the {@link Portal} on.
      * @param portal    to set on the side of the {@link Wall}.
      */
-    public void setPortal(Direction direction, Portal portal) {
+    public boolean setPortal(Direction direction, Portal portal) {
         portals.put(direction, portal);
+        return true;
     }
 
     /**
