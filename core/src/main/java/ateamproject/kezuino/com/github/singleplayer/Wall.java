@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Wall {
 
@@ -9,9 +10,9 @@ public class Wall {
     private Collection<Portal> portal;
 
     /**
-     * Initializes a wall at the position of the given node.
+     * Initializes a {@link Wall} at the position of the given {@link Node}.
      *
-     * @param node
+     * @param node {@link Node} that this {@link Wall} should be set on.
      */
     public Wall(Node node) {
         this.node = node;
@@ -34,8 +35,9 @@ public class Wall {
      * @param direction to set the {@link Portal} on.
      * @param portal    to set on the side of the {@link Wall}.
      */
-    public void setPortal(Direction direction, Portal portal) {
+    public boolean setPortal(Direction direction, Portal portal) {
         portals.put(direction, portal);
+        return true;
     }
 
     /**
@@ -61,12 +63,25 @@ public class Wall {
     }
 
     /**
-     * Removes all the portals on this wall.
+     * Removes all {@link Portal portals} from this {@link Wall}.
      */
     public void clear() {
         for (Portal p : getPortals()) {
-
+            p.getOwner().removePortal();
         }
         portals.clear();
+    }
+
+    /**
+     * Removes all {@link Portal portals} in the given {@link Direction side} of the {@link Wall}.
+     *
+     * @param side {@link Direction side} of the {@link Wall} to remove the {@link Portal portals} from.
+     */
+    public void clearDirection(Direction side) {
+        if (side == null) throw new IllegalArgumentException("Parameter side must not be null.");
+        for (Portal p : getPortals().stream().filter(p2 -> p2.getDirection() == side).collect(Collectors.toList())) {
+            p.getOwner().removePortal();
+            portals.remove(p);
+        }
     }
 }

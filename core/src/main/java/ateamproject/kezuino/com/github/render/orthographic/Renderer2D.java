@@ -17,11 +17,11 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
 
 public class Renderer2D implements IRenderer {
-    private SpriteBatch batch;
-    private Map map;
-    private MapRenderer tileMapRenderer;
-    private Camera camera;
-    private TiledMap tiledMap;
+    private final SpriteBatch batch;
+    private final Map map;
+    private final MapRenderer tileMapRenderer;
+    private final Camera camera;
+    private final TiledMap tiledMap;
 
     public Renderer2D(Map map) {
         batch = new SpriteBatch();

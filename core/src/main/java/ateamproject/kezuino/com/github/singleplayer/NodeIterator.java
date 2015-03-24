@@ -6,6 +6,7 @@ public class NodeIterator implements Iterator<Node> {
     protected int x;
     protected int y;
     protected Node[][] nodes;
+    boolean isFirst = true;
 
     public NodeIterator(Node[][] nodes) {
         this.nodes = nodes;
@@ -62,8 +63,6 @@ public class NodeIterator implements Iterator<Node> {
     public Node current() {
         return nodes[x][y];
     }
-
-    boolean isFirst = true;
 
     @Override
     public Node next() {

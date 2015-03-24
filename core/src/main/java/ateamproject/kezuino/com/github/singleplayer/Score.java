@@ -3,22 +3,27 @@ package ateamproject.kezuino.com.github.singleplayer;
 public class Score {
 
     private int score;
-    private GameSession GameSession;
+    private GameSession gameSession;
+
+    /**
+     * Initializes a score.
+     *
+     * @param session The gamesession of this score
+     */
+    public Score(GameSession session) {
+        this.gameSession = session;
+    }
 
     public int getScore() {
         return this.score;
     }
 
-    public void setScore(int score) {
-        this.score = score;
+    public GameSession getGameSession() {
+        return this.gameSession;
     }
 
-    /**
-     * Initializes a score.
-     */
-    public Score() {
-        // TODO - implement Score.Score
-        throw new UnsupportedOperationException();
+    public int incrementScore(int score) {
+        this.score += score;
+        return this.score;
     }
-
 }
