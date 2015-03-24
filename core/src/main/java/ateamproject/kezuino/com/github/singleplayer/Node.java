@@ -76,17 +76,34 @@ public class Node {
     }
 
     /**
-     * Sets the item and returns if succeeded.
+     * Sets the {@link Item} and returns true if succeeded.
      *
-     * @param item
+     * @param itemName Name of the {@link Item} to create and set on the {@link Node}.
+     * @return {@link Item} that has been created and set on this {@link Node}.
      */
-    public boolean setItem(Item item) {
-        this.item = item;
-        return true;
+    public Item setItem(String itemName) {
+        if (itemName == null || itemName.isEmpty())
+            throw new IllegalArgumentException("Parameter itemName must not be null or empty.");
+        this.item = new Item(itemName, this);
+        return this.item;
     }
 
     /**
-     * Removes the item and returns if succeeded.
+     * Sets the {@link Item} and returns true if succeeded.
+     *
+     * @param item {@link Item} to set on this {@link Node}.
+     * @return {@link Item} that has been set on this {@link Node}.
+     */
+    public Item setItem(Item item) {
+        if (item == null) throw new IllegalArgumentException("Parameter item must not be null.");
+        this.item = item;
+        return this.item;
+    }
+
+    /**
+     * Removes the {@link Item} and returns true if succeeded.
+     *
+     * @return If true, {@link Item} was successfully removed from this {@link Node}.
      */
     public boolean removeItem() {
         this.item = null;
@@ -94,7 +111,7 @@ public class Node {
     }
 
     /**
-     * Sets a new {@link Wall} on the {@link Node}.
+     * Sets a new default {@link Wall} on the {@link Node}.
      *
      * @return The newly created {@link Wall}.
      */
@@ -104,9 +121,24 @@ public class Node {
     }
 
     /**
-     * Removes the wall and returns if succeeded.
+     * Sets a new {@link Wall} on the {@link Node}.
+     *
+     * @param wall {@link Wall} to set on this {@link Node}.
+     * @return {@link Wall} that has been set on this {@link Node}.
+     */
+    public Wall setWall(Wall wall) {
+        if (wall == null) throw new IllegalArgumentException("Parameter wall must not be null.");
+        this.wall = wall;
+        return wall;
+    }
+
+    /**
+     * Removes the {@link Wall} and returns true if succeeded.
+     *
+     * @return If true, {@link Wall} was removed.
      */
     public boolean removeWall() {
+        if (wall == null) return true;
         wall.clear();
         this.wall = null;
         return true;
@@ -126,6 +158,11 @@ public class Node {
         return this.wall;
     }
 
+    /**
+     * Gets the Y position of this {@link Node}.
+     *
+     * @return X position of this {@link Node}.
+     */
     public int getX() {
         return x;
     }

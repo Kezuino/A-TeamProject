@@ -18,6 +18,7 @@ public class Item {
     public Item(String name, Node node) {
         this.name = name;
         this.node = node;
+        this.node.setItem(this);
 
         // TODO: Discuss usage of "offsetPosition" for position of item in Node.
     }

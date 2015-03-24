@@ -40,29 +40,32 @@ public abstract class GameObject {
     private Direction direction;
 
     /**
-     * Initializes this {@link GameObject}.
-     *  @param map           That hosts this {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
+     * Initializes this {@link GameObject} and sets it on the {@link Node} given by {@link #getNode()}.
+     *
+     * @param map           That hosts this {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
      * @param x             X position of this {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
      * @param y             Y position of this {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
      * @param movementSpeed Speed in seconds that this {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes
-*                      to move to another adjacent {@link ateamproject.kezuino.com.github.singleplayer.Node}.
+     *                      to move to another adjacent {@link ateamproject.kezuino.com.github.singleplayer.Node}.
      * @param direction     {@link ateamproject.kezuino.com.github.singleplayer.Direction} that this {@link ateamproject.kezuino.com.github.singleplayer.GameObject} is
-*                      currently facing.
+     *                      currently facing.
      * @param color         {@link com.badlogic.gdx.graphics.Color} that this
-*                      {@link GameObject} will be
+     *                      {@link GameObject} will be
      */
     public GameObject(Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
         if (direction == null) throw new IllegalArgumentException("Parameter direction must not be null.");
         if (color == null) throw new IllegalArgumentException("Parameter color must not be null.");
         if (movementSpeed <= 0) throw new IllegalArgumentException("Parameter movementSpeed must be higher than 0.");
         this.map = map;
-        this.map.addGameObject(x, y, this);
         this.x = x;
         this.y = y;
         this.movementSpeed = movementSpeed;
         this.direction = direction;
         this.color = color;
         this.movementInterpolation = false;
+
+        // Add GameObject to the node at the given position.
+        this.getNode().addGameObject(this);
     }
 
     /**

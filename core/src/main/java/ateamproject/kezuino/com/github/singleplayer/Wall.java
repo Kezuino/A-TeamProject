@@ -7,7 +7,6 @@ public class Wall {
 
     private HashMap<Direction, Portal> portals;
     private Node node;
-    private Collection<Portal> portal;
 
     /**
      * Initializes a {@link Wall} at the position of the given {@link Node}.
@@ -15,7 +14,9 @@ public class Wall {
      * @param node {@link Node} that this {@link Wall} should be set on.
      */
     public Wall(Node node) {
+        portals = new HashMap<>();
         this.node = node;
+        this.node.setWall(this);
     }
 
     /**
@@ -59,7 +60,7 @@ public class Wall {
      * @return list of {@link Portal portals} on this {@link Wall}.
      */
     public List<Portal> getPortals() {
-        return (List<Portal>) portals.values();
+        return portals.values().stream().collect(Collectors.toList());
     }
 
     /**

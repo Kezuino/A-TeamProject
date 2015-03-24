@@ -13,7 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author Kez and Jules
+ * @author Kez and Jules, Anton
  */
 public class TestNode {
     private GameSession testSession;
@@ -51,99 +51,149 @@ public class TestNode {
         assertSame("Session map must be the same as the node for wall.", this.testSession.getMap(), this.nodeForWall.getMap());
     }
 
-    /**
-     * Gets the {@link Wall} from a {@link Node}.
-     */
     @Test
     public void testGetWall() {
+        /**
+         * Gets the {@link Wall} from a {@link Node}.
+         */
         assertSame("Testwall must be the same as the wall of the node for wall.", this.testWall, this.nodeForWall.getWall());
     }
 
-    /**
-     * Sets a new {@link Wall} on the {@link Node}.
-     *
-     * @return The newly created {@link Wall}.
-     */
+    @Test
     public void testSetWall() {
-
+        /**
+         * Sets a new default {@link Wall} on the {@link Node}.
+         *
+         * @return The newly created {@link Wall}.
+         */
+        assertNotNull("Node must have a wall.", nodeForWall.getWall());
+        nodeForWall.removeWall();
+        assertNull("Wall must be unset on node.", nodeForWall.getWall());
+        nodeForWall.setWall();
+        assertNotNull("Node must have a wall again.", nodeForWall.getWall());
     }
 
-    /**
-     *
-     */
+    @Test
+    public void testSetWall2() {
+        /**
+         * Sets a new {@link Wall} on the {@link Node}.
+         *
+         * @param wall {@link Wall} to set on this {@link Node}.
+         * @return {@link Wall} that has been set on this {@link Node}.
+         */
+        assertNotNull("Node must have a wall.", nodeForWall.getWall());
+        nodeForWall.removeWall();
+        assertNull("Wall must be unset on node.", nodeForWall.getWall());
+        nodeForWall.setWall(testWall);
+        assertSame("Node must have the wall that has been set.", testWall, nodeForWall.getWall());
+    }
+
     @Test
     public void testRemoveWall() {
-
+        /**
+         * Removes the {@link Wall} and returns if succeeded.
+         *
+         * @return If true, {@link Wall} was removed.
+         */
+        assertNotNull("Wall must not be null.", nodeForWall.getWall());
+        nodeForWall.removeWall();
+        assertNull("Wall must have been removed.", nodeForWall.getWall());
     }
 
-    /**
-     *
-     */
     @Test
     public void testGetItem() {
-
+        /**
+         * Returns {@link Item} contained by this {@link Node}.
+         *
+         * @return {@link Item} contained by this {@link Node}.
+         */
         assertSame("Item of item for node must be the same object as testitem.", this.testItem, this.nodeForItem.getItem());
     }
 
-    /**
-     *
-     */
     @Test
     public void testSetItem() {
-
+        /**
+         * Sets the {@link Item} and returns true if succeeded.
+         *
+         * @param item {@link Item} to set on this {@link Node}.
+         */
+        assertNotNull("An item must be set on the node.", nodeForItem.getItem());
+        nodeForItem.removeItem();
+        assertNull("Item must have been removed from the node.", nodeForItem.getItem());
+        Item item = nodeForItem.setItem("TestItem");
+        assertSame("Item must have been set on the node.", item, nodeForItem.getItem());
     }
 
-    /**
-     *
-     */
+    @Test
+    public void testSetItem2() {
+        /**
+         * Sets the {@link Item} and returns true if succeeded.
+         *
+         * @param item {@link Item} to set on this {@link Node}.
+         * @return {@link Item} that has been set on this {@link Node}.
+         */
+        assertNotNull("An item must be set on the node.", nodeForItem.getItem());
+        nodeForItem.removeItem();
+        assertNull("Item must have been removed from the node.", nodeForItem.getItem());
+        Item item = new Item("TestItem", nodeForItem);
+        assertSame("Item must have been set on the node.", item, nodeForItem.getItem());
+    }
+
     @Test
     public void testRemoveItem() {
-
+        /**
+         * Removes the {@link Item} and returns true if succeeded.
+         *
+         * @return If true, {@link Item} was successfully removed from this {@link Node}.
+         */
+        assertNotNull("An item must be set on the node.", nodeForItem.getItem());
+        nodeForItem.removeItem();
+        assertNull("The item on the node must have been removed.", nodeForItem.getItem());
     }
 
-    /**
-     *
-     */
     @Test
     public void testGetX() {
+        /**
+         * Gets the Y position of this {@link Node}.
+         *
+         * @return X position of this {@link Node}.
+         */
+        assertEquals("NodeForWall x position should be 1.", 1, nodeForWall.getX());
+        assertEquals("NodeForItem x position should be 0.", 0, nodeForItem.getX());
 
     }
 
-    /**
-     *
-     */
     @Test
     public void testGetY() {
-
+        /**
+         * Gets the X position of this {@link Node}.
+         *
+         * @return X position of this {@link Node}.
+         */
+        assertEquals("NodeForWall y position should be 10.", 10, nodeForWall.getY());
+        assertEquals("NodeForItem y position should be 8.", 8, nodeForItem.getY());
     }
 
-    /**
-     *
-     */
     @Test
-    public void getGameObjects() {
-
+    public void testGetGameObjects() {
+        /**
+         * Gets all the {@link GameObject GameObjects} that are on this {@link Node}.
+         *
+         * @return all {@link GameObject GameObjects} on this {@link Node}.
+         */
+        System.out.println(nodeForPactale.getGameObjects().size());
     }
 
-    /**
-     *
-     */
     @Test
-    public void RemoveGameObjects() {
+    public void testRemoveGameObjects() {
 
     }
 
-    /**
-     *
-     */
     @Test
-    public void AddGameObjects() {
+    public void testAddGameObjects() {
 
     }
 
-    /**
-     *
-     */
     @Test
     public void hasGameObject() {
 
