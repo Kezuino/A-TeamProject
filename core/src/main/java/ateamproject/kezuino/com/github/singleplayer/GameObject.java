@@ -40,7 +40,7 @@ public abstract class GameObject {
     private Direction direction;
 
     /**
-     * Initializes this {@link GameObject} and sets it on the {@link Node} given by {@link #getNode()}.
+     * Initializes this {@link GameObject}.
      *
      * @param map           That hosts this {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
      * @param x             X position of this {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
@@ -64,8 +64,6 @@ public abstract class GameObject {
         this.color = color;
         this.movementInterpolation = false;
 
-        // Add GameObject to the node at the given position.
-        this.getNode().addGameObject(this);
     }
 
     /**

@@ -107,7 +107,7 @@ public class Map {
      * @return {@link Node} if {@code x} and {@code y} are in-bounds. Null otherwise.
      */
     public Node getNode(int x, int y) {
-        if (x < width && y < height) {
+        if (x >= 0 && y >= 0 && x < width && y < height) {
             return nodes.get(x, y);
         }
         return null;

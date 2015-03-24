@@ -58,6 +58,7 @@ public class Node {
      * @param object to add to the {@link Node}.
      */
     public boolean addGameObject(GameObject object) {
+        if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
         if (hasGameObject(object)) return false;
         gameObjects.add(object);
         return true;
@@ -72,7 +73,6 @@ public class Node {
     public GameObject removeGameObject(GameObject object) {
         if (!gameObjects.remove(object)) return null;
         return object;
-
     }
 
     /**
