@@ -6,10 +6,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
-import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -33,7 +30,7 @@ public class TestGameObject {
         session = new GameSession(20);
         map = session.getMap();
         spawn = map.getNode(19, 19);
-        enemy = new Enemy(null, map, spawn.getX(), spawn.getY(), 100, Direction.Down, Color.BLACK);       
+        enemy = new Enemy(null, map, spawn.getX(), spawn.getY(), 100, Direction.Down, Color.BLACK);
     }
     
     //Game object is an abstract class, in this unittest we will test the child class Enemey to check it's parents methods.

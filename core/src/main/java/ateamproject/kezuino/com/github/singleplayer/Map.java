@@ -12,7 +12,14 @@ public class Map {
      * Y dimension of the size of this {@link Map}.
      */
     private int height;
+
+    /**
+     * All the {@link Node nodes} on this {@link Map}.
+     */
     private Nodes nodes;
+    /**
+     * {@link GameSession} that hosts the {@link Map} and allows multiplayer.
+     */
     private GameSession gameSession;
 
     /**
@@ -47,7 +54,7 @@ public class Map {
      * @return Amount of nodes used by this map.
      */
     public int getSize() {
-        return nodes.getLength();
+        return getWidth() * getHeight();
     }
 
     /**
@@ -75,10 +82,19 @@ public class Map {
      * @param height Y dimension of the {@link Map}.
      */
     protected void resetNodes(int width, int height) {
-        // Fill 2D array with nodes.
-        for (int y = 0; y < nodes.getLength(); y++) {
-            for (int x = 0; x < nodes.getLength(1); x++) {
-                nodes.set(x, y, new Node(this, x, y));
+        nodes = new Nodes(width, height);
+        resetNodes();
+        this.width = width;
+        this.height = height;
+    }
+
+    /**
+     * Resets the 2D array based on the current {@link #width} and {@link #height}.
+     */
+    protected void resetNodes() {
+        for (int i = 0; i < nodes.getLength(); i++) {
+            for (int j = 0; j < nodes.getLength(i); j++) {
+                nodes.set(i, j, new Node(this, i, j));
             }
         }
     }
@@ -98,10 +114,10 @@ public class Map {
     }
 
     /**
-     * Returns all {@link GameObject gameobjects} within a game.
+     * Returns all {@link GameObject gameobjects} within a {@link Map}.
      */
     public List<GameObject> getAllGameObjects() {
-        List<GameObject> objs = new ArrayList<GameObject>();
+        List<GameObject> objs = new ArrayList<>();
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
                 Node node = getNode(x, y);
@@ -137,18 +153,20 @@ public class Map {
     /**
      * Adds a {@link GameObject} to a position on this {@link Map}.
      *
-     * @param object to add to a {@link Node} on this {@link Map}.
+     * @param object to add to a {@link ateamproject.kezuino.com.github.singleplayer.Node} on this {@link ateamproject.kezuino.com.github.singleplayer.Map}.
+     * @return {@link GameObject} that was added to the {@link Map}.
      */
-    public void addGameObject(int x, int y, GameObject object) {
+    public GameObject addGameObject(int x, int y, GameObject object) {
         getNode(x, y).addGameObject(object);
         object.setPosition(x, y);
         object.setMap(this);
+        return object;
     }
 
     /**
-     * Gets an {@link java.util.Iterator} to iterate through all {@link Node nodes} in this {@link Map}.
+     * Gets all the {@link Node nodes} of this {@link Map}.
      *
-     * @return {@link java.util.Iterator} to iterate through all {@link Node nodes} in this {@link Map}.
+     * @return All the {@link Node nodes} of this {@link Map}.
      */
     public Nodes getNodes() {
         return nodes;

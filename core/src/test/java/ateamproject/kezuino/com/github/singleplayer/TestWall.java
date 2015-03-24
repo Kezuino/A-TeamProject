@@ -48,7 +48,7 @@ public class TestWall {
          */
 
         Wall wall = new Wall(node);
-        Pactale pactale = new Pactale(map, 1, 1, 1, Color.CLEAR, 1.1f, Direction.Right);
+        Pactale pactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.CLEAR);
 
         // Add Left portal
         Portal portalL = new Portal(pactale, wall, Direction.Left);
@@ -75,7 +75,7 @@ public class TestWall {
          * @param portal to set on the side of the {@link Wall}.
          */
         Wall wall = new Wall(node);
-        Pactale pactale = new Pactale(map, 1, 1, 1, Color.CLEAR, 1.1f, Direction.Right);
+        Pactale pactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.CLEAR);
 
         // Left portal
         Portal portalL = new Portal(pactale, wall, Direction.Left);
@@ -106,7 +106,7 @@ public class TestWall {
          */
         Wall wall = new Wall(node);
 
-        Pactale pactale = new Pactale(map, 1, 1, 1, Color.CLEAR, 1.1f, Direction.Right);
+        Pactale pactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.CLEAR);
 
         Portal portalL = new Portal(pactale, wall, Direction.Left);
         wall.setPortal(Direction.Left, portalL);
@@ -130,7 +130,7 @@ public class TestWall {
          * @return list of {@link Portal portals} on this {@link Wall}.
          */
         Wall wall = new Wall(node);
-        Pactale pactale = new Pactale(map, 1, 1, 1, Color.CLEAR, 1.1f, Direction.Right);
+        Pactale pactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.CLEAR);
 
         Portal portalL = new Portal(pactale, wall, Direction.Left);
         wall.setPortal(Direction.Left, portalL);
@@ -153,7 +153,7 @@ public class TestWall {
          */
 
         Wall wall = new Wall(node);
-        Pactale pactale = new Pactale(map, 1, 1, 1, Color.CLEAR, 1.1f, Direction.Right);
+        Pactale pactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.CLEAR);
 
         // add walls
         Portal portalL = new Portal(pactale, wall, Direction.Left);

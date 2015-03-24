@@ -6,12 +6,12 @@ public class Projectile extends GameObject {
     private Pactale owner;
 
     /**
-     * Initializes a new projectile.
+     * Initializes a new {@link Projectile}.
      *
-     * @param owner         @see Pactale that fired this projectile.
-     * @param movementSpeed
-     * @param direction     orientation that the projectile has and is currently going towards.
-     * @param color
+     * @param owner         {@link Pactale} that fired this projectile.
+     * @param movementSpeed Speed in seconds it takes for this {@link Projectile} to move to another adjacent {@link Node}.
+     * @param direction     Orientation that the {@link Projectile} has and is currently going towards.
+     * @param color         {@link com.badlogic.gdx.graphics.Color} used to draw this {@link Projectile}.
      */
     public Projectile(Map map, int x, int y, Pactale owner, float movementSpeed, Direction direction, Color color) {
         super(map, x, y, movementSpeed, direction, color);

@@ -32,7 +32,7 @@ public class TestProjectile {
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Left;
         Color color = new Color(1, 111, 11, 111);
-        Pactale owner = new Pactale(g.getMap(), 1, 1, 1, color, movementSpeed, walkingDirection);
+        Pactale owner = new Pactale(g.getMap(), 1, 1, 1, movementSpeed, walkingDirection, color);
 
         Projectile p = new Projectile(g.getMap(), 1, 1, owner, movementSpeed, walkingDirection, color);
         assertEquals("The color needs to be set", p.getColor(), color);
@@ -52,11 +52,11 @@ public class TestProjectile {
          */
         GameSession g = new GameSession(3);
         Node position = new Node(g.getMap(), 0, 0);
-        g.getMap().getNode(1, 0).setWall(new Wall(g.getMap().getNode(1, 0)));
+        g.getMap().getNode(1, 0).setWall();
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Right;
         Color color = new Color(1, 111, 11, 111);
-        Pactale owner = new Pactale(g.getMap(), 1, 1, 1, color, movementSpeed, walkingDirection);
+        Pactale owner = new Pactale(g.getMap(), 1, 1, 1, movementSpeed, walkingDirection, color);
         Projectile p = new Projectile(g.getMap(), 1, 1, owner, movementSpeed, walkingDirection, color);
 
         assertTrue("It needs to collide with the wall when it goes rights", p.hasCollision(Direction.Right));

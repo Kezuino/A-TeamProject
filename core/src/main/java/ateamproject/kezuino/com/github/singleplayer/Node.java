@@ -10,7 +10,7 @@ public class Node {
     /**
      * All {@link GameObject GameObjects} on this {@link Node}.
      */
-    private final Collection<GameObject> gameObjects;
+    private final List<GameObject> gameObjects;
     /**
      * {@link Wall} information that defines this {@link Node}.
      */
@@ -66,10 +66,13 @@ public class Node {
     /**
      * Removes the given {@link GameObject} and returns if succeeded.
      *
-     * @param object
+     * @param object {@link GameObject} to remove.
+     * @return {@link GameObject} that was removed.
      */
-    public boolean removeGameObject(GameObject object) {
-        return gameObjects.remove(object);
+    public GameObject removeGameObject(GameObject object) {
+        if (!gameObjects.remove(object)) return null;
+        return object;
+
     }
 
     /**
@@ -110,14 +113,14 @@ public class Node {
     }
 
     /**
-     * Returns the map from where the node currently resides.
+     * Returns the {@link Map} from where the node currently resides.
      */
     public Map getMap() {
         return this.map;
     }
 
     /**
-     * Gets the wall from a node
+     * Gets the {@link Wall} from a {@link Node}.
      */
     public Wall getWall() {
         return this.wall;
@@ -141,7 +144,7 @@ public class Node {
      *
      * @return all {@link GameObject GameObjects} on this {@link Node}.
      */
-    public Collection<GameObject> getGameObjects() {
+    public List<GameObject> getGameObjects() {
         return gameObjects;
     }
 
@@ -153,5 +156,14 @@ public class Node {
                 ", wall=" + wall +
                 ", item=" + item +
                 '}';
+    }
+
+    /**
+     * Returns {@link Item} contained by this {@link Node}.
+     *
+     * @return {@link Item} contained by this {@link Node}.
+     */
+    public Item getItem() {
+        return item;
     }
 }

@@ -24,13 +24,13 @@ public class Enemy extends GameObject {
 
     /**
      * Initializes an {@link Enemy} which isn't dead and isn't currently edible.
-     *
      * @param objectToFollow {@link GameObject} to follow. Can be null.
      * @param map            {@link Map} that this {@link Enemy} is currently in.
      * @param x              X position of this {@link Enemy}.
      * @param y              Y position of this {@link Enemy}.
      * @param movementSpeed  Speed in seconds that it takes to move to another {@link Node}.
      * @param direction      Direction that this {@link Enemy} is currently facing towards.
+     * @param color
      */
     public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
         super(map, x, y, movementSpeed, direction, color);

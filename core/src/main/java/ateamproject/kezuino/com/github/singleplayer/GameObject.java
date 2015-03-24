@@ -41,17 +41,15 @@ public abstract class GameObject {
 
     /**
      * Initializes this {@link GameObject}.
-     *
-     * @param map           That hosts this {@link GameObject}.
-     * @param x             X position of this {@link GameObject}.
-     * @param y             Y position of this {@link GameObject}.
-     * @param movementSpeed Speed in seconds that this {@link GameObject} takes
-     *                      to move to another adjacent {@link Node}.
-     * @param direction     {@link Direction} that this {@link GameObject} is
-     *                      currently facing.
+     *  @param map           That hosts this {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
+     * @param x             X position of this {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
+     * @param y             Y position of this {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
+     * @param movementSpeed Speed in seconds that this {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes
+*                      to move to another adjacent {@link ateamproject.kezuino.com.github.singleplayer.Node}.
+     * @param direction     {@link ateamproject.kezuino.com.github.singleplayer.Direction} that this {@link ateamproject.kezuino.com.github.singleplayer.GameObject} is
+*                      currently facing.
      * @param color         {@link com.badlogic.gdx.graphics.Color} that this
-     *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject} will be
-     *                      drawn at.
+*                      {@link GameObject} will be
      */
     public GameObject(Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
         if (direction == null) throw new IllegalArgumentException("Parameter direction must not be null.");
@@ -190,7 +188,7 @@ public abstract class GameObject {
         }
 
         // Remove GameObject from current Node.
-        if (!currentNode.removeGameObject(this)) {
+        if (currentNode.removeGameObject(this) == null) {
             return false;
         }
 

@@ -79,7 +79,7 @@ public class TestItem {
          */
 
         Item item = new Item("Small gold nugget", node);
-        GameObject UserPactale = new Pactale(map, 1, 1, 1, Color.CLEAR, 1.1f, Direction.Right);
+        GameObject UserPactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.CLEAR);
 
         item.activate(UserPactale);
         

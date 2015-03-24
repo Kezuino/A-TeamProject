@@ -14,15 +14,14 @@ public class Pactale extends GameObject {
 
     /**
      * Initialize a {@link Pactale}.
-     *
-     * @param x                position of this {@link Pactale} on the @see Map.
-     * @param y                position of this {@link Pactale} on the @see Map.
-     * @param lives            Times that the {@link Pactale} can be hit. Defaults to 1 for a multiplayer session.
-     * @param color            Distinct color of this {@link Pactale} in the game.
+     *  @param x                position of this {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see Map.
+     * @param y                position of this {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see Map.
+     * @param lives            Times that the {@link ateamproject.kezuino.com.github.singleplayer.Pactale} can be hit. Defaults to 1 for a multiplayer session.
      * @param movementSpeed    Amount of seconds that it will take to move to another node.
      * @param walkingDirection Looking direction to start with.
+     * @param color            Distinct color of this {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
      */
-    public Pactale(Map map, int x, int y, int lives, Color color, float movementSpeed, Direction walkingDirection) {
+    public Pactale(Map map, int x, int y, int lives, float movementSpeed, Direction walkingDirection, Color color) {
         super(map, x, y, movementSpeed, walkingDirection, color);
         this.lives = lives;
     }
