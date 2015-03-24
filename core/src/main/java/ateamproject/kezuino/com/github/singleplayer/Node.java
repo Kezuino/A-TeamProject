@@ -92,13 +92,13 @@ public class Node {
     }
 
     /**
-     * Sets the wall and returns if succeeded.
+     * Sets a new {@link Wall} on the {@link Node}.
      *
-     * @param wall
+     * @return The newly created {@link Wall}.
      */
-    public boolean setWall(Wall wall) {
-        this.wall = wall;
-        return true;
+    public Wall setWall() {
+        this.wall = new Wall(this);
+        return wall;
     }
 
     /**

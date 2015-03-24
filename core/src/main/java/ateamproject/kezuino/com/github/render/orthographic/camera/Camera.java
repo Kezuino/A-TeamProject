@@ -23,7 +23,7 @@ public class Camera extends OrthographicCamera {
         this.maxZoom = 100f;
         this.minZoom = 0.25f;
 
-        zoom = 1.5f;
+
 
         translate(map.getWidth() * scale / 2, map.getHeight() * scale / 2);
         update();
@@ -32,14 +32,14 @@ public class Camera extends OrthographicCamera {
 
     @Override
     public void update() {
-        position.x = Math.max(boundsXLower, position.x);
-        position.x = Math.min(boundsXUpper, position.x);
-
-        position.y = Math.max(boundsYLower, position.y);
-        position.y = Math.min(boundsYUpper, position.y);
-
-        zoom = Math.min(maxZoom, zoom);
-        zoom = Math.max(minZoom, zoom);
+//        position.x = Math.max(boundsXLower, position.x);
+//        position.x = Math.min(boundsXUpper, position.x);
+//
+//        position.y = Math.max(boundsYLower, position.y);
+//        position.y = Math.min(boundsYUpper, position.y);
+//
+//        zoom = Math.min(maxZoom, zoom);
+//        zoom = Math.max(minZoom, zoom);
 
         super.update();
     }
