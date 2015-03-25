@@ -79,12 +79,13 @@ public class Node {
      * Sets the {@link Item} and returns true if succeeded.
      *
      * @param itemName Name of the {@link Item} to create and set on the {@link Node}.
+     * @param type The type of the item
      * @return {@link Item} that has been created and set on this {@link Node}.
      */
-    public Item setItem(String itemName) {
+    public Item setItem(String itemName,ItemType type) {
         if (itemName == null || itemName.isEmpty())
             throw new IllegalArgumentException("Parameter itemName must not be null or empty.");
-        this.item = new Item(itemName, this);
+        this.item = new Item(itemName, this,type);
         return this.item;
     }
 
