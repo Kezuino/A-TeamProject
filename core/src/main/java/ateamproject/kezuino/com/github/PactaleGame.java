@@ -2,27 +2,32 @@ package ateamproject.kezuino.com.github;
 
 import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
+import ateamproject.kezuino.com.github.render.screens.LoginScreen;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 
-public class PactaleGame extends ApplicationAdapter {
+public class PactaleGame extends Game {
+
     private IRenderer renderer;
     private GameSession session;
 
     @Override
     public void create() {
-        Assets.create();
-        session = new GameSession(20);
-        renderer = new GameRenderer(session.getMap());
+        this.setScreen(new LoginScreen(this));
+       // Assets.create();
+       // session = new GameSession(20);
+       // renderer = new GameRenderer(session.getMap());
     }
 
     @Override
     public void render() {
-        update();
-        draw();
+      //  update();
+      //  draw();
+       super.render();
     }
 
     /**
@@ -40,6 +45,8 @@ public class PactaleGame extends ApplicationAdapter {
         Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        if (renderer != null) renderer.render();
+      //  if (renderer != null) {
+      //      renderer.render();
+      //  }
     }
 }
