@@ -34,7 +34,7 @@ public class GameScreen implements Screen {
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
         
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        //Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
     }
     
     @Override
@@ -64,21 +64,25 @@ public class GameScreen implements Screen {
 
     @Override
     public void pause() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO: If singleplayer: pause game.
+
+        // TODO: If multiplayer: render menu on top of game and capture input, but do NOT pause the game!
     }
 
     @Override
     public void resume() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // TODO: If singleplayer: unpause the game.
+
+        // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
     }
 
     @Override
     public void hide() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
     }
 
     @Override
     public void dispose() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Assets.dispose();
     }
 }

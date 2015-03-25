@@ -15,7 +15,7 @@ public class PactaleGame extends Game {
 
     @Override
     public void create() {
-        this.setScreen(new GameScreen(this));
+        this.setScreen(new LoginScreen(this));
     }
 
     @Override
