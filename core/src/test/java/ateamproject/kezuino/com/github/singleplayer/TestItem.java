@@ -35,7 +35,7 @@ public class TestItem {
          * @param name the name of the item
          * @param node the node the item is located on
          */
-        Item item = new Item("Small gold nugger", node);
+        Item item = new Item("Small gold nugger", node,ItemType.BigNugget);
         assertNotNull(item);
 
         assertEquals("Small Dot/Item", item.getName());
@@ -48,25 +48,9 @@ public class TestItem {
          *
          * @param name Name of the item
          */
-        Item item = new Item("Small gold nugget", node);
+        Item item = new Item("Small gold nugget", node,ItemType.BigNugget);
         item.setName("Big gold nugget");
         assertEquals("Big gold nugget", item.getName());
-    }
-
-    @Test
-    public void setOffSetPosition() {
-        /**
-         * sets the point from the left and top corner to set the location of
-         * the item in the node
-         *
-         * @param offSetPosition point of the item is located on the node
-         */
-        Item item = new Item("Small gold nugget", node);
-        Point p = new Point(10, 10);
-        item.setOffsetPosition(p);
-
-        assertEquals("OffsetPosition of the item does not match!", p, item.getOffsetPosition());
-
     }
 
     @Test
@@ -78,7 +62,7 @@ public class TestItem {
          * @param target target standing on the node with the item
          */
 
-        Item item = new Item("Small gold nugget", node);
+        Item item = new Item("Small gold nugget", node,ItemType.BigNugget);
         GameObject UserPactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.CLEAR);
 
         item.activate(UserPactale);
