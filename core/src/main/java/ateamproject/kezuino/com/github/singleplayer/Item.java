@@ -4,9 +4,9 @@ import java.awt.Point;
 
 public class Item {
 
-    private String name;
-    private Point offsetPosition;
-    private Node node;
+    private String Name;
+    private Node Node;
+    private ItemType Type;
 
 
     /**
@@ -14,11 +14,13 @@ public class Item {
      *
      * @param name the name of the item
      * @param node the node the item is located on
+     * @param type the type of the item standing on the node
      */
-    public Item(String name, Node node) {
-        this.name = name;
-        this.node = node;
-        this.node.setItem(this);
+    public Item(String name, Node node,ItemType type) {
+        this.Name = name;
+        this.Node = node;
+        this.Node.setItem(this);
+        this.Type = type;
 
         // TODO: Discuss usage of "offsetPosition" for position of item in Node.
     }
@@ -29,7 +31,7 @@ public class Item {
      * @return name of the item
      */
     public String getName() {
-        return this.name;
+        return this.Name;
     }
 
     /**
@@ -38,27 +40,28 @@ public class Item {
      * @param name Name of the item
      */
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
     }
 
     /**
-     * Gets the offset position of the item
+     * Gets the type of the item
      *
-     * @return point object of the offset of the item
+     * @return type of the item
      */
-    public Point getOffsetPosition() {
-        return this.offsetPosition;
+    public ItemType getItemType() {
+        return this.Type;
     }
 
     /**
-     * Sets the point from the left and top corner to set the location of the item in the node
+     * sets the item type of the object
      *
-     * @param offsetPosition point of the item is located on the node
+     * @param type
      */
-    public void setOffsetPosition(Point offsetPosition) {
-        this.offsetPosition = offsetPosition;
+    public void setItemType(ItemType type) {
+        this.Type = type;
     }
-
+    
+   
     /**
      * The target who picks up this item activates the effect this item is carrying
      *
@@ -66,7 +69,18 @@ public class Item {
      */
     public void activate(GameObject target) {
         // TODO - implement Item.activate
-        throw new UnsupportedOperationException();
+        switch(this.Type){
+            case BigNugget:
+                
+                
+                break;
+            case SmallNugget :
+                
+                
+                break;
+            default:
+                break;
+        }
     }
 
 }

@@ -175,7 +175,7 @@ public abstract class GameObject {
      *
      * @param x X position to set this {@link GameObject} to.
      * @param y Y position to set this {@link GameObject} to.
-     * @return True if succesfully changed the Position, false if it d
+     * @return True if succesfully changed the Position, false if it didn't.
      */
     public boolean setPosition(int x, int y) {
         // Pre-check if all input data is valid.

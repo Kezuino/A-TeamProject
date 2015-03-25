@@ -61,6 +61,8 @@ public class TestProjectile {
 
         assertTrue("It needs to collide with the wall when it goes rights", p.hasCollision(Direction.Right));
         assertFalse("It needs not to collide with the wall when it goes down", p.hasCollision(Direction.Down));
-        assertFalse("It needs not to collide with the wall when it goes up", p.hasCollision(Direction.Up));
+        assertFalse("It needs not to collide with the wall when it goes up", p.hasCollision(Direction.Up));        
+        assertNull("Wrong value givven as parameter for HasCollision", p.hasCollision(null));
+
     }
 }
