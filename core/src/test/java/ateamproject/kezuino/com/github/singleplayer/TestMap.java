@@ -6,18 +6,15 @@ import org.junit.Test;
 
 import java.util.List;
 
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertSame;
-import static junit.framework.TestCase.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestMap {
     Map map;
 
     @Before
     public void setUp() throws Exception {
-        GameSession session = new GameSession(20);
+        GameSession session = new GameSession();
+        session.setMap(20);
         map = session.getMap();
 
         // Set walls.

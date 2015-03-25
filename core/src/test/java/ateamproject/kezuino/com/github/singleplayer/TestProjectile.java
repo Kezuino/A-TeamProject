@@ -27,7 +27,8 @@ public class TestProjectile {
          * @param walkingDirection
          * @param color
          */
-        GameSession g = new GameSession(3);
+        GameSession g = new GameSession();
+        g.setMap(3);
         Node position = new Node(g.getMap(), 1, 1);
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Left;
@@ -50,7 +51,8 @@ public class TestProjectile {
          *
          * @param direction
          */
-        GameSession g = new GameSession(3);
+        GameSession g = new GameSession();
+        g.setMap(3);
         Node position = new Node(g.getMap(), 0, 0);
         g.getMap().getNode(1, 0).setWall();
         float movementSpeed = 3;

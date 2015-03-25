@@ -27,7 +27,8 @@ public class TestGameObject {
 
     @Before
     public void setUp() {
-        session = new GameSession(20);
+        session = new GameSession();
+        session.setMap(20);
         map = session.getMap();
         spawn = map.getNode(19, 19);
         enemy = new Enemy(null, map, spawn.getX(), spawn.getY(), 100, Direction.Down, Color.BLACK);
@@ -54,7 +55,7 @@ public class TestGameObject {
         assertEquals(spawn.getX(), enemy.getNode().getX());
         assertEquals(spawn.getY(), enemy.getNode().getY());
         assertEquals("The map that was used to create the Enemy can't be correctly foun again", map, enemy.getNode().getMap());
-        assertEquals("The movementspeed didnt initialize at 100 propery", 100, enemy.getMovementSpeed());
+        assertEquals("The movementspeed didnt initialize at 100 propery", 100, enemy.getMovementSpeed(), 0.00001);
         assertEquals("The colour wasn't set to black", Color.BLACK, enemy.getColor());
     }
 

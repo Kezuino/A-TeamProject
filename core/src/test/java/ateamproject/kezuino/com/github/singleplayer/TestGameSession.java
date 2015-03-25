@@ -19,7 +19,8 @@ public class TestGameSession {
 
     @Before
     public void setUp() {
-        this.testSession = new GameSession(4);
+        this.testSession = new GameSession();
+        this.testSession.setMap(4);
         this.testPactale = new Pactale(this.testSession.getMap(), 0, 0, 3, 0.1f, Direction.Left, Color.CLEAR);
     }
 

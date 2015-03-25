@@ -8,29 +8,11 @@ public class GameSession {
     private Map map;
     private Score score;
 
-    private GameSession() {
+    /**
+     * Creates a new @see GameSession with the default skin.
+     */
+    public GameSession() {
         startTime = new Date();
-    }
-
-    /**
-     * Creates a new @see GameSession with the default skin.
-     *
-     * @param width  X dimension of the @see Map.
-     * @param height Y dimension of the @see Map.
-     */
-    public GameSession(int width, int height) {
-        this();
-        map = new Map(this, width, height);
-    }
-
-    /**
-     * Creates a new @see GameSession with the default skin.
-     *
-     * @param squareSize Size of the map in square root.
-     */
-    public GameSession(int squareSize) {
-        this();
-        map = new Map(this, squareSize);
     }
 
     public Date getStartTime() {
@@ -55,4 +37,31 @@ public class GameSession {
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Sets a new {@link Map} for this {@link GameSession}. Connected clients should be synced here if current computer is the host.
+     *
+     * @param map {@link Map} to change to.
+     */
+    public void setMap(Map map) {
+        this.map = map;
+    }
+
+    /**
+     * Sets a new {@link Map} for this {@link GameSession}. Connected clients should be synced here if the current computer is the host.
+     *
+     * @param width  X dimension of the {@link Map}.
+     * @param height Y dimension of the {@link Map}.
+     */
+    public void setMap(int width, int height) {
+        setMap(new Map(this, width, height));
+    }
+
+    /**
+     * Sets a new {@link Map} for this {@link GameSession}. Connected clients should be synced here if the current computer is the host.
+     *
+     * @param squareSize X and Y dimension of the {@link Map}.
+     */
+    public void setMap(int squareSize) {
+        setMap(new Map(this, squareSize));
+    }
 }

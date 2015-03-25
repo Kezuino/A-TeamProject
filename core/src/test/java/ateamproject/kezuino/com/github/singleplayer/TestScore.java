@@ -20,7 +20,8 @@ public class TestScore {
     
     @Before
     public void setUp() {
-        this.testSession = new GameSession(4);
+        this.testSession = new GameSession();
+        testSession.setMap(4);
         this.testScore = new Score(this.testSession);
     }
     

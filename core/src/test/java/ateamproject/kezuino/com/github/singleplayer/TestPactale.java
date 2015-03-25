@@ -28,7 +28,8 @@ public class TestPactale {
          * @param movementSpeed
          * @param walkingDirection
          */
-        GameSession g = new GameSession(3);
+        GameSession g = new GameSession();
+        g.setMap(3);
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Left;
         Color color = new Color(1, 111, 11, 111);
@@ -57,7 +58,8 @@ public class TestPactale {
         /**
          * Will remove all listed portals from this Pactale
          */
-        GameSession g = new GameSession(3);
+        GameSession g = new GameSession();
+        g.setMap(3);
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Left;
         Color color = new Color(1, 111, 11, 111);
@@ -78,7 +80,8 @@ public class TestPactale {
          *
          * @param direction
          */
-        GameSession g = new GameSession(3);
+        GameSession g = new GameSession();
+        g.setMap(3);
         Node position = new Node(g.getMap(), 1, 1);
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Left;

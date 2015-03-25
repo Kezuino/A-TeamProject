@@ -25,7 +25,8 @@ public class TestNode {
 
     @Before
     public void setUp() {
-        this.testSession = new GameSession(10, 10);
+        this.testSession = new GameSession();
+        this.testSession.setMap(10);
 
         this.nodeForPactale = new Node(this.testSession.getMap(), 1, 5);
         this.testPactale = new Pactale(this.testSession.getMap(), 1, 5, 3, 0.1f, Direction.Left, Color.CLEAR);

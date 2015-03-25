@@ -6,6 +6,10 @@
 package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.render.IRenderer;
+import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
+import ateamproject.kezuino.com.github.singleplayer.GameSession;
+import ateamproject.kezuino.com.github.singleplayer.Map;
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -15,38 +19,42 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 /**
- * @author David
+ * @author Anton
  */
-public class LoginScreen implements Screen {
+public class GameScreen implements Screen {
     private Game game;
     private Stage stage;
-    
-    public LoginScreen(Game g){
-        game = g;
+
+    private GameSession session;
+    private IRenderer renderer;
+
+    public GameScreen(Game game){
+        this.game = game;
         
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
         
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-        TextButton btnLogin = new TextButton("Press me!", skin);
-        btnLogin.setPosition(300, 300);
-        btnLogin.setSize(300, 40);
-        
-        stage.addActor(btnLogin);
     }
     
     @Override
     public void show() {
         // Initialize screen here.
+        Assets.create();
+        session = new GameSession();
+        session.setMap(new Map(session, 20));
+        renderer = new GameRenderer(session.getMap());
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
+        Gdx.gl.glClearColor(1, 1, 1, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
+
         stage.act(delta);
         stage.draw();
+        renderer.render();
     }
 
     @Override
