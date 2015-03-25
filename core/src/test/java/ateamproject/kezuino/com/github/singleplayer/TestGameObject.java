@@ -23,7 +23,7 @@ public class TestGameObject {
     Map map;
     Node spawn;
     Enemy enemy;
-    Node teleportNode;
+    Node moveNode;
 
     @Before
     public void setUp() {
@@ -111,6 +111,26 @@ public class TestGameObject {
         //Enemy was spawned on default 19 19. If we move it up one the y should go -1.
         enemy.moveAdjacent(Direction.Up);
         assertEquals(18,enemy.getY());
+        //If we go back down, should be 19 again
+        enemy.moveAdjacent(Direction.Down);
+        assertEquals(19,enemy.getY());
+        
+    }
+    
+    @Test
+    public void testMove(){
+            /**
+     * Tries to move this {@link GameObject} to another {@link Node} using
+     * pathfinding based on the {@link #movementSpeed}.
+     *
+     * @param node {@link Node} to move towards.
+     * @see #moveAdjacent(Direction)
+     */
+        //Create a node and move the enemy to that node.
+        moveNode = map.getNode(10, 10);
+        enemy.move(moveNode);
+        assertEquals(10,enemy.getX());
+        assertEquals(10,enemy.getY());
     }
 
 }
