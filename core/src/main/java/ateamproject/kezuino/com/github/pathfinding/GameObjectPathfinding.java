@@ -169,7 +169,7 @@ public class GameObjectPathfinding {
                             feelerCrossed.add(map.getNode(feeler.x, feeler.y));//make sure that the path will be remebered
 
                             System.out.println("feelers moves to the left");
-                           if (feelerLookUp) {
+                            if (feelerLookUp) {
                                 if (canNodeBeWalked(feeler, Direction.Up, map, feeledNodes)) {
                                     System.out.println("feelers did found a hole which is up!");
 
@@ -241,7 +241,9 @@ public class GameObjectPathfinding {
 
                 }
 
-            } else if (walker.x == endPosition.getX() && walker.y == endPosition.getY()) {//if a move is made. check if the target is reached
+            }
+
+            if (walker.x == endPosition.getX() && walker.y == endPosition.getY()) {//if a move is made. check if the target is reached
                 targetReached = true;
                 System.out.println("Target reached. Terminating");
             }
