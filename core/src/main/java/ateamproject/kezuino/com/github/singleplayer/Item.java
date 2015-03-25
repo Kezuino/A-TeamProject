@@ -5,7 +5,6 @@ import java.awt.Point;
 public class Item {
 
     private String Name;
-    private Point offsetPosition;
     private Node Node;
     private ItemType Type;
 
@@ -62,24 +61,7 @@ public class Item {
         this.Type = type;
     }
     
-    /**
-     * Gets the offset position of the item
-     *
-     * @return point object of the offset of the item
-     */
-    public Point getOffsetPosition() {
-        return this.offsetPosition;
-    }
-
-    /**
-     * Sets the point from the left and top corner to set the location of the item in the node
-     *
-     * @param offsetPosition point of the item is located on the node
-     */
-    public void setOffsetPosition(Point offsetPosition) {
-        this.offsetPosition = offsetPosition;
-    }
-
+   
     /**
      * The target who picks up this item activates the effect this item is carrying
      *
@@ -90,12 +72,12 @@ public class Item {
         switch(this.Type){
             case BigNugget:
                 
-                break;
                 
+                break;
             case SmallNugget :
                 
-                break;
                 
+                break;
             default:
                 break;
         }
