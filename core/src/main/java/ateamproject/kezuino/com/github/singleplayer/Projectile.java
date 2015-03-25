@@ -37,6 +37,11 @@ public class Projectile extends GameObject {
         Node NextNode = null;
         int x = this.getX();
         int y = this.getY();
+        
+        if (direction == null) {
+            return null;
+        }
+        
         switch (direction) {
             case Up:
                 NextNode = this.getMap().getNode(x, y--);
