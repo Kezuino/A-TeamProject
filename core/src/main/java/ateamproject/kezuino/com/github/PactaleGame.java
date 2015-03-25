@@ -21,21 +21,24 @@ public class PactaleGame extends Game {
     public void create() {
         //this.setScreen(new LoginScreen(this));
         GameObjectPathfinding g = new GameObjectPathfinding();
-        GameSession gs = new GameSession(10);
-        gs.getMap().getNode(6, 5).setWall();
-        gs.getMap().getNode(5, 5).setWall();
-        gs.getMap().getNode(4, 5).setWall();
-        gs.getMap().getNode(3, 5).setWall();
-        gs.getMap().getNode(8, 5).setWall();
-        g.generatePath(gs.getMap().getNode(7, 7), gs.getMap().getNode(8, 2));
+        GameSession gs = new GameSession(5);
+        gs.getMap().getNode(0, 1).setWall();
+        gs.getMap().getNode(1, 1).setWall();
+        gs.getMap().getNode(0, 2).setWall();
+        gs.getMap().getNode(0, 3).setWall();
+        gs.getMap().getNode(2, 1).setWall();
+        gs.getMap().getNode(3, 1).setWall();
+        gs.getMap().getNode(3, 2).setWall();
+        gs.getMap().getNode(1, 4).setWall();
+        g.generatePath(gs.getMap().getNode(1, 3), gs.getMap().getNode(0, 0));
 
     }
 
     @Override
     public void render() {
-      //  update();
-      //  draw();
-       super.render();
+        //  update();
+        //  draw();
+        super.render();
     }
 
     /**
