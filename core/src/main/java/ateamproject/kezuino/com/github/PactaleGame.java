@@ -17,19 +17,7 @@ public class PactaleGame extends Game {
 
     @Override
     public void create() {
-        //this.setScreen(new LoginScreen(this));
-        GameObjectPathfinding g = new GameObjectPathfinding();
-        GameSession gs = new GameSession(5);
-        gs.getMap().getNode(0, 1).setWall();
-        gs.getMap().getNode(1, 1).setWall();
-        gs.getMap().getNode(0, 2).setWall();
-        gs.getMap().getNode(0, 3).setWall();
-        gs.getMap().getNode(2, 1).setWall();
-        gs.getMap().getNode(3, 1).setWall();
-        gs.getMap().getNode(3, 2).setWall();
-        gs.getMap().getNode(1, 4).setWall();
-        g.generatePath(gs.getMap().getNode(1, 3), gs.getMap().getNode(0, 0));
-
+        this.setScreen(new GameScreen(this));
     }
 
     @Override

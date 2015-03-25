@@ -66,10 +66,9 @@ public class Map {
         if (mapPath == null || mapPath.isEmpty()) throw new IllegalArgumentException();
         JsonReader reader = new JsonReader();
         JsonValue rootValue = reader.parse(Gdx.files.internal("maps/" + mapPath));
-        return null;
 
         // TODO: Load map from JSON file.
-        Map map = new Map(session, 10);
+        Map map = new Map(session, 5);
         return map;
     }
 

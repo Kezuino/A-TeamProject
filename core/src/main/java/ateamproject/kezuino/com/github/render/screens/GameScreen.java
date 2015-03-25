@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.pathfinding.GameObjectPathfinding;
 import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
@@ -41,9 +42,21 @@ public class GameScreen implements Screen {
     public void show() {
         // Initialize screen here.
         Assets.create();
-        session = new GameSession();
-        session.setMap(new Map(session, 20));
-        renderer = new GameRenderer(session.getMap());
+
+        GameObjectPathfinding g = new GameObjectPathfinding();
+        GameSession gs = new GameSession();
+        gs.setMap(5);
+        gs.getMap().getNode(0, 1).setWall();
+        gs.getMap().getNode(1, 1).setWall();
+        gs.getMap().getNode(0, 2).setWall();
+        gs.getMap().getNode(0, 3).setWall();
+        gs.getMap().getNode(2, 1).setWall();
+        gs.getMap().getNode(3, 1).setWall();
+        gs.getMap().getNode(3, 2).setWall();
+        gs.getMap().getNode(1, 4).setWall();
+        g.generatePath(gs.getMap().getNode(1, 3), gs.getMap().getNode(0, 0));
+
+        renderer = new GameRenderer(gs.getMap());
     }
 
     @Override
