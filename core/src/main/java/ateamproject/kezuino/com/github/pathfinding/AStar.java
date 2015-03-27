@@ -130,8 +130,8 @@ public abstract class AStar<T> {
      * Default c'tor.
      */
     public AStar() {
-        paths = new PriorityQueue<Path>();
-        mindists = new HashMap<T, Double>();
+        paths = new PriorityQueue<>();
+        mindists = new HashMap<>();
         expandedCounter = 0;
         lastCost = 0.0;
     }
