@@ -80,25 +80,25 @@ public class GameObjectPathfinding {
     private boolean canNodeBeWalked(Point currentPosition, Direction direction, Map map) {
         if (direction == Direction.Up) {
             if (map.getNode(currentPosition.x, currentPosition.y - 1) != null) {//check if there is a node for UP
-                if (map.getNode(currentPosition.x, currentPosition.y - 1).getWall() == null) {//check if there is not a wall for UP 
+                if (map.getNode(currentPosition.x, currentPosition.y - 1).isWall()) {//check if there is not a wall for UP
                     return true;
                 }
             }
         } else if (direction == Direction.Right) {
             if (map.getNode(currentPosition.x + 1, currentPosition.y) != null) {//check if there is a node for RIGHT
-                if (map.getNode(currentPosition.x + 1, currentPosition.y).getWall() == null) {//check if there is not a wall for RIGHT 
+                if (map.getNode(currentPosition.x + 1, currentPosition.y).isWall()) {//check if there is not a wall for RIGHT
                     return true;
                 }
             }
         } else if (direction == Direction.Down) {
             if (map.getNode(currentPosition.x, currentPosition.y + 1) != null) {//check if there is a node for DOWN
-                if (map.getNode(currentPosition.x, currentPosition.y + 1).getWall() == null) {//check if there is not a wall for DOWN
+                if (map.getNode(currentPosition.x, currentPosition.y + 1).isWall()) {//check if there is not a wall for DOWN
                     return true;
                 }
             }
         } else if (direction == Direction.Left) {
             if (map.getNode(currentPosition.x - 1, currentPosition.y) != null) {//check if there is a node for LEFT
-                if (map.getNode(currentPosition.x - 1, currentPosition.y).getWall() == null) {//check if there is not a wall for LEFT
+                if (map.getNode(currentPosition.x - 1, currentPosition.y).isWall()) {//check if there is not a wall for LEFT
                     return true;
                 }
             }
@@ -114,7 +114,7 @@ public class GameObjectPathfinding {
                     System.out.print("1");
                 } else if (mapNode.equals(endPosition)) {
                     System.out.print("2");
-                } else if (mapNode.getWall() == null) {
+                } else if (mapNode.isWall()) {
                     System.out.print("O");
                 } else {
                     System.out.print("W");
@@ -135,7 +135,7 @@ public class GameObjectPathfinding {
                     System.out.print("1");
                 } else if (mapNode.equals(endPosition)) {
                     System.out.print("2");
-                } else if (mapNode.getWall() == null) {
+                } else if (mapNode.isWall()) {
                     System.out.print("O");
                 } else {
                     System.out.print("W");

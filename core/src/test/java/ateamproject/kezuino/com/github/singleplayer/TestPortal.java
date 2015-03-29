@@ -39,10 +39,9 @@ public class TestPortal {
      * @param wall      That contains the {@link Portal} on a side.
      * @param direction Side on the {@link Wall} that this {@link Portal} should appear on.
      */
-        
-    Wall wall = new Wall(node);
+
     Pactale pactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.CLEAR);
-    Portal p = new Portal(pactale, wall, Direction.Left);
+    Portal p = new Portal(pactale, node, Direction.Left);
     assertNotNull(p);
         
     }

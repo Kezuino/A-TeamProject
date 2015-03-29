@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="9">
+ <tileset firstgid="1" name="Background" tilewidth="32" tileheight="32">
+  <image source="Background.png" width="64" height="32"/>
+  <tile id="0">
+   <properties>
+    <property name="isWall" value="true"/>
+    <property name="test" value="wut"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Background" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjZGBgYByhmIlMjM88RjQ1uNj4xLC5j1rmYTOfUHiQYh45amgdH8S4D1vc0cM8fP5hIsM8YtMfqe6jtnnUiN9RPPAYAD5CAfQ=
+  </data>
+ </layer>
+</map>

@@ -54,7 +54,7 @@ public class TestProjectile {
         GameSession g = new GameSession();
         g.setMap(3);
         Node position = new Node(g.getMap(), 0, 0);
-        g.getMap().getNode(1, 0).setWall();
+        g.getMap().getNode(1, 0).setTileId(0);
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Right;
         Color color = new Color(1, 111, 11, 111);

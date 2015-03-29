@@ -33,39 +33,8 @@ public class GameRenderer implements IRenderer {
         camera = new Camera(map.getWidth() * 32 + 100, map.getHeight() * 32 + 100, map, 32);
 
         // Init tilemap.
-        tiledMap = new TiledMap();
-        tileMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        tileMapRenderer = new OrthogonalTiledMapRenderer(map.getBaseMap());
         tileMapRenderer.setView(camera);
-
-        tiledMap.getLayers().add(new TiledMapTileLayer(map.getWidth(), map.getHeight(), 32, 32));
-        // TODO: tiledMap.getLayers().add(getObjectLayer());
-    }
-
-    protected void updateBackground() {
-        TiledMapTileLayer layer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
-
-        // Set textures on all nodes in 2D array of map.
-        for (Node node : map.getNodes()) {
-            Texture texture = null; // Default texture.
-
-            if (node.getWall() != null) {
-                texture = Assets.manager.get("nodes/wall.png");
-            } else {
-                texture = Assets.manager.get("nodes/floor.png");
-            }
-
-            // Create a tile for this node.
-            TiledMapTile tile = new StaticTiledMapTile(new TextureRegion(texture));
-            TiledMapTileLayer.Cell cell = new TiledMapTileLayer.Cell();
-            cell.setTile(tile);
-
-            // Set tile in relative position with the map.
-            layer.setCell(node.getX(), node.getY(), cell);
-        }
-    }
-
-    protected TiledMapTileLayer getObjectLayer() {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -75,8 +44,6 @@ public class GameRenderer implements IRenderer {
 
     @Override
     public void render() {
-        updateBackground();
-
         tileMapRenderer.render();
 
         batch.begin();

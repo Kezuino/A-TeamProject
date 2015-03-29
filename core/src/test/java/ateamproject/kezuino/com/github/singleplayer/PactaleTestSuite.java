@@ -17,8 +17,7 @@ import org.junit.runners.Suite;
     TestScore.class,
     TestMap.class,
     TestPactale.class,
-    TestProjectile.class,
-    TestWall.class})
+    TestProjectile.class})
 public class PactaleTestSuite {
     public static void main(String[] args) {
         Result result = JUnitCore.runClasses(PactaleTestSuite.class);

@@ -21,7 +21,6 @@ public class TestNode {
     private Pactale testPactale;
     private Enemy testEnemy;
     private Item testItem;
-    private Wall testWall;
 
     @Before
     public void setUp() {
@@ -39,7 +38,6 @@ public class TestNode {
         this.testItem = new Item("Item Name", this.nodeForItem,ItemType.BigNugget);
 
         this.nodeForWall = new Node(this.testSession.getMap(), 1, 10);
-        this.testWall = new Wall(this.nodeForWall);
     }
 
     @Test
@@ -51,55 +49,6 @@ public class TestNode {
         assertSame("Session map must be the same as the node for pactale.", this.testSession.getMap(), this.nodeForPactale.getMap());
         assertSame("Session map must be the same as the node for enemy.", this.testSession.getMap(), this.nodeforEnemy.getMap());
         assertSame("Session map must be the same as the node for wall.", this.testSession.getMap(), this.nodeForWall.getMap());
-    }
-
-    @Test
-    public void testGetWall() {
-        /**
-         * Gets the {@link Wall} from a {@link Node}.
-         */
-        assertSame("Testwall must be the same as the wall of the node for wall.", this.testWall, this.nodeForWall.getWall());
-    }
-
-    @Test
-    public void testSetWall() {
-        /**
-         * Sets a new default {@link Wall} on the {@link Node}.
-         *
-         * @return The newly created {@link Wall}.
-         */
-        assertNotNull("Node must have a wall.", nodeForWall.getWall());
-        nodeForWall.removeWall();
-        assertNull("Wall must be unset on node.", nodeForWall.getWall());
-        nodeForWall.setWall();
-        assertNotNull("Node must have a wall again.", nodeForWall.getWall());
-    }
-
-    @Test
-    public void testSetWall2() {
-        /**
-         * Sets a new {@link Wall} on the {@link Node}.
-         *
-         * @param wall {@link Wall} to set on this {@link Node}.
-         * @return {@link Wall} that has been set on this {@link Node}.
-         */
-        assertNotNull("Node must have a wall.", nodeForWall.getWall());
-        nodeForWall.removeWall();
-        assertNull("Wall must be unset on node.", nodeForWall.getWall());
-        nodeForWall.setWall(testWall);
-        assertSame("Node must have the wall that has been set.", testWall, nodeForWall.getWall());
-    }
-
-    @Test
-    public void testRemoveWall() {
-        /**
-         * Removes the {@link Wall} and returns if succeeded.
-         *
-         * @return If true, {@link Wall} was removed.
-         */
-        assertNotNull("Wall must not be null.", nodeForWall.getWall());
-        nodeForWall.removeWall();
-        assertNull("Wall must have been removed.", nodeForWall.getWall());
     }
 
     @Test

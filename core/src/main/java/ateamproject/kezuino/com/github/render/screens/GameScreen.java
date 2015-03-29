@@ -42,7 +42,7 @@ public class GameScreen implements Screen {
         // Initialize screen here.
         Assets.create();
         session = new GameSession();
-        session.setMap(new Map(session, 20));
+        session.setMap(Map.load(session, "maps/level/0.tmx"));
         renderer = new GameRenderer(session.getMap());
     }
 

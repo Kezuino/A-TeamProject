@@ -1,8 +1,15 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import java.util.*;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 
-public class Node {
+import java.util.*;
+import java.util.stream.Collectors;
+
+public class Node extends TiledMapTileLayer.Cell {
     /**
      * {@link Map} that contains this {@link Node}.
      */
@@ -11,10 +18,11 @@ public class Node {
      * All {@link GameObject GameObjects} on this {@link Node}.
      */
     private final List<GameObject> gameObjects;
+    private int tileId;
     /**
-     * {@link Wall} information that defines this {@link Node}.
+     * List of {@link Portal portals} that can be on a side of this {@link Node}.
      */
-    private Wall wall;
+    private HashMap<Direction, Portal> portals;
     /**
      * {@link Item} that is on this {@link Node}.
      */
@@ -23,7 +31,6 @@ public class Node {
      * Gets the X position that this {@link Node} is on.
      */
     private int x;
-
     /**
      * Gets the Y position that this {@link Node} is on.
      */
@@ -38,9 +45,18 @@ public class Node {
      */
     Node(Map map, int x, int y) {
         gameObjects = new ArrayList<>();
+        this.tileId = 0;
         this.map = map;
         this.x = x;
         this.y = y;
+    }
+
+    public int getTileId() {
+        return tileId;
+    }
+
+    public void setTileId(int tileId) {
+        this.tileId = tileId;
     }
 
     /**
@@ -79,13 +95,13 @@ public class Node {
      * Sets the {@link Item} and returns true if succeeded.
      *
      * @param itemName Name of the {@link Item} to create and set on the {@link Node}.
-     * @param type The type of the item
+     * @param type     The type of the item
      * @return {@link Item} that has been created and set on this {@link Node}.
      */
-    public Item setItem(String itemName,ItemType type) {
+    public Item setItem(String itemName, ItemType type) {
         if (itemName == null || itemName.isEmpty())
             throw new IllegalArgumentException("Parameter itemName must not be null or empty.");
-        this.item = new Item(itemName, this,type);
+        this.item = new Item(itemName, this, type);
         return this.item;
     }
 
@@ -112,51 +128,10 @@ public class Node {
     }
 
     /**
-     * Sets a new default {@link Wall} on the {@link Node}.
-     *
-     * @return The newly created {@link Wall}.
-     */
-    public Wall setWall() {
-        this.wall = new Wall(this);
-        return wall;
-    }
-
-    /**
-     * Sets a new {@link Wall} on the {@link Node}.
-     *
-     * @param wall {@link Wall} to set on this {@link Node}.
-     * @return {@link Wall} that has been set on this {@link Node}.
-     */
-    public Wall setWall(Wall wall) {
-        if (wall == null) throw new IllegalArgumentException("Parameter wall must not be null.");
-        this.wall = wall;
-        return wall;
-    }
-
-    /**
-     * Removes the {@link Wall} and returns true if succeeded.
-     *
-     * @return If true, {@link Wall} was removed.
-     */
-    public boolean removeWall() {
-        if (wall == null) return true;
-        wall.clear();
-        this.wall = null;
-        return true;
-    }
-
-    /**
      * Returns the {@link Map} from where the node currently resides.
      */
     public Map getMap() {
         return this.map;
-    }
-
-    /**
-     * Gets the {@link Wall} from a {@link Node}.
-     */
-    public Wall getWall() {
-        return this.wall;
     }
 
     /**
@@ -178,6 +153,32 @@ public class Node {
     }
 
     /**
+     * Gets if this {@link Node} is a wall or not.
+     *
+     * @return True if this {@link Node} is a wall.
+     */
+    public boolean isWall() {
+        return Boolean.valueOf(getProperty("isWall"));
+    }
+
+    public String getProperty(String name) {
+        if (map == null) return null;
+        TiledMap baseMap = map.getBaseMap();
+        if (baseMap == null) return null;
+        TiledMapTileSet tileSet;
+        try {
+            tileSet = baseMap.getTileSets().getTileSet(0);
+        } catch (IndexOutOfBoundsException ex) {
+            return null;
+        }
+        TiledMapTile tile = tileSet.getTile(tileId);
+        MapProperties props = tile.getProperties();
+        if (props == null) return null;
+        if (!props.containsKey(name)) return null;
+        return (String) props.get(name);
+    }
+
+    /**
      * Gets all the {@link GameObject GameObjects} that are on this {@link Node}.
      *
      * @return all {@link GameObject GameObjects} on this {@link Node}.
@@ -191,7 +192,6 @@ public class Node {
         return "Node{" +
                 "x=" + x +
                 ", y=" + y +
-                ", wall=" + wall +
                 ", item=" + item +
                 '}';
     }
@@ -203,5 +203,72 @@ public class Node {
      */
     public Item getItem() {
         return item;
+    }
+
+    /**
+     * Returns the {@link Portal} on the {@link Node} on the side specified by {@code direction}.
+     *
+     * @param direction of the side of the {@link Node} to get the {@link Portal} from.
+     * @return portal at the direction of the {@link Node} or null.
+     */
+    public Portal getPortal(Direction direction) {
+        if (!portals.containsKey(direction)) return null;
+        return portals.get(direction);
+    }
+
+    /**
+     * Sets a {@link Portal} to the side of the {@link Node} specified by the {@code direction}.
+     *
+     * @param direction to set the {@link Portal} on.
+     * @param portal    to set on the side of the {@link Node}.
+     */
+    public boolean setPortal(Direction direction, Portal portal) {
+        portals.put(direction, portal);
+        return true;
+    }
+
+    /**
+     * Removes a {@link Portal} from the side of the {@link Node} if it exists.
+     *
+     * @param direction of the side on the {@link Node} to look for a {@link Portal} to remove.
+     * @return if true, removed a {@link Portal} from the {@link Node}.
+     */
+    public boolean removePortal(Direction direction) {
+        if (!portals.containsKey(direction)) return false;
+        portals.put(direction, null);
+        return true;
+    }
+
+
+    /**
+     * Gets all the {@link Portal portals} on this {@link Node}.
+     *
+     * @return list of {@link Portal portals} on this {@link Node}.
+     */
+    public List<Portal> getPortals() {
+        return portals.values().stream().collect(Collectors.toList());
+    }
+
+    /**
+     * Removes all {@link Portal portals} from this {@link Node}.
+     */
+    public void clearPortals() {
+        for (Portal p : getPortals()) {
+            p.getOwner().removePortal();
+        }
+        portals.clear();
+    }
+
+    /**
+     * Removes all {@link Portal portals} in the given {@link Direction side} of the {@link Node}.
+     *
+     * @param side {@link Direction side} of the {@link Node} to remove the {@link Portal portals} from.
+     */
+    public void clearDirection(Direction side) {
+        if (side == null) throw new IllegalArgumentException("Parameter side must not be null.");
+        for (Portal p : getPortals().stream().filter(p2 -> p2.getDirection() == side).collect(Collectors.toList())) {
+            p.getOwner().removePortal();
+            portals.remove(p);
+        }
     }
 }

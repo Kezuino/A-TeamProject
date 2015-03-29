@@ -18,8 +18,8 @@ public class TestMap {
         map = session.getMap();
 
         // Set walls.
-        map.getNode(14, 19).setWall();
-        map.getNode(13, 13).setWall();
+        map.getNode(14, 19).setTileId(0);
+        map.getNode(13, 13).setTileId(0);
 
         // GameObjects.
         Pactale pac = (Pactale) map.addGameObject(13, 13, new Pactale(map, 13, 13, 1, 1, Direction.Down, Color.WHITE));
@@ -89,7 +89,7 @@ public class TestMap {
 
         // Test if all nodes are cleared.
         for (Node n : map.getNodes()) {
-            assertNull("Wall must be null.", n.getWall());
+            assertFalse("Wall must be null.", n.isWall());
         }
     }
 
@@ -102,7 +102,7 @@ public class TestMap {
          * @param y position to get {@link Node} from.
          * @return {@link Node} if {@code x} and {@code y} are in-bounds. Null otherwise.
          */
-        assertNotNull("Node should have a wall.", map.getNode(14, 19).getWall());
+        assertTrue("Node should have a wall.", map.getNode(14, 19).isWall());
         assertNotNull("Node on edge of map should exist.", map.getNode(19, 19));
         assertNotNull("Node on edge of map should exist.", map.getNode(0, 0));
     }
