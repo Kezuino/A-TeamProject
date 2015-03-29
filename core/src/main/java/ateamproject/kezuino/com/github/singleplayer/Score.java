@@ -11,6 +11,7 @@ public class Score {
      * @param session The {@link GameSession} of this score.
      */
     public Score(GameSession session) {
+        this.score = 0;
         this.gameSession = session;
     }
 
@@ -39,7 +40,7 @@ public class Score {
      * @return The new current score value of this {@link Score}.
      */
     public int incrementScore(int increaseBy) {
-        this.score += score;
+        this.score += increaseBy;
         return this.score;
     }
     
@@ -49,8 +50,8 @@ public class Score {
      * @param decreaseBy The value to decrease the current {@link Score} value with.
      * @return The new current score value of this {@link Score}.
      */
-    public int decreaseScore(int decreaseBy) {
-        this.score -= score;
+    public int decrementScore(int decreaseBy) {
+        this.score -= decreaseBy;
         return this.score;
     }
 }

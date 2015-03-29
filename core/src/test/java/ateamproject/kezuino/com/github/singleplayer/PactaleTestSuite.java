@@ -13,9 +13,13 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
     TestEnemy.class,
+    TestGameObject.class,
     TestGameSession.class,
-    TestScore.class,
+    TestItem.class,
     TestMap.class,
+    TestNode.class,
+    TestPortal.class,
+    TestScore.class,
     TestPactale.class,
     TestProjectile.class})
 public class PactaleTestSuite {
