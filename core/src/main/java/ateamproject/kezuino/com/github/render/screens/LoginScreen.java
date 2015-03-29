@@ -37,8 +37,9 @@ public class LoginScreen implements Screen {
                 game.setScreen(new GameScreen(game));
             }
         });
-        btnLogin.setPosition(300, 300);
+
         btnLogin.setSize(300, 40);
+        btnLogin.setPosition(stage.getWidth()/2-btnLogin.getWidth()/2, stage.getHeight()/2-btnLogin.getHeight()/2);
 
         stage.addActor(btnLogin);
     }
