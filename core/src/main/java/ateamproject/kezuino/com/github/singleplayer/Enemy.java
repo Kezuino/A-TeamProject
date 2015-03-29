@@ -5,48 +5,58 @@ import com.badlogic.gdx.graphics.Color;
 public class Enemy extends GameObject {
 
     /**
-     * If true, {@link Enemy} is currently dead and doesn't partake in the game until respawned.
+     * If true, {@link Enemy} is currently dead and doesn't participate in the game until respawned.
      */
     private boolean dead;
+    
     /**
-     * If true, {@link Enemy} can currently be eaten by a {@link Pactale}.
+     * If true, {@link Enemy} can be eaten by a {@link Pactale}.
      */
     private boolean edible;
+    
     /**
-     * {@link GameObject} that this {@link Enemy} currently follows. Can be null.
+     * The {@link GameObject} this {@link Enemy} currently follows. Can be null.
      */
     private GameObject objectToFollow;
 
     /**
-     * {@link Node} that the {@link Enemy} spawned on.
+     * The {@link Node} this {@link Enemy} spawned on.
      */
     private Node respawnNode;
 
     /**
-     * Initializes an {@link Enemy} which isn't dead and isn't currently edible.
+     * Constructs a new {@link Enemy}.
+     * The newly constructed {@link Enemy} is not dead.
+     * The newly constructed {@link Enemy} is not edible.
+     * 
      * @param objectToFollow {@link GameObject} to follow. Can be null.
-     * @param map            {@link Map} that this {@link Enemy} is currently in.
+     * @param map            {@link Map} this {@link Enemy} is currently in.
      * @param x              X position of this {@link Enemy}.
      * @param y              Y position of this {@link Enemy}.
      * @param movementSpeed  Speed in seconds that it takes to move to another {@link Node}.
-     * @param direction      Direction that this {@link Enemy} is currently facing towards.
-     * @param color
+     * @param direction      Direction this {@link Enemy} is currently facing.
+     * @param color          Color of this {@link Enemy}.
      */
     public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
         super(map, x, y, movementSpeed, direction, color);
         this.objectToFollow = objectToFollow;
         this.respawnNode = map.getNode(x, y);
+        this.dead = false;
+        this.edible = false;
     }
 
     /**
-     * Initializes an {@link Enemy} which isn't dead and isn't currently edible with a default draw color of {@code Color.WHITE}.
+     * Constructs a new {@link Enemy}.
+     * The newly constructed {@link Enemy} is not dead.
+     * The newly constructed {@link Enemy} is not edible.
+     * The default draw color is set to {@code Color.WHITE}.
      *
      * @param objectToFollow {@link GameObject} to follow. Can be null.
      * @param map            {@link Map} that this {@link Enemy} is currently in.
      * @param x              X position of this {@link Enemy}.
      * @param y              Y position of this {@link Enemy}.
      * @param movementSpeed  Speed in seconds that it takes to move to another {@link Node}.
-     * @param direction      Direction that this {@link Enemy} is currently facing towards.
+     * @param direction      Direction this {@link Enemy} is currently facing.
      */
     public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction) {
         this(objectToFollow, map, x, y, movementSpeed, direction, Color.WHITE);
@@ -60,14 +70,17 @@ public class Enemy extends GameObject {
     }
 
     /**
-     * @return If the enemy is dead this will return true, if the enemy is still alive will return false
+     * Gets the current state of this {@link Enemy).
+     * If this enemy is currently dead it will return true, else false.
+     * 
+     * @return The current state of this {@link Enemy}.
      */
     public boolean isDead() {
         return this.dead;
     }
 
     /**
-     * Sets the dead propertie of the enemy. If the enemy is dead it should be set to true, if the enemy is not dead should be false.
+     * Sets the dead property of the enemy. If the enemy is dead it should be set to true, if the enemy is not dead should be false.
      *
      * @param dead Must be true or false, cannot be null
      */

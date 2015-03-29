@@ -39,7 +39,6 @@ public class LoginScreen implements Screen {
         });
         btnLogin.setPosition(300, 300);
         btnLogin.setSize(300, 40);
-        
 
         stage.addActor(btnLogin);
     }
