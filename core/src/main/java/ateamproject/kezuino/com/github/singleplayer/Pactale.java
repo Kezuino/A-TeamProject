@@ -25,6 +25,10 @@ public class Pactale extends GameObject {
         super(map, x, y, movementSpeed, walkingDirection, color);
         this.lives = lives;
     }
+    
+    public int getPlayerIndex() {
+        return this.playerIndex;
+    }
 
     public Portal getPortal() {
         return this.Portal;

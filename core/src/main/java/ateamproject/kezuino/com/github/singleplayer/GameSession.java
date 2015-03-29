@@ -33,6 +33,9 @@ public class GameSession {
      * @param playerIndex
      */
     public Pactale getPlayer(int playerIndex) {
+        //this.map.getAllGameObjects().stream().filter(gameObject -> gameObject instanceof Pactale).filter((Pactale pactale) -> pactale.getPlayerIndex());
+        
+        
         // TODO - NOT IN FIRST IMPLEMENTATION.
         throw new UnsupportedOperationException();
     }
