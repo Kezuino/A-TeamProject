@@ -5,12 +5,13 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
 public class DesktopLauncher {
-	public static void main (String[] arg) {
-		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+
+    public static void main(String[] arg) {
+        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.foregroundFPS = 60;
         cfg.backgroundFPS = 30;
         cfg.samples = 8;
 
-		new LwjglApplication(new PactaleGame(), cfg);
-	}
+        new LwjglApplication(new PactaleGame(), cfg);
+    }
 }
