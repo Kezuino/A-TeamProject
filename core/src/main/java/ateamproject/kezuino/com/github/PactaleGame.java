@@ -1,6 +1,5 @@
 package ateamproject.kezuino.com.github;
 
-import ateamproject.kezuino.com.github.pathfinding.GameObjectPathfinding;
 import ateamproject.kezuino.com.github.render.screens.GameScreen;
 import com.badlogic.gdx.Game;
 

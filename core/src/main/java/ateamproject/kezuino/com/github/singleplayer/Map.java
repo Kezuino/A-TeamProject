@@ -73,7 +73,6 @@ public class Map {
     public static Map load(GameSession session, String mapPath) {
         if (mapPath == null || mapPath.isEmpty()) throw new IllegalArgumentException();
 
-<<<<<<< HEAD
         TmxMapLoader.Parameters parms = new TmxMapLoader.Parameters();
         parms.textureMinFilter = Texture.TextureFilter.Nearest;
         parms.textureMagFilter = Texture.TextureFilter.Nearest;
@@ -91,12 +90,7 @@ public class Map {
         }
         
         // TODO: Create GameObjects from the second layer.
-        
 
-=======
-        // TODO: Load map from JSON file.
-        Map map = new Map(session, 5);
->>>>>>> origin/Pathfinding
         return map;
     }
 

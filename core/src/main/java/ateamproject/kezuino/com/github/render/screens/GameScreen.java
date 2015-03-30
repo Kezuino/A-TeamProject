@@ -5,7 +5,6 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.pathfinding.GameObjectPathfinding;
 import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
@@ -40,16 +39,16 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         
         //Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        Assets.create();
+
+        session = new GameSession();
+        session.setMap(Map.load(session, "maps/level/0.tmx"));
+        renderer = new GameRenderer(session.getMap());
     }
     
     @Override
     public void show() {
         // Initialize screen here.
-        Assets.create();
-
-        session.setMap(Map.load(session, "maps/level/0.tmx"));
-        renderer = new GameRenderer(session.getMap());
-
     }
 
     @Override
