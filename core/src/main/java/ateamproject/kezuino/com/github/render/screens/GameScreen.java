@@ -9,15 +9,18 @@ import ateamproject.kezuino.com.github.pathfinding.GameObjectPathfinding;
 import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
-import ateamproject.kezuino.com.github.singleplayer.Map;
+import ateamproject.kezuino.com.github.singleplayer.Node;
 import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ai.pfa.Connection;
+import com.badlogic.gdx.ai.pfa.HierarchicalGraph;
+import com.badlogic.gdx.ai.pfa.HierarchicalPathFinder;
+import com.badlogic.gdx.ai.pfa.PathFinder;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * @author Anton
@@ -42,21 +45,7 @@ public class GameScreen implements Screen {
     public void show() {
         // Initialize screen here.
         Assets.create();
-
-        GameObjectPathfinding g = new GameObjectPathfinding();
-        GameSession gs = new GameSession();
-        gs.setMap(5);
-        gs.getMap().getNode(0, 1).setWall();
-        gs.getMap().getNode(1, 1).setWall();
-        gs.getMap().getNode(0, 2).setWall();
-        gs.getMap().getNode(0, 3).setWall();
-        gs.getMap().getNode(2, 1).setWall();
-        gs.getMap().getNode(3, 1).setWall();
-        gs.getMap().getNode(3, 2).setWall();
-        gs.getMap().getNode(1, 4).setWall();
-        g.generatePath(gs.getMap().getNode(1, 3), gs.getMap().getNode(0, 0));
-
-        renderer = new GameRenderer(gs.getMap());
+        
     }
 
     @Override
