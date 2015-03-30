@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
+
 /**
  *
  * @author Sven
@@ -39,17 +40,24 @@ public class StoreScreen implements Screen {
                 // game.setScreen(new HomeScreen(game));
             }
         });
+        float x = 240;
+        float y = stage.getHeight() / 4;
         btnBack.setSize(200, 40);
-        btnBack.setPosition(stage.getWidth() / 2 - btnBack.getWidth() / 2, stage.getHeight() / 4 - btnBack.getHeight() / 4);
+        btnBack.setPosition(x,y);
+        
 
         Label lblStore = new Label("Winkel", skin);
         lblStore.setColor(Color.YELLOW);
-        lblStore.setPosition(stage.getWidth() / 2 - btnBack.getWidth() / 2, stage.getHeight() / 150 / 100 - btnBack.getHeight() / 150 / 100);
+        lblStore.setPosition(x,y+300);
         
-        
+        List listStoreItems = new List(skin);
+        String[] skinsArray = {"Skin pack","Minecraft pack"};
+        listStoreItems.setItems(skinsArray);
+        listStoreItems.setPosition(x,y+200);
 
         stage.addActor(btnBack);
         stage.addActor(lblStore);
+        stage.addActor(listStoreItems);
     }
 
     @Override
