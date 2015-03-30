@@ -3,18 +3,21 @@ package ateamproject.kezuino.com.github.singleplayer;
 import com.badlogic.gdx.graphics.Color;
 
 public class Projectile extends GameObject {
-
-    private Pactale owner;
+    /*
+        Field created for the {@link Pactale} this {@link Projectile}
+        origined from.
+    */
+    private final Pactale owner;
 
     /**
      * Initializes a new {@link Projectile}.
      *
-     * @param owner {@link Pactale} that fired this projectile.
+     * @param owner {@link Pactale} this {@link Projectile} origined from.
      * @param movementSpeed Speed in seconds it takes for this
      * {@link Projectile} to move to another adjacent {@link Node}.
-     * @param direction Orientation that the {@link Projectile} has and is
-     * currently going towards.
-     * @param color {@link com.badlogic.gdx.graphics.Color} used to draw this
+     * @param direction Direction this {@link Projectile} is moviong
+     * towards.
+     * @param color {@link com.badlogic.gdx.graphics.Color} of this 
      * {@link Projectile}.
      */
     public Projectile(Map map, int x, int y, Pactale owner, float movementSpeed, Direction direction, Color color) {
@@ -22,10 +25,21 @@ public class Projectile extends GameObject {
         this.owner = owner;
     }
 
+    /**
+     * Gets the {@link Pactale} this {@link Projectile} origined from.
+     * 
+     * @return {@link Pactale} that this {@link Projectile} origined from.
+     */
     public Pactale getOwner() {
         return this.owner;
     }
 
+    /**
+     * Checks wether the next {@link Node} this {@link Projectile} is heading
+     * will collide with a different {@link GameObject} or impenetratable tile {@see Node}.
+     * @param direction The direction this {@link Projectile} is heading?
+     * @return True if it will collide with a different object or impentratable tile, else false.
+     */
     public Boolean hasCollision(Direction direction) {
         /**
          * Will check if a colission has happened and returns a boolean
