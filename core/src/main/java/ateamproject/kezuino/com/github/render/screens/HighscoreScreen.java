@@ -39,7 +39,7 @@ public class HighscoreScreen implements Screen {
         btnBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new mainMenu(game));
+                game.setScreen(new MainScreen(game));
             }
         });
         float x = 240;
@@ -143,12 +143,7 @@ class ValueComparator implements Comparator<String> {
     
     @Override
     public int compare(String a, String b) {
-        if(base.get(a) >= base.get(b)) {
-            return -1;
-        }
-        else {
-            return 1;
-        }
+        return a.compareTo(b);
     }
 
 }
