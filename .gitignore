@@ -68,3 +68,4 @@ build/
 .nb-gradle/profiles/private/aux-config
 core/src/assets/test-results/binary/test/output.bin.idx
 core/src/assets/test-results/binary/test/output.bin
+core/src/assets/libs/core-1.0.jar
