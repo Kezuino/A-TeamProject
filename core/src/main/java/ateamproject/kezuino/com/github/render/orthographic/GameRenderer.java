@@ -45,9 +45,5 @@ public class GameRenderer implements IRenderer {
     @Override
     public void render() {
         tileMapRenderer.render();
-
-        batch.begin();
-        batch.setProjectionMatrix(camera.combined);
-        batch.end();
     }
 }
