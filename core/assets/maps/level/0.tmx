@@ -5,13 +5,12 @@
   <tile id="0">
    <properties>
     <property name="isWall" value="true"/>
-    <property name="test" value="wut"/>
    </properties>
   </tile>
  </tileset>
  <layer name="Background" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjZGBgYByhmIlMjM88RjQ1uNj4xLC5j1rmYTOfUHiQYh45amgdH8S4D1vc0cM8fP5hIsM8YtMfqe6jtnnUiN9RPPAYAD5CAfQ=
+   eJxjZGBgYByhmIlMjM88RjQ1uNj4xLC5j1rmYTOfUHiQYh45akixn1buwxZ39DAPn3+YyDCP2PRHqvuobR418tsoHngMADN6AfE=
   </data>
  </layer>
 </map>
