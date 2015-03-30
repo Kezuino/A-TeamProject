@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer.desktop;
 
 import ateamproject.kezuino.com.github.PactaleGame;
+import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 

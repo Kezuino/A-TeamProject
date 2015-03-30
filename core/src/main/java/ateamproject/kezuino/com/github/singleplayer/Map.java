@@ -90,7 +90,6 @@ public class Map {
         }
         
         // TODO: Create GameObjects from the second layer.
-        
 
         return map;
     }
