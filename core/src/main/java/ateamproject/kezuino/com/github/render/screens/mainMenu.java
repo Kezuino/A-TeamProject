@@ -20,12 +20,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 /**
  * @author David
  */
-public class mainMenu implements Screen {
+public class MainMenu implements Screen {
 
     private Game game;
     private Stage stage;
 
-    public mainMenu(Game game) {
+    public MainMenu(Game game) {
         this.game = game;
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
