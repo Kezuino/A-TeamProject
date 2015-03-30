@@ -9,14 +9,18 @@ import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import ateamproject.kezuino.com.github.singleplayer.Map;
+import ateamproject.kezuino.com.github.singleplayer.Node;
 import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.ai.pfa.Connection;
+import com.badlogic.gdx.ai.pfa.HierarchicalGraph;
+import com.badlogic.gdx.ai.pfa.HierarchicalPathFinder;
+import com.badlogic.gdx.ai.pfa.PathFinder;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.Array;
 
 /**
  * @author Anton
@@ -35,15 +39,16 @@ public class GameScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
         
         //Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        Assets.create();
+
+        session = new GameSession();
+        session.setMap(Map.load(session, "maps/level/0.tmx"));
+        renderer = new GameRenderer(session.getMap());
     }
     
     @Override
     public void show() {
         // Initialize screen here.
-        Assets.create();
-        session = new GameSession();
-        session.setMap(Map.load(session, "maps/level/0.tmx"));
-        renderer = new GameRenderer(session.getMap());
     }
 
     @Override
