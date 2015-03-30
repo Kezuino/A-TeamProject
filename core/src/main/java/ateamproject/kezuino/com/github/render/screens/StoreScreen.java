@@ -54,6 +54,26 @@ public class StoreScreen implements Screen {
         String[] skinsArray = {"Skin pack","Minecraft pack"};
         listStoreItems.setItems(skinsArray);
         listStoreItems.setPosition(x,y+200);
+        
+         TextButton btnBuy = new TextButton("Koop item", skin);
+        btnBuy.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // game.setScreen(new HomeScreen(game));
+            }
+        });
+        btnBuy.setSize(200, 40);
+        btnBuy.setPosition(x-50,y+50);
+        
+         TextButton btnSelect = new TextButton("Selecteer item", skin);
+        btnSelect.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // game.setScreen(new HomeScreen(game));
+            }
+        });
+        btnSelect.setSize(200, 40);
+        btnSelect.setPosition(x+50,y+50);
 
         stage.addActor(btnBack);
         stage.addActor(lblStore);
