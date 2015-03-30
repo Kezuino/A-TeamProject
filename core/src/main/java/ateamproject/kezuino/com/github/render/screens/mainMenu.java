@@ -14,36 +14,96 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 /**
  * @author David
  */
-public class LoginScreen implements Screen {
+public class mainMenu implements Screen {
+
     private Game game;
     private Stage stage;
-    
-    public LoginScreen(Game game){
+
+    public mainMenu(Game game) {
         this.game = game;
         stage = new Stage();
         Gdx.input.setInputProcessor(stage);
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
-        // TODO: Redesign login screen to match documentation.
-        TextButton btnLogin = new TextButton("Press me!", skin);
-        btnLogin.addListener(new ClickListener() {
+        TextButton tbSearchGame = new TextButton("Spel zoeken", skin);
+        tbSearchGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game));
+                //game.setScreen(new GameScreen(game));
             }
         });
 
-        btnLogin.setSize(300, 40);
-        btnLogin.setPosition(stage.getWidth()/2-btnLogin.getWidth()/2, stage.getHeight()/2-btnLogin.getHeight()/2);
+        TextButton tbClanGame = new TextButton("Clan spel", skin);
+        tbClanGame.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //game.setScreen(new GameScreen(game));
+            }
+        });
 
-        stage.addActor(btnLogin);
+        TextButton tbHighscores = new TextButton("Highscores", skin);
+        tbHighscores.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //game.setScreen(new GameScreen(game));
+            }
+        });
+
+        TextButton tbChangeLook = new TextButton("Uiterlijk aanpassen", skin);
+        tbChangeLook.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //game.setScreen(new GameScreen(game));
+            }
+        });
+
+        TextButton tbOptions = new TextButton("Opties", skin);
+        tbOptions.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //game.setScreen(new GameScreen(game));
+            }
+        });
+
+        TextButton tbLogout = new TextButton("Uitloggen", skin);
+        tbLogout.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                //game.setScreen(new GameScreen(game));
+            }
+        });
+
+        tbChangeLook.setSize(300, 40);
+        tbClanGame.setSize(300, 40);
+        tbHighscores.setSize(300, 40);
+        tbLogout.setSize(300, 40);
+        tbOptions.setSize(300, 40);
+        tbSearchGame.setSize(300, 40);
+
+        float xOfSearchGameButton = stage.getWidth() / 2 - tbSearchGame.getWidth() / 2;
+        float yOfSearchGameButton = stage.getHeight() - 50;
+
+        tbSearchGame.setPosition(xOfSearchGameButton, yOfSearchGameButton);
+        tbClanGame.setPosition(xOfSearchGameButton, yOfSearchGameButton - 50);
+        tbHighscores.setPosition(xOfSearchGameButton, yOfSearchGameButton - 100);
+        tbChangeLook.setPosition(xOfSearchGameButton, yOfSearchGameButton - 150);
+        tbOptions.setPosition(xOfSearchGameButton, yOfSearchGameButton - 200);
+        tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
+
+        stage.addActor(tbSearchGame);
+        stage.addActor(tbClanGame);
+        stage.addActor(tbHighscores);
+        stage.addActor(tbChangeLook);
+        stage.addActor(tbOptions);
+        stage.addActor(tbLogout);
     }
-    
+
     @Override
     public void show() {
         // Initialize screen here.
@@ -53,7 +113,7 @@ public class LoginScreen implements Screen {
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
+
         stage.act(delta);
         stage.draw();
     }
@@ -65,12 +125,12 @@ public class LoginScreen implements Screen {
 
     @Override
     public void pause() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void resume() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
