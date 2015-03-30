@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.render.screens.GameScreen;
 import ateamproject.kezuino.com.github.render.screens.LoginScreen;
+import ateamproject.kezuino.com.github.render.screens.StoreScreen;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.ApplicationAdapter;
@@ -15,7 +16,7 @@ public class PactaleGame extends Game {
 
     @Override
     public void create() {
-        this.setScreen(new LoginScreen(this));
+        this.setScreen(new StoreScreen(this));
     }
 
     @Override
