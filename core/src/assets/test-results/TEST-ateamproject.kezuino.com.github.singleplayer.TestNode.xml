@@ -1,12 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="ateamproject.kezuino.com.github.singleplayer.TestNode" tests="12" skipped="0" failures="0" errors="0" timestamp="2015-03-29T22:34:41" hostname="Ken-Laptop" time="0.006">
+<testsuite name="ateamproject.kezuino.com.github.singleplayer.TestNode" tests="24" skipped="0" failures="0" errors="0" timestamp="2015-03-30T10:11:56" hostname="Svenke" time="0.142">
   <properties/>
   <testcase name="testRemoveGameObjects" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
   <testcase name="testAddGameObject" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
-  <testcase name="testGetX" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.001"/>
-  <testcase name="testGetY" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.001"/>
+  <testcase name="testGetX" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
+  <testcase name="testGetY" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
   <testcase name="testGetItem" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
   <testcase name="testRemoveItem" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.001"/>
+  <testcase name="testGetGameObjects" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
+  <testcase name="testAddGameObjectNullObject" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
+  <testcase name="hasGameObject" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.002"/>
+  <testcase name="testGetMap" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.001"/>
+  <testcase name="testSetItem" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
+  <testcase name="testSetItem2" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
+  <testcase name="testRemoveGameObjects" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
+  <testcase name="testAddGameObject" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
+  <testcase name="testGetX" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
+  <testcase name="testGetY" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
+  <testcase name="testGetItem" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
+  <testcase name="testRemoveItem" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
   <testcase name="testGetGameObjects" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
   <testcase name="testAddGameObjectNullObject" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
   <testcase name="hasGameObject" classname="ateamproject.kezuino.com.github.singleplayer.TestNode" time="0.0"/>
