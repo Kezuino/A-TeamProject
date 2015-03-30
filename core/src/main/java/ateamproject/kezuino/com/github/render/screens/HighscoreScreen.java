@@ -7,12 +7,12 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.Comparator;
@@ -27,7 +27,7 @@ import java.util.TreeMap;
 public class HighscoreScreen extends BaseScreen {
     public HighscoreScreen(Game game) {
         super(game);
-        // TODO: Redesign login screen to match documentation.
+
         TextButton btnBack = new TextButton("Terug", skin);
         btnBack.addListener(new ClickListener() {
             @Override
@@ -49,6 +49,7 @@ public class HighscoreScreen extends BaseScreen {
         ValueComparator bvc = new ValueComparator(scores);
         TreeMap<String, Integer> sortedScores = new TreeMap<>(bvc);
 
+        // TODO: Fill with real data.
         scores.put("Team8", 345345);
         scores.put("Winter Wolfs", 454646);
         scores.put("Meet Your Makers", 4533);
