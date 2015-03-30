@@ -25,47 +25,32 @@ import com.badlogic.gdx.utils.Array;
 /**
  * @author Anton
  */
-public class GameScreen implements Screen {
-    private Game game;
-    private Stage stage;
+public class GameScreen extends BaseScreen {
 
     private GameSession session;
     private IRenderer renderer;
 
     public GameScreen(Game game){
-        this.game = game;
-        
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-        
-        //Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        super(game);
         Assets.create();
 
         session = new GameSession();
         session.setMap(Map.load(session, "maps/level/0.tmx"));
         renderer = new GameRenderer(session.getMap());
     }
-    
-    @Override
-    public void show() {
-        // Initialize screen here.
-    }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(1, 1, 1, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        stage.act(delta);
-        stage.draw();
+        // Render UI controls.
+        super.render(delta);
+
+        // Render game.
         renderer.render();
     }
 
-    @Override
-    public void resize(int width, int height) {
-        // Reset controls of this screen to align with new resolution.
-    }
 
     @Override
     public void pause() {
@@ -79,11 +64,6 @@ public class GameScreen implements Screen {
         // TODO: If singleplayer: unpause the game.
 
         // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     @Override

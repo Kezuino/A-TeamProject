@@ -14,47 +14,46 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import com.sun.javaws.exceptions.InvalidArgumentException;
 
 /**
- *
  * @author Fatih
  */
 public abstract class BaseScreen implements Screen {
 
     protected Viewport viewport;
     protected Camera camera;
-    
+
     protected Game game;
     protected Stage stage;
-    
+
     protected Skin skin;
-    
-    public BaseScreen()
-    {
+
+    public BaseScreen(Game game) {
         stage = new Stage();
+        Gdx.input.setInputProcessor(stage);
         camera = stage.getCamera();
-        viewport = new FitViewport(stage.getWidth(),stage.getHeight(),camera);
-        
+        viewport = new FitViewport(stage.getWidth(), stage.getHeight(), camera);
+
         this.game = game;
-        
+
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("uiskin.json"));
-        
+
         stage.setViewport(viewport);
     }
-    
+
     @Override
     public void show() {
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (game == null)
+            throw new UnsupportedOperationException("Game must be set. Did you forget to call super(game) in the constructor of this screen?");
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
         stage.act(delta);
-        stage.draw(); }
+        stage.draw();
+    }
 
     @Override
     public void resize(int width, int height) {
@@ -63,23 +62,19 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void pause() {
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void resume() {
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void hide() {
-       // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     public void dispose() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    
+
 }

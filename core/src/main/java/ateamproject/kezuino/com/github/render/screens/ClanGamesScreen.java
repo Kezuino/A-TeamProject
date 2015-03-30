@@ -6,6 +6,8 @@
 package ateamproject.kezuino.com.github.render.screens;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -13,12 +15,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 /**
  * @author David
  */
-public class ClanGames extends BaseScreen{
+public class ClanGamesScreen extends BaseScreen {
 
-    public ClanGames(Game game)
-    {
-        super();
-      
+    public ClanGamesScreen(Game game) {
+        super(game);
+
         TextButton btnLogin = new TextButton("Press me!", skin);
         btnLogin.addListener(new ClickListener() {
             @Override
@@ -26,7 +27,7 @@ public class ClanGames extends BaseScreen{
                 game.setScreen(new GameScreen(game));
             }
         });
-        
+
 
         btnLogin.setSize(300, 40);
         btnLogin.setPosition(stage.getWidth() / 2 - btnLogin.getWidth() / 2, stage.getHeight() / 2 - btnLogin.getHeight() / 2);
@@ -42,42 +43,18 @@ public class ClanGames extends BaseScreen{
         table.row();
         table.add(addressLabel);
         table.add(addressText).width(10);
-        
-        table.setPosition(stage.getWidth()/2, stage.getHeight()/2);
+
+        table.setPosition(stage.getWidth() / 2, stage.getHeight() / 2);
         //stage.addActor(btnLogin);        
         stage.addActor(table);
 
     }
-    
-    @Override
-    public void show() {
-        // Initialize screen here.
-    }
-
 
     @Override
-    public void resize(int width, int height) {
-        // Reset controls of this screen to align with new resolution.
-        viewport.update(width, height);
-    }
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-    @Override
-    public void pause() {
-        ///throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void resume() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void hide() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void dispose() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super.render(delta);
     }
 }

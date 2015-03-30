@@ -23,13 +23,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class MainScreen extends BaseScreen {
 
     public MainScreen(Game game) {
-        Gdx.input.setInputProcessor(stage);
+        super(game);
 
         TextButton tbSearchGame = new TextButton("Spel zoeken", skin);
         tbSearchGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //game.setScreen(new GameScreen(game));
+                game.setScreen(new GameScreen(game));
             }
         });
 
@@ -37,7 +37,7 @@ public class MainScreen extends BaseScreen {
         tbClanGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //game.setScreen(new GameScreen(game));
+                game.setScreen(new ClanGamesScreen(game));
             }
         });
 
@@ -45,7 +45,7 @@ public class MainScreen extends BaseScreen {
         tbHighscores.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //game.setScreen(new GameScreen(game));
+                game.setScreen(new HighscoreScreen(game));
             }
         });
 
@@ -96,5 +96,13 @@ public class MainScreen extends BaseScreen {
         stage.addActor(tbChangeLook);
         stage.addActor(tbOptions);
         stage.addActor(tbLogout);
+    }
+
+    @Override
+    public void render(float delta) {
+        Gdx.gl.glClearColor(0, 0, 0, 0);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+
+        super.render(delta);
     }
 }
