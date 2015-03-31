@@ -29,9 +29,9 @@ public class PactaleTestSuite {
             System.out.println(failure.toString());
         }
         if (result.wasSuccessful()) {
-            System.out.println("All tests in the fontys.schedule suite passed.");
+            System.out.println("All tests in the pactale suite passed.");
         } else {
-            System.out.println("Schedule test suite was NOT succesful");
+            System.out.println("Pactale test suite was NOT succesful");
         }
     }
 }

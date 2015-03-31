@@ -8,9 +8,8 @@ public class Pactale extends GameObject {
 
     private int playerIndex;
     private int lives;
-    private Portal Portal;
-    private Node Node;
-    private Collection<Projectile> Projectile;
+    private Portal portal;
+    private Collection<Projectile> projectiles;
 
     /**
      * Initialize a {@link Pactale}.
@@ -31,7 +30,7 @@ public class Pactale extends GameObject {
     }
 
     public Portal getPortal() {
-        return this.Portal;
+        return this.portal;
     }
 
     public int getLives() {

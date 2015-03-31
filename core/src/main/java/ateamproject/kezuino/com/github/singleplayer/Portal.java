@@ -4,12 +4,11 @@ public class Portal {
 
     private Node node;
     private Pactale owner;
-
+    private Direction direction;
+    
     public Direction getDirection() {
         return direction;
     }
-
-    private Direction direction;
 
     /**
      * Initializes a {@link Portal} from a specific {@link Pactale owner} on a {@link Direction side} of a {@link Wall}.
