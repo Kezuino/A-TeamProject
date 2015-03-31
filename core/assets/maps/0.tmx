@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><map height="20" nextobjectid="9" orientation="orthogonal" renderorder="right-down" tileheight="32" tilewidth="32" version="1.0" width="20"><properties><property name="atlas" value="tileset/packed.atlas"/><property name="blended tiles" value=""/></properties>
+ <tileset firstgid="1" name="Background" tileheight="32" tilewidth="32">
+  <image height="36" source="Background.png" width="68"/>
+  <tile id="0">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer height="20" name="Background" width="20">
+  <data compression="zlib" encoding="base64">
+   eJxjZGBgYByhmIlMjM88RjQ1uNj4xLC5j1rmYTOfUHiQYh45akixn1buwxZ39DAPn3+YyDCP2PRHqvuobR418tsoHngMADN6AfE=
+  </data>
+ </layer>
+</map>

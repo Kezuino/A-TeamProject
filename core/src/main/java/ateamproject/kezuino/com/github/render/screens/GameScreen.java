@@ -27,7 +27,7 @@ public class GameScreen extends BaseScreen {
         Assets.create();
 
         session = new GameSession();
-        session.setMap(Map.load(session, "maps/level/0.tmx"));
+        session.setMap(Map.load(session, "maps/0.tmx"));
         renderer = new GameRenderer(session.getMap());
     }
 
