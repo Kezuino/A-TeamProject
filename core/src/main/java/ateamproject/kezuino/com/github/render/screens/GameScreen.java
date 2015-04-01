@@ -31,7 +31,6 @@ public class GameScreen extends BaseScreen {
 
     public GameScreen(Game game) {
         super(game);
-        Assets.create();
 
         session = new GameSession();
         session.setMap(Map.load(session, "maps/0.tmx"));
