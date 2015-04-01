@@ -37,7 +37,7 @@ public abstract class GameObject {
      * {@link Direction} that this {@link GameObject} is currently facing
      * towards.
      */
-    private Direction direction;
+    protected Direction direction;
 
     /**
      * Initializes this {@link GameObject}.

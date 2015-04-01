@@ -40,7 +40,7 @@ public class Projectile extends GameObject {
      * @param direction The direction this {@link Projectile} is heading?
      * @return True if it will collide with a different object or impentratable tile, else false.
      */
-    public Boolean hasCollision(Direction direction) {
+    public Boolean hasCollision() {
         /**
          * Will check if a colission has happened and returns a boolean
          * accordingly. if direction is null , this method will return null as
