@@ -221,22 +221,24 @@ public abstract class GameObject {
      */
     public void moveAdjacent(Direction direction) {
         if (direction == Direction.Down) {
-            if (this.map.getNode(x, y--) != null) {
+            if (this.map.getNode(x, y-1) != null) {
                 this.y--;
             }
         } else if (direction == Direction.Right) {
-            if (this.map.getNode(x++, y) != null) {
+            if (this.map.getNode(x+1, y) != null) {
                 this.x++;
             }
         } else if (direction == Direction.Up) {
-            if (this.map.getNode(x, y++) != null) {
+            if (this.map.getNode(x, y+1) != null) {
                 this.y++;
             }
         } else if (direction == Direction.Left) {
-            if (this.map.getNode(x--, y) != null) {
+            if (this.map.getNode(x-1, y) != null) {
                 this.x--;
             }
         }
+        
+        System.out.println(y);
         //throw new UnsupportedOperationException();//no movement inplemented
     }
 

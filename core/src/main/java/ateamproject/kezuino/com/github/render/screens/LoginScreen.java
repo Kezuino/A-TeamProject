@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -17,14 +18,19 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  * @author David
  */
 public class LoginScreen extends BaseScreen {
+
     public LoginScreen(Game game) {
         super(game);
+        Sound sound = Assets.manager.get("sounds/Background.mp3",Sound.class);
+        sound.play();
 
         TextButton btnLogin = new TextButton("Login", skin);
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                sound.dispose();
                 game.setScreen(new MainScreen(game));
+
             }
         });
 
@@ -34,9 +40,6 @@ public class LoginScreen extends BaseScreen {
         float yOfLoginButton = stage.getHeight() / 2 - btnLogin.getHeight() / 2;
 
         btnLogin.setPosition(xOfLoginButton, yOfLoginButton);
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/PacmanSample.mp3"));
-        sound.play();
-        
 
         stage.addActor(btnLogin);
 

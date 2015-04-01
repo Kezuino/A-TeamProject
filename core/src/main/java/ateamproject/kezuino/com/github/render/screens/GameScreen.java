@@ -31,7 +31,6 @@ public class GameScreen extends BaseScreen {
 
     public GameScreen(Game game) {
         super(game);
-        Assets.create();
 
         session = new GameSession();
         session.setMap(Map.load(session, "maps/0.tmx"));
@@ -68,6 +67,11 @@ public class GameScreen extends BaseScreen {
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             //this.player.shootPortal();
         }
+        
+        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            this.pause();
+        }
+        
         // Render UI controls.
         super.render(delta);
 
