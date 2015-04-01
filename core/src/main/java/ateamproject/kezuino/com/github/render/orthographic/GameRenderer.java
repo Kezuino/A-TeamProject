@@ -6,19 +6,12 @@ import ateamproject.kezuino.com.github.singleplayer.GameObject;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.singleplayer.Node;
 import ateamproject.kezuino.com.github.utility.Assets;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTile;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.maps.tiled.tiles.StaticTiledMapTile;
-import com.badlogic.gdx.math.Matrix4;
 
 public class GameRenderer implements IRenderer {
     private SpriteBatch batch;
@@ -64,7 +57,11 @@ public class GameRenderer implements IRenderer {
             }
 
             batch.setColor(obj.getColor());
-            batch.draw(Assets.manager.get("characters/pactale.png", Texture.class), x * 32, y * 32);
+            
+            Texture texture = Assets.manager.get("characters/pactale.png", Texture.class);
+            TextureRegion region = new TextureRegion(texture, 0, 0, 28, 28);
+            
+            batch.draw(region, x * 32, y * 32);
         }
         batch.end();
     }

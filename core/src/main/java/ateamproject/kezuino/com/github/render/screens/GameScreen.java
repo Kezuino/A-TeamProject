@@ -68,6 +68,11 @@ public class GameScreen extends BaseScreen {
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
             //this.player.shootPortal();
         }
+        
+        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+            this.pause();
+        }
+        
         // Render UI controls.
         super.render(delta);
 
