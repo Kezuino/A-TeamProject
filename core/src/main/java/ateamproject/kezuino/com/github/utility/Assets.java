@@ -29,8 +29,7 @@ public class Assets {
         fonts.put("fps", font);
 
         // Textures.
-        manager.load("nodes/wall.png", Texture.class);
-        manager.load("nodes/floor.png", Texture.class);
+        manager.load("characters/pactale.png", Texture.class);
 
         // Wait for assets to load.
         manager.finishLoading();
