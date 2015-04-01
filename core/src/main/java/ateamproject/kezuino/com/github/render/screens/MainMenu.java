@@ -22,9 +22,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  */
 public class MainMenu extends BaseScreen {
 
-    public MainMenu() {
-        Gdx.input.setInputProcessor(stage);
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+    public MainMenu(Game game) {
+        super(game);
 
         TextButton tbSearchGame = new TextButton("Spel zoeken", skin);
         tbSearchGame.addListener(new ClickListener() {
