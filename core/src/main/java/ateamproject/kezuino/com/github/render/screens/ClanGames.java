@@ -18,7 +18,7 @@ public class ClanGames extends BaseScreen{
 
     public ClanGames(Game game)
     {
-        super();
+        super(game);
     
         Table table = new Table();
        

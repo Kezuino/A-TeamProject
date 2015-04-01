@@ -2,11 +2,13 @@ package ateamproject.kezuino.com.github.render.orthographic;
 
 import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.camera.*;
+import ateamproject.kezuino.com.github.singleplayer.GameObject;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.singleplayer.Node;
 import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.maps.MapObject;
@@ -44,10 +46,26 @@ public class GameRenderer implements IRenderer {
 
     @Override
     public void render() {
+        // Render background.
         tileMapRenderer.render();
 
-        batch.begin();
+        // Render objects.
+        SpriteBatch batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        for (GameObject obj : map.getAllGameObjects()) {
+            Node node = obj.getNode();
+            int x = 0;
+            int y = 0;
+            
+            if(node != null) {
+                x = node.getX();
+                y = node.getY();
+            }
+
+            batch.setColor(obj.getColor());
+            batch.draw(Assets.manager.get("characters/pactale.png", Texture.class), x * 32, y * 32);
+        }
         batch.end();
     }
 }

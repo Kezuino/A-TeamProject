@@ -5,34 +5,25 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.render.IRenderer;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.List;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 
 /**
- *
  * @author Sven
  */
-public class StoreScreen implements Screen {
-
-    private Game game;
-    private Stage stage;
+public class StoreScreen extends BaseScreen {
 
     public StoreScreen(Game game) {
-        this.game = game;
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-        Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
+        super(game);
 
-        // TODO: Redesign login screen to match documentation.
         TextButton btnBack = new TextButton("Terug", skin);
         btnBack.addListener(new ClickListener() {
             @Override
@@ -43,19 +34,19 @@ public class StoreScreen implements Screen {
         float x = 240;
         float y = stage.getHeight() / 4;
         btnBack.setSize(200, 40);
-        btnBack.setPosition(x,y);
-        
+        btnBack.setPosition(x, y);
+
 
         Label lblStore = new Label("Winkel", skin);
         lblStore.setColor(Color.YELLOW);
-        lblStore.setPosition(x,y+300);
-        
+        lblStore.setPosition(x, y + 300);
+
         List listStoreItems = new List(skin);
-        String[] skinsArray = {"Skin pack","Minecraft pack"};
-        listStoreItems.setItems(skinsArray);
-        listStoreItems.setPosition(x,y+200);
-        
-         TextButton btnBuy = new TextButton("Koop item", skin);
+        String[] skinsArray = {"Skin pack", "Minecraft pack"};
+        listStoreItems.setItems((Object) skinsArray);
+        listStoreItems.setPosition(x, y + 200);
+
+        TextButton btnBuy = new TextButton("Koop item", skin);
         btnBuy.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -63,9 +54,9 @@ public class StoreScreen implements Screen {
             }
         });
         btnBuy.setSize(200, 40);
-        btnBuy.setPosition(x-50,y+50);
-        
-         TextButton btnSelect = new TextButton("Selecteer item", skin);
+        btnBuy.setPosition(x - 50, y + 50);
+
+        TextButton btnSelect = new TextButton("Selecteer item", skin);
         btnSelect.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -73,7 +64,7 @@ public class StoreScreen implements Screen {
             }
         });
         btnSelect.setSize(200, 40);
-        btnSelect.setPosition(x+50,y+50);
+        btnSelect.setPosition(x + 50, y + 50);
 
         stage.addActor(btnBack);
         stage.addActor(lblStore);
@@ -81,41 +72,10 @@ public class StoreScreen implements Screen {
     }
 
     @Override
-    public void show() {
-        // Initialize screen here.
-    }
-
-    @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        stage.act(delta);
-        stage.draw();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        // Reset controls of this screen to align with new resolution.
-    }
-
-    @Override
-    public void pause() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void resume() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void hide() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void dispose() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        super.render(delta);
     }
 }

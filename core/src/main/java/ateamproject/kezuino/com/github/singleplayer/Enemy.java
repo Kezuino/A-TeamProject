@@ -63,7 +63,7 @@ public class Enemy extends GameObject {
     }
 
     /**
-     * Will move a Enemy to its spawn and reset some of its properties.
+     * Move an Enemy to its spawn and reset some of its properties.
      */
     public void respawn() {
         setPosition(respawnNode.getX(), respawnNode.getY());
@@ -89,6 +89,8 @@ public class Enemy extends GameObject {
     }
 
     /**
+     * Gets wether this {@link Enemy} is edbile.
+     * 
      * @return True if the enemy is edible at the moment, false if the enemy is not edible.
      */
     public boolean isEdible() {
@@ -96,12 +98,14 @@ public class Enemy extends GameObject {
     }
 
     /**
-     * Sets whether the enemy is edible or not, the enemy is edible if true. The enemy is not edible if false
+     * Sets wether this {@link Enemy} is edible.
+     * This {@link Enemy} is edible if true.
+     * This {@link Enemy} is not edible if false.
      *
      * @param eatable Boolean, cannot be null
      */
-    public void setEdible(boolean eatable) {
-        this.edible = eatable;
+    public void setEdible(boolean edible) {
+        this.edible = edible;
     }
 
     /**

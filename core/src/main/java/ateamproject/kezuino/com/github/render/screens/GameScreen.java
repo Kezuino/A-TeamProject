@@ -9,58 +9,72 @@ import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import ateamproject.kezuino.com.github.singleplayer.Map;
+import ateamproject.kezuino.com.github.singleplayer.Pactale;
 import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import ateamproject.kezuino.com.github.singleplayer.Direction;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.graphics.Color;
 
 /**
  * @author Anton
  */
-public class GameScreen implements Screen {
-    private Game game;
-    private Stage stage;
+public class GameScreen extends BaseScreen {
 
     private GameSession session;
     private IRenderer renderer;
-
-    public GameScreen(Game game){
-        this.game = game;
-        
-        stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
-        
-        //Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
-    }
     
-    @Override
-    public void show() {
-        // Initialize screen here.
+    //TEST CONTROLS
+    private final Pactale player;
+
+    public GameScreen(Game game) {
+        super(game);
         Assets.create();
+
         session = new GameSession();
-        session.setMap(Map.load(session, "maps/level/0.tmx"));
+        session.setMap(Map.load(session, "maps/0.tmx"));
+        
+        //TEST CONTROLS
+        player = new Pactale(session.getMap(), 5, 5, 3, 0.1f, Direction.Down, Color.BLUE);
+        session.getMap().addGameObject(5, 5, this.player);
+        
         renderer = new GameRenderer(session.getMap());
     }
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glViewport(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-        Gdx.gl.glClearColor(1, 1, 1, 1);
+        Gdx.gl.glClearColor(1, 1, 1, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
-        stage.act(delta);
-        stage.draw();
+        //CONTROLS
+        if(Gdx.input.isKeyPressed(Input.Keys.W)) {
+            this.player.moveAdjacent(Direction.Up);
+        }
+        
+        if(Gdx.input.isKeyPressed(Input.Keys.A)) {
+            this.player.moveAdjacent(Direction.Left);
+        }
+        
+        if(Gdx.input.isKeyPressed(Input.Keys.S)) {
+            this.player.moveAdjacent(Direction.Down);
+        }
+
+        if(Gdx.input.isKeyPressed(Input.Keys.D)) {
+            this.player.moveAdjacent(Direction.Right);
+        }
+        
+        if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+            //this.player.shootPortal();
+        }
+        // Render UI controls.
+        super.render(delta);
+
+        // Render game.
         renderer.render();
     }
 
-    @Override
-    public void resize(int width, int height) {
-        // Reset controls of this screen to align with new resolution.
-    }
 
     @Override
     public void pause() {
@@ -74,11 +88,6 @@ public class GameScreen implements Screen {
         // TODO: If singleplayer: unpause the game.
 
         // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
-    }
-
-    @Override
-    public void hide() {
-
     }
 
     @Override

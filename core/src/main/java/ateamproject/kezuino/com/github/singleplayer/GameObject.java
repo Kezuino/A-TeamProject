@@ -220,7 +220,7 @@ public abstract class GameObject {
      *                  {@link Node}).
      */
     public void moveAdjacent(Direction direction) {
-        if (direction == Direction.Up) {
+        if (direction == Direction.Down) {
             if (this.map.getNode(x, y--) != null) {
                 this.y--;
             }
@@ -228,7 +228,7 @@ public abstract class GameObject {
             if (this.map.getNode(x++, y) != null) {
                 this.x++;
             }
-        } else if (direction == Direction.Down) {
+        } else if (direction == Direction.Up) {
             if (this.map.getNode(x, y++) != null) {
                 this.y++;
             }
@@ -237,7 +237,7 @@ public abstract class GameObject {
                 this.x--;
             }
         }
-        throw new UnsupportedOperationException();//no movement inplemented
+        //throw new UnsupportedOperationException();//no movement inplemented
     }
 
     /**

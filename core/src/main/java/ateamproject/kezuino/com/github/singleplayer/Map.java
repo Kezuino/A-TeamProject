@@ -3,10 +3,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.TiledMap;
-import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
-import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
-import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.maps.tiled.*;
 import com.badlogic.gdx.utils.JsonReader;
 import com.badlogic.gdx.utils.JsonValue;
 import javafx.beans.property.MapProperty;
@@ -73,10 +70,7 @@ public class Map {
     public static Map load(GameSession session, String mapPath) {
         if (mapPath == null || mapPath.isEmpty()) throw new IllegalArgumentException();
 
-        TmxMapLoader.Parameters parms = new TmxMapLoader.Parameters();
-        parms.textureMinFilter = Texture.TextureFilter.Nearest;
-        parms.textureMagFilter = Texture.TextureFilter.Nearest;
-        TiledMap tiledMap = new TmxMapLoader().load(mapPath, parms);
+        TiledMap tiledMap = new AtlasTmxMapLoader().load(mapPath);
         MapProperties props = tiledMap.getProperties();
         Map map = new Map(session, props.get("width", Integer.class), props.get("height", Integer.class));
         map.baseMap = tiledMap;
@@ -90,7 +84,6 @@ public class Map {
         }
         
         // TODO: Create GameObjects from the second layer.
-        
 
         return map;
     }
