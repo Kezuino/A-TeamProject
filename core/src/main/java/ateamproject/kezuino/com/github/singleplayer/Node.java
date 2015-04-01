@@ -1,15 +1,19 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import com.badlogic.gdx.ai.pfa.Connection;
+import com.badlogic.gdx.ai.pfa.DefaultConnection;
+import com.badlogic.gdx.ai.pfa.indexed.IndexedNode;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-public class Node extends TiledMapTileLayer.Cell {
+public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
     /**
      * {@link Map} that contains this {@link Node}.
      */
@@ -270,5 +274,27 @@ public class Node extends TiledMapTileLayer.Cell {
             p.getOwner().removePortal();
             portals.remove(p);
         }
+    }
+
+    /**
+     * Gets the index based on the {@link Map#getSize()}.
+     *
+     * @return Index based on the {@link Map#getSize()}.
+     */
+    @Override
+    public int getIndex() {
+        if (map == null) throw new IllegalArgumentException("Map must not be null.");
+        return (getX() * getMap().getWidth()) + getY();
+    }
+
+    @Override
+    public Array<Connection<Node>> getConnections() {
+        Node curNode = getMap().getNode(x, y);
+        Array<Connection<Node>> connections = new Array<>();
+        for (Direction dir : Direction.values()) {
+            Connection<Node> con = new DefaultConnection<>(curNode, getMap().getAdjecentNode(curNode, dir));
+            connections.add(con);
+        }
+        return connections;
     }
 }

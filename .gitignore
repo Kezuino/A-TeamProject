@@ -96,3 +96,9 @@ core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.T
 core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestScore.xml
 core/src/assets/test-results/binary/test/results.bin
 >>>>>>> origin/master
+core/src/assets/reports/tests/js/report.js
+core/src/assets/reports/tests/css/style.css
+core/src/assets/reports/tests/css/base-style.css
+core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.pathfinding.TestAStar.xml
+core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.pathfinding.TestAStar.html
+core/src/assets/reports/tests/packages/ateamproject.kezuino.com.github.pathfinding.html
