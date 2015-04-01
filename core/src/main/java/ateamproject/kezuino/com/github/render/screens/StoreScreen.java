@@ -43,7 +43,7 @@ public class StoreScreen extends BaseScreen {
 
         List listStoreItems = new List(skin);
         String[] skinsArray = {"Skin pack", "Minecraft pack"};
-        listStoreItems.setItems(skinsArray);
+        listStoreItems.setItems((Object) skinsArray);
         listStoreItems.setPosition(x, y + 200);
 
         TextButton btnBuy = new TextButton("Koop item", skin);
