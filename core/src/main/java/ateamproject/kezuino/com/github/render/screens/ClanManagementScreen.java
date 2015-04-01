@@ -19,13 +19,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 /**
  * @author David
  */
-public class ClanManagementScreen implements Screen {
-    private Game game;
-    private Stage stage;
+public class ClanManagementScreen extends BaseScreen {
     
     public ClanManagementScreen(Game game){
-        this.game = game;
-        stage = new Stage();
         Gdx.input.setInputProcessor(stage);
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
@@ -70,44 +66,5 @@ public class ClanManagementScreen implements Screen {
         stage.addActor(btnClanToevoegen);
         stage.addActor(lbClannaam);
         stage.addActor(btnTerug);
-    }
-    
-    @Override
-    public void show() {
-        // Initialize screen here.
-    }
-
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
-        stage.act(delta);
-        stage.draw();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        // Reset controls of this screen to align with new resolution.
-    }
-
-    @Override
-    public void pause() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void resume() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void hide() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void dispose() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
