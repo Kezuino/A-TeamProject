@@ -29,7 +29,7 @@ public abstract class BaseScreen implements Screen {
 
     public BaseScreen(Game game) {
         stage = new Stage();
-        Gdx.input.setInputProcessor(stage);
+        //Gdx.input.setInputProcessor(stage);
         camera = stage.getCamera();
         viewport = new FitViewport(stage.getWidth(), stage.getHeight(), camera);
 
@@ -39,6 +39,8 @@ public abstract class BaseScreen implements Screen {
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
         stage.setViewport(viewport);
+        
+        
     }
 
     @Override

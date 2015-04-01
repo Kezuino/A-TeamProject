@@ -55,8 +55,13 @@ public class GameRenderer implements IRenderer {
         batch.begin();
         for (GameObject obj : map.getAllGameObjects()) {
             Node node = obj.getNode();
-            int x = node.getX();
-            int y = node.getY();
+            int x = 0;
+            int y = 0;
+            
+            if(node != null) {
+                x = node.getX();
+                y = node.getY();
+            }
 
             batch.setColor(obj.getColor());
             batch.draw(Assets.manager.get("characters/pactale.png", Texture.class), x * 32, y * 32);
