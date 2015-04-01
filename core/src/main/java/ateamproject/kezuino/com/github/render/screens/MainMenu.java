@@ -20,14 +20,9 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 /**
  * @author David
  */
-public class mainMenu implements Screen {
+public class MainMenu extends BaseScreen {
 
-    private Game game;
-    private Stage stage;
-
-    public mainMenu(Game game) {
-        this.game = game;
-        stage = new Stage();
+    public MainMenu() {
         Gdx.input.setInputProcessor(stage);
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 
@@ -102,44 +97,5 @@ public class mainMenu implements Screen {
         stage.addActor(tbChangeLook);
         stage.addActor(tbOptions);
         stage.addActor(tbLogout);
-    }
-
-    @Override
-    public void show() {
-        // Initialize screen here.
-    }
-
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        stage.act(delta);
-        stage.draw();
-    }
-
-    @Override
-    public void resize(int width, int height) {
-        // Reset controls of this screen to align with new resolution.
-    }
-
-    @Override
-    public void pause() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void resume() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void hide() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void dispose() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
