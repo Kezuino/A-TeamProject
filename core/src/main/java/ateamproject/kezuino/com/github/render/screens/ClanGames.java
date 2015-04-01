@@ -17,7 +17,7 @@ public class ClanGames extends BaseScreen{
 
     public ClanGames(Game game)
     {
-        super();
+        super(game);
       
         TextButton btnLogin = new TextButton("Press me!", skin);
         btnLogin.addListener(new ClickListener() {

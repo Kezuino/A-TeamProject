@@ -68,9 +68,6 @@ build/
 .nb-gradle/profiles/private/aux-config
 core/src/assets/test-results/binary/test/output.bin.idx
 core/src/assets/test-results/binary/test/output.bin
-core/src/assets/libs/*
-<<<<<<< HEAD
-=======
 core/src/main/java/ateamproject/kezuino/com/github/PactaleGame.java
 core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.singleplayer.TestEnemy.html
 core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.singleplayer.TestGameObject.html
@@ -95,4 +92,4 @@ core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.T
 core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestProjectile.xml
 core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestScore.xml
 core/src/assets/test-results/binary/test/results.bin
->>>>>>> origin/master
+core/src/assets/libs/
