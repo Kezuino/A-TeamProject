@@ -23,6 +23,7 @@ public class Pactale extends GameObject {
     public Pactale(Map map, int x, int y, int lives, float movementSpeed, Direction walkingDirection, Color color) {
         super(map, x, y, movementSpeed, walkingDirection, color);
         this.lives = lives;
+        this.projectiles = new ArrayList<>();
     }
     
     public int getPlayerIndex() {
@@ -45,8 +46,19 @@ public class Pactale extends GameObject {
      * Will shoot a portal in the direction that the {@link Pactale} currently is heading.
      */
     public void shootPortal() {
-        // TODO - implement Pactale.shootPortal
-        throw new UnsupportedOperationException();
+        
+        // it is only possible to shoot 1 projectile at a time
+        if (projectiles.size() == 0) {
+            Projectile p = new Projectile(this.getMap(), this.getX(), getY(), this, this.getMovementSpeed(), this.getDirection(), Color.CLEAR);
+            int i =0;
+            while(!p.hasCollision())
+            {
+                p.moveAdjacent(direction.Right); // Test projecttile direction to right
+                i++;
+                System.out.println("Aantal tiles gelopen: "+i);
+            }
+        
+        }
     }
 
     /**

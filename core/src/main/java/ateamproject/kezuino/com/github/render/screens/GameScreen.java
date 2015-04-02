@@ -65,7 +65,8 @@ public class GameScreen extends BaseScreen {
         }
         
         if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
-            //this.player.shootPortal();
+            this.player.shootPortal();
+            
         }
         
         if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
