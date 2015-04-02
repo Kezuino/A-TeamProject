@@ -1,24 +1,16 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.pathfinding.AStar;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.*;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-import javafx.beans.property.MapProperty;
-import jdk.nashorn.internal.parser.JSONParser;
-import jdk.nashorn.internal.runtime.Source;
 
-import java.io.File;
 import java.util.*;
 
 public class Map {
     /**
      * Handles pathfinding for this {@link Map}.
      */
-    private AStar pathfinding;
+    private AStar pathfinder;
     /**
      * LibGDX 2D {@link TiledMap} for rendering purposes.
      */
@@ -64,7 +56,7 @@ public class Map {
 
         nodes = new Nodes(width, height);
         resetNodes(width, height);
-        pathfinding = new AStar(this);
+        pathfinder = new AStar(this);
     }
 
     /**
@@ -233,7 +225,7 @@ public class Map {
      *
      * @return Pathfinding handler for this {@link Map}.
      */
-    public AStar getPathfinding() {
-        return pathfinding;
+    public AStar getPathfinder() {
+        return pathfinder;
     }
 }

@@ -243,7 +243,7 @@ public abstract class GameObject {
 
     /**
      * Tries to move this {@link GameObject} to another {@link Node} using
-     * {@link Map#getPathfinding()} based on the {@link #movementSpeed}.
+     * {@link Map#getPathfinder()} based on the {@link #movementSpeed}.
      *
      * @param targetNode {@link Node} to move towards.
      * @see #moveAdjacent(Direction)
