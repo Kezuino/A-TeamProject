@@ -42,7 +42,6 @@ public class GameRenderer implements IRenderer {
         tileMapRenderer.render();
 
         // Render objects.
-        batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         for (GameObject obj : map.getAllGameObjects()) {

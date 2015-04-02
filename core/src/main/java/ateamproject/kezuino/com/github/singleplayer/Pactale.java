@@ -52,18 +52,20 @@ public class Pactale extends GameObject {
      */
     public void shootPortal() {
         Projectile p = new Projectile(this.getMap(), this.getX(), getY(), this, this.getMovementSpeed(), this.getDirection(), Color.CLEAR);
-        int i = 0;
-        while (!p.hasCollision()) {
-            p.moveAdjacent(direction);
-            System.out.println("Aantal tiles gelopen: " + ++i);
-        }
+        p.moveAdjacent(p.getDirection(), true);
+        // TEST:
+//        int i = 0;
+//        while (!p.hasCollision()) {
+//            p.moveAdjacent(direction);
+//            System.out.println("Aantal tiles gelopen: " + ++i);
+//        }
     }
 
     /**
      * Will remove all listed portals from this {@link Pactale}.
      */
     public void removePortal() {
-        // TODO - implement Pactale.removePortal
-        throw new UnsupportedOperationException();
+        portal.getNode().removePortal(portal.getDirection());
+        portal = null;
     }
 }
