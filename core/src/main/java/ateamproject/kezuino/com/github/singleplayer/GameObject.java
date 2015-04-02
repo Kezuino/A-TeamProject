@@ -1,9 +1,13 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.net.ServerSocketHints;
+import com.badlogic.gdx.net.SocketHints;
 
 public abstract class GameObject {
 
@@ -57,6 +61,10 @@ public abstract class GameObject {
      */
     private float movementSpeed;
     /**
+     * If true, {@link #moveAdjacent(Direction)} has moved past the current {@link Node} and is now moving on the next {@link Node}.
+     */
+    private boolean isMovingOnNextNode;
+    /**
      * {@link com.badlogic.gdx.graphics.Color} at that will be used to draw this
      * {@link GameObject}.
      */
@@ -84,10 +92,11 @@ public abstract class GameObject {
         this.movementSpeed = movementSpeed;
         this.direction = direction;
         this.color = color;
-        this.movementInterpolation = false;
+        this.movementInterpolation = true;
         this.drawOffsetX = .5f;
         this.drawOffsetY = .5f;
     }
+
     /**
      * Initializes this {@link GameObject} with a default {@code Color.WHITE}
      * color.
@@ -102,6 +111,10 @@ public abstract class GameObject {
      */
     public GameObject(Map map, int x, int y, float movementSpeed, Direction direction) {
         this(map, x, y, movementSpeed, direction, Color.WHITE);
+    }
+
+    public boolean isMoving() {
+        return isMoving;
     }
 
     /**
@@ -354,32 +367,67 @@ public abstract class GameObject {
      * Draws this {@link GameObject} inside the {@link Map}.
      */
     public void draw(SpriteBatch batch) {
+        // Capture node and texture.
         Node node = getNode();
         if (node == null || texture == null) return;
         int x = 0;
         int y = 0;
 
-        if(node != null) {
+        if (node != null) {
             x = node.getX();
             y = node.getY();
         } else {
             System.out.printf("Node is null: %s%n", toString());
         }
 
+        // Preprocess batch.
         batch.setColor(getColor());
 
-        TextureRegion region = new TextureRegion(texture, 0, 0, 28, 32);
+        // TODO: Animate from sprite region.
+        TextureRegion region = new TextureRegion(texture, 0, 0, 26, 32);
+
+        // Set draw offset when moving.
+        if (movementInterpolation && isMoving) {
+
+            if (drawOffsetX <= 0 || drawOffsetX >= 1 || drawOffsetY <= 0 || drawOffsetY >= 1) {
+                // GameObject is now drawn at the very edge.. move to next node.
+                isMovingOnNextNode = true;
+                this.x += direction.getX();
+                this.y += direction.getY();
+                this.drawOffsetX = Math.abs(this.drawOffsetX + direction.getX());
+                this.drawOffsetY = Math.abs(this.drawOffsetY + direction.getY());
+            } else {
+                if (isMovingOnNextNode) {
+                    // Keep updating the drawOffset for interpolation in reverse (because we are on the other node).
+                    drawOffsetX -= direction.getX() * movementSpeed * Gdx.graphics.getDeltaTime();
+                    drawOffsetY -= direction.getY() * movementSpeed * Gdx.graphics.getDeltaTime();
+
+                    // Check if we are at the center of the new node. We should stop then.
+                    if (Math.abs(drawOffsetX - .5) < .005  && Math.abs(drawOffsetY - .5) < .005) {
+                        isMoving = false;
+                        isMovingOnNextNode = false;
+                        drawOffsetX = .5f;
+                        drawOffsetY = .5f;
+                    }
+                } else {
+                    // Keep updating the drawOffset for interpolation.
+                    drawOffsetX += -direction.getX() * movementSpeed * Gdx.graphics.getDeltaTime();
+                    drawOffsetY += -direction.getY() * movementSpeed * Gdx.graphics.getDeltaTime();
+                }
+            }
+
+            System.out.println(drawOffsetX + " - " + drawOffsetY);
+        }
 
         // Draw centered in node.
         float xOffset;
         float yOffset;
         if (movementInterpolation) {
-            // TODO: Add x and y draw offset for movement interpolation.
-            xOffset = (32 - region.getRegionWidth()) / 2;
-            yOffset = (32 - region.getRegionHeight()) / 2;
+            xOffset = (32 - region.getRegionWidth()) / 2f + (16 - 32 * drawOffsetX);
+            yOffset = (32 - region.getRegionHeight()) / 2f + (16 - 32 * drawOffsetY);
         } else {
-            xOffset = (32 - region.getRegionWidth()) / 2;
-            yOffset = (32 - region.getRegionHeight()) / 2;
+            xOffset = (32 - region.getRegionWidth()) / 2f;
+            yOffset = (32 - region.getRegionHeight()) / 2f;
         }
         batch.draw(region, x * 32 + xOffset, y * 32 + yOffset);
     }
