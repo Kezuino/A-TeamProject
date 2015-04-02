@@ -287,12 +287,23 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
         return (getX() * getMap().getWidth()) + getY();
     }
 
+    /**
+     * Returns all the adjacent connections to this {@link Node}.
+     *
+     * @return All the adjacent connections to this {@link Node}.
+     */
     @Override
     public Array<Connection<Node>> getConnections() {
         Node curNode = getMap().getNode(x, y);
         Array<Connection<Node>> connections = new Array<>();
+
         for (Direction dir : Direction.values()) {
-            Connection<Node> con = new DefaultConnection<>(curNode, getMap().getAdjecentNode(curNode, dir));
+            // Get adjacent node if not null.
+            Node adjacentNode = getMap().getAdjecentNode(curNode, dir);
+            if (adjacentNode == null) continue;
+
+            // Add adjacent node to connections.
+            Connection<Node> con = new DefaultConnection<>(curNode, adjacentNode);
             connections.add(con);
         }
         return connections;
