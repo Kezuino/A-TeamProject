@@ -10,7 +10,20 @@ public abstract class GameObject {
      * ignores interlopation and just waits based on the {link #movementSpeed}
      * until it can {@link #move(Node)} again.
      */
-    private boolean movementInterpolation;
+    protected boolean movementInterpolation;
+    /**
+     * {@link Direction} that this {@link GameObject} is currently facing
+     * towards.
+     */
+    protected Direction direction;
+    /**
+     * Offset in the X dimension to draw this {@link GameObject} from where 0 is the most left spot and 1 is the most right spot.
+     */
+    protected float drawOffsetX;
+    /**
+     * Offset in the Y dimension to draw this {@link GameObject} from where 0 is the most bottom spot and 1 is the most top spot.
+     */
+    protected float drawOffsetY;
     /**
      * {@link Map} that contains this {@link GameObject}.
      */
@@ -33,11 +46,6 @@ public abstract class GameObject {
      * {@link GameObject}.
      */
     private Color color;
-    /**
-     * {@link Direction} that this {@link GameObject} is currently facing
-     * towards.
-     */
-    protected Direction direction;
 
     /**
      * Initializes this {@link GameObject}.
@@ -82,14 +90,37 @@ public abstract class GameObject {
         this(map, x, y, movementSpeed, direction, Color.WHITE);
     }
 
+    public float getDrawOffsetX() {
+        return drawOffsetX;
+    }
+
+    public float getDrawOffsetY() {
+        return drawOffsetY;
+    }
+
+    /**
+     * Gets the X dimension that this {@link GameObject} is on.
+     *
+     * @return X dimension that this {@link GameObject} is on.
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Gets the Y dimension that this {@link GameObject} is on.
+     *
+     * @return Y dimension that this {@link GameObject} is on.
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * Gets the {@link Map} that hosts this {@link GameObject}.
+     *
+     * @return {@link Map} that hosts this {@link GameObject}.
+     */
     public Map getMap() {
         return map;
     }
@@ -220,25 +251,16 @@ public abstract class GameObject {
      *                  {@link Node}).
      */
     public void moveAdjacent(Direction direction) {
-        if (direction == Direction.Down) {
-            if (this.map.getNode(x, y-1) != null) {
-                this.y--;
-            }
-        } else if (direction == Direction.Right) {
-            if (this.map.getNode(x+1, y) != null) {
-                this.x++;
-            }
-        } else if (direction == Direction.Up) {
-            if (this.map.getNode(x, y+1) != null) {
-                this.y++;
-            }
-        } else if (direction == Direction.Left) {
-            if (this.map.getNode(x-1, y) != null) {
-                this.x--;
-            }
+        this.direction = direction;
+
+        if (movementInterpolation) {
+            
+        } else {
+            // The enum Direction contains information about which offset x and y is should return based on the value of the enum.
+            // Change this value if Y are inverted.. do not change this code.
+            this.x += direction.getX();
+            this.y += direction.getY();
         }
-        
-        System.out.println(y);
     }
 
     /**
