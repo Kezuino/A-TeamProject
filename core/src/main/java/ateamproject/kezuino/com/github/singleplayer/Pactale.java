@@ -1,6 +1,10 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.*;
 
@@ -13,7 +17,8 @@ public class Pactale extends GameObject {
 
     /**
      * Initialize a {@link Pactale}.
-     *  @param x                position of this {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see Map.
+     *
+     * @param x                position of this {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see Map.
      * @param y                position of this {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see Map.
      * @param lives            Times that the {@link ateamproject.kezuino.com.github.singleplayer.Pactale} can be hit. Defaults to 1 for a multiplayer session.
      * @param movementSpeed    Amount of seconds that it will take to move to another node.
@@ -25,7 +30,7 @@ public class Pactale extends GameObject {
         this.lives = lives;
         this.projectiles = new ArrayList<>();
     }
-    
+
     public int getPlayerIndex() {
         return this.playerIndex;
     }
@@ -46,18 +51,11 @@ public class Pactale extends GameObject {
      * Will shoot a portal in the direction that the {@link Pactale} currently is heading.
      */
     public void shootPortal() {
-        
-        // it is only possible to shoot 1 projectile at a time
-        if (projectiles.size() == 0) {
-            Projectile p = new Projectile(this.getMap(), this.getX(), getY(), this, this.getMovementSpeed(), this.getDirection(), Color.CLEAR);
-            int i =0;
-            while(!p.hasCollision())
-            {
-                p.moveAdjacent(direction.Right); // Test projecttile direction to right
-                i++;
-                System.out.println("Aantal tiles gelopen: "+i);
-            }
-        
+        Projectile p = new Projectile(this.getMap(), this.getX(), getY(), this, this.getMovementSpeed(), this.getDirection(), Color.CLEAR);
+        int i = 0;
+        while (!p.hasCollision()) {
+            p.moveAdjacent(direction);
+            System.out.println("Aantal tiles gelopen: " + ++i);
         }
     }
 

@@ -1,7 +1,9 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public abstract class GameObject {
 
@@ -34,6 +36,10 @@ public abstract class GameObject {
      */
     protected float movementStartTime;
     /**
+     * {@link Texture} of this {@link GameObject} for drawing.
+     */
+    protected Texture texture;
+    /**
      * {@link Map} that contains this {@link GameObject}.
      */
     private Map map;
@@ -55,7 +61,6 @@ public abstract class GameObject {
      * {@link GameObject}.
      */
     private Color color;
-
     /**
      * Initializes this {@link GameObject}.
      *
@@ -83,7 +88,6 @@ public abstract class GameObject {
         this.drawOffsetX = .5f;
         this.drawOffsetY = .5f;
     }
-
     /**
      * Initializes this {@link GameObject} with a default {@code Color.WHITE}
      * color.
@@ -98,6 +102,20 @@ public abstract class GameObject {
      */
     public GameObject(Map map, int x, int y, float movementSpeed, Direction direction) {
         this(map, x, y, movementSpeed, direction, Color.WHITE);
+    }
+
+    /**
+     * Gets the {@link Texture} of this {@link GameObject} for drawing.
+     */
+    public Texture getTexture() {
+        return texture;
+    }
+
+    /**
+     * Sets the {@link Texture} of this {@link GameObject} for drawing.
+     */
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 
     public float getDrawOffsetX() {
@@ -155,6 +173,17 @@ public abstract class GameObject {
         return this.movementSpeed;
     }
 
+    /**
+     * Sets the speed in seconds that it takes for this {@link GameObject} to
+     * move to another adjacent {@link Node}.
+     *
+     * @param movementSpeed Speed in seconds that it takes for this
+     *                      {@link GameObject} to move to another adjacent {@link Node}.
+     */
+    public void setMovementSpeed(float movementSpeed) {
+        this.movementSpeed = movementSpeed;
+    }
+
     @Override
     public String toString() {
         return "GameObject{" +
@@ -166,17 +195,6 @@ public abstract class GameObject {
                 ", drawOffsetX=" + drawOffsetX +
                 ", drawOffsetY=" + drawOffsetY +
                 '}';
-    }
-
-    /**
-     * Sets the speed in seconds that it takes for this {@link GameObject} to
-     * move to another adjacent {@link Node}.
-     *
-     * @param movementSpeed Speed in seconds that it takes for this
-     *                      {@link GameObject} to move to another adjacent {@link Node}.
-     */
-    public void setMovementSpeed(float movementSpeed) {
-        this.movementSpeed = movementSpeed;
     }
 
     /**
@@ -270,6 +288,38 @@ public abstract class GameObject {
      * immediately and wait until it can move again based on
      * {@link #movementSpeed}.
      *
+     * @param direction  {@link Direction} to move in (to an adjacent
+     *                   {@link Node}).
+     * @param continuous If true, movement will keep going until a collision has been met.
+     */
+    public void moveAdjacent(Direction direction, boolean continuous) {
+        this.direction = direction;
+        Node targetNode = getMap().getAdjecentNode(getNode(), direction);
+        if (targetNode == null || targetNode.isWall()) return;
+
+        if (movementInterpolation) {
+            if (!isMoving) {
+                isMoving = true;
+                drawOffsetX = .5f;
+                drawOffsetY = .5f;
+                movementStartTime = System.nanoTime();
+            }
+        } else {
+            // The enum Direction contains information about which offset x and y is should return based on the value of the enum.
+            // Change this value if Y are inverted.. do not change this code.
+            this.x += direction.getX();
+            this.y += direction.getY();
+        }
+    }
+
+    /**
+     * Moves this {@link GameObject} to another adjacent {@link Node} based on
+     * the given {@code direction}. If {@link #movementInterpolation} is true,
+     * this movement should be pixel-perfectly smooth between the nodes. If
+     * {@link #movementInterpolation} is false, this movement should move
+     * immediately and wait until it can move again based on
+     * {@link #movementSpeed}.
+     *
      * @param direction {@link Direction} to move in (to an adjacent
      *                  {@link Node}).
      */
@@ -291,6 +341,47 @@ public abstract class GameObject {
             this.x += direction.getX();
             this.y += direction.getY();
         }
+    }
+
+    /**
+     * Updates this {@link GameObject}.
+     */
+    public void update() {
+
+    }
+
+    /**
+     * Draws this {@link GameObject} inside the {@link Map}.
+     */
+    public void draw(SpriteBatch batch) {
+        Node node = getNode();
+        if (node == null || texture == null) return;
+        int x = 0;
+        int y = 0;
+
+        if(node != null) {
+            x = node.getX();
+            y = node.getY();
+        } else {
+            System.out.printf("Node is null: %s%n", toString());
+        }
+
+        batch.setColor(getColor());
+
+        TextureRegion region = new TextureRegion(texture, 0, 0, 28, 32);
+
+        // Draw centered in node.
+        float xOffset;
+        float yOffset;
+        if (movementInterpolation) {
+            // TODO: Add x and y draw offset for movement interpolation.
+            xOffset = (32 - region.getRegionWidth()) / 2;
+            yOffset = (32 - region.getRegionHeight()) / 2;
+        } else {
+            xOffset = (32 - region.getRegionWidth()) / 2;
+            yOffset = (32 - region.getRegionHeight()) / 2;
+        }
+        batch.draw(region, x * 32 + xOffset, y * 32 + yOffset);
     }
 
     /**

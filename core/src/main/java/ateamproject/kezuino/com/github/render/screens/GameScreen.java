@@ -15,6 +15,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import ateamproject.kezuino.com.github.singleplayer.Direction;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 
 /**
  * @author Anton
@@ -34,6 +35,7 @@ public class GameScreen extends BaseScreen {
         session.setMap(Map.load(session, "maps/0.tmx"));
 
         player = new Pactale(session.getMap(), 5, 5, 3, 0.1f, Direction.Down, Color.BLUE);
+        player.setTexture(Assets.get("characters/pactale.png", Texture.class));
         session.getMap().addGameObject(5, 5, this.player);
         
         renderer = new GameRenderer(session.getMap());
