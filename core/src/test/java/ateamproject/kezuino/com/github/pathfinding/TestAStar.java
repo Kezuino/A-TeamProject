@@ -5,8 +5,8 @@ import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.singleplayer.Node;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
+import static org.junit.Assert.*;
 
 public class TestAStar {
 
@@ -18,6 +18,7 @@ public class TestAStar {
     public void setUp() throws Exception {
         session = new GameSession();
         map = new Map(session, 20);
+        map.getNode(3, 10).setWall(true);
         aStar = new AStar(map);
     }
 
@@ -28,8 +29,10 @@ public class TestAStar {
         GraphPath<Node> result = new DefaultGraphPath<>();
         aStar.searchNodePath(node, endNode, (node1, endNode1) -> 0, result);
 
+        // All nodes in the path must be valid.
         for (Node n : result) {
-            System.out.println(n);
+            assertNotNull("Node must not be null.", n);
+            assertFalse("Node must not be a wall.", n.isWall());
         }
     }
 }
