@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -26,21 +27,27 @@ public abstract class BaseScreen implements Screen {
     protected Stage stage;
 
     protected Skin skin;
+    protected InputMultiplexer inputs;
 
     public BaseScreen(Game game) {
+        // Bootstrap screen.
+        inputs = new InputMultiplexer();
         stage = new Stage();
-        //Gdx.input.setInputProcessor(stage);
-        camera = stage.getCamera();
-        viewport = new FitViewport(stage.getWidth(), stage.getHeight(), camera);
 
+        // Bootstrap game objects.
         this.game = game;
 
-        Gdx.input.setInputProcessor(stage);
+        // Bootstrap skin.
         skin = new Skin(Gdx.files.internal("uiskin.json"));
 
+        // Bootstrap input.
+        inputs.addProcessor(stage);
+        Gdx.input.setInputProcessor(inputs);
+
+        // Bootstrap view.
+        camera = stage.getCamera();
+        viewport = new FitViewport(stage.getWidth(), stage.getHeight(), camera);
         stage.setViewport(viewport);
-        
-        
     }
 
     @Override

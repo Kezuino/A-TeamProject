@@ -54,14 +54,20 @@ public class GameRenderer implements IRenderer {
             if(node != null) {
                 x = node.getX();
                 y = node.getY();
+            } else {
+                System.out.printf("Node is null: %s%n", obj);
             }
 
             batch.setColor(obj.getColor());
             
             Texture texture = Assets.manager.get("characters/pactale.png", Texture.class);
-            TextureRegion region = new TextureRegion(texture, 0, 0, 28, 28);
-            
-            batch.draw(region, x * 32, y * 32);
+            TextureRegion region = new TextureRegion(texture, 0, 0, 28, 32);
+
+            // Draw centered in node.
+            // TODO: Add x and y draw offset for movement interpolation.
+            float xOffset = (32 - region.getRegionWidth()) / 2;
+            float yOffset = (32 - region.getRegionHeight()) / 2;
+            batch.draw(region, x * 32 + xOffset, y * 32 + yOffset);
         }
         batch.end();
     }

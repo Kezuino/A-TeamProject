@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 
 public abstract class GameObject {
@@ -24,6 +25,14 @@ public abstract class GameObject {
      * Offset in the Y dimension to draw this {@link GameObject} from where 0 is the most bottom spot and 1 is the most top spot.
      */
     protected float drawOffsetY;
+    /**
+     * If true, this {@link GameObject} is currently transitioning between {@link Node nodes}.
+     */
+    protected boolean isMoving;
+    /**
+     * Gametime when this {@link GameObject} started transitioning from another {@link Node}.
+     */
+    protected float movementStartTime;
     /**
      * {@link Map} that contains this {@link GameObject}.
      */
@@ -71,7 +80,8 @@ public abstract class GameObject {
         this.direction = direction;
         this.color = color;
         this.movementInterpolation = false;
-
+        this.drawOffsetX = .5f;
+        this.drawOffsetY = .5f;
     }
 
     /**
@@ -143,6 +153,19 @@ public abstract class GameObject {
      */
     public float getMovementSpeed() {
         return this.movementSpeed;
+    }
+
+    @Override
+    public String toString() {
+        return "GameObject{" +
+                "x=" + x +
+                ", y=" + y +
+                ", movementSpeed=" + movementSpeed +
+                ", color=" + color +
+                ", direction=" + direction +
+                ", drawOffsetX=" + drawOffsetX +
+                ", drawOffsetY=" + drawOffsetY +
+                '}';
     }
 
     /**
@@ -254,7 +277,33 @@ public abstract class GameObject {
         this.direction = direction;
 
         if (movementInterpolation) {
-            
+            if (!isMoving) {
+                isMoving = true;
+                drawOffsetX = .5f;
+                drawOffsetY = .5f;
+                movementStartTime = System.nanoTime();
+            }
+
+            float drawOffsetSpeed = movementSpeed * Gdx.graphics.getDeltaTime();
+            switch (direction) {
+                case Up:
+                    drawOffsetY += drawOffsetSpeed;
+                    break;
+                case Down:
+                    drawOffsetY -= drawOffsetSpeed;
+                    break;
+                case Left:
+                    drawOffsetX -= drawOffsetSpeed;
+                    break;
+                case Right:
+                    drawOffsetX += drawOffsetSpeed;
+                    break;
+            }
+
+            // If one offset has reached it's max..
+            if (drawOffsetX <= 0 || drawOffsetX >= 1 || drawOffsetY <= 0 || drawOffsetY >= 0) {
+                isMoving = false;
+            }
         } else {
             // The enum Direction contains information about which offset x and y is should return based on the value of the enum.
             // Change this value if Y are inverted.. do not change this code.
