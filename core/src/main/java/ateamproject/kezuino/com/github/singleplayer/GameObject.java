@@ -1,13 +1,10 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.net.ServerSocketHints;
-import com.badlogic.gdx.net.SocketHints;
 
 public abstract class GameObject {
 
@@ -69,6 +66,7 @@ public abstract class GameObject {
      * {@link GameObject}.
      */
     private Color color;
+
     /**
      * Initializes this {@link GameObject}.
      *
@@ -129,14 +127,6 @@ public abstract class GameObject {
      */
     public void setTexture(Texture texture) {
         this.texture = texture;
-    }
-
-    public float getDrawOffsetX() {
-        return drawOffsetX;
-    }
-
-    public float getDrawOffsetY() {
-        return drawOffsetY;
     }
 
     /**
@@ -349,8 +339,8 @@ public abstract class GameObject {
                 movementStartTime = System.nanoTime();
             }
         } else {
-            // The enum Direction contains information about which offset x and y is should return based on the value of the enum.
-            // Change this value if Y are inverted.. do not change this code.
+            // The enum Direction contains information about which offset x and y should return based on the value set in the enum.
+            // Change this value if X or Y are inverted.. do not change this code.
             this.x += direction.getX();
             this.y += direction.getY();
         }
@@ -388,47 +378,26 @@ public abstract class GameObject {
 
         // Set draw offset when moving.
         if (movementInterpolation && isMoving) {
+            // Calculate the amount of offset.
+            float secondsFromStart = (System.nanoTime() - movementStartTime) / 1000000000.0f;
 
-            if (drawOffsetX <= 0 || drawOffsetX >= 1 || drawOffsetY <= 0 || drawOffsetY >= 1) {
-                // GameObject is now drawn at the very edge.. move to next node.
-                isMovingOnNextNode = true;
+            drawOffsetX = direction.getX() * (secondsFromStart * (1 / movementSpeed)) + .5f;
+            drawOffsetY = direction.getY() * (secondsFromStart * (1 / movementSpeed)) + .5f;
+            if (secondsFromStart >= movementSpeed) {
+                isMoving = false;
+                isMovingOnNextNode = false;
+                drawOffsetX = .5f;
+                drawOffsetY = .5f;
                 this.x += direction.getX();
                 this.y += direction.getY();
-                this.drawOffsetX = Math.abs(this.drawOffsetX + direction.getX());
-                this.drawOffsetY = Math.abs(this.drawOffsetY + direction.getY());
-            } else {
-                if (isMovingOnNextNode) {
-                    // Keep updating the drawOffset for interpolation in reverse (because we are on the other node).
-                    drawOffsetX -= direction.getX() * movementSpeed * Gdx.graphics.getDeltaTime();
-                    drawOffsetY -= direction.getY() * movementSpeed * Gdx.graphics.getDeltaTime();
-
-                    // Check if we are at the center of the new node. We should stop then.
-                    if (Math.abs(drawOffsetX - .5) < .005  && Math.abs(drawOffsetY - .5) < .005) {
-                        isMoving = false;
-                        isMovingOnNextNode = false;
-                        drawOffsetX = .5f;
-                        drawOffsetY = .5f;
-                    }
-                } else {
-                    // Keep updating the drawOffset for interpolation.
-                    drawOffsetX += -direction.getX() * movementSpeed * Gdx.graphics.getDeltaTime();
-                    drawOffsetY += -direction.getY() * movementSpeed * Gdx.graphics.getDeltaTime();
-                }
             }
+            System.out.println(secondsFromStart);
 
-            System.out.println(drawOffsetX + " - " + drawOffsetY);
         }
 
         // Draw centered in node.
-        float xOffset;
-        float yOffset;
-        if (movementInterpolation) {
-            xOffset = (32 - region.getRegionWidth()) / 2f + (16 - 32 * drawOffsetX);
-            yOffset = (32 - region.getRegionHeight()) / 2f + (16 - 32 * drawOffsetY);
-        } else {
-            xOffset = (32 - region.getRegionWidth()) / 2f;
-            yOffset = (32 - region.getRegionHeight()) / 2f;
-        }
+        float xOffset = (32 - region.getRegionWidth()) / 2f - (16 - 32 * drawOffsetX);
+        float yOffset = (32 - region.getRegionHeight()) / 2f - (16 - 32 * drawOffsetY);
         batch.draw(region, x * 32 + xOffset, y * 32 + yOffset);
     }
 
