@@ -239,17 +239,16 @@ public abstract class GameObject {
         }
         
         System.out.println(y);
-        //throw new UnsupportedOperationException();//no movement inplemented
     }
 
     /**
      * Tries to move this {@link GameObject} to another {@link Node} using
-     * pathfinding based on the {@link #movementSpeed}.
+     * {@link Map#getPathfinding()} based on the {@link #movementSpeed}.
      *
-     * @param node {@link Node} to move towards.
+     * @param targetNode {@link Node} to move towards.
      * @see #moveAdjacent(Direction)
      */
-    public void move(Node node) {
+    public void move(Node targetNode) {
         throw new UnsupportedOperationException();//no movement inplemented
     }
 }

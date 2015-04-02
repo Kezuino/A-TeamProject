@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.pathfinding.AStar;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapProperties;
@@ -14,6 +15,10 @@ import java.io.File;
 import java.util.*;
 
 public class Map {
+    /**
+     * Handles pathfinding for this {@link Map}.
+     */
+    private AStar pathfinding;
     /**
      * LibGDX 2D {@link TiledMap} for rendering purposes.
      */
@@ -34,6 +39,7 @@ public class Map {
      * {@link GameSession} that hosts the {@link Map} and allows multiplayer.
      */
     private GameSession gameSession;
+
     /**
      * Initializes a map with a 2D array filled with {@link Node nodes}.
      *
@@ -58,6 +64,7 @@ public class Map {
 
         nodes = new Nodes(width, height);
         resetNodes(width, height);
+        pathfinding = new AStar(this);
     }
 
     /**
@@ -82,7 +89,7 @@ public class Map {
                 node.setTileId(layer.getCell(x, y).getTile().getId());
             }
         }
-        
+
         // TODO: Create GameObjects from the second layer.
 
         return map;
@@ -219,5 +226,14 @@ public class Map {
      */
     public Nodes getNodes() {
         return nodes;
+    }
+
+    /**
+     * Gets the pathfinding handler for this {@link Map}.
+     *
+     * @return Pathfinding handler for this {@link Map}.
+     */
+    public AStar getPathfinding() {
+        return pathfinding;
     }
 }
