@@ -275,6 +275,8 @@ public abstract class GameObject {
      */
     public void moveAdjacent(Direction direction) {
         this.direction = direction;
+        Node targetNode = getMap().getAdjecentNode(getNode(), direction);
+        if (targetNode == null || targetNode.isWall()) return;
 
         if (movementInterpolation) {
             if (!isMoving) {
@@ -282,27 +284,6 @@ public abstract class GameObject {
                 drawOffsetX = .5f;
                 drawOffsetY = .5f;
                 movementStartTime = System.nanoTime();
-            }
-
-            float drawOffsetSpeed = movementSpeed * Gdx.graphics.getDeltaTime();
-            switch (direction) {
-                case Up:
-                    drawOffsetY += drawOffsetSpeed;
-                    break;
-                case Down:
-                    drawOffsetY -= drawOffsetSpeed;
-                    break;
-                case Left:
-                    drawOffsetX -= drawOffsetSpeed;
-                    break;
-                case Right:
-                    drawOffsetX += drawOffsetSpeed;
-                    break;
-            }
-
-            // If one offset has reached it's max..
-            if (drawOffsetX <= 0 || drawOffsetX >= 1 || drawOffsetY <= 0 || drawOffsetY >= 0) {
-                isMoving = false;
             }
         } else {
             // The enum Direction contains information about which offset x and y is should return based on the value of the enum.

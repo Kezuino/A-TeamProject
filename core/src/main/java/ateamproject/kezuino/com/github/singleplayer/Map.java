@@ -184,18 +184,7 @@ public class Map {
     public Node getAdjecentNode(Node node, Direction direction) {
         if (node == null) throw new NullPointerException("Parameter node must not be null.");
         if (direction == null) throw new NullPointerException("Parameter direction must not be null.");
-        switch (direction) {
-            case Up:
-                return getNode(node.getX(), node.getY() - 1);
-            case Down:
-                return getNode(node.getX(), node.getY() + 1);
-            case Left:
-                return getNode(node.getX() - 1, node.getY());
-            case Right:
-                return getNode(node.getX() + 1, node.getY());
-            default:
-                return null;
-        }
+        return getNode(node.getX() + direction.getX(), node.getY() + direction.getY());
     }
 
     /**

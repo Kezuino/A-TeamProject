@@ -18,7 +18,6 @@ public class GameRenderer implements IRenderer {
     private Map map;
     private MapRenderer tileMapRenderer;
     private Camera camera;
-    private TiledMap tiledMap;
 
     public GameRenderer(Map map) {
         batch = new SpriteBatch();
