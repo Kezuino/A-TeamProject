@@ -41,7 +41,7 @@ public class MainScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 sound.dispose();
-                game.setScreen(new ClanGamesScreen(game));
+                game.setScreen(new ClanGames(game));
             }
         });
 

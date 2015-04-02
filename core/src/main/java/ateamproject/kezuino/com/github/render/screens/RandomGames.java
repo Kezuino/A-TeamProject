@@ -14,9 +14,9 @@ import javafx.scene.paint.Color;
 /**
  * @author David
  */
-public class ClanGames extends BaseScreen{
+public class RandomGames extends BaseScreen{
 
-    public ClanGames(Game game)
+    public RandomGames(Game game)
     {
         super(game);
     
@@ -31,16 +31,16 @@ public class ClanGames extends BaseScreen{
             table.row();
         }
         
-        TextButton btnBack = new TextButton("< Back", skin);
-         btnBack.addListener(new ClickListener() {
+        TextButton btnLogin = new TextButton("Press me!", skin);
+         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new GameScreen(game));
             }
         });
-        btnBack.setSize(300, 400);
+        btnLogin.setSize(300, 400);
         
-        table.add(btnBack).colspan(2);
+        table.add(btnLogin).colspan(2);
         
         
         table.setPosition(stage.getWidth()/2, stage.getHeight()/2);
@@ -49,36 +49,10 @@ public class ClanGames extends BaseScreen{
         stage.addActor(table);
 
     }
-    
-    @Override
-    public void show() {
-        // Initialize screen here.
-    }
-
 
     @Override
     public void resize(int width, int height) {
         // Reset controls of this screen to align with new resolution.
         viewport.update(width, height);
-    }
-
-    @Override
-    public void pause() {
-        ///throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void resume() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void hide() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void dispose() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }
