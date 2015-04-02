@@ -46,16 +46,16 @@ public class GameScreen extends BaseScreen {
             public boolean keyDown(int keycode) {
                 switch (keycode) {
                     case Input.Keys.W:
-                        player.moveAdjacent(Direction.Up);
+                        player.moveAdjacent(Direction.Up, true);
                         break;
                     case Input.Keys.S:
-                        player.moveAdjacent(Direction.Down);
+                        player.moveAdjacent(Direction.Down, true);
                         break;
                     case Input.Keys.A:
-                        player.moveAdjacent(Direction.Left);
+                        player.moveAdjacent(Direction.Left, true);
                         break;
                     case Input.Keys.D:
-                        player.moveAdjacent(Direction.Right);
+                        player.moveAdjacent(Direction.Right, true);
                         break;
                     case Input.Keys.SPACE:
                         player.shootPortal();
