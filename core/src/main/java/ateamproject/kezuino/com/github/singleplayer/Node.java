@@ -41,6 +41,11 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
     private int y;
 
     /**
+     * If true, this {@link Node} is a wall (no matter what).
+     */
+    private boolean isForcedWall;
+
+    /**
      * Initializes a {@link Node} in the given {@link Map} at the specific position.
      *
      * @param map that contains the {@link Node}.
@@ -162,9 +167,26 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
      * @return True if this {@link Node} is a wall.
      */
     public boolean isWall() {
+        if (isForcedWall) return true;
         return Boolean.valueOf(getProperty("isWall"));
     }
 
+    /**
+     * Force sets this {@link Node} to a wall.
+     *
+     * @param value If true, this {@link Node} is a wall.
+     */
+    public void setWall(boolean value) {
+        isForcedWall = value;
+    }
+
+    /**
+     * Gets the value of the custom property set in the Tiled program based on the {@link #tileId}.
+     * Returns null if the property was not found of the {@link #tileId}.
+     *
+     * @param name Property name of the custom property set in the Tiled program based on {@link #tileId}.
+     * @return The value of the custom property or null if no property with the {@code name} was found.
+     */
     public String getProperty(String name) {
         if (map == null) return null;
         TiledMap baseMap = map.getBaseMap();
@@ -197,6 +219,7 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
                 "x=" + x +
                 ", y=" + y +
                 ", item=" + item +
+                ", wall=" + isWall() +
                 '}';
     }
 
@@ -288,9 +311,9 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
     }
 
     /**
-     * Returns all the adjacent connections to this {@link Node}.
+     * Returns all the adjacent connections to this {@link Node}. Connections should be valid "able-to-move-to" {@link Node nodes} for a {@link GameObject}.
      *
-     * @return All the adjacent connections to this {@link Node}.
+     * @return All the adjacent connections to this {@link Node}. Connections should be valid "able-to-move-to" {@link Node nodes} for a {@link GameObject}.
      */
     @Override
     public Array<Connection<Node>> getConnections() {
@@ -298,9 +321,9 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
         Array<Connection<Node>> connections = new Array<>();
 
         for (Direction dir : Direction.values()) {
-            // Get adjacent node if not null.
+            // Get adjacent node if not null and isn't a wall.
             Node adjacentNode = getMap().getAdjecentNode(curNode, dir);
-            if (adjacentNode == null) continue;
+            if (adjacentNode == null || adjacentNode.isWall()) continue;
 
             // Add adjacent node to connections.
             Connection<Node> con = new DefaultConnection<>(curNode, adjacentNode);

@@ -7,6 +7,9 @@ import com.badlogic.gdx.ai.pfa.indexed.IndexedAStarPathFinder;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedGraph;
 import com.badlogic.gdx.utils.Array;
 
+/**
+ * {@link AStar} pathfinding for {@link Node nodes}.
+ */
 public class AStar extends IndexedAStarPathFinder<Node> {
     public AStar(Map map) {
         super(new IndexedGraph<Node>() {
