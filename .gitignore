@@ -66,34 +66,7 @@ build/
 /Pactales/.nb-gradle/private/
 /Pactales/.nb-gradle/profiles/private/
 .nb-gradle/profiles/private/aux-config
-core/src/assets/test-results/binary/test/output.bin.idx
-core/src/assets/test-results/binary/test/output.bin
-core/src/assets/libs/*
-<<<<<<< HEAD
-=======
-core/src/main/java/ateamproject/kezuino/com/github/PactaleGame.java
-core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.singleplayer.TestEnemy.html
-core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.singleplayer.TestGameObject.html
-core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.singleplayer.TestGameSession.html
-core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.singleplayer.TestItem.html
-core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.singleplayer.TestMap.html
-core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.singleplayer.TestNode.html
-core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.singleplayer.TestPactale.html
-core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.singleplayer.TestPortal.html
-core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.singleplayer.TestProjectile.html
-core/src/assets/reports/tests/classes/ateamproject.kezuino.com.github.singleplayer.TestScore.html
-core/src/assets/reports/tests/index.html
-core/src/assets/reports/tests/packages/ateamproject.kezuino.com.github.singleplayer.html
-core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestEnemy.xml
-core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestGameObject.xml
-core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestGameSession.xml
-core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestItem.xml
-core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestMap.xml
-core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestNode.xml
-core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestPactale.xml
-core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestPortal.xml
-core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestProjectile.xml
-core/src/assets/test-results/TEST-ateamproject.kezuino.com.github.singleplayer.TestScore.xml
-core/src/assets/test-results/binary/test/results.bin
->>>>>>> origin/master
+core/src/assets/libs/
+core/src/assets/reports/
+core/src/assets/test-results/
 core/src/assets/libs/core-1.0.jar
