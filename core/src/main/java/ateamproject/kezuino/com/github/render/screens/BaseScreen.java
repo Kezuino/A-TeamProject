@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.render.IRenderer;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -14,6 +15,9 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Fatih
@@ -27,10 +31,12 @@ public abstract class BaseScreen implements Screen {
     protected Stage stage;
 
     protected Skin skin;
+    protected List<IRenderer> renderers;
     protected InputMultiplexer inputs;
 
     public BaseScreen(Game game) {
         // Bootstrap screen.
+        renderers = new ArrayList<>();
         inputs = new InputMultiplexer();
         stage = new Stage();
 
@@ -54,12 +60,19 @@ public abstract class BaseScreen implements Screen {
     public void show() {
         if (game == null)
             throw new UnsupportedOperationException("Game must be set. Did you forget to call super(game) in the constructor of this screen?");
+        for (IRenderer renderer : renderers) {
+            renderer.active();
+        }
     }
 
     @Override
     public void render(float delta) {
         stage.act(delta);
         stage.draw();
+
+        for (IRenderer renderer : renderers) {
+            renderer.render();
+        }
     }
 
     @Override

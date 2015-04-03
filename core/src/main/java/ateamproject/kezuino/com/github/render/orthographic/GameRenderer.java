@@ -27,7 +27,6 @@ public class GameRenderer implements IRenderer {
 
     @Override
     public void active() {
-
     }
 
     @Override

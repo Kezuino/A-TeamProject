@@ -3,7 +3,7 @@ package ateamproject.kezuino.com.github.render;
 public interface IRenderer {
 
     /**
-     * Called when this {@link ateamproject.kezuino.com.github.render.IRenderer} should be enabled.
+     * Called when this {@link ateamproject.kezuino.com.github.render.IRenderer} should be shown.
      */
     public void active();
 

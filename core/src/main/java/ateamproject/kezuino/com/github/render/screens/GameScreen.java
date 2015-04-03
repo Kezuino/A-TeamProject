@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.render.IRenderer;
+import ateamproject.kezuino.com.github.render.orthographic.DebugRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import ateamproject.kezuino.com.github.singleplayer.Map;
@@ -23,9 +24,7 @@ import com.badlogic.gdx.graphics.Texture;
 public class GameScreen extends BaseScreen {
 
     private GameSession session;
-    private IRenderer renderer;
-    
-    //TEST CONTROLS
+
     private final Pactale player;
 
     public GameScreen(Game game) {
@@ -37,8 +36,10 @@ public class GameScreen extends BaseScreen {
         player = new Pactale(session.getMap(), 9, 5, 3, .5f, Direction.Down, Color.RED);
         player.setTexture(Assets.get("textures/foreground/pactale.png", Texture.class));
         session.getMap().addGameObject(5, 5, this.player);
-        
-        renderer = new GameRenderer(session.getMap());
+
+        // Add renderer.
+        renderers.add(new GameRenderer(session.getMap()));
+        renderers.add(new DebugRenderer(session.getMap()));
 
         // Gameplay controls handling:
         inputs.addProcessor(new InputAdapter() {
@@ -80,11 +81,8 @@ public class GameScreen extends BaseScreen {
         Gdx.gl.glClearColor(1, 1, 1, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        // Render UI controls.
+        // Render UI and Game.
         super.render(delta);
-
-        // Render game.
-        renderer.render();
     }
 
 
