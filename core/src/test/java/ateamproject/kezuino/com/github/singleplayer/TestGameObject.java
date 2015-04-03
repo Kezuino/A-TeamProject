@@ -110,10 +110,10 @@ public class TestGameObject {
          */
 
         //Enemy was spawned on default 19 19. If we move it up one the y should go -1.
-        enemy.moveAdjacent(Direction.Up, false);
+        enemy.moveAdjacent(Direction.Up);
         assertEquals(18, enemy.getY());
         //If we go back down, should be 19 again
-        enemy.moveAdjacent(Direction.Down, false);
+        enemy.moveAdjacent(Direction.Down);
         assertEquals(19, enemy.getY());
 
     }
