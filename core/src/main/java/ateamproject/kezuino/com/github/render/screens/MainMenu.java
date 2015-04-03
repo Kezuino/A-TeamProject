@@ -57,6 +57,14 @@ public class MainMenu extends BaseScreen {
             }
         });
 
+        TextButton tbStore = new TextButton("Winkel", skin);
+        tbStore.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new StoreScreen(game));
+            }
+        });
+
         TextButton tbOptions = new TextButton("Opties", skin);
         tbOptions.addListener(new ClickListener() {
             @Override
@@ -79,6 +87,7 @@ public class MainMenu extends BaseScreen {
         tbLogout.setSize(300, 40);
         tbOptions.setSize(300, 40);
         tbSearchGame.setSize(300, 40);
+        tbStore.setSize(300, 40);
 
         float xOfSearchGameButton = stage.getWidth() / 2 - tbSearchGame.getWidth() / 2;
         float yOfSearchGameButton = stage.getHeight() - 50;
@@ -87,8 +96,9 @@ public class MainMenu extends BaseScreen {
         tbClanGame.setPosition(xOfSearchGameButton, yOfSearchGameButton - 50);
         tbHighscores.setPosition(xOfSearchGameButton, yOfSearchGameButton - 100);
         tbChangeLook.setPosition(xOfSearchGameButton, yOfSearchGameButton - 150);
-        tbOptions.setPosition(xOfSearchGameButton, yOfSearchGameButton - 200);
-        tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
+        tbStore.setPosition(xOfSearchGameButton, yOfSearchGameButton - 200);
+        tbOptions.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
+        tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 300);
 
         stage.addActor(tbSearchGame);
         stage.addActor(tbClanGame);
@@ -96,5 +106,6 @@ public class MainMenu extends BaseScreen {
         stage.addActor(tbChangeLook);
         stage.addActor(tbOptions);
         stage.addActor(tbLogout);
+        stage.addActor(tbStore);
     }
 }

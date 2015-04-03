@@ -40,6 +40,9 @@ public class Enemy extends GameObject {
     public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
         super(map, x, y, movementSpeed, direction, color);
         this.objectToFollow = objectToFollow;
+        if (objectToFollow!=null){
+            
+        }
         this.respawnNode = map.getNode(x, y);
         this.dead = false;
         this.edible = false;
@@ -114,4 +117,11 @@ public class Enemy extends GameObject {
     public GameObject getObjectToFollow() {
         return this.objectToFollow;
     }
+
+    @Override
+    public void update() {
+        
+    }
+    
+    
 }
