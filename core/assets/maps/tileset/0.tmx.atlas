@@ -1,0 +1,40 @@
+
+0.tmx.png
+size: 128,64
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+textures/Background/floor
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+textures/Background/wall
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+0.tmx2.png
+size: 128,64
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+textures/Foreground/enemy
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+textures/Foreground/pactale
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
