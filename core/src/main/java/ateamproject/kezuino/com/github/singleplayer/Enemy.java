@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Enemy extends GameObject {
 
@@ -24,6 +25,9 @@ public class Enemy extends GameObject {
      */
     private Node respawnNode;
 
+    private float edibleStartTime;
+    
+    private float edibleTime;
     /**
      * Constructs a new {@link Enemy}.
      * The newly constructed {@link Enemy} is not dead.
@@ -46,6 +50,7 @@ public class Enemy extends GameObject {
         this.respawnNode = map.getNode(x, y);
         this.dead = false;
         this.edible = false;
+        this.edibleTime = 2f;
     }
 
     /**
@@ -108,6 +113,11 @@ public class Enemy extends GameObject {
      * @param eatable Boolean, cannot be null
      */
     public void setEdible(boolean edible) {
+        if(edible) {
+            this.setColor(Color.WHITE);
+            this.edibleStartTime = System.nanoTime();
+        }
+        
         this.edible = edible;
     }
 
@@ -120,8 +130,15 @@ public class Enemy extends GameObject {
 
     @Override
     public void update() {
+        if(this.edible) {
+            float secondsFromStart = (System.nanoTime() - this.edibleStartTime) / 1000000000.0f;
+            
+            if(secondsFromStart >= this.edibleTime) {
+                this.edible = false;
+                this.setColor(this.previousColor);
+            }
+        }
         
-    }
-    
-    
+        super.update();
+    }   
 }

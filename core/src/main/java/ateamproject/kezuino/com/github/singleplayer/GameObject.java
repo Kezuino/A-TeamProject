@@ -69,6 +69,7 @@ public abstract class GameObject {
      */
     private Color color;
 
+    protected Color previousColor;
     /**
      * Initializes this {@link GameObject}.
      *
@@ -212,6 +213,16 @@ public abstract class GameObject {
      */
     public Color getColor() {
         return this.color;
+    }
+    
+    /**
+     * Sets / changes the current color of the this {@link GameObject}
+     * 
+     * @param color  Color this {@link GameObject} will be.
+     */
+    public void setColor(Color color) {
+        this.previousColor = this.color;
+        this.color = color;
     }
 
     /**
