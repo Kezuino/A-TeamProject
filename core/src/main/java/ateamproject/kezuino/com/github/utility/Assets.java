@@ -14,13 +14,14 @@ import java.util.HashMap;
 import java.util.logging.FileHandler;
 
 public class Assets {
+
     public static AssetManager manager;
     public static HashMap<String, BitmapFont> fonts;
     public static MusicLoader musicLoader;
 
     public static void create() {
         manager = new AssetManager();
-        fonts = new HashMap<>();        
+        fonts = new HashMap<>();
         load();
     }
 
@@ -37,11 +38,11 @@ public class Assets {
 
         // Textures.
         manager.load("textures/foreground/pactale.png", Texture.class);
+        manager.load("textures/foreground/projectile.png", Texture.class);
 
         // Sounds.
         //manager.load("sounds/Background.mp3", Sound.class); //Takes a long time..
         //manager.load("sounds/Defeat.wav", Sound.class); //Takes a long time...
-        
         // Wait for assets to load.
         manager.finishLoading();
     }
@@ -53,8 +54,9 @@ public class Assets {
      * @return Resource from the {@link AssetManager} or null if not found
      */
     public static <T> T get(String asset, Class<T> type) {
-        if (manager.isLoaded(asset, type))
+        if (manager.isLoaded(asset, type)) {
             return manager.get(asset, type);
+        }
         return null;
     }
 
