@@ -48,37 +48,13 @@ public class ClanGames extends BaseScreen{
         //stage.addActor(btnLogin);        
         stage.addActor(table);
 
-    }
-    
-    @Override
-    public void show() {
-        // Initialize screen here.
-    }
+    }    
+ 
 
-
-    @Override
+    /*@Override
     public void resize(int width, int height) {
         // Reset controls of this screen to align with new resolution.
         viewport.update(width, height);
-    }
+    }*/
 
-    @Override
-    public void pause() {
-        ///throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void resume() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void hide() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void dispose() {
-        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
 }

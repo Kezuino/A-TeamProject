@@ -35,7 +35,9 @@ public class StoreScreen extends BaseScreen {
         btnBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (sound!=null){
                  sound.dispose();
+                }
                 game.setScreen(new MainScreen(game));
                
             }
