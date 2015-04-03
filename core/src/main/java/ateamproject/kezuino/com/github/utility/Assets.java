@@ -17,7 +17,6 @@ public class Assets {
 
     public static AssetManager manager;
     public static HashMap<String, BitmapFont> fonts;
-    public static MusicLoader musicLoader;
 
     public static void create() {
         manager = new AssetManager();
@@ -46,7 +45,7 @@ public class Assets {
 
         // Sounds.
         //manager.load("sounds/Background.mp3", Sound.class); //Takes a long time..
-        //manager.load("sounds/Defeat.wav", Sound.class); //Takes a long time...
+        //manager.load("sounds/Defeat.wav", Sound.class); //Takes a long time..
         // Wait for assets to load.
         manager.finishLoading();
     }

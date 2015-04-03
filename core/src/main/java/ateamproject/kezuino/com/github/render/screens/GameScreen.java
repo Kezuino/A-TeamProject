@@ -38,8 +38,8 @@ public class GameScreen extends BaseScreen {
         session.getMap().addGameObject(5, 5, this.player);
 
         // Add renderer.
-        GameRenderer gameRenderer = addRenderer(new GameRenderer(session.getMap()));
-        addRenderer(new DebugRenderer(session.getMap(), gameRenderer.getCamera(), gameRenderer.getBatch()));
+        addRenderer(new GameRenderer(session.getMap()));
+        addRenderer(new DebugRenderer(session.getMap()));
 
         // Gameplay controls handling:
         inputs.addProcessor(new InputAdapter() {

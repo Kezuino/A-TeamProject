@@ -6,7 +6,6 @@
 package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.render.IRenderer;
-import ateamproject.kezuino.com.github.singleplayer.IRenderable;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -98,10 +97,11 @@ public abstract class BaseScreen implements Screen {
     }
 
     /**
-     * Adds the {@link IRenderer}
-     * @param renderer
-     * @param <T>
-     * @return
+     * Adds the {@link IRenderer} to the list of renderers.
+     *
+     * @param renderer {@link IRenderer} to add to the list.
+     * @param <T>      Any class that implements the interface {@link IRenderer} to add to the list.
+     * @return {@link IRenderer} that was added for chaining purposes.
      */
     public <T extends IRenderer> T addRenderer(T renderer) {
         renderers.add(renderer);
