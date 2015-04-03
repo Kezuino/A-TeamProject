@@ -1,11 +1,12 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import java.awt.Point;
+import java.util.stream.Collectors;
 
 public class Item {
 
-    private String Name;
-    private ItemType Type;
+    private String name;
+    private ItemType type;
     private int xCoordinate;
     private int yCoordinate;
 
@@ -17,8 +18,8 @@ public class Item {
      * @param type the type of the item standing on the node
      */
     public Item(String name, int xCoordinate, int yCoordinate, ItemType type) {
-        this.Name = name;
-        this.Type = type;
+        this.name = name;
+        this.type = type;
         this.xCoordinate = xCoordinate;
         this.yCoordinate = yCoordinate;
 
@@ -31,7 +32,7 @@ public class Item {
      * @return name of the item
      */
     public String getName() {
-        return this.Name;
+        return this.name;
     }
 
     /**
@@ -40,7 +41,7 @@ public class Item {
      * @param name Name of the item
      */
     public void setName(String name) {
-        this.Name = name;
+        this.name = name;
     }
 
     /**
@@ -49,7 +50,7 @@ public class Item {
      * @return type of the item
      */
     public ItemType getItemType() {
-        return this.Type;
+        return this.type;
     }
 
     /**
@@ -58,7 +59,7 @@ public class Item {
      * @param type
      */
     public void setItemType(ItemType type) {
-        this.Type = type;
+        this.type = type;
     }
 
     /**
@@ -69,16 +70,25 @@ public class Item {
      */
     public void activate(GameObject target) {
         // TODO - implement Item.activate
-        switch (this.Type) {
+        switch(this.type){
             case BigObject:
-
+                this.node.getMap().getAllGameObjects().stream().filter((GameObject o) -> o instanceof Enemy).map((GameObject e) -> (Enemy)e).forEach(e -> e.setEdible(true));
                 break;
-            case SmallObject:
-
+            case Diamond:
+                //TODO apply powerup
                 break;
-            default:
+            case Emerald:
+                //TODO apply powerup
+                break;
+            case Sapphire:
+                //TODO apply powerup
+                break;
+            case Ruby:
+                //TODO apply powerup
                 break;
         }
+        
+        this.node.getMap().getSession().getScore().incrementScore(this.type.getScore());
     }
 
 }

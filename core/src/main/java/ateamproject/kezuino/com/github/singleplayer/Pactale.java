@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 
 import java.util.*;
 
@@ -65,15 +66,16 @@ public class Pactale extends GameObject {
      * Will shoot a portal in the direction that the {@link Pactale} currently
      * is heading.
      */
-    public void shootPortal() {
+    public void shootProjectile() {
         // create projectile
-        Projectile prjtl = new Projectile(this.getMap(), this.getX(), getY(), this, this.getMovementSpeed(), this.getDirection(), Color.CLEAR);
-      
+        Projectile prjtl = new Projectile(this.getMap(), this.getX(), getY(), this, this.getMovementSpeed() / 3, this.getDirection(), this.getColor());
+        prjtl.getMap().addGameObject(this.getX(), this.getY(), prjtl);
+
         // check if next node has collision
         prjtl.moveAdjacent(direction);
-        
-        
     }
+    
+    
 
     int getCollisionObject(int x, int y) {
         Node NextNode;
@@ -88,6 +90,18 @@ public class Pactale extends GameObject {
         return ReturnVal;
     }
 
+    public boolean addPortal(Portal portal)
+    {
+        if (portal != null) {
+            this.portal = portal;
+            return true;
+        }
+        else 
+        {
+            return false;
+        }
+    }
+    
     /**
      * Will remove all listed portals from this {@link Pactale}.
      */

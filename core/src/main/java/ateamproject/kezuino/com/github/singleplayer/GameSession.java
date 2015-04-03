@@ -13,6 +13,7 @@ public class GameSession {
      */
     public GameSession() {
         startTime = new Date();
+        this.score = new Score(this);
     }
 
     public Date getStartTime() {
@@ -66,5 +67,14 @@ public class GameSession {
      */
     public void setMap(int squareSize) {
         setMap(new Map(this, squareSize));
+    }
+    
+    /**
+     * Gets the current game {@link Score} this {@link GameSession} is applied to.
+     * 
+     * @return The current {@link Score} from this {@link GameSession}.
+     */
+    public Score getScore() {
+        return this.score;
     }
 }

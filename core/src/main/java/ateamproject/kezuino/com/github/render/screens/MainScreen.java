@@ -5,10 +5,8 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -18,8 +16,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  * @author David
  */
 public class MainScreen extends BaseScreen {
-
-    private Sound backgroundSound;
 
     public MainScreen(Game game) {
         super(game);
@@ -55,14 +51,6 @@ public class MainScreen extends BaseScreen {
                 //game.setScreen(new GameScreen(game));
             }
         });
-        
-            TextButton tbStore = new TextButton("Winkel", skin);
-        tbStore.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new StoreScreen(game));
-            }
-        });
 
         TextButton tbOptions = new TextButton("Opties", skin);
         tbOptions.addListener(new ClickListener() {
@@ -79,6 +67,14 @@ public class MainScreen extends BaseScreen {
                 //game.setScreen(new GameScreen(game));
             }
         });
+        
+        TextButton tbClanManagement = new TextButton("Clan management", skin);
+        tbClanManagement.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new ClanManagementScreen(game));
+            }
+        });
 
         tbChangeLook.setSize(300, 40);
         tbClanGame.setSize(300, 40);
@@ -86,7 +82,7 @@ public class MainScreen extends BaseScreen {
         tbLogout.setSize(300, 40);
         tbOptions.setSize(300, 40);
         tbSearchGame.setSize(300, 40);
-        tbStore.setSize(300,40);
+        tbClanManagement.setSize(300, 40);
 
         float xOfSearchGameButton = stage.getWidth() / 2 - tbSearchGame.getWidth() / 2;
         float yOfSearchGameButton = stage.getHeight() - 50;
@@ -95,9 +91,9 @@ public class MainScreen extends BaseScreen {
         tbClanGame.setPosition(xOfSearchGameButton, yOfSearchGameButton - 50);
         tbHighscores.setPosition(xOfSearchGameButton, yOfSearchGameButton - 100);
         tbChangeLook.setPosition(xOfSearchGameButton, yOfSearchGameButton - 150);
-        tbStore.setPosition(xOfSearchGameButton, yOfSearchGameButton-200);
-        tbOptions.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
-        tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 300);
+        tbOptions.setPosition(xOfSearchGameButton, yOfSearchGameButton - 200);
+        tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
+        tbClanManagement.setPosition(xOfSearchGameButton, yOfSearchGameButton - 300);
 
         stage.addActor(tbSearchGame);
         stage.addActor(tbClanGame);
@@ -105,38 +101,7 @@ public class MainScreen extends BaseScreen {
         stage.addActor(tbChangeLook);
         stage.addActor(tbOptions);
         stage.addActor(tbLogout);
-        stage.addActor(tbStore);
-    }
-
-    @Override
-    public void show() {
-        backgroundSound = Assets.get("sounds/Background.mp3", Sound.class);
-        if (backgroundSound != null) {
-            backgroundSound.loop();
-        }
-        super.show();
-    }
-
-    @Override
-    public void pause() {
-        if (backgroundSound != null) {
-            backgroundSound.stop();
-        }
-        super.pause();
-    }
-
-    @Override
-    public void resume() {
-        if (backgroundSound != null) {
-            backgroundSound.loop();
-        }
-        super.resume();
-    }
-
-    @Override
-    public void dispose() {
-        if (backgroundSound != null) backgroundSound.dispose();
-        super.dispose();
+        stage.addActor(tbClanManagement);
     }
 
     @Override

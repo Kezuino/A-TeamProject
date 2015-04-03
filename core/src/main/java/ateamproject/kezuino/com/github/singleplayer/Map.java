@@ -38,7 +38,7 @@ public class Map {
     /**
      * Initializes a map with a 2D array filled with {@link Node nodes}.
      *
-     * @param session {@link GameSession} that will host this @see Map.
+     * @param session    {@link GameSession} that will host this @see Map.
      * @param squareSize Width and height dimension length.
      */
     public Map(GameSession session, int squareSize) {
@@ -49,8 +49,8 @@ public class Map {
      * Initializes a {@link Map} with a 2D array filled with {@link Node nodes}.
      *
      * @param session {@link GameSession} that will host this {@link Map}.
-     * @param width X dimension of the map.
-     * @param height Y dimension of the map.
+     * @param width   X dimension of the map.
+     * @param height  Y dimension of the map.
      */
     public Map(GameSession session, int width, int height) {
         gameSession = session;
@@ -73,6 +73,7 @@ public class Map {
         if (mapPath == null || mapPath.isEmpty()) {
             throw new IllegalArgumentException();
         }
+        if (mapPath == null || mapPath.isEmpty()) throw new IllegalArgumentException();
 
         TiledMap tiledMap = new TmxMapLoader().load(mapPath);
         MapProperties props = tiledMap.getProperties();
@@ -215,8 +216,7 @@ public class Map {
     /**
      * X dimension of the size of this {@link Map}.
      *
-     * @return number of {@link Node nodes} that this {@link Map} is in the X
-     * dimension.
+     * @return number of {@link Node nodes} that this {@link Map} is in the X dimension.
      */
     public int getWidth() {
         return width;
@@ -225,8 +225,7 @@ public class Map {
     /**
      * Y dimension of the size of this {@link Map}.
      *
-     * @return number of {@link Node nodes} that this {@link Map} is in the Y
-     * dimension.
+     * @return number of {@link Node nodes} that this {@link Map} is in the Y dimension.
      */
     public int getHeight() {
         return height;
@@ -235,7 +234,7 @@ public class Map {
     /**
      * Resets the 2D array to the new dimensions.
      *
-     * @param width X dimension of the {@link Map}.
+     * @param width  X dimension of the {@link Map}.
      * @param height Y dimension of the {@link Map}.
      */
     protected void resetNodes(int width, int height) {
@@ -246,8 +245,7 @@ public class Map {
     }
 
     /**
-     * Resets the 2D array based on the current {@link #width} and
-     * {@link #height}.
+     * Resets the 2D array based on the current {@link #width} and {@link #height}.
      */
     protected void resetNodes() {
         baseMap = new TiledMap();
@@ -267,8 +265,7 @@ public class Map {
      *
      * @param x position to get {@link Node} from.
      * @param y position to get {@link Node} from.
-     * @return {@link Node} if {@code x} and {@code y} are in-bounds. Null
-     * otherwise.
+     * @return {@link Node} if {@code x} and {@code y} are in-bounds. Null otherwise.
      */
     public Node getNode(int x, int y) {
         if (x >= 0 && y >= 0 && x < width && y < height) {
@@ -292,28 +289,21 @@ public class Map {
     }
 
     /**
-     * Returns a node which is in the direction of the given direction. Will
-     * return null if node does not exist.
+     * Returns a node which is in the direction of the given direction. Will return null if node does not exist.
      *
      * @param node
      * @param direction
      */
     public Node getAdjecentNode(Node node, Direction direction) {
-        if (node == null) {
-            throw new NullPointerException("Parameter node must not be null.");
-        }
-        if (direction == null) {
-            throw new NullPointerException("Parameter direction must not be null.");
-        }
+        if (node == null) throw new NullPointerException("Parameter node must not be null.");
+        if (direction == null) throw new NullPointerException("Parameter direction must not be null.");
         return getNode(node.getX() + direction.getX(), node.getY() + direction.getY());
     }
 
     /**
      * Adds a {@link GameObject} to a position on this {@link Map}.
      *
-     * @param object to add to a
-     * {@link ateamproject.kezuino.com.github.singleplayer.Node} on this
-     * {@link ateamproject.kezuino.com.github.singleplayer.Map}.
+     * @param object to add to a {@link ateamproject.kezuino.com.github.singleplayer.Node} on this {@link ateamproject.kezuino.com.github.singleplayer.Map}.
      * @return {@link GameObject} that was added to the {@link Map}.
      */
     public GameObject addGameObject(int x, int y, GameObject object) {
@@ -339,5 +329,14 @@ public class Map {
      */
     public AStar getPathfinder() {
         return pathfinder;
+    }
+    
+    /**
+     * Get the current {@link GameSession} this {@link Map} is currently in.
+     * 
+     * @return The current {@link GameSession}
+     */
+    public GameSession getSession() {
+        return this.gameSession;
     }
 }
