@@ -19,19 +19,15 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  */
 public class MainScreen extends BaseScreen {
 
+    private Sound backgroundSound;
+
     public MainScreen(Game game) {
         super(game);
-        //Sound sound =  Gdx.audio.newSound(Gdx.files.internal("sounds/Background.mp3"));
-       //Sound sound = Assets.manager.get("sounds/Background.mp3",Sound.class);
-        Sound sound = Assets.manager.get("sounds/Background.mp3",Sound.class);
-        
-        sound.loop();
 
         TextButton tbSearchGame = new TextButton("Spel zoeken", skin);
         tbSearchGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                sound.dispose();
                 game.setScreen(new GameScreen(game));
             }
         });
@@ -40,7 +36,6 @@ public class MainScreen extends BaseScreen {
         tbClanGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                sound.dispose();
                 game.setScreen(new ClanGames(game));
             }
         });
@@ -49,7 +44,6 @@ public class MainScreen extends BaseScreen {
         tbHighscores.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                sound.dispose();
                 game.setScreen(new HighscoreScreen(game));
             }
         });
@@ -58,7 +52,6 @@ public class MainScreen extends BaseScreen {
         tbChangeLook.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                sound.dispose();
                 //game.setScreen(new GameScreen(game));
             }
         });
@@ -67,7 +60,6 @@ public class MainScreen extends BaseScreen {
         tbOptions.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                sound.dispose();
                 //game.setScreen(new GameScreen(game));
             }
         });
@@ -76,7 +68,6 @@ public class MainScreen extends BaseScreen {
         tbLogout.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                sound.dispose();
                 //game.setScreen(new GameScreen(game));
             }
         });
@@ -104,6 +95,37 @@ public class MainScreen extends BaseScreen {
         stage.addActor(tbChangeLook);
         stage.addActor(tbOptions);
         stage.addActor(tbLogout);
+    }
+
+    @Override
+    public void show() {
+        backgroundSound = Assets.get("sounds/Background.mp3", Sound.class);
+        if (backgroundSound != null) {
+            backgroundSound.loop();
+        }
+        super.show();
+    }
+
+    @Override
+    public void pause() {
+        if (backgroundSound != null) {
+            backgroundSound.stop();
+        }
+        super.pause();
+    }
+
+    @Override
+    public void resume() {
+        if (backgroundSound != null) {
+            backgroundSound.loop();
+        }
+        super.resume();
+    }
+
+    @Override
+    public void dispose() {
+        if (backgroundSound != null) backgroundSound.dispose();
+        super.dispose();
     }
 
     @Override

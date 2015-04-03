@@ -39,10 +39,22 @@ public class Assets {
         manager.load("characters/pactale.png", Texture.class);
 
         // Sounds.
-        manager.load("sounds/Background.mp3", Sound.class);
+        //manager.load("sounds/Background.mp3", Sound.class); //Takes a long time..
         
         // Wait for assets to load.
         manager.finishLoading();
+    }
+
+    /**
+     * Gets the resource from the {@link AssetManager} or null if not found.
+     *
+     * @param asset Name of the resource to find.
+     * @return Resource from the {@link AssetManager} or null if not found
+     */
+    public static <T> T get(String asset, Class<T> type) {
+        if (manager.isLoaded(asset, type))
+            return manager.get(asset, type);
+        return null;
     }
 
     /**

@@ -21,14 +21,15 @@ public class LoginScreen extends BaseScreen {
 
     public LoginScreen(Game game) {
         super(game);
-        Sound sound = Assets.manager.get("sounds/Background.mp3",Sound.class);
-        sound.play();
+        Sound sound = Assets.get("sounds/Background.mp3",Sound.class);
+        if (sound != null)
+            sound.play();
 
         TextButton btnLogin = new TextButton("Login", skin);
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                sound.dispose();
+                if (sound != null) sound.dispose();
                 game.setScreen(new MainScreen(game));
 
             }

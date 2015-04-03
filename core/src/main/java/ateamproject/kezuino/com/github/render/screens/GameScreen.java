@@ -11,12 +11,11 @@ import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.singleplayer.Pactale;
 import ateamproject.kezuino.com.github.utility.Assets;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import ateamproject.kezuino.com.github.singleplayer.Direction;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 
 /**
  * @author Anton
@@ -34,44 +33,48 @@ public class GameScreen extends BaseScreen {
 
         session = new GameSession();
         session.setMap(Map.load(session, "maps/0.tmx"));
-        
-        //TEST CONTROLS
-        player = new Pactale(session.getMap(), 5, 5, 3, 0.1f, Direction.Down, Color.BLUE);
+
+        player = new Pactale(session.getMap(), 5, 5, 3, .5f, Direction.Down, Color.BLUE);
+        player.setTexture(Assets.get("characters/pactale.png", Texture.class));
         session.getMap().addGameObject(5, 5, this.player);
         
         renderer = new GameRenderer(session.getMap());
+
+        // Gameplay controls handling:
+        inputs.addProcessor(new InputAdapter() {
+            @Override
+            public boolean keyDown(int keycode) {
+                switch (keycode) {
+                    case Input.Keys.W:
+                        player.moveAdjacent(Direction.Up, true);
+                        break;
+                    case Input.Keys.S:
+                        player.moveAdjacent(Direction.Down, true);
+                        break;
+                    case Input.Keys.A:
+                        player.moveAdjacent(Direction.Left, true);
+                        break;
+                    case Input.Keys.D:
+                        player.moveAdjacent(Direction.Right, true);
+                        break;
+                    case Input.Keys.SPACE:
+                        player.shootPortal();
+                        break;
+                    case Input.Keys.ESCAPE:
+                        pause();
+                        break;
+                    default:
+                        return false;
+                }
+                return true;
+            }
+        });
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        //CONTROLS
-        if(Gdx.input.isKeyPressed(Input.Keys.W)) {
-            this.player.moveAdjacent(Direction.Up);
-        }
-        
-        if(Gdx.input.isKeyPressed(Input.Keys.A)) {
-            this.player.moveAdjacent(Direction.Left);
-        }
-        
-        if(Gdx.input.isKeyPressed(Input.Keys.S)) {
-            this.player.moveAdjacent(Direction.Down);
-        }
-
-        if(Gdx.input.isKeyPressed(Input.Keys.D)) {
-            this.player.moveAdjacent(Direction.Right);
-        }
-        
-        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            this.player.shootPortal();
-            
-        }
-        
-        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
-            this.pause();
-        }
         
         // Render UI controls.
         super.render(delta);

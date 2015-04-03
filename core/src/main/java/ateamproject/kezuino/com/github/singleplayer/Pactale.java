@@ -1,6 +1,10 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.*;
 
@@ -129,7 +133,7 @@ public class Pactale extends GameObject {
      * Will remove all listed portals from this {@link Pactale}.
      */
     public void removePortal() {
-        // TODO - implement Pactale.removePortal
-        throw new UnsupportedOperationException();
+        portal.getNode().removePortal(portal.getDirection());
+        portal = null;
     }
 }

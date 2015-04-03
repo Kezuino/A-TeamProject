@@ -18,7 +18,6 @@ public class GameRenderer implements IRenderer {
     private Map map;
     private MapRenderer tileMapRenderer;
     private Camera camera;
-    private TiledMap tiledMap;
 
     public GameRenderer(Map map) {
         batch = new SpriteBatch();
@@ -43,25 +42,11 @@ public class GameRenderer implements IRenderer {
         tileMapRenderer.render();
 
         // Render objects.
-        SpriteBatch batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         for (GameObject obj : map.getAllGameObjects()) {
-            Node node = obj.getNode();
-            int x = 0;
-            int y = 0;
-            
-            if(node != null) {
-                x = node.getX();
-                y = node.getY();
-            }
-
-            batch.setColor(obj.getColor());
-            
-            Texture texture = Assets.manager.get("characters/pactale.png", Texture.class);
-            TextureRegion region = new TextureRegion(texture, 0, 0, 28, 28);
-            
-            batch.draw(region, x * 32, y * 32);
+            obj.update();
+            obj.draw(batch);
         }
         batch.end();
     }
