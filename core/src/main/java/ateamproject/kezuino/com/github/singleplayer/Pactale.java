@@ -1,10 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import java.util.*;
 
@@ -73,7 +69,7 @@ public class Pactale extends GameObject {
         // if collision has detected, check if it is a wall or an object
         // 1 = wall 
         // 2 = Object (pactale/Enemy)
-        int WallOrObject = GetCollisionObject(prjtl.getX(), prjtl.getY());
+        int WallOrObject = getCollisionObject(prjtl.getX(), prjtl.getY());
         System.out.println("Shot on : "+WallOrObject);
         if (WallOrObject == 1) { // wall
             Portal portal = new Portal(this, prjtl.getNode(), direction);
@@ -89,42 +85,15 @@ public class Pactale extends GameObject {
 
     }
 
-    int GetCollisionObject(int x, int y) {
-        Node NextNode = null;
+    int getCollisionObject(int x, int y) {
+        Node NextNode;
         int ReturnVal = 0;
-        switch (direction) {
-            case Up:
-                NextNode = this.getMap().getNode(x, y--);
-                if (NextNode.isWall()) {
-                    // Next Node is a wall, colision detected, return true
-                    ReturnVal = 1;
-                } else if (!NextNode.getGameObjects().isEmpty()) {
-                    ReturnVal = 2;
-                }
-            case Right:
-                NextNode = this.getMap().getNode(x++, y);
-                if (NextNode.isWall()) {
-                    // Next Node is a wall, colision detected, return true
-                    ReturnVal = 1;
-                } else if (!NextNode.getGameObjects().isEmpty()) {
-                    ReturnVal = 2;
-                }
-            case Down:
-                NextNode = this.getMap().getNode(x, y++);
-                if (NextNode.isWall()) {
-                    // Next Node is a wall, colision detected, return true
-                    ReturnVal = 1;
-                } else if (!NextNode.getGameObjects().isEmpty()) {
-                    ReturnVal = 2;
-                }
-            case Left:
-                NextNode = this.getMap().getNode(x--, y);
-                if (NextNode.isWall()) {
-                    // Next Node is a wall, colision detected, return true
-                    ReturnVal = 1;
-                } else if (!NextNode.getGameObjects().isEmpty()) {
-                    ReturnVal = 2;
-                }
+        NextNode = this.getMap().getNode(x + direction.getX(), y + direction.getY());
+        if (NextNode.isWall()) {
+            // Next Node is a wall, colision detected, return true
+            ReturnVal = 1;
+        } else if (!NextNode.getGameObjects().isEmpty()) {
+            ReturnVal = 2;
         }
         return ReturnVal;
     }
