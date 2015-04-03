@@ -64,12 +64,12 @@ public class GameScreen extends BaseScreen {
             this.player.moveAdjacent(Direction.Right);
         }
         
-        if(Gdx.input.isKeyPressed(Input.Keys.SPACE)) {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             this.player.shootPortal();
             
         }
         
-        if(Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
+        if(Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
             this.pause();
         }
         

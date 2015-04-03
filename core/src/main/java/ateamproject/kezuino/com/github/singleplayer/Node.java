@@ -54,6 +54,7 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
      */
     Node(Map map, int x, int y) {
         gameObjects = new ArrayList<>();
+        portals = new HashMap<Direction, Portal>();
         this.tileId = 0;
         this.map = map;
         this.x = x;

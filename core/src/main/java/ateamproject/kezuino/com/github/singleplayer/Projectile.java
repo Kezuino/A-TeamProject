@@ -60,7 +60,7 @@ public class Projectile extends GameObject {
             case Up:
                 NextNode = this.getMap().getNode(x, y--);
                 if (NextNode.isWall()) {
-                    // Next Node is a wall, colision detected, return false
+                    // Next Node is a wall, colision detected, return true
                     return true;
                 } else if (!NextNode.getGameObjects().isEmpty()) {
                     return true;
@@ -70,7 +70,7 @@ public class Projectile extends GameObject {
             case Right:
                 NextNode = this.getMap().getNode(x++, y);
                 if (NextNode.isWall()) {
-                    // Next Node is a wall, colision detected, return false
+                    // Next Node is a wall, colision detected, return true
                     return true;
                 } else if (!NextNode.getGameObjects().isEmpty()) {
                     return true;
@@ -80,7 +80,7 @@ public class Projectile extends GameObject {
             case Down:
                 NextNode = this.getMap().getNode(x, y++);
                 if (NextNode.isWall()) {
-                    // Next Node is a wall, colision detected, return false
+                    // Next Node is a wall, colision detected, return true
                     return true;
                 } else if (!NextNode.getGameObjects().isEmpty()) {
                     return true;
@@ -90,7 +90,7 @@ public class Projectile extends GameObject {
             case Left:
                 NextNode = this.getMap().getNode(x--, y);
                 if (NextNode.isWall()) {
-                    // Next Node is a wall, colision detected, return false
+                    // Next Node is a wall, colision detected, return true
                     return true;
                 } else if (!NextNode.getGameObjects().isEmpty()) {
                     return true;
