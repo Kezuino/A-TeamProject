@@ -68,15 +68,16 @@ public class Projectile extends GameObject {
         return false;
     }
 
-    /**
-     * Called when a collision was detected by this {@link Projectile}. Return true if collision has been handled and shouldn't continue.
-     *
-     * @param object {@link GameObject} that this {@link Projectile} is colliding with.
-     * @return True if collision has been handled and {@link Projectile} should be destroyed.
-     */
+    @Override
     protected boolean collisionWithGameObject(GameObject object) {
-        // TODO: Handle collision with a GameObject.
-        return false;
+        if (object.equals(owner)) return false;
+        
+        // TODO: Collision
+        
+        
+        return super.collisionWithGameObject(object); //To change body of generated methods, choose Tools | Templates.
     }
+
+
 }
 
