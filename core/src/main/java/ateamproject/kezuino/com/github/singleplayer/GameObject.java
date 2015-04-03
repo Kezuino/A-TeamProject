@@ -299,7 +299,9 @@ public abstract class GameObject {
         if (targetNode != null) {
             if (targetNode.isWall()) return;
             for (GameObject obj : targetNode.getGameObjects()) {
-                collisionWithGameObject(obj);
+                if (collisionWithGameObject(obj)) {
+                    break;
+                }
             }
         }
 
@@ -384,7 +386,7 @@ public abstract class GameObject {
         batch.setColor(getColor());
 
         // TODO: Animate from sprite region.
-        TextureRegion region = new TextureRegion(texture, 0, 0, 26, 32);
+        //TextureRegion region = new TextureRegion(texture, 0, 0, 26, 32);
 
         // Set draw offset when moving.
         if (movementInterpolation && isMoving) {
@@ -404,9 +406,10 @@ public abstract class GameObject {
         }
 
         // Draw centered in node.
-        float xOffset = (32 - region.getRegionWidth()) / 2f - (16 - 32 * drawOffsetX);
-        float yOffset = (32 - region.getRegionHeight()) / 2f - (16 - 32 * drawOffsetY);
-        batch.draw(region, this.x * 32 + xOffset, this.y * 32 + yOffset);
+        float xOffset = (32 - texture.getWidth()) / 2f - (16 - 32 * drawOffsetX);
+        float yOffset = (32 - texture.getHeight()) / 2f - (16 - 32 * drawOffsetY);
+        //batch.draw(texture, this.x * 32 + xOffset, this.y * 32 + yOffset);
+        batch.draw(texture, 0, 0);
     }
 
     /**
