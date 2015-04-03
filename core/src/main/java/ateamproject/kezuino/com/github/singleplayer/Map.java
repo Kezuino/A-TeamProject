@@ -69,7 +69,7 @@ public class Map {
     public static Map load(GameSession session, String mapPath) {
         if (mapPath == null || mapPath.isEmpty()) throw new IllegalArgumentException();
 
-        TiledMap tiledMap = new AtlasTmxMapLoader().load(mapPath);
+        TiledMap tiledMap = new TmxMapLoader().load(mapPath);
         MapProperties props = tiledMap.getProperties();
         Map map = new Map(session, props.get("width", Integer.class), props.get("height", Integer.class));
         map.baseMap = tiledMap;

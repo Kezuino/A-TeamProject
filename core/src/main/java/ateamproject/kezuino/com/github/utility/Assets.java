@@ -36,7 +36,7 @@ public class Assets {
         fonts.put("fps", font);
 
         // Textures.
-        manager.load("characters/pactale.png", Texture.class);
+        manager.load("textures/foreground/pactale.png", Texture.class);
 
         // Sounds.
         //manager.load("sounds/Background.mp3", Sound.class); //Takes a long time..
