@@ -5,6 +5,7 @@ import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import java.util.Iterator;
 
 public class Enemy extends GameObject {
 
@@ -38,11 +39,7 @@ public class Enemy extends GameObject {
      */
     private float edibleTime;
     
-    /**
-     * The pathFinder used to create
-     */
-    private AStar pathFinder;
-    
+     
     /**
      * The path created by pathfinding
      */
@@ -158,6 +155,22 @@ public class Enemy extends GameObject {
                 this.edible = false;
                 this.setColor(this.previousColor);
             }
+        }
+        
+        //Take the first node out of the created Path, and try to move to it. 
+        if (this.graphPath!=null){
+            Iterator<Node> nodeFromPath = graphPath.iterator();
+            this.move(nodeFromPath.next());
+            nodeFromPath.remove();
+            graphPath.clear();
+            while (nodeFromPath.hasNext()){
+                graphPath.add(nodeFromPath.next());
+            }
+            
+           /*for (Node n : nodeFromPath){
+              this.move(n);
+              break;
+           }*/
         }
         
         super.update();
