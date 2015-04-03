@@ -1,6 +1,8 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 
 public class Projectile extends GameObject {
     /*
@@ -23,6 +25,7 @@ public class Projectile extends GameObject {
     public Projectile(Map map, int x, int y, Pactale owner, float movementSpeed, Direction direction, Color color) {
         super(map, x, y, movementSpeed, direction, color);
         this.owner = owner;
+        this.setTexture(Assets.get("",Texture.class) );
     }
 
     /**

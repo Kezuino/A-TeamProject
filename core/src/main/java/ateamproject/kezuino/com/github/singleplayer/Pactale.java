@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 
 import java.util.*;
 
@@ -68,7 +69,7 @@ public class Pactale extends GameObject {
     public void shootPortal() {
         // create projectile
         Projectile prjtl = new Projectile(this.getMap(), this.getX(), getY(), this, this.getMovementSpeed(), this.getDirection(), Color.CLEAR);
-      
+        
         // check if next node has collision
         prjtl.moveAdjacent(direction);
         
