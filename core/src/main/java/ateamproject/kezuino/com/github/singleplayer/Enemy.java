@@ -65,10 +65,10 @@ public class Enemy extends GameObject {
         this.edible = false;
         this.edibleTime = 2f;
         //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
-         if (objectToFollow!=null){
+         /*if (objectToFollow!=null){
              graphPath  = new DefaultGraphPath<>();
             map.getPathfinder().searchNodePath(this.getNode(), this.objectToFollow.getNode(), (node1, endNode1) -> 0, graphPath);            
-        }
+        }*/
     }
 
     /**
