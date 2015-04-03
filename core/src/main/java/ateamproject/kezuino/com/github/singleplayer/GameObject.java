@@ -292,9 +292,8 @@ public abstract class GameObject {
      *
      * @param direction  {@link Direction} to move in (to an adjacent
      *                   {@link Node}).
-     * @param continuous If true, movement will keep going until a collision has been met.
      */
-    public void moveAdjacent(Direction direction, boolean continuous) {
+    public void moveAdjacent(Direction direction) {
         this.direction = direction;
         Node targetNode = getMap().getAdjecentNode(getNode(), direction);
         if (targetNode == null || targetNode.isWall()) return;
@@ -322,8 +321,6 @@ public abstract class GameObject {
      * immediately and wait until it can move again based on
      * {@link #movementSpeed}.
      *
-     * @param direction {@link Direction} to move in (to an adjacent
-     *                  {@link Node}).
      */
     public void moveAdjacent() {
         Direction previousDirection = this.direction;
@@ -401,7 +398,6 @@ public abstract class GameObject {
      * {@link Map#getPathfinder()} based on the {@link #movementSpeed}.
      *
      * @param targetNode {@link Node} to move towards.
-     * @see #moveAdjacent(Direction)
      */
     public void move(Node targetNode) {
         throw new UnsupportedOperationException();//no movement inplemented
