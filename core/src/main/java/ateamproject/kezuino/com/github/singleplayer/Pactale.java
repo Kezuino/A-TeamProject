@@ -71,7 +71,7 @@ public class Pactale extends GameObject {
         //int i = 0;
 
         // check if next node has collision
-        prjtl.moveAdjacent(direction, true);
+        prjtl.moveAdjacent(direction);
         
         
     }
