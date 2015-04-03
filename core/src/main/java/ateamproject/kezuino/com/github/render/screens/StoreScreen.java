@@ -24,9 +24,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class StoreScreen extends BaseScreen {
 
     public StoreScreen(Game game) {
-        super(game);
+        super(game); 
         Sound sound = Assets.manager.get("sounds/Background.mp3",Sound.class);
-        sound.loop();
+        if (sound != null){
+            sound.loop();
+        }
+                
 
         TextButton btnBack = new TextButton("Terug", skin);
         btnBack.addListener(new ClickListener() {
