@@ -1,17 +1,21 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-public class Portal {
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+public class Portal implements IRenderable {
 
     private Node node;
     private Pactale owner;
     private Direction direction;
+    private Texture texture;
     
     public Direction getDirection() {
         return direction;
     }
 
     /**
-     * Initializes a {@link Portal} from a specific {@link Pactale owner} on a {@link Direction side} of a {@link Wall}.
+     * Initializes a {@link Portal} from a specific {@link Pactale owner} on a {@link Direction side} of a {@link Node}.
      *
      * @param owner     That caused this {@link Portal} to be created.
      * @param position      That contains the {@link Portal} on a side.
@@ -32,5 +36,29 @@ public class Portal {
 
     public Pactale getOwner() {
         return owner;
+    }
+
+    @Override
+    public Texture getTexture() {
+        return texture;
+    }
+
+    @Override
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public void draw(SpriteBatch batch) {
+        // TODO: Draw portal on edge of Node.
+        if (texture == null) return;
+        float xOffset = (32 - texture.getWidth()) / 2f;
+        float yOffset = (32 - texture.getHeight()) / 2f;
+        batch.draw(texture, this.node.getX() * 32 + xOffset, this.node.getY() * 32 + yOffset);
     }
 }

@@ -2,10 +2,7 @@ package ateamproject.kezuino.com.github.render.orthographic;
 
 import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.camera.*;
-import ateamproject.kezuino.com.github.singleplayer.GameObject;
-import ateamproject.kezuino.com.github.singleplayer.Item;
-import ateamproject.kezuino.com.github.singleplayer.Map;
-import ateamproject.kezuino.com.github.singleplayer.Node;
+import ateamproject.kezuino.com.github.singleplayer.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -42,9 +39,17 @@ public class GameRenderer implements IRenderer {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         for (Node node : map.getNodes()) {
+            // Render items.
             Item item = node.getItem();
             if (item != null) {
+                item.update();
                 item.draw(batch);
+            }
+
+            // Render portals.
+            for (Portal portal : node.getPortals()) {
+                portal.update();
+                portal.draw(batch);
             }
 
             // Render dynamic objects.
