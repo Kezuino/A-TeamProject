@@ -296,7 +296,12 @@ public abstract class GameObject {
     public void moveAdjacent(Direction direction) {
         this.direction = direction;
         Node targetNode = getMap().getAdjecentNode(getNode(), direction);
-        if (targetNode == null || targetNode.isWall()) return;
+        if (targetNode != null) {
+            if (targetNode.isWall()) return;
+            for (GameObject obj : targetNode.getGameObjects()) {
+                collisionWithGameObject(obj);
+            }
+        }
 
         if (movementInterpolation) {
             if (!isMoving) {
@@ -313,6 +318,17 @@ public abstract class GameObject {
         }
     }
 
+    /**
+     * Called when a collision was detected by this {@link GameObject}. Return true if collision has been handled and shouldn't continue.
+     *
+     * @param object {@link GameObject} that this {@link GameObject} is colliding with.
+     * @return True if collision has been handled and {@link GameObject}.
+     */
+    protected boolean collisionWithGameObject(GameObject object) {
+        // TODO: Handle collision with a GameObject.
+        return false;
+    }
+    
     /**
      * Moves this {@link GameObject} to another adjacent {@link Node} based on
      * the given {@code direction}. If {@link #movementInterpolation} is true,
