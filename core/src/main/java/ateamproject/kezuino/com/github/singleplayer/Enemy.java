@@ -1,5 +1,8 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.pathfinding.AStar;
+import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
+import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -34,6 +37,16 @@ public class Enemy extends GameObject {
      * The time this {@link Enemy} will be edible, if set edible.
      */
     private float edibleTime;
+    
+    /**
+     * The pathFinder used to create
+     */
+    private AStar pathFinder;
+    
+    /**
+     * The path created by pathfinding
+     */
+    private GraphPath<Node> graphPath;
     /**
      * Constructs a new {@link Enemy}.
      * The newly constructed {@link Enemy} is not dead.
@@ -49,14 +62,16 @@ public class Enemy extends GameObject {
      */
     public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
         super(map, x, y, movementSpeed, direction, color);
-        this.objectToFollow = objectToFollow;
-        if (objectToFollow!=null){
-            
-        }
+        this.objectToFollow = objectToFollow;       
         this.respawnNode = map.getNode(x, y);
         this.dead = false;
         this.edible = false;
         this.edibleTime = 2f;
+        //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
+         if (objectToFollow!=null){
+             graphPath  = new DefaultGraphPath<>();
+            map.getPathfinder().searchNodePath(this.getNode(), this.objectToFollow.getNode(), (node1, endNode1) -> 0, graphPath);            
+        }
     }
 
     /**
