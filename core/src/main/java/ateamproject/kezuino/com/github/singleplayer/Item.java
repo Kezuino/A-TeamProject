@@ -1,12 +1,16 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-public class Item {
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+public class Item implements IRenderable {
 
     private final int x;
     private final int y;
     private String name;
     private ItemType type;
     private Map map;
+    private Texture texture;
 
     /**
      * Initializes an {@link Item} at the given {@link Node}.
@@ -35,6 +39,14 @@ public class Item {
      */
     public Item(Map map, int x, int y, ItemType type) {
         this(String.valueOf(type), map, x, y, type);
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
     }
 
     public Map getMap() {
@@ -115,5 +127,18 @@ public class Item {
      */
     public Node getNode() {
         return this.getMap().getNode(this.x, this.y);
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+    @Override
+    public void draw(SpriteBatch batch) {
+        if (texture == null) return;
+        float xOffset = (32 - texture.getWidth()) / 2f;
+        float yOffset = (32 - texture.getHeight()) / 2f;
+        batch.draw(texture, this.x * 32 + xOffset, this.y * 32 + yOffset);
     }
 }

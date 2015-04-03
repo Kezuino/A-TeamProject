@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.*;
 
@@ -108,5 +109,10 @@ public class Pactale extends GameObject {
     public void removePortal() {
         portal.getNode().removePortal(portal.getDirection());
         portal = null;
+    }
+
+    @Override
+    public void draw(SpriteBatch batch) {
+
     }
 }

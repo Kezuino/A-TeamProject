@@ -92,7 +92,7 @@ public class GameScreen extends BaseScreen {
     public void pause() {
         // TODO: If singleplayer: pause game.
 
-        // TODO: If multiplayer: render menu on top of game and capture input, but do NOT pause the game!
+        // TODO: If multiplayer: draw menu on top of game and capture input, but do NOT pause the game!
     }
 
     @Override

@@ -33,7 +33,7 @@ public enum Direction {
         return y;
     }
     
-    public Direction reverseDirection()
+    public Direction reverse()
     {
         switch(this)
         {
@@ -45,7 +45,7 @@ public enum Direction {
                 return Direction.Right;
             case Right:
                 return Direction.Left;
-            default: 
+            default:
                 return null;
         }
     }
