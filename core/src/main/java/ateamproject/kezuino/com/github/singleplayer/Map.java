@@ -217,4 +217,13 @@ public class Map {
     public AStar getPathfinder() {
         return pathfinder;
     }
+    
+    /**
+     * Get the current {@link GameSession} this {@link Map} is currently in.
+     * 
+     * @return The current {@link GameSession}
+     */
+    public GameSession getSession() {
+        return this.gameSession;
+    }
 }
