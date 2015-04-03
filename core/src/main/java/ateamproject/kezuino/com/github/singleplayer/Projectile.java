@@ -76,11 +76,22 @@ public class Projectile extends GameObject {
         if (object.equals(owner)) return false;
 
         // TODO: Collision
-
-
+        
         return super.collisionWithGameObject(object); //To change body of generated methods, choose Tools | Templates.
     }
 
+    @Override
+    protected boolean collisionWithWall(Node node) {
+        if (node.isWall()) {
+            Portal p = new Portal(owner, node, direction.reverseDirection());
+            this.owner.addPortal(p);
+            return true;
+        }
+        
+        return super.collisionWithWall(node); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    
 
 }
 

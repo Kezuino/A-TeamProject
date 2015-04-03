@@ -62,7 +62,7 @@ public class GameScreen extends BaseScreen {
                         player.setDirection(Direction.Right);
                         break;
                     case Input.Keys.SPACE:
-                        player.shootPortal();
+                        player.shootProjectile();
                         break;
                     case Input.Keys.ESCAPE:
                         pause();
