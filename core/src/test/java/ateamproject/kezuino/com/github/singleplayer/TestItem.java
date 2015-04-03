@@ -6,13 +6,13 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
-import java.awt.Point;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import org.junit.Before;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 /**
- *
  * @author Fatih
  */
 public class TestItem {
@@ -36,7 +36,7 @@ public class TestItem {
          * @param name the name of the item
          * @param node the node the item is located on
          */
-        Item item = new Item("Small gold nugger", node,ItemType.BigObject);
+        Item item = new Item("Small gold nugger", this.map, node.getX(), node.getY(), ItemType.BigObject);
         assertNotNull(item);
 
         assertEquals("Small Dot/Item", item.getName());
@@ -49,7 +49,7 @@ public class TestItem {
          *
          * @param name Name of the item
          */
-        Item item = new Item("Small gold nugget", node,ItemType.BigObject);
+        Item item = new Item("Small gold nugget", this.map, node.getX(), node.getY(), ItemType.BigObject);
         item.setName("Big gold nugget");
         assertEquals("Big gold nugget", item.getName());
     }
@@ -63,11 +63,11 @@ public class TestItem {
          * @param target target standing on the node with the item
          */
 
-        Item item = new Item("Small gold nugget", node,ItemType.BigObject);
+        Item item = new Item("Small gold nugget", this.map, node.getX(), node.getY(), ItemType.BigObject);
         GameObject UserPactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.CLEAR);
 
         item.activate(UserPactale);
-        
+
         // not complete
     }
 

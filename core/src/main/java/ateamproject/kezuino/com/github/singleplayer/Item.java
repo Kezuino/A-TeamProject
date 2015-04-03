@@ -1,37 +1,50 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import java.awt.Point;
-import java.util.stream.Collectors;
-
 public class Item {
 
+    private final int x;
+    private final int y;
     private String name;
     private ItemType type;
-    private final int xCoordinate;
-    private final int yCoordinate;
+    private Map map;
 
     /**
-     * Initializes a item at the given node.
+     * Initializes an {@link Item} at the given {@link Node}.
      *
-     * @param name the name of the item
-     * @param xCoordinate
-     * @param yCoordinate
-     * @param node the node the item is located on
-     * @param type the type of the item standing on the node
+     * @param name Name of the {@link Item}.
+     * @param map  {@link Map} that hosts the {@link Item}.
+     * @param x    X dimension of the {@link Node} that should contain this {@link Item}.
+     * @param y    Y dimension of the {@link Node} that should contain this {@link Item}.
+     * @param type {@link ItemType} dat determines the {@code name} and {@link #activate(GameObject)}'s body.
      */
-    public Item(String name, int xCoordinate, int yCoordinate, ItemType type) {
+    public Item(String name, Map map, int x, int y, ItemType type) {
         this.name = name;
         this.type = type;
-        this.xCoordinate = xCoordinate;
-        this.yCoordinate = yCoordinate;
+        this.map = map;
+        this.x = x;
+        this.y = y;
+    }
 
-        // TODO: Discuss usage of "offsetPosition" for position of item in Node.
+    /**
+     * Initializes an {@link Item} at the given {@link Node} using the default name of the {@link ItemType}.
+     *
+     * @param map  {@link Map} that hosts the {@link Item}.
+     * @param x    X dimension of the {@link Node} that should contain this {@link Item}.
+     * @param y    Y dimension of the {@link Node} that should contain this {@link Item}.
+     * @param type {@link ItemType} dat determines the {@code name} and {@link #activate(GameObject)}'s body.
+     */
+    public Item(Map map, int x, int y, ItemType type) {
+        this(String.valueOf(type), map, x, y, type);
+    }
+
+    public Map getMap() {
+        return map;
     }
 
     /**
      * Gets the name of the item
      *
-     * @return name of the item
+     * @return Name of the item
      */
     public String getName() {
         return this.name;
@@ -49,7 +62,7 @@ public class Item {
     /**
      * Gets the type of the item
      *
-     * @return type of the item
+     * @return Type of the item
      */
     public ItemType getItemType() {
         return this.type;
@@ -61,6 +74,7 @@ public class Item {
      * @param type
      */
     public void setItemType(ItemType type) {
+        if (this.type.equals(type)) return;
         this.type = type;
     }
 
@@ -68,13 +82,13 @@ public class Item {
      * The target who picks up this item activates the effect this item is
      * carrying
      *
-     * @param target target standing on the node with the item
+     * @param target Target standing on the node with the item
      */
     public void activate(GameObject target) {
         // TODO - implement Item.activate
-        switch(this.type){
+        switch (this.type) {
             case BigObject:
-                this.node.getMap().getAllGameObjects().stream().filter((GameObject o) -> o instanceof Enemy).map((GameObject e) -> (Enemy)e).forEach(e -> e.setEdible(true));
+                this.getMap().getAllGameObjects().stream().filter((GameObject o) -> o instanceof Enemy).map((GameObject e) -> (Enemy) e).forEach(e -> e.setEdible(true));
                 break;
             case Diamond:
                 //TODO apply powerup
@@ -89,8 +103,17 @@ public class Item {
                 //TODO apply powerup
                 break;
         }
-        
-        this.node.getMap().getSession().getScore().incrementScore(this.type.getScore());
+
+        this.getMap().getSession().getScore().incrementScore(this.type.getScore());
     }
 
+
+    /**
+     * Returns the {@link Node} based on the X and Y dimensions on the {@link Map}.
+     *
+     * @return {@link Node} based on the X and Y dimensions on the {@link Map}.
+     */
+    public Node getNode() {
+        return this.getMap().getNode(this.x, this.y);
+    }
 }

@@ -4,9 +4,9 @@ import ateamproject.kezuino.com.github.pathfinding.AStar;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.*;
-import com.sun.deploy.uitoolkit.impl.fx.ui.FXUIFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Map {
 
@@ -89,9 +89,8 @@ public class Map {
 
                 if (foreground.getCell(x, y) != null) {//check if there is something that can be placed on the foreground
                     createGameObjectFromTileMap(x, y, map);//create a gameobject or item
-                }
-                else if (isPlaceForSmallObject(x, y, map)) {//check if a small object can be placed
-                    createSmallObject(x,y,map);//create a small object
+                } else if (isPlaceForSmallObject(x, y, map)) {//check if a small object can be placed
+                    createItemFromTileMap(x, y, map);//create a small object
                 }
             }
 
@@ -119,15 +118,15 @@ public class Map {
 
     /**
      * places a small object at the given position
+     *
      * @param x
      * @param y
-     * @param map 
+     * @param map
      */
-    private static void createSmallObject(int x, int y, Map map) {
-        Item i = new Item("smallObject", x, y, ItemType.SmallObject);
+    private static void createItemFromTileMap(int x, int y, Map map) {
+        Item i = new Item(map, x, y, ItemType.SmallObject);
         Node currNode = map.getNode(x, y);
         currNode.setItem(i);
-        System.out.println("smallObject made on x,y:"+x+","+y);
     }
 
     /**
@@ -136,9 +135,7 @@ public class Map {
      *
      * @param x
      * @param y
-     * @param foreground
-     * @param tMap
-     * @param gMap
+     * @param map
      * @return
      */
     private static Object createGameObjectFromTileMap(int x, int y, Map map) {
@@ -155,7 +152,6 @@ public class Map {
         if (gObjectProperties != null) {
             Pactale p = new Pactale(map, x, y, 3, 3, Direction.Down, Color.BLUE);
             map.addGameObject(x, y, p);
-            System.out.println("pactale made on x,y:"+x+","+y);
             return p;
         }
 
@@ -165,7 +161,6 @@ public class Map {
                 if (gObject.getClass().equals(Pactale.class)) {//check if there is a pactale on allgameobject
                     Enemy e = new Enemy(gObject, map, x, y, 3, Direction.Down);//follow pactale
                     map.addGameObject(x, y, e);
-                    System.out.println("enemy made on x,y:"+x+","+y);
                     return e;
                 }
             }
@@ -180,16 +175,14 @@ public class Map {
             gObjectProperties = properties.get("name");
             if (gObjectProperties != null) {
                 if (gObjectProperties == "bigObject") {
-                    Item i = new Item("bigObject", x, y, ItemType.BigObject);
+                    Item i = new Item(map, x, y, ItemType.BigObject);
                     Node currNode = map.getNode(x, y);
                     currNode.setItem(i);
-                    System.out.println("bigObject made on x,y:"+x+","+y);
                     return i;
                 } else if (gObjectProperties == "watch") {
-                    Item i = new Item("watch", x, y, ItemType.Watch);
+                    Item i = new Item(map, x, y, ItemType.Watch);
                     Node currNode = map.getNode(x, y);
                     currNode.setItem(i);
-                    System.out.println("watch made on x,y:"+x+","+y);
                     return i;
                 }
             }
@@ -330,10 +323,10 @@ public class Map {
     public AStar getPathfinder() {
         return pathfinder;
     }
-    
+
     /**
      * Get the current {@link GameSession} this {@link Map} is currently in.
-     * 
+     *
      * @return The current {@link GameSession}
      */
     public GameSession getSession() {
