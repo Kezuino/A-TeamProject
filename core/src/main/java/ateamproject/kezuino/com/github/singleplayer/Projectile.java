@@ -25,7 +25,7 @@ public class Projectile extends GameObject {
     public Projectile(Map map, int x, int y, Pactale owner, float movementSpeed, Direction direction, Color color) {
         super(map, x, y, movementSpeed, direction, color);
         this.owner = owner;
-        this.setTexture(Assets.get("",Texture.class) );
+        this.setTexture(Assets.get("textures/foreground/projectile.png", Texture.class));
     }
 
     /**
@@ -56,7 +56,7 @@ public class Projectile extends GameObject {
 
         NextNode = this.getMap().getNode(x + direction.getX(), y + direction.getY());
         if (NextNode.isWall()) {
-                    // Next Node is a wall, colision detected, return true
+            // Next Node is a wall, colision detected, return true
             return true;
         } else if (!NextNode.getGameObjects().isEmpty()) {
             // Collision with a GameObject.;
@@ -74,10 +74,10 @@ public class Projectile extends GameObject {
     @Override
     protected boolean collisionWithGameObject(GameObject object) {
         if (object.equals(owner)) return false;
-        
+
         // TODO: Collision
-        
-        
+
+
         return super.collisionWithGameObject(object); //To change body of generated methods, choose Tools | Templates.
     }
 

@@ -68,12 +68,11 @@ public class Pactale extends GameObject {
      */
     public void shootPortal() {
         // create projectile
-        Projectile prjtl = new Projectile(this.getMap(), this.getX(), getY(), this, this.getMovementSpeed(), this.getDirection(), Color.CLEAR);
-        
+        Projectile prjtl = new Projectile(this.getMap(), this.getX(), getY(), this, this.getMovementSpeed() / 3, this.getDirection(), this.getColor());
+        prjtl.getMap().addGameObject(this.getX(), this.getY(), prjtl);
+
         // check if next node has collision
         prjtl.moveAdjacent(direction);
-        
-        
     }
 
     int getCollisionObject(int x, int y) {
