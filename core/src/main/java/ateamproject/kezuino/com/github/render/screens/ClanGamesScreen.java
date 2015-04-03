@@ -14,9 +14,9 @@ import javafx.scene.paint.Color;
 /**
  * @author David
  */
-public class ClanGames extends BaseScreen{
+public class ClanGamesScreen extends BaseScreen{
 
-    public ClanGames(Game game)
+    public ClanGamesScreen(Game game)
     {
         super(game);
     

@@ -14,9 +14,9 @@ import javafx.scene.paint.Color;
 /**
  * @author David
  */
-public class RandomGames extends BaseScreen{
+public class RandomGamesScreen extends BaseScreen{
 
-    public RandomGames(Game game)
+    public RandomGamesScreen(Game game)
     {
         super(game);
     
