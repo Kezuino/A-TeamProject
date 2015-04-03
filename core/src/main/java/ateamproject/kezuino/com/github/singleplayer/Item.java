@@ -74,6 +74,18 @@ public class Item {
             case BigNugget:
                 this.node.getMap().getAllGameObjects().stream().filter((GameObject o) -> o instanceof Enemy).map((GameObject e) -> (Enemy)e).forEach(e -> e.setEdible(true));
                 break;
+            case Diamond:
+                //TODO apply powerup
+                break;
+            case Emerald:
+                //TODO apply powerup
+                break;
+            case Sapphire:
+                //TODO apply powerup
+                break;
+            case Ruby:
+                //TODO apply powerup
+                break;
         }
         
         this.node.getMap().getSession().getScore().incrementScore(this.type.getScore());

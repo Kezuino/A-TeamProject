@@ -21,6 +21,9 @@ public abstract class GameObject {
      * towards.
      */
     protected Direction direction;
+    /**
+     * {@link Direction} this {@link GameObject} will continue onto next.
+     */
     protected Direction nextDirection;
     /**
      * Offset in the X dimension to draw this {@link GameObject} from where 0 is
@@ -66,6 +69,7 @@ public abstract class GameObject {
     /**
      * If true, {@link #moveAdjacent(Direction)} has moved past the current
      * {@link Node} and is now moving on the next {@link Node}.
+     * @deprecated No longer used? TODO check/remove on cleanup.
      */
     private boolean isMovingOnNextNode;
     /**

@@ -4,7 +4,14 @@ public enum ItemType {
     //BigNugget item/consumable. grants 100 score
     BigNugget(100),
     //SmallNugget item/consumable. grants 50 score
-    SmallNugget(50);
+    SmallNugget(50),
+    
+    //PowerUps
+    Diamond(250),
+    Emerald(200),
+    Sapphire(150),
+    Ruby(100);
+    
     
     //The score of this {@link ItemType}.
     private final int score;
