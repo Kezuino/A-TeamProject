@@ -109,6 +109,6 @@ public class Pactale extends GameObject {
 
     @Override
     public void draw(SpriteBatch batch) {
-
+        super.draw(batch);
     }
 }
