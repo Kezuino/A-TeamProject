@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.utility.Assets;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -44,6 +45,14 @@ public class Pactale extends GameObject {
     }
 
     public void setLives(int lives) {
+        //Checks if the lives that are getting set is lower than the current lives, if so pactale got defeated.
+        if (lives > this.lives) {
+            Sound sound = Assets.get("sounds/Defeat.wav", Sound.class);
+            if (sound != null) {
+                sound.play();
+                sound.dispose();
+            }
+        }
         this.lives = lives;
     }
 
