@@ -32,4 +32,21 @@ public enum Direction {
     public int getY() {
         return y;
     }
+    
+    public Direction reverseDirection()
+    {
+        switch(this)
+        {
+            case Up:
+                return Direction.Down;
+            case Down:
+                return Direction.Up;
+            case Left:
+                return Direction.Right;
+            case Right:
+                return Direction.Left;
+            default: 
+                return null;
+        }
+    }
 }
