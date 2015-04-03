@@ -22,7 +22,12 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  */
 public class MainMenu extends BaseScreen {
 
-    public MainMenu() {
+    /**
+     *
+     */
+    public MainMenu(Game game) {
+        super(game);
+        
         Gdx.input.setInputProcessor(stage);
         Skin skin = new Skin(Gdx.files.internal("uiskin.json"));
 

@@ -67,6 +67,14 @@ public class MainScreen extends BaseScreen {
                 //game.setScreen(new GameScreen(game));
             }
         });
+        
+        TextButton tbClanManagement = new TextButton("Clan management", skin);
+        tbClanManagement.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new ClanManagementScreen(game));
+            }
+        });
 
         tbChangeLook.setSize(300, 40);
         tbClanGame.setSize(300, 40);
@@ -74,6 +82,7 @@ public class MainScreen extends BaseScreen {
         tbLogout.setSize(300, 40);
         tbOptions.setSize(300, 40);
         tbSearchGame.setSize(300, 40);
+        tbClanManagement.setSize(300, 40);
 
         float xOfSearchGameButton = stage.getWidth() / 2 - tbSearchGame.getWidth() / 2;
         float yOfSearchGameButton = stage.getHeight() - 50;
@@ -84,6 +93,7 @@ public class MainScreen extends BaseScreen {
         tbChangeLook.setPosition(xOfSearchGameButton, yOfSearchGameButton - 150);
         tbOptions.setPosition(xOfSearchGameButton, yOfSearchGameButton - 200);
         tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
+        tbClanManagement.setPosition(xOfSearchGameButton, yOfSearchGameButton - 300);
 
         stage.addActor(tbSearchGame);
         stage.addActor(tbClanGame);
@@ -91,6 +101,7 @@ public class MainScreen extends BaseScreen {
         stage.addActor(tbChangeLook);
         stage.addActor(tbOptions);
         stage.addActor(tbLogout);
+        stage.addActor(tbClanManagement);
     }
 
     @Override
