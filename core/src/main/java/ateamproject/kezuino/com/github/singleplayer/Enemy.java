@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public class Enemy extends GameObject {
 
@@ -25,6 +26,15 @@ public class Enemy extends GameObject {
     private Node respawnNode;
 
     /**
+     * The space to store the start time when the edible state has been set to this {@link Enemy}.
+     */
+    private float edibleStartTime;
+    
+    /**
+     * The time this {@link Enemy} will be edible, if set edible.
+     */
+    private float edibleTime;
+    /**
      * Constructs a new {@link Enemy}.
      * The newly constructed {@link Enemy} is not dead.
      * The newly constructed {@link Enemy} is not edible.
@@ -40,9 +50,13 @@ public class Enemy extends GameObject {
     public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
         super(map, x, y, movementSpeed, direction, color);
         this.objectToFollow = objectToFollow;
+        if (objectToFollow!=null){
+            
+        }
         this.respawnNode = map.getNode(x, y);
         this.dead = false;
         this.edible = false;
+        this.edibleTime = 2f;
     }
 
     /**
@@ -63,7 +77,7 @@ public class Enemy extends GameObject {
     }
 
     /**
-     * Will move a Enemy to its spawn and reset some of its properties.
+     * Move an Enemy to its spawn and reset some of its properties.
      */
     public void respawn() {
         setPosition(respawnNode.getX(), respawnNode.getY());
@@ -89,6 +103,8 @@ public class Enemy extends GameObject {
     }
 
     /**
+     * Gets wether this {@link Enemy} is edbile.
+     * 
      * @return True if the enemy is edible at the moment, false if the enemy is not edible.
      */
     public boolean isEdible() {
@@ -96,12 +112,19 @@ public class Enemy extends GameObject {
     }
 
     /**
-     * Sets whether the enemy is edible or not, the enemy is edible if true. The enemy is not edible if false
+     * Sets wether this {@link Enemy} is edible.
+     * This {@link Enemy} is edible if true.
+     * This {@link Enemy} is not edible if false.
      *
      * @param eatable Boolean, cannot be null
      */
-    public void setEdible(boolean eatable) {
-        this.edible = eatable;
+    public void setEdible(boolean edible) {
+        if(edible) {
+            this.setColor(Color.WHITE);
+            this.edibleStartTime = System.nanoTime();
+        }
+        
+        this.edible = edible;
     }
 
     /**
@@ -110,4 +133,18 @@ public class Enemy extends GameObject {
     public GameObject getObjectToFollow() {
         return this.objectToFollow;
     }
+
+    @Override
+    public void update() {
+        if(this.edible) {
+            float secondsFromStart = (System.nanoTime() - this.edibleStartTime) / 1000000000.0f;
+            
+            if(secondsFromStart >= this.edibleTime) {
+                this.edible = false;
+                this.setColor(this.previousColor);
+            }
+        }
+        
+        super.update();
+    }   
 }

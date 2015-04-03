@@ -11,7 +11,7 @@ public class DesktopLauncher {
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.foregroundFPS = 60;
         cfg.backgroundFPS = 30;
-        cfg.samples = 8;
+        //cfg.samples = 8;
 
         new LwjglApplication(new PactaleGame(), cfg);
     }

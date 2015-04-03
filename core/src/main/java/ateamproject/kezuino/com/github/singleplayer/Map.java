@@ -1,19 +1,16 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Texture;
+import ateamproject.kezuino.com.github.pathfinding.AStar;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.*;
-import com.badlogic.gdx.utils.JsonReader;
-import com.badlogic.gdx.utils.JsonValue;
-import javafx.beans.property.MapProperty;
-import jdk.nashorn.internal.parser.JSONParser;
-import jdk.nashorn.internal.runtime.Source;
 
-import java.io.File;
 import java.util.*;
 
 public class Map {
+    /**
+     * Handles pathfinding for this {@link Map}.
+     */
+    private AStar pathfinder;
     /**
      * LibGDX 2D {@link TiledMap} for rendering purposes.
      */
@@ -34,6 +31,7 @@ public class Map {
      * {@link GameSession} that hosts the {@link Map} and allows multiplayer.
      */
     private GameSession gameSession;
+
     /**
      * Initializes a map with a 2D array filled with {@link Node nodes}.
      *
@@ -58,6 +56,7 @@ public class Map {
 
         nodes = new Nodes(width, height);
         resetNodes(width, height);
+        pathfinder = new AStar(this);
     }
 
     /**
@@ -70,7 +69,7 @@ public class Map {
     public static Map load(GameSession session, String mapPath) {
         if (mapPath == null || mapPath.isEmpty()) throw new IllegalArgumentException();
 
-        TiledMap tiledMap = new AtlasTmxMapLoader().load(mapPath);
+        TiledMap tiledMap = new TmxMapLoader().load(mapPath);
         MapProperties props = tiledMap.getProperties();
         Map map = new Map(session, props.get("width", Integer.class), props.get("height", Integer.class));
         map.baseMap = tiledMap;
@@ -82,7 +81,7 @@ public class Map {
                 node.setTileId(layer.getCell(x, y).getTile().getId());
             }
         }
-        
+
         // TODO: Create GameObjects from the second layer.
 
         return map;
@@ -185,18 +184,7 @@ public class Map {
     public Node getAdjecentNode(Node node, Direction direction) {
         if (node == null) throw new NullPointerException("Parameter node must not be null.");
         if (direction == null) throw new NullPointerException("Parameter direction must not be null.");
-        switch (direction) {
-            case Up:
-                return getNode(node.getX(), node.getY() - 1);
-            case Down:
-                return getNode(node.getX(), node.getY() + 1);
-            case Left:
-                return getNode(node.getX() - 1, node.getY());
-            case Right:
-                return getNode(node.getX() + 1, node.getY());
-            default:
-                return null;
-        }
+        return getNode(node.getX() + direction.getX(), node.getY() + direction.getY());
     }
 
     /**
@@ -219,5 +207,23 @@ public class Map {
      */
     public Nodes getNodes() {
         return nodes;
+    }
+
+    /**
+     * Gets the pathfinding handler for this {@link Map}.
+     *
+     * @return Pathfinding handler for this {@link Map}.
+     */
+    public AStar getPathfinder() {
+        return pathfinder;
+    }
+    
+    /**
+     * Get the current {@link GameSession} this {@link Map} is currently in.
+     * 
+     * @return The current {@link GameSession}
+     */
+    public GameSession getSession() {
+        return this.gameSession;
     }
 }

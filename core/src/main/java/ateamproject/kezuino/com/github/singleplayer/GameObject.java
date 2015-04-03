@@ -1,6 +1,11 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.Assets;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public abstract class GameObject {
 
@@ -10,7 +15,37 @@ public abstract class GameObject {
      * ignores interlopation and just waits based on the {link #movementSpeed}
      * until it can {@link #move(Node)} again.
      */
-    private boolean movementInterpolation;
+    protected boolean movementInterpolation;
+    /**
+     * {@link Direction} that this {@link GameObject} is currently facing
+     * towards.
+     */
+    protected Direction direction;
+    protected Direction nextDirection;
+    /**
+     * Offset in the X dimension to draw this {@link GameObject} from where 0 is
+     * the most left spot and 1 is the most right spot.
+     */
+    protected float drawOffsetX;
+    /**
+     * Offset in the Y dimension to draw this {@link GameObject} from where 0 is
+     * the most bottom spot and 1 is the most top spot.
+     */
+    protected float drawOffsetY;
+    /**
+     * If true, this {@link GameObject} is currently transitioning between
+     * {@link Node nodes}.
+     */
+    protected boolean isMoving;
+    /**
+     * Gametime when this {@link GameObject} started transitioning from another
+     * {@link Node}.
+     */
+    protected float movementStartTime;
+    /**
+     * {@link Texture} of this {@link GameObject} for drawing.
+     */
+    protected Texture texture;
     /**
      * {@link Map} that contains this {@link GameObject}.
      */
@@ -29,67 +64,121 @@ public abstract class GameObject {
      */
     private float movementSpeed;
     /**
+     * If true, {@link #moveAdjacent(Direction)} has moved past the current
+     * {@link Node} and is now moving on the next {@link Node}.
+     */
+    private boolean isMovingOnNextNode;
+    /**
      * {@link com.badlogic.gdx.graphics.Color} at that will be used to draw this
      * {@link GameObject}.
      */
     private Color color;
-    /**
-     * {@link Direction} that this {@link GameObject} is currently facing
-     * towards.
-     */
-    private Direction direction;
 
+    /**
+     * {@link com.badlogic.gdx.graphics.Color} this {@link GameObject} previously originated from.
+     */
+    protected Color previousColor;
     /**
      * Initializes this {@link GameObject}.
      *
-     * @param map           That hosts this {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
-     * @param x             X position of this {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
-     * @param y             Y position of this {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
-     * @param movementSpeed Speed in seconds that this {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes
-     *                      to move to another adjacent {@link ateamproject.kezuino.com.github.singleplayer.Node}.
-     * @param direction     {@link ateamproject.kezuino.com.github.singleplayer.Direction} that this {@link ateamproject.kezuino.com.github.singleplayer.GameObject} is
-     *                      currently facing.
-     * @param color         {@link com.badlogic.gdx.graphics.Color} that this
-     *                      {@link GameObject} will be
+     * @param map That hosts this
+     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
+     * @param x X position of this
+     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
+     * @param y Y position of this
+     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
+     * @param movementSpeed Speed in seconds that this
+     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes to
+     * move to another adjacent
+     * {@link ateamproject.kezuino.com.github.singleplayer.Node}.
+     * @param direction
+     * {@link ateamproject.kezuino.com.github.singleplayer.Direction} that this
+     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject} is
+     * currently facing.
+     * @param color {@link com.badlogic.gdx.graphics.Color} that this
+     * {@link GameObject} will be
      */
     public GameObject(Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
-        if (direction == null) throw new IllegalArgumentException("Parameter direction must not be null.");
-        if (color == null) throw new IllegalArgumentException("Parameter color must not be null.");
-        if (movementSpeed <= 0) throw new IllegalArgumentException("Parameter movementSpeed must be higher than 0.");
+        if (direction == null) {
+            throw new IllegalArgumentException("Parameter direction must not be null.");
+        }
+        if (color == null) {
+            throw new IllegalArgumentException("Parameter color must not be null.");
+        }
+        if (movementSpeed <= 0) {
+            throw new IllegalArgumentException("Parameter movementSpeed must be higher than 0.");
+        }
+        if (color.equals(Color.CLEAR)) {
+            throw new IllegalArgumentException("Parameter color must not be Color.CLEAR.");
+        }
         this.map = map;
         this.x = x;
         this.y = y;
         this.movementSpeed = movementSpeed;
         this.direction = direction;
         this.color = color;
-        this.movementInterpolation = false;
-
+        this.movementInterpolation = true;
+        this.drawOffsetX = .5f;
+        this.drawOffsetY = .5f;
     }
 
     /**
      * Initializes this {@link GameObject} with a default {@code Color.WHITE}
      * color.
      *
-     * @param map           That hosts this {@link GameObject}.
-     * @param x             X position of this {@link GameObject}.
-     * @param y             Y position of this {@link GameObject}.
+     * @param map That hosts this {@link GameObject}.
+     * @param x X position of this {@link GameObject}.
+     * @param y Y position of this {@link GameObject}.
      * @param movementSpeed Speed in seconds that this {@link GameObject} takes
-     *                      to move to another adjacent {@link Node}.
-     * @param direction     {@link Direction} that this {@link GameObject} is
-     *                      currently facing.
+     * to move to another adjacent {@link Node}.
+     * @param direction {@link Direction} that this {@link GameObject} is
+     * currently facing.
      */
     public GameObject(Map map, int x, int y, float movementSpeed, Direction direction) {
         this(map, x, y, movementSpeed, direction, Color.WHITE);
     }
 
+    public boolean isMoving() {
+        return isMoving;
+    }
+
+    /**
+     * Gets the {@link Texture} of this {@link GameObject} for drawing.
+     */
+    public Texture getTexture() {
+        return texture;
+    }
+
+    /**
+     * Sets the {@link Texture} of this {@link GameObject} for drawing.
+     */
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
+
+    /**
+     * Gets the X dimension that this {@link GameObject} is on.
+     *
+     * @return X dimension that this {@link GameObject} is on.
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Gets the Y dimension that this {@link GameObject} is on.
+     *
+     * @return Y dimension that this {@link GameObject} is on.
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * Gets the {@link Map} that hosts this {@link GameObject}.
+     *
+     * @return {@link Map} that hosts this {@link GameObject}.
+     */
     public Map getMap() {
         return map;
     }
@@ -119,10 +208,23 @@ public abstract class GameObject {
      * move to another adjacent {@link Node}.
      *
      * @param movementSpeed Speed in seconds that it takes for this
-     *                      {@link GameObject} to move to another adjacent {@link Node}.
+     * {@link GameObject} to move to another adjacent {@link Node}.
      */
     public void setMovementSpeed(float movementSpeed) {
         this.movementSpeed = movementSpeed;
+    }
+
+    @Override
+    public String toString() {
+        return "GameObject{"
+                + "x=" + x
+                + ", y=" + y
+                + ", movementSpeed=" + movementSpeed
+                + ", color=" + color
+                + ", direction=" + direction
+                + ", drawOffsetX=" + drawOffsetX
+                + ", drawOffsetY=" + drawOffsetY
+                + '}';
     }
 
     /**
@@ -134,6 +236,16 @@ public abstract class GameObject {
      */
     public Color getColor() {
         return this.color;
+    }
+    
+    /**
+     * Sets / changes the current color of the this {@link GameObject}
+     * 
+     * @param color  Color this {@link GameObject} will be.
+     */
+    public void setColor(Color color) {
+        this.previousColor = this.color;
+        this.color = color;
     }
 
     /**
@@ -152,10 +264,10 @@ public abstract class GameObject {
      * facing towards.
      *
      * @param direction {@link Direction} that this {@link GameObject} is
-     *                  currently facing towards.
+     * currently facing towards.
      */
     public void setDirection(Direction direction) {
-        this.direction = direction;
+        this.nextDirection = this.isMoving ? direction : (this.direction = direction);
     }
 
     /**
@@ -196,9 +308,7 @@ public abstract class GameObject {
         // Add GameObject to new Node or revert if failing.
         if (!targetNode.addGameObject(this)) {
             // Revert position back because we failed.
-            if (currentNode != null) {
-                currentNode.addGameObject(this);
-            }
+            currentNode.addGameObject(this);
             return false;
         }
 
@@ -217,37 +327,150 @@ public abstract class GameObject {
      * {@link #movementSpeed}.
      *
      * @param direction {@link Direction} to move in (to an adjacent
-     *                  {@link Node}).
+     * {@link Node}).
      */
     public void moveAdjacent(Direction direction) {
-        if (direction == Direction.Up) {
-            if (this.map.getNode(x, y--) != null) {
-                this.y--;
+        this.direction = direction;
+        Node targetNode = getMap().getAdjecentNode(getNode(), direction);
+        if (targetNode != null) {
+
+        }
+
+        if (movementInterpolation) {
+            if (!isMoving) {
+                isMoving = true;
+                drawOffsetX = .5f;
+                drawOffsetY = .5f;
+                movementStartTime = System.nanoTime();
             }
-        } else if (direction == Direction.Right) {
-            if (this.map.getNode(x++, y) != null) {
-                this.x++;
-            }
-        } else if (direction == Direction.Down) {
-            if (this.map.getNode(x, y++) != null) {
-                this.y++;
-            }
-        } else if (direction == Direction.Left) {
-            if (this.map.getNode(x--, y) != null) {
-                this.x--;
+        } else {
+            // The enum Direction contains information about which offset x and y is should return based on the value of the enum.
+            // Change this value if Y are inverted.. do not change this code.
+            this.x += direction.getX();
+            this.y += direction.getY();
+        }
+    }
+
+    /**
+     * Called when a collision was detected by this {@link GameObject}. Return
+     * true if collision has been handled and shouldn't continue.
+     *
+     * @param object {@link GameObject} that this {@link GameObject} is
+     * colliding with.
+     * @return True if collision has been handled and {@link GameObject}.
+     */
+    protected boolean collisionWithGameObject(GameObject object) {
+        // TODO: Handle collision with a GameObject.
+        return false;
+    }
+
+    protected boolean collisionWithWall(Node node) {
+
+        return false;
+    }
+
+    /**
+     * Moves this {@link GameObject} to another adjacent {@link Node} based on
+     * the given {@code direction}. If {@link #movementInterpolation} is true,
+     * this movement should be pixel-perfectly smooth between the nodes. If
+     * {@link #movementInterpolation} is false, this movement should move
+     * immediately and wait until it can move again based on
+     * {@link #movementSpeed}.
+     *
+     */
+    public void moveAdjacent() {
+        Direction previousDirection = this.direction;
+        this.direction = this.nextDirection != null ? this.nextDirection : direction;
+        Node targetNode = getMap().getAdjecentNode(getNode(), this.direction);
+        if (targetNode == null || targetNode.isWall()) {
+            this.direction = previousDirection;
+            targetNode = getMap().getAdjecentNode(getNode(), this.direction);
+            if (targetNode == null || targetNode.isWall()) {
+                return;
             }
         }
-        throw new UnsupportedOperationException();//no movement inplemented
+
+        if (movementInterpolation) {
+            if (!isMoving) {
+                isMoving = true;
+                drawOffsetX = .5f;
+                drawOffsetY = .5f;
+                movementStartTime = System.nanoTime();
+            }
+        } else {
+            // The enum Direction contains information about which offset x and y should return based on the value set in the enum.
+            // Change this value if X or Y are inverted.. do not change this code.
+            this.x += direction.getX();
+            this.y += direction.getY();
+        }
+    }
+
+    /**
+     * Updates this {@link GameObject}.
+     */
+    public void update() {
+        if (!this.isMoving) {
+            this.moveAdjacent();
+        }
+
+        Node targetNode = this.getMap().getAdjecentNode(getNode(), this.direction);
+        for (GameObject obj : targetNode.getGameObjects()) {
+            if (obj.equals(this)) break;
+            if (collisionWithGameObject(obj)) {
+                break;
+            }
+        }
+        if (targetNode.isWall()) {
+            collisionWithWall(targetNode);
+            return;
+        };
+    }
+
+    /**
+     * Draws this {@link GameObject} inside the {@link Map}.
+     */
+    public void draw(SpriteBatch batch) {
+        // Capture node and texture.
+        Node node = getNode();
+        if (node == null || texture == null) {
+            return;
+        }
+
+        // Preprocess batch.
+        batch.setColor(getColor());
+
+        // TODO: Animate from sprite region.
+        //TextureRegion region = new TextureRegion(texture, 0, 0, 26, 32);
+        // Set draw offset when moving.
+        if (movementInterpolation && isMoving) {
+            // Calculate the amount of offset.
+            float secondsFromStart = (System.nanoTime() - movementStartTime) / 1000000000.0f;
+
+            drawOffsetX = direction.getX() * (secondsFromStart * (1 / movementSpeed)) + .5f;
+            drawOffsetY = direction.getY() * (secondsFromStart * (1 / movementSpeed)) + .5f;
+            if (secondsFromStart >= movementSpeed) {
+                isMoving = false;
+                isMovingOnNextNode = false;
+                drawOffsetX = .5f;
+                drawOffsetY = .5f;
+                this.x += direction.getX();
+                this.y += direction.getY();
+            }
+        }
+
+        // Draw centered in node.
+        float xOffset = (32 - texture.getWidth()) / 2f - (16 - 32 * drawOffsetX);
+        float yOffset = (32 - texture.getHeight()) / 2f - (16 - 32 * drawOffsetY);
+        batch.draw(texture, this.x * 32 + xOffset, this.y * 32 + yOffset);
     }
 
     /**
      * Tries to move this {@link GameObject} to another {@link Node} using
-     * pathfinding based on the {@link #movementSpeed}.
+     * {@link Map#getPathfinder()} based on the {@link #movementSpeed}.
      *
-     * @param node {@link Node} to move towards.
-     * @see #moveAdjacent(Direction)
+     * @param targetNode {@link Node} to move towards.
      */
-    public void move(Node node) {
+    public void move(Node targetNode) {
         throw new UnsupportedOperationException();//no movement inplemented
     }
 }

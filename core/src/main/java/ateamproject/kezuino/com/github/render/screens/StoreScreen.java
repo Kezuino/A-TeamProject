@@ -5,8 +5,10 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -22,13 +24,22 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class StoreScreen extends BaseScreen {
 
     public StoreScreen(Game game) {
-        super(game);
+        super(game); 
+        Sound sound = Assets.manager.get("sounds/Background.mp3",Sound.class);
+        if (sound != null){
+            sound.loop();
+        }
+                
 
         TextButton btnBack = new TextButton("Terug", skin);
         btnBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // game.setScreen(new HomeScreen(game));
+                if (sound!=null){
+                 sound.dispose();
+                }
+                game.setScreen(new MainScreen(game));
+               
             }
         });
         float x = 240;

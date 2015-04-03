@@ -1,5 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import com.badlogic.gdx.utils.Array;
+
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -70,5 +72,19 @@ public class Nodes implements Iterable<Node> {
 
     public Stream<Node> stream() {
         return StreamSupport.stream(spliterator(), false);
+    }
+
+    /**
+     * Returns a {@link Array<Node>} variant of the {@link Node} list.
+     *
+     * @return {@link Array<Node>} variant of the {@link Node} list.
+     */
+    public Array<Node> toArray() {
+        Array<Node> nodes = new Array<>();
+        Iterator<Node> iter = iterator();
+        while (iter.hasNext()) {
+            nodes.add(iter.next());
+        }
+        return nodes;
     }
 }

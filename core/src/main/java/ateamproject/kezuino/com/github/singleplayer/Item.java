@@ -1,12 +1,13 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import java.awt.Point;
+import java.util.stream.Collectors;
 
 public class Item {
 
-    private String Name;
-    private Node Node;
-    private ItemType Type;
+    private String name;
+    private Node node;
+    private ItemType type;
 
 
     /**
@@ -16,11 +17,11 @@ public class Item {
      * @param node the node the item is located on
      * @param type the type of the item standing on the node
      */
-    public Item(String name, Node node,ItemType type) {
-        this.Name = name;
-        this.Node = node;
-        this.Node.setItem(this);
-        this.Type = type;
+    public Item(String name, Node node, ItemType type) {
+        this.name = name;
+        this.node = node;
+        this.node.setItem(this);
+        this.type = type;
 
         // TODO: Discuss usage of "offsetPosition" for position of item in Node.
     }
@@ -31,7 +32,7 @@ public class Item {
      * @return name of the item
      */
     public String getName() {
-        return this.Name;
+        return this.name;
     }
 
     /**
@@ -40,7 +41,7 @@ public class Item {
      * @param name Name of the item
      */
     public void setName(String name) {
-        this.Name = name;
+        this.name = name;
     }
 
     /**
@@ -49,7 +50,7 @@ public class Item {
      * @return type of the item
      */
     public ItemType getItemType() {
-        return this.Type;
+        return this.type;
     }
 
     /**
@@ -58,7 +59,7 @@ public class Item {
      * @param type
      */
     public void setItemType(ItemType type) {
-        this.Type = type;
+        this.type = type;
     }
     
    
@@ -69,18 +70,13 @@ public class Item {
      */
     public void activate(GameObject target) {
         // TODO - implement Item.activate
-        switch(this.Type){
+        switch(this.type){
             case BigNugget:
-                
-                
-                break;
-            case SmallNugget :
-                
-                
-                break;
-            default:
+                this.node.getMap().getAllGameObjects().stream().filter((GameObject o) -> o instanceof Enemy).map((GameObject e) -> (Enemy)e).forEach(e -> e.setEdible(true));
                 break;
         }
+        
+        this.node.getMap().getSession().getScore().incrementScore(this.type.getScore());
     }
 
 }

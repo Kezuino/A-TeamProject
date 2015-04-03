@@ -1,20 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="9">
- <properties>
-  <property name="atlas" value="tileset/packed.atlas"/>
-  <property name="blended tiles" value=""/>
- </properties>
- <tileset firstgid="1" name="Background" tilewidth="32" tileheight="32" spacing="1" margin="2">
-  <image source="tileset/Background.png" width="128" height="64"/>
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="1">
+ <tileset firstgid="1" name="Background" tilewidth="32" tileheight="32">
+  <tile id="0">
+   <image width="32" height="32" source="../textures/Background/floor.png"/>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="isWall" value="True"/>
+   </properties>
+   <image width="32" height="32" source="../textures/Background/wall.png"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="3" name="Foreground" tilewidth="32" tileheight="32">
   <tile id="0">
    <properties>
-    <property name="isWall" value="true"/>
+    <property name="isPactale" value="True"/>
    </properties>
+   <image width="32" height="32" source="../textures/Foreground/pactale.png"/>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="isEnemy" value="True"/>
+   </properties>
+   <image width="32" height="32" source="../textures/Foreground/enemy.png"/>
   </tile>
  </tileset>
  <layer name="Background" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjZGBgYByhmIlMjM88RjQ1uNj4xLC5j1rmkeN/UswjRw0+95Cjhhz3YYs7epiHzz9MZJhHbPoj1X3UNo8a+W0UDzwGADhOAfI=
+   eJxjYmBgYARiplE8ZDAjFkwtcygxk5pm4TOPmuE2FMKOmuZRK93RIj3TwkxqmksLdw51DAACjwLg
+  </data>
+ </layer>
+ <layer name="Foreground" width="20" height="20">
+  <data encoding="base64" compression="zlib">
+   eJxjYBgFo2BkAeaBdgAdAQsaHgWjgJoAADXEABQ=
   </data>
  </layer>
 </map>
