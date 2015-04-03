@@ -5,9 +5,9 @@ import java.awt.Point;
 public class Item {
 
     private String Name;
-    private Node Node;
     private ItemType Type;
-
+    private int xCoordinate;
+    private int yCoordinate;
 
     /**
      * Initializes a item at the given node.
@@ -16,11 +16,11 @@ public class Item {
      * @param node the node the item is located on
      * @param type the type of the item standing on the node
      */
-    public Item(String name, Node node,ItemType type) {
+    public Item(String name, int xCoordinate, int yCoordinate, ItemType type) {
         this.Name = name;
-        this.Node = node;
-        this.Node.setItem(this);
         this.Type = type;
+        this.xCoordinate = xCoordinate;
+        this.yCoordinate = yCoordinate;
 
         // TODO: Discuss usage of "offsetPosition" for position of item in Node.
     }
@@ -60,23 +60,21 @@ public class Item {
     public void setItemType(ItemType type) {
         this.Type = type;
     }
-    
-   
+
     /**
-     * The target who picks up this item activates the effect this item is carrying
+     * The target who picks up this item activates the effect this item is
+     * carrying
      *
      * @param target target standing on the node with the item
      */
     public void activate(GameObject target) {
         // TODO - implement Item.activate
-        switch(this.Type){
-            case BigNugget:
-                
-                
+        switch (this.Type) {
+            case BigObject:
+
                 break;
-            case SmallNugget :
-                
-                
+            case SmallObject:
+
                 break;
             default:
                 break;

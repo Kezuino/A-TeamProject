@@ -26,9 +26,16 @@ filter: Nearest,Nearest
 repeat: none
 textures/Foreground/allPactales
   rotate: false
-  xy: 2, 36
+  xy: 2, 71
   size: 128, 128
   orig: 128, 128
+  offset: 0, 0
+  index: -1
+textures/Foreground/bigObject
+  rotate: false
+  xy: 132, 167
+  size: 32, 32
+  orig: 32, 32
   offset: 0, 0
   index: -1
 textures/Foreground/enemy
@@ -38,9 +45,30 @@ textures/Foreground/enemy
   orig: 32, 32
   offset: 0, 0
   index: -1
+textures/Foreground/item
+  rotate: false
+  xy: 37, 37
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
 textures/Foreground/pactale
   rotate: false
-  xy: 132, 132
+  xy: 132, 133
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+textures/Foreground/projectile
+  rotate: false
+  xy: 2, 36
+  size: 33, 33
+  orig: 33, 33
+  offset: 0, 0
+  index: -1
+textures/Foreground/smallObject
+  rotate: false
+  xy: 166, 167
   size: 32, 32
   orig: 32, 32
   offset: 0, 0

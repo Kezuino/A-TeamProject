@@ -34,7 +34,7 @@ public class GameScreen extends BaseScreen {
         session = new GameSession();
         session.setMap(Map.load(session, "maps/0.tmx"));
 
-        player = new Pactale(session.getMap(), 5, 5, 3, .5f, Direction.Down, Color.RED);
+        player = new Pactale(session.getMap(), 9, 5, 3, .5f, Direction.Down, Color.RED);
         player.setTexture(Assets.get("textures/foreground/pactale.png", Texture.class));
         session.getMap().addGameObject(5, 5, this.player);
         

@@ -35,7 +35,7 @@ public class TestNode {
         this.testEnemy = new Enemy(this.testPactale, this.testSession.getMap(), 3, 1, 0.1f, Direction.Right);
 
         this.nodeForItem = new Node(this.testSession.getMap(), 0, 8);
-        this.testItem = new Item("Item Name", this.nodeForItem,ItemType.BigNugget);
+        this.testItem = new Item("Item Name", this.nodeForItem,ItemType.BigObject);
 
         this.nodeForWall = new Node(this.testSession.getMap(), 1, 10);
     }
@@ -71,7 +71,7 @@ public class TestNode {
         assertNotNull("An item must be set on the node.", nodeForItem.getItem());
         nodeForItem.removeItem();
         assertNull("Item must have been removed from the node.", nodeForItem.getItem());
-        Item item = nodeForItem.setItem("TestItem",ItemType.BigNugget);
+        Item item = nodeForItem.setItem("TestItem",ItemType.BigObject);
         assertSame("Item must have been set on the node.", item, nodeForItem.getItem());
     }
 
@@ -86,7 +86,7 @@ public class TestNode {
         assertNotNull("An item must be set on the node.", nodeForItem.getItem());
         nodeForItem.removeItem();
         assertNull("Item must have been removed from the node.", nodeForItem.getItem());
-        Item item = new Item("TestItem", nodeForItem,ItemType.BigNugget);
+        Item item = new Item("TestItem", nodeForItem,ItemType.BigObject);
         assertSame("Item must have been set on the node.", item, nodeForItem.getItem());
     }
 

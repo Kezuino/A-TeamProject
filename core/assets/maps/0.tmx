@@ -2,6 +2,9 @@
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="1">
  <tileset firstgid="1" name="Background" tilewidth="32" tileheight="32">
   <tile id="0">
+   <properties>
+    <property name="isGround" value="True"/>
+   </properties>
    <image width="32" height="32" source="../textures/Background/floor.png"/>
   </tile>
   <tile id="1">
@@ -24,15 +27,29 @@
    </properties>
    <image width="32" height="32" source="../textures/Foreground/enemy.png"/>
   </tile>
+  <tile id="2">
+   <properties>
+    <property name="isItem" value="True"/>
+    <property name="name" value="bigObject"/>
+   </properties>
+   <image width="32" height="32" source="../textures/Foreground/bigObject.png"/>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="isItem" value="True"/>
+    <property name="name" value="watch"/>
+   </properties>
+   <image width="32" height="32" source="../textures/Foreground/item.png"/>
+  </tile>
  </tileset>
  <layer name="Background" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYmBgYARiplE8ZDAjFkwtcygxk5pm4TOPmuE2FMKOmuZRK93RIj3TwkxqmksLdw51DAACjwLg
+   eJxjZGBgYETDTDhobPLoctjMYsKhBxuNy05s5hFyHz5z8JlJLqaXudTwA73NpKa/qR2OtIiTwWoetdIhtdI2E43NpEU+pKY7hzoGAO09Aq4=
   </data>
  </layer>
  <layer name="Foreground" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYBgFo2BkAeaBdgAdAQsaHgWjgJoAADXEABQ=
+   eJxjZmBgYIFiBiR6FIyCgQasRIoNNGCD4sFq3igYBbQCAMtEADI=
   </data>
  </layer>
 </map>

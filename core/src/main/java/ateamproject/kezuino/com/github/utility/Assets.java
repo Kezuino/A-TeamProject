@@ -38,7 +38,11 @@ public class Assets {
 
         // Textures.
         manager.load("textures/foreground/pactale.png", Texture.class);
+        manager.load("textures/foreground/enemy.png", Texture.class);
         manager.load("textures/foreground/projectile.png", Texture.class);
+        manager.load("textures/foreground/bigObject.png", Texture.class);
+        manager.load("textures/foreground/smallObject.png", Texture.class);
+        manager.load("textures/foreground/item.png", Texture.class);
 
         // Sounds.
         //manager.load("sounds/Background.mp3", Sound.class); //Takes a long time..

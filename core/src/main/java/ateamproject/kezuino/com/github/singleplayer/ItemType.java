@@ -10,6 +10,7 @@ package ateamproject.kezuino.com.github.singleplayer;
  * @author Fatih
  */
 public enum ItemType {
-    BigNugget,
-    SmallNugget
+    BigObject,
+    SmallObject,
+    Watch
 }
