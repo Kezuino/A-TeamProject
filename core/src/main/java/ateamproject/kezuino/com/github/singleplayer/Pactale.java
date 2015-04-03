@@ -3,10 +3,10 @@ package ateamproject.kezuino.com.github.singleplayer;
 import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class Pactale extends GameObject {
 
@@ -18,20 +18,20 @@ public class Pactale extends GameObject {
     /**
      * Initialize a {@link Pactale}.
      *
-     * @param x position of this
-     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see
-     * Map.
-     * @param y position of this
-     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see
-     * Map.
-     * @param lives Times that the
-     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} can be hit.
-     * Defaults to 1 for a multiplayer session.
-     * @param movementSpeed Amount of seconds that it will take to move to
-     * another node.
+     * @param x                position of this
+     *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see
+     *                         Map.
+     * @param y                position of this
+     *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see
+     *                         Map.
+     * @param lives            Times that the
+     *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} can be hit.
+     *                         Defaults to 1 for a multiplayer session.
+     * @param movementSpeed    Amount of seconds that it will take to move to
+     *                         another node.
      * @param walkingDirection Looking direction to start with.
-     * @param color Distinct color of this
-     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
+     * @param color            Distinct color of this
+     *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
      */
     public Pactale(Map map, int x, int y, int lives, float movementSpeed, Direction walkingDirection, Color color) {
         super(map, x, y, movementSpeed, walkingDirection, color);
@@ -75,8 +75,7 @@ public class Pactale extends GameObject {
         // check if next node has collision
         prjtl.moveAdjacent(direction);
     }
-    
-    
+
 
     int getCollisionObject(int x, int y) {
         Node NextNode;
@@ -91,18 +90,15 @@ public class Pactale extends GameObject {
         return ReturnVal;
     }
 
-    public boolean addPortal(Portal portal)
-    {
+    public boolean addPortal(Portal portal) {
         if (portal != null) {
             this.portal = portal;
             return true;
-        }
-        else 
-        {
+        } else {
             return false;
         }
     }
-    
+
     /**
      * Will remove all listed portals from this {@link Pactale}.
      */
