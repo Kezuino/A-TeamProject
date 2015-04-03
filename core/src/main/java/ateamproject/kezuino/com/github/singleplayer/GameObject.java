@@ -1,6 +1,9 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public abstract class GameObject {
 
@@ -10,7 +13,36 @@ public abstract class GameObject {
      * ignores interlopation and just waits based on the {link #movementSpeed}
      * until it can {@link #move(Node)} again.
      */
-    private boolean movementInterpolation;
+    protected boolean movementInterpolation;
+    /**
+     * Gametime when this {@link GameObject} started transitioning from another {@link Node}.
+     */
+    protected float movementStartTime;
+    /**
+     * {@link Direction} queued for when the {@link GameObject} has stopped moving. This is required to change a direction and not have to repress the movement key.
+     */
+    protected Direction nextDirection;
+    /**
+     * {@link Direction} that this {@link GameObject} is currently facing
+     * towards.
+     */
+    protected Direction direction;
+    /**
+     * Offset in the X dimension to draw this {@link GameObject} from where 0 is the most left spot and 1 is the most right spot.
+     */
+    protected float drawOffsetX;
+    /**
+     * Offset in the Y dimension to draw this {@link GameObject} from where 0 is the most bottom spot and 1 is the most top spot.
+     */
+    protected float drawOffsetY;
+    /**
+     * If true, this {@link GameObject} is currently transitioning between {@link Node nodes}.
+     */
+    protected boolean isMoving;
+    /**
+     * {@link Texture} of this {@link GameObject} for drawing.
+     */
+    protected Texture texture;
     /**
      * {@link Map} that contains this {@link GameObject}.
      */
@@ -29,15 +61,20 @@ public abstract class GameObject {
      */
     private float movementSpeed;
     /**
+     * If true, {@link #moveAdjacent(Direction)} has moved past the current {@link Node} and is now moving on the next {@link Node}.
+     */
+    private boolean isMovingOnNextNode;
+
+    /**
+     * If true, {@link #draw(SpriteBatch)} will immediately move the {@link GameObject} again when the movement has finished until it cannot move straight again.
+     * When movement is blocked, {@link #continuousMovement} will be set to false.
+     */
+    private boolean continuousMovement;
+    /**
      * {@link com.badlogic.gdx.graphics.Color} at that will be used to draw this
      * {@link GameObject}.
      */
     private Color color;
-    /**
-     * {@link Direction} that this {@link GameObject} is currently facing
-     * towards.
-     */
-    private Direction direction;
 
     /**
      * Initializes this {@link GameObject}.
@@ -63,7 +100,8 @@ public abstract class GameObject {
         this.direction = direction;
         this.color = color;
         this.movementInterpolation = false;
-
+        this.drawOffsetX = .5f;
+        this.drawOffsetY = .5f;
     }
 
     /**
@@ -82,14 +120,47 @@ public abstract class GameObject {
         this(map, x, y, movementSpeed, direction, Color.WHITE);
     }
 
+    public boolean isMoving() {
+        return isMoving;
+    }
+
+    /**
+     * Gets the {@link Texture} of this {@link GameObject} for drawing.
+     */
+    public Texture getTexture() {
+        return texture;
+    }
+
+    /**
+     * Sets the {@link Texture} of this {@link GameObject} for drawing.
+     */
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
+
+    /**
+     * Gets the X dimension that this {@link GameObject} is on.
+     *
+     * @return X dimension that this {@link GameObject} is on.
+     */
     public int getX() {
         return x;
     }
 
+    /**
+     * Gets the Y dimension that this {@link GameObject} is on.
+     *
+     * @return Y dimension that this {@link GameObject} is on.
+     */
     public int getY() {
         return y;
     }
 
+    /**
+     * Gets the {@link Map} that hosts this {@link GameObject}.
+     *
+     * @return {@link Map} that hosts this {@link GameObject}.
+     */
     public Map getMap() {
         return map;
     }
@@ -123,6 +194,19 @@ public abstract class GameObject {
      */
     public void setMovementSpeed(float movementSpeed) {
         this.movementSpeed = movementSpeed;
+    }
+
+    @Override
+    public String toString() {
+        return "GameObject{" +
+                "x=" + x +
+                ", y=" + y +
+                ", movementSpeed=" + movementSpeed +
+                ", color=" + color +
+                ", direction=" + direction +
+                ", drawOffsetX=" + drawOffsetX +
+                ", drawOffsetY=" + drawOffsetY +
+                '}';
     }
 
     /**
@@ -216,38 +300,147 @@ public abstract class GameObject {
      * immediately and wait until it can move again based on
      * {@link #movementSpeed}.
      *
+     * @param direction  {@link Direction} to move in (to an adjacent
+     *                   {@link Node}).
+     * @param continuous If true, movement will keep going until a collision has been met.
+     * @return True if movement is possible.
+     */
+    public boolean moveAdjacent(Direction direction, boolean continuous) {
+        this.continuousMovement = continuous;
+        if (isMoving) {
+            nextDirection = direction;
+            System.out.println(this.direction + " - " + nextDirection);
+            return true;
+        } else if (this.direction != direction) {
+            this.direction = nextDirection == null ? direction : nextDirection;
+            nextDirection = null;
+        }
+
+        System.out.println(direction + " - " + nextDirection);
+
+
+        // Test collision.
+        Node dirNode = getMap().getAdjecentNode(getNode(), this.direction);
+        Node nextNode = null;
+        if (nextDirection != null) {
+            nextNode = getMap().getAdjecentNode(getNode(), this.nextDirection);
+        }
+        if (nextNode != null && !nextNode.isWall()) {
+            this.direction = nextDirection;
+            this.nextDirection = null;
+            isMoving = true;
+            return true;
+        } else if (dirNode != null && dirNode.isWall()) {
+            isMoving = false;
+            return false;
+        }
+
+        drawOffsetX = .5f;
+        drawOffsetY = .5f;
+        movementStartTime = System.nanoTime();
+        isMoving = true;
+        return true;
+    }
+
+    /**
+     * Moves this {@link GameObject} to another adjacent {@link Node} based on
+     * the given {@code direction}. If {@link #movementInterpolation} is true,
+     * this movement should be pixel-perfectly smooth between the nodes. If
+     * {@link #movementInterpolation} is false, this movement should move
+     * immediately and wait until it can move again based on
+     * {@link #movementSpeed}.
+     *
      * @param direction {@link Direction} to move in (to an adjacent
      *                  {@link Node}).
+     * @return True if movement is possible.
      */
-    public void moveAdjacent(Direction direction) {
-        if (direction == Direction.Up) {
-            if (this.map.getNode(x, y--) != null) {
-                this.y--;
-            }
-        } else if (direction == Direction.Right) {
-            if (this.map.getNode(x++, y) != null) {
-                this.x++;
-            }
-        } else if (direction == Direction.Down) {
-            if (this.map.getNode(x, y++) != null) {
-                this.y++;
-            }
-        } else if (direction == Direction.Left) {
-            if (this.map.getNode(x--, y) != null) {
-                this.x--;
+    public boolean moveAdjacent(Direction direction) {
+        return moveAdjacent(direction, false);
+    }
+
+    /**
+     * Updates this {@link GameObject}.
+     */
+    public void update() {
+
+    }
+
+    /**
+     * Draws this {@link GameObject} inside the {@link Map}.
+     */
+    public void draw(SpriteBatch batch) {
+        if (texture == null) return;
+
+        // Preprocess batch.
+        batch.setColor(getColor());
+
+        // TODO: Animate from sprite region.
+        TextureRegion region = new TextureRegion(texture, 0, 0, 26, 32);
+
+        if (isMoving) {
+            float secondsFromStart = (System.nanoTime() - movementStartTime) / 1000000000.0f;
+
+            // Set draw offset when moving.
+            if (movementInterpolation) {
+                drawOffsetX = direction.getX() * (secondsFromStart * (1 / movementSpeed)) + .5f;
+                drawOffsetY = direction.getY() * (secondsFromStart * (1 / movementSpeed)) + .5f;
+
+                // Check if GameObject is on second node.
+                if (secondsFromStart > movementSpeed / 2.0f) {
+                    // Invert.
+                    if (direction.getX() != 0) drawOffsetX = drawOffsetX <= 1 ? drawOffsetX + 1 : drawOffsetX - 1;
+                    if (direction.getY() != 0) drawOffsetY = drawOffsetY <= 1 ? drawOffsetY + 1 : drawOffsetY - 1;
+
+                    if (!isMovingOnNextNode) {
+                        this.x += direction.getX();
+                        this.y += direction.getY();
+                        isMovingOnNextNode = true;
+                    }
+                }
+
+                // Check if GameObject is done moving.
+                if (secondsFromStart >= movementSpeed) {
+                    isMoving = false;
+                    isMovingOnNextNode = false;
+                    drawOffsetX = .5f;
+                    drawOffsetY = .5f;
+
+                    if (continuousMovement) {
+                        if (!moveAdjacent(direction, true)) {
+                            continuousMovement = false;
+                        }
+                    }
+                }
+            } else {
+                // TODO: Wait before GameObject can move again.
+                if (secondsFromStart >= movementSpeed) {
+                    this.x += direction.getX();
+                    this.y += direction.getY();
+                    isMoving = false;
+
+                    if (continuousMovement) {
+                        if (!moveAdjacent(direction, true)) {
+                            continuousMovement = false;
+                        }
+                    }
+                }
             }
         }
-        throw new UnsupportedOperationException();//no movement inplemented
+
+        // Draw centered in node. (center) - (offset)
+        float xOffset = (32 - region.getRegionWidth()) / 2f - (16 - 32 * drawOffsetX);
+        float yOffset = (32 - region.getRegionHeight()) / 2f - (16 - 32 * drawOffsetY);
+        batch.draw(region, x * 32 + xOffset, y * 32 + yOffset);
     }
 
     /**
      * Tries to move this {@link GameObject} to another {@link Node} using
-     * pathfinding based on the {@link #movementSpeed}.
+     * {@link Map#getPathfinder()} based on the {@link #movementSpeed}.
      *
-     * @param node {@link Node} to move towards.
+     * @param targetNode {@link Node} to move towards.
      * @see #moveAdjacent(Direction)
      */
-    public void move(Node node) {
+    public void move(Node targetNode) {
         throw new UnsupportedOperationException();//no movement inplemented
     }
 }

@@ -5,8 +5,10 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -16,14 +18,20 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  * @author David
  */
 public class LoginScreen extends BaseScreen {
+
     public LoginScreen(Game game) {
         super(game);
+        Sound sound = Assets.get("sounds/Background.mp3",Sound.class);
+        if (sound != null)
+            sound.play();
 
         TextButton btnLogin = new TextButton("Login", skin);
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (sound != null) sound.dispose();
                 game.setScreen(new MainScreen(game));
+
             }
         });
 

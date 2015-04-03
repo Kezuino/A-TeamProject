@@ -13,18 +13,28 @@ public class Pactale extends GameObject {
 
     /**
      * Initialize a {@link Pactale}.
-     *  @param x                position of this {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see Map.
-     * @param y                position of this {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see Map.
-     * @param lives            Times that the {@link ateamproject.kezuino.com.github.singleplayer.Pactale} can be hit. Defaults to 1 for a multiplayer session.
-     * @param movementSpeed    Amount of seconds that it will take to move to another node.
+     *
+     * @param x position of this
+     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see
+     * Map.
+     * @param y position of this
+     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see
+     * Map.
+     * @param lives Times that the
+     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} can be hit.
+     * Defaults to 1 for a multiplayer session.
+     * @param movementSpeed Amount of seconds that it will take to move to
+     * another node.
      * @param walkingDirection Looking direction to start with.
-     * @param color            Distinct color of this {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
+     * @param color Distinct color of this
+     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
      */
     public Pactale(Map map, int x, int y, int lives, float movementSpeed, Direction walkingDirection, Color color) {
         super(map, x, y, movementSpeed, walkingDirection, color);
         this.lives = lives;
+        this.projectiles = new ArrayList<>();
     }
-    
+
     public int getPlayerIndex() {
         return this.playerIndex;
     }
@@ -42,18 +52,57 @@ public class Pactale extends GameObject {
     }
 
     /**
-     * Will shoot a portal in the direction that the {@link Pactale} currently is heading.
+     * Will shoot a portal in the direction that the {@link Pactale} currently
+     * is heading.
      */
     public void shootPortal() {
-        // TODO - implement Pactale.shootPortal
-        throw new UnsupportedOperationException();
+        // create projectile
+        Projectile prjtl = new Projectile(this.getMap(), this.getX(), getY(), this, this.getMovementSpeed(), this.getDirection(), Color.CLEAR);
+        //int i = 0;
+
+        // check if next node has collision
+        while (!prjtl.hasCollision()) {
+            prjtl.moveAdjacent(direction); // Test projecttile direction to right
+           // System.out.println("Steps to wall: " + i++);
+        }
+
+        // if collision has detected, check if it is a wall or an object
+        // 1 = wall 
+        // 2 = Object (pactale/Enemy)
+        int WallOrObject = getCollisionObject(prjtl.getX(), prjtl.getY());
+        System.out.println("Shot on : "+WallOrObject);
+        if (WallOrObject == 1) { // wall
+            Portal portal = new Portal(this, prjtl.getNode(), direction);
+            this.getMap().getNode(prjtl.getX(), prjtl.getY()).setPortal(direction, portal);
+            System.out.println("Portal set on : x" + portal.getNode().getX() + "-y" + portal.getNode().getY());
+        } else if (WallOrObject == 2) {// object
+            
+            // TO Move object to existing portal of this.pactale
+            // if no portal, exit/break code
+            System.out.println("Object is Shot on : x" + prjtl.getX() + "-y" + prjtl.getY());
+
+        } else { }
+
+    }
+
+    int getCollisionObject(int x, int y) {
+        Node NextNode;
+        int ReturnVal = 0;
+        NextNode = this.getMap().getNode(x + direction.getX(), y + direction.getY());
+        if (NextNode.isWall()) {
+            // Next Node is a wall, colision detected, return true
+            ReturnVal = 1;
+        } else if (!NextNode.getGameObjects().isEmpty()) {
+            ReturnVal = 2;
+        }
+        return ReturnVal;
     }
 
     /**
      * Will remove all listed portals from this {@link Pactale}.
      */
     public void removePortal() {
-        // TODO - implement Pactale.removePortal
-        throw new UnsupportedOperationException();
+        portal.getNode().removePortal(portal.getDirection());
+        portal = null;
     }
 }

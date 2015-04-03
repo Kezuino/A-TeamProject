@@ -9,6 +9,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import javafx.scene.paint.Color;
 
 /**
  * @author David
@@ -18,32 +19,32 @@ public class ClanGames extends BaseScreen{
     public ClanGames(Game game)
     {
         super(game);
-      
-        TextButton btnLogin = new TextButton("Press me!", skin);
-        btnLogin.addListener(new ClickListener() {
+    
+        Table table = new Table();
+       
+        for (int i = 0; i < 5; i++) {
+            Label clan = new Label("OurClan", skin);        
+            Label clanjoin = new Label("8/10", skin);
+            
+            table.add(clan);
+            table.add(clanjoin);
+            table.row();
+        }
+        
+        TextButton btnBack = new TextButton("< Back", skin);
+         btnBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 game.setScreen(new GameScreen(game));
             }
         });
+        btnBack.setSize(300, 400);
         
-
-        btnLogin.setSize(300, 40);
-        btnLogin.setPosition(stage.getWidth() / 2 - btnLogin.getWidth() / 2, stage.getHeight() / 2 - btnLogin.getHeight() / 2);
-
-        Label nameLabel = new Label("Name:", skin);
-        TextField nameText = new TextField("", skin);
-        Label addressLabel = new Label("Address:", skin);
-        TextField addressText = new TextField("", skin);
-
-        Table table = new Table();
-        table.add(nameLabel);
-        table.add(nameText).width(10);
-        table.row();
-        table.add(addressLabel);
-        table.add(addressText).width(10);
+        table.add(btnBack).colspan(2);
+        
         
         table.setPosition(stage.getWidth()/2, stage.getHeight()/2);
+        
         //stage.addActor(btnLogin);        
         stage.addActor(table);
 

@@ -5,8 +5,10 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -16,6 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  * @author David
  */
 public class MainScreen extends BaseScreen {
+
+    private Sound backgroundSound;
 
     public MainScreen(Game game) {
         super(game);
@@ -32,7 +36,7 @@ public class MainScreen extends BaseScreen {
         tbClanGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new ClanGamesScreen(game));
+                game.setScreen(new ClanGames(game));
             }
         });
 
@@ -91,6 +95,37 @@ public class MainScreen extends BaseScreen {
         stage.addActor(tbChangeLook);
         stage.addActor(tbOptions);
         stage.addActor(tbLogout);
+    }
+
+    @Override
+    public void show() {
+        backgroundSound = Assets.get("sounds/Background.mp3", Sound.class);
+        if (backgroundSound != null) {
+            backgroundSound.loop();
+        }
+        super.show();
+    }
+
+    @Override
+    public void pause() {
+        if (backgroundSound != null) {
+            backgroundSound.stop();
+        }
+        super.pause();
+    }
+
+    @Override
+    public void resume() {
+        if (backgroundSound != null) {
+            backgroundSound.loop();
+        }
+        super.resume();
+    }
+
+    @Override
+    public void dispose() {
+        if (backgroundSound != null) backgroundSound.dispose();
+        super.dispose();
     }
 
     @Override

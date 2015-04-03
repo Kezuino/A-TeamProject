@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -27,11 +28,14 @@ import java.util.TreeMap;
 public class HighscoreScreen extends BaseScreen {
     public HighscoreScreen(Game game) {
         super(game);
+        Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/Background.mp3"));
+        sound.loop();
 
         TextButton btnBack = new TextButton("Terug", skin);
         btnBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                sound.dispose();
                 game.setScreen(new MainScreen(game));
             }
         });
