@@ -74,6 +74,9 @@ public abstract class GameObject {
      */
     private Color color;
 
+    /**
+     * {@link com.badlogic.gdx.graphics.Color} this {@link GameObject} previously originated from.
+     */
     protected Color previousColor;
     /**
      * Initializes this {@link GameObject}.

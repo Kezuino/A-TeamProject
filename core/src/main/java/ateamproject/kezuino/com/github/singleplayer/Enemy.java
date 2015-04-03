@@ -25,8 +25,14 @@ public class Enemy extends GameObject {
      */
     private Node respawnNode;
 
+    /**
+     * The space to store the start time when the edible state has been set to this {@link Enemy}.
+     */
     private float edibleStartTime;
     
+    /**
+     * The time this {@link Enemy} will be edible, if set edible.
+     */
     private float edibleTime;
     /**
      * Constructs a new {@link Enemy}.
