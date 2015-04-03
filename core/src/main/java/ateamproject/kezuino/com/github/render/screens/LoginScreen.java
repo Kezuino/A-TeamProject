@@ -22,8 +22,9 @@ public class LoginScreen extends BaseScreen {
     public LoginScreen(Game game) {
         super(game);
         Sound sound = Assets.get("sounds/Background.mp3",Sound.class);
-        if (sound != null)
+        if (sound != null){
             sound.play();
+        }
 
         TextButton btnLogin = new TextButton("Login", skin);
         btnLogin.addListener(new ClickListener() {
