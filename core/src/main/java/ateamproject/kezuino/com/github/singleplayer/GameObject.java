@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -85,6 +86,7 @@ public abstract class GameObject {
         if (direction == null) throw new IllegalArgumentException("Parameter direction must not be null.");
         if (color == null) throw new IllegalArgumentException("Parameter color must not be null.");
         if (movementSpeed <= 0) throw new IllegalArgumentException("Parameter movementSpeed must be higher than 0.");
+        if (color.equals(Color.CLEAR)) throw new IllegalArgumentException("Parameter color must not be Color.CLEAR.");
         this.map = map;
         this.x = x;
         this.y = y;
