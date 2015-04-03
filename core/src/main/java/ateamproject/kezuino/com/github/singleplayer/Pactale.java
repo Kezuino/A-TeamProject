@@ -61,28 +61,9 @@ public class Pactale extends GameObject {
         //int i = 0;
 
         // check if next node has collision
-        while (!prjtl.hasCollision()) {
-            prjtl.moveAdjacent(direction); // Test projecttile direction to right
-           // System.out.println("Steps to wall: " + i++);
-        }
-
-        // if collision has detected, check if it is a wall or an object
-        // 1 = wall 
-        // 2 = Object (pactale/Enemy)
-        int WallOrObject = getCollisionObject(prjtl.getX(), prjtl.getY());
-        System.out.println("Shot on : "+WallOrObject);
-        if (WallOrObject == 1) { // wall
-            Portal portal = new Portal(this, prjtl.getNode(), direction);
-            this.getMap().getNode(prjtl.getX(), prjtl.getY()).setPortal(direction, portal);
-            System.out.println("Portal set on : x" + portal.getNode().getX() + "-y" + portal.getNode().getY());
-        } else if (WallOrObject == 2) {// object
-            
-            // TO Move object to existing portal of this.pactale
-            // if no portal, exit/break code
-            System.out.println("Object is Shot on : x" + prjtl.getX() + "-y" + prjtl.getY());
-
-        } else { }
-
+        prjtl.moveAdjacent(direction, true);
+        
+        
     }
 
     int getCollisionObject(int x, int y) {
