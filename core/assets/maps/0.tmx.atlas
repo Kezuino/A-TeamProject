@@ -20,10 +20,17 @@ textures/Background/wall
   index: -1
 
 0.tmx2.png
-size: 128,64
+size: 256,256
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+textures/Foreground/allPactales
+  rotate: false
+  xy: 2, 36
+  size: 128, 128
+  orig: 128, 128
+  offset: 0, 0
+  index: -1
 textures/Foreground/enemy
   rotate: false
   xy: 2, 2
@@ -33,7 +40,7 @@ textures/Foreground/enemy
   index: -1
 textures/Foreground/pactale
   rotate: false
-  xy: 36, 2
+  xy: 132, 132
   size: 32, 32
   orig: 32, 32
   offset: 0, 0

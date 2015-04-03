@@ -5,20 +5,29 @@
    <image width="32" height="32" source="../textures/Background/floor.png"/>
   </tile>
   <tile id="1">
+   <properties>
+    <property name="isWall" value="True"/>
+   </properties>
    <image width="32" height="32" source="../textures/Background/wall.png"/>
   </tile>
  </tileset>
  <tileset firstgid="3" name="Foreground" tilewidth="32" tileheight="32">
   <tile id="0">
+   <properties>
+    <property name="isPactale" value="True"/>
+   </properties>
    <image width="32" height="32" source="../textures/Foreground/pactale.png"/>
   </tile>
   <tile id="1">
+   <properties>
+    <property name="isEnemy" value="True"/>
+   </properties>
    <image width="32" height="32" source="../textures/Foreground/enemy.png"/>
   </tile>
  </tileset>
  <layer name="Background" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjYmBgYBrFQwozYsHUMocSM6lpFj7zqBluQyHsqGketdIdLdIzLcykprm0cOdQxwAIywLh
+   eJxjYmBgYARiplE8ZDAjFkwtcygxk5pm4TOPmuE2FMKOmuZRK93RIj3TwkxqmksLdw51DAACjwLg
   </data>
  </layer>
  <layer name="Foreground" width="20" height="20">
