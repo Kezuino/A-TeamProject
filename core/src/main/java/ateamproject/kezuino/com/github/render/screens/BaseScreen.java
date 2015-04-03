@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.render.IRenderer;
+import ateamproject.kezuino.com.github.singleplayer.IRenderable;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -31,8 +32,8 @@ public abstract class BaseScreen implements Screen {
     protected Stage stage;
 
     protected Skin skin;
-    protected List<IRenderer> renderers;
     protected InputMultiplexer inputs;
+    private List<IRenderer> renderers;
 
     public BaseScreen(Game game) {
         // Bootstrap screen.
@@ -96,5 +97,15 @@ public abstract class BaseScreen implements Screen {
     public void dispose() {
     }
 
+    /**
+     * Adds the {@link IRenderer}
+     * @param renderer
+     * @param <T>
+     * @return
+     */
+    public <T extends IRenderer> T addRenderer(T renderer) {
+        renderers.add(renderer);
+        return renderer;
+    }
 
 }

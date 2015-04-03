@@ -1,7 +1,7 @@
 package ateamproject.kezuino.com.github.render.orthographic;
 
 import ateamproject.kezuino.com.github.render.IRenderer;
-import ateamproject.kezuino.com.github.render.orthographic.camera.*;
+import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
@@ -23,6 +23,14 @@ public class GameRenderer implements IRenderer {
         // Init tilemap.
         tileMapRenderer = new OrthogonalTiledMapRenderer(map.getBaseMap());
         tileMapRenderer.setView(camera);
+    }
+
+    public SpriteBatch getBatch() {
+        return batch;
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 
     @Override
