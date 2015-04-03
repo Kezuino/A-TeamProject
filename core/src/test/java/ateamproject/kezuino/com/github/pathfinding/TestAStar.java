@@ -34,5 +34,14 @@ public class TestAStar {
             assertNotNull("Node must not be null.", n);
             assertFalse("Node must not be a wall.", n.isWall());
         }
+
+        // Create impossible situation for pathfinding.
+        for (int i = 0; i < 20; i++) {
+            map.getNode(i, 4).setWall(true);
+        }
+        aStar = new AStar(map);
+        result = new DefaultGraphPath<>();
+        aStar.searchNodePath(node, endNode, (node1, endNode1) -> 0, result);
+        assertEquals("Result path must be empty.", result);
     }
 }
