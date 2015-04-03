@@ -7,13 +7,15 @@ public class Item {
 
     private String name;
     private ItemType type;
-    private int xCoordinate;
-    private int yCoordinate;
+    private final int xCoordinate;
+    private final int yCoordinate;
 
     /**
      * Initializes a item at the given node.
      *
      * @param name the name of the item
+     * @param xCoordinate
+     * @param yCoordinate
      * @param node the node the item is located on
      * @param type the type of the item standing on the node
      */

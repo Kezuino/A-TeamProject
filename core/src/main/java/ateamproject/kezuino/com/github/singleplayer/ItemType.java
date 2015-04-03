@@ -2,9 +2,12 @@ package ateamproject.kezuino.com.github.singleplayer;
 
 public enum ItemType {
     //BigNugget item/consumable. grants 100 score
-    BigNugget(100),
+    BigObject(100),
     //SmallNugget item/consumable. grants 50 score
-    SmallNugget(50),
+    SmallObject(50),
+    
+    //test for object
+    Watch(0),
     
     //PowerUps
     Diamond(250),
