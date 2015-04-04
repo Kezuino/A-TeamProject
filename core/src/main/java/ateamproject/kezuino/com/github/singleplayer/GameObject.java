@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.render.IRenderable;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -288,15 +289,17 @@ public abstract class GameObject implements IRenderable {
         if (map == null) {
             return false;
         }
-        Node currentNode = map.getNode(this.x, this.y);
+
         Node targetNode = map.getNode(x, y);
-        if (targetNode == null || currentNode == null) {
+        if (targetNode == null) {
             return false;
         }
 
+        Node currentNode = map.getNode(this.x, this.y);
         // Remove GameObject from current Node.
         if (currentNode.removeGameObject(this) == null) {
-            return false;
+            // GameObject wasn't on current node. It might be set from outside of the map.
+            //return false;
         }
 
         // Add GameObject to new Node or revert if failing.
@@ -325,10 +328,6 @@ public abstract class GameObject implements IRenderable {
      */
     public void moveAdjacent(Direction direction) {
         this.direction = direction;
-        Node targetNode = getMap().getAdjecentNode(getNode(), direction);
-        if (targetNode != null) {
-
-        }
 
         if (movementInterpolation) {
             if (!isMoving) {
@@ -374,10 +373,10 @@ public abstract class GameObject implements IRenderable {
     public void moveAdjacent() {
         Direction previousDirection = this.direction;
         this.direction = this.nextDirection != null ? this.nextDirection : direction;
-        Node targetNode = getMap().getAdjecentNode(getNode(), this.direction);
+        Node targetNode = getMap().getAdjacentNode(getNode(), this.direction);
         if (targetNode == null || targetNode.isWall()) {
             this.direction = previousDirection;
-            targetNode = getMap().getAdjecentNode(getNode(), this.direction);
+            targetNode = getMap().getAdjacentNode(getNode(), this.direction);
             if (targetNode == null || targetNode.isWall()) {
                 return;
             }
@@ -406,7 +405,7 @@ public abstract class GameObject implements IRenderable {
             this.moveAdjacent();
         }
 
-        Node targetNode = this.getMap().getAdjecentNode(getNode(), this.direction);
+        Node targetNode = this.getMap().getAdjacentNode(getNode(), this.direction);
         for (GameObject obj : targetNode.getGameObjects()) {
             if (obj.equals(this)) break;
             if (collisionWithGameObject(obj)) {

@@ -3,7 +3,6 @@ package ateamproject.kezuino.com.github.pathfinding;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.singleplayer.Node;
-import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -18,7 +17,7 @@ public class TestAStar {
     public void setUp() throws Exception {
         session = new GameSession();
         map = new Map(session, 20);
-        map.getNode(3, 10).setWall(true);
+        map.getNode(3, 10).setWallForced(true);
         aStar = new AStar(map);
     }
 
@@ -26,8 +25,7 @@ public class TestAStar {
     public void testGeneratePath() {
         Node node = map.getNode(3, 14);
         Node endNode = map.getNode(3, 3);
-        GraphPath<Node> result = new DefaultGraphPath<>();
-        aStar.searchNodePath(node, endNode, (node1, endNode1) -> 0, result);
+        GraphPath<Node> result = aStar.searchNodePath(node, endNode);
 
         // All nodes in the path must be valid.
         for (Node n : result) {
@@ -37,11 +35,10 @@ public class TestAStar {
 
         // Create impossible situation for pathfinding.
         for (int i = 0; i < 20; i++) {
-            map.getNode(i, 4).setWall(true);
+            map.getNode(i, 4).setWallForced(true);
         }
         aStar = new AStar(map);
-        result = new DefaultGraphPath<>();
-        aStar.searchNodePath(node, endNode, (node1, endNode1) -> 0, result);
-        assertEquals("Result path must be empty.", result);
+        result = aStar.searchNodePath(node, endNode);
+        assertEquals("Result path must be empty.", 0, result.getCount());
     }
 }

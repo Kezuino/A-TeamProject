@@ -287,7 +287,7 @@ public class Map {
      * @param node
      * @param direction
      */
-    public Node getAdjecentNode(Node node, Direction direction) {
+    public Node getAdjacentNode(Node node, Direction direction) {
         if (node == null) throw new NullPointerException("Parameter node must not be null.");
         if (direction == null) throw new NullPointerException("Parameter direction must not be null.");
         return getNode(node.getX() + direction.getX(), node.getY() + direction.getY());
@@ -300,7 +300,12 @@ public class Map {
      * @return {@link GameObject} that was added to the {@link Map}.
      */
     public GameObject addGameObject(int x, int y, GameObject object) {
-        getNode(x, y).addGameObject(object);
+        if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
+        Node node = getNode(x, y);
+        if (node == null) throw new IllegalArgumentException("Cannot add GameObject to an x and y node because node is null.");
+
+        if (node.hasGameObject(object)) return null;
+        if (!node.addGameObject(object)) return null;
         object.setPosition(x, y);
         object.setMap(this);
         return object;

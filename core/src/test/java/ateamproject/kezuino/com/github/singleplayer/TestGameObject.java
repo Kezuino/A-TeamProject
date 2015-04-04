@@ -21,6 +21,7 @@ public class TestGameObject {
     Node spawn;
     Enemy enemy;
     Node moveNode;
+
     public TestGameObject() {
     }
 
@@ -31,6 +32,7 @@ public class TestGameObject {
         map = session.getMap();
         spawn = map.getNode(19, 19);
         enemy = new Enemy(null, map, spawn.getX(), spawn.getY(), 100, Direction.Down, Color.BLACK);
+        map.addGameObject(spawn.getX(), spawn.getY(), enemy);
     }
 
     //Game object is an abstract class, in this unittest we will test the child class Enemey to check it's parents methods.
@@ -44,7 +46,7 @@ public class TestGameObject {
          * @param x X position of this {@link GameObject}.
          * @param y Y position of this {@link GameObject}.
          * @param movementSpeed Speed in seconds that this {@link GameObject}
-         * takes to move to another adjacent {@link Node}.
+         * takes to testMove to another adjacent {@link Node}.
          * @param direction {@link Direction} that this {@link GameObject} is
          * currently facing.
          * @param color {@link com.badlogic.gdx.graphics.Color} that this
@@ -68,7 +70,7 @@ public class TestGameObject {
          * @param x             X position of this {@link GameObject}.
          * @param y             Y position of this {@link GameObject}.
          * @param movementSpeed Speed in seconds that this {@link GameObject}
-         * takes to move to another adjacent {@link Node}.
+         * takes to testMove to another adjacent {@link Node}.
          * @param direction {@link Direction} that this {@link GameObject} is
          * currently facing.
          */
@@ -89,45 +91,53 @@ public class TestGameObject {
          * @return True if succesfully changed the Position, false if it didn't.
          */
 
-        //If we try to set the position to a location on the map should return true
+        // If we try to set the position to a location on the map should return true
         assertTrue(enemy.setPosition(10, 10));
-        //If we try to set the position to a X and Y so high it should never be on anny map, should return false.
+        // If we try to set the position to a X and Y so high it should never be on anny map, should return false.
         assertFalse(enemy.setPosition(214700000, 2147000000));
     }
 
-    @Test
+    /**
+     * @deprecated Test method cannot be tested through unittesting without running the game loop here.
+     */
+    @Deprecated
     public void testMoveAdjecentNode() {
         /**
          * Moves this {@link GameObject} to another adjacent {@link Node} based on
          * the given {@code direction}. If {@link #movementInterpolation} is true,
          * this movement should be pixel-perfectly smooth between the nodes. If
-         * {@link #movementInterpolation} is false, this movement should move
-         * immediately and wait until it can move again based on
+         * {@link #movementInterpolation} is false, this movement should testMove
+         * immediately and wait until it can testMove again based on
          * {@link #movementSpeed}.
          *
-         * @param direction {@link Direction} to move in (to an adjacent
+         * @param direction {@link Direction} to testMove in (to an adjacent
          *                  {@link Node}).
          */
 
-        //Enemy was spawned on default 19 19. If we move it up one the y should go -1.
+        // Disable interpolation because we cannot test with interpolation. It requires the game loop to be running.
+        enemy.movementInterpolation = false;
+
+        // Enemy was spawned on default 19 19. If we testMove it up one the y should go -1.
         enemy.moveAdjacent(Direction.Up);
         assertEquals(18, enemy.getY());
-        //If we go back down, should be 19 again
+        // If we go back down, should be 19 again
         enemy.moveAdjacent(Direction.Down);
         assertEquals(19, enemy.getY());
-
     }
 
-    @Test
+    /**
+     * @deprecated Test method cannot be tested through unittesting without running the game loop here.
+     */
+    @Deprecated
     public void testMove() {
         /**
-         * Tries to move this {@link GameObject} to another {@link Node} using
+         * Tries to testMove this {@link GameObject} to another {@link Node} using
          * pathfinding based on the {@link #movementSpeed}.
          *
-         * @param node {@link Node} to move towards.
+         * @param node {@link Node} to testMove towards.
          * @see #moveAdjacent(Direction)
          */
-        //Create a node and move the enemy to that node.
+        //Create a node and testMove the enemy to that node.
         moveNode = map.getNode(10, 10);
         enemy.move(moveNode);
         assertEquals(10, enemy.getX());

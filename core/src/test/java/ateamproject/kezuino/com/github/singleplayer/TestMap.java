@@ -4,8 +4,6 @@ import com.badlogic.gdx.graphics.Color;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.List;
-
 import static org.junit.Assert.*;
 
 public class TestMap {
@@ -18,8 +16,8 @@ public class TestMap {
         map = session.getMap();
 
         // Set walls.
-        map.getNode(14, 19).setTileId(0);
-        map.getNode(13, 13).setTileId(0);
+        map.getNode(14, 19).setWallForced(true);
+        map.getNode(13, 13).setWallForced(true);
 
         // GameObjects.
         Pactale pac = (Pactale) map.addGameObject(13, 13, new Pactale(map, 13, 13, 1, 1, Direction.Down, Color.WHITE));
@@ -114,7 +112,7 @@ public class TestMap {
          *
          * @return All the {@link Node nodes} of this {@link Map}.
          */
-        assertSame("Node x:0, y:0 is not the same as through getNode.", map.getNodes().get(0,0), map.getNode(0,0));
+        assertSame("Node x:0, y:0 is not the same as through getNode.", map.getNodes().get(0, 0), map.getNode(0, 0));
     }
 
     @Test
@@ -122,11 +120,11 @@ public class TestMap {
         /**
          * Returns all {@link GameObject gameobjects} within a {@link Map}.
          */
-        assertTrue("There must be 4 GameObjects in the map.", map.getAllGameObjects().size() == 4);
-        assertTrue("There must be 1 Projectile in the map.", map.getAllGameObjects().stream().filter(o -> o.getClass().equals(Projectile.class)).count() == 1);
-        assertTrue("There must be 2 Enemies in the map.", map.getAllGameObjects().stream().filter(o -> o.getClass().equals(Enemy.class)).count() == 2);
+        assertEquals("There must be 4 GameObjects in the map.", 4, map.getAllGameObjects().size());
+        assertEquals("There must be 1 testProjectileConstructor in the map.", 1, map.getAllGameObjects().stream().filter(o -> o.getClass().equals(Projectile.class)).count());
+        assertEquals("There must be 2 Enemies in the map.", 2, map.getAllGameObjects().stream().filter(o -> o.getClass().equals(Enemy.class)).count());
         map.getNode(13, 14).removeGameObject(map.getNode(13, 14).getGameObjects().get(0));
-        assertTrue("There must be 1 Enemy in the map.", map.getAllGameObjects().stream().filter(o -> o.getClass().equals(Enemy.class)).count() == 1);
+        assertEquals("There must be 1 Enemy in the map.", 1, map.getAllGameObjects().stream().filter(o -> o.getClass().equals(Enemy.class)).count());
     }
 
     @Test
@@ -138,10 +136,10 @@ public class TestMap {
          * @param direction
          */
         Node baseNode = map.getNode(10, 10);
-        assertEquals("Node must be above the other node.", map.getNode(10, 9), map.getAdjecentNode(baseNode, Direction.Up));
-        assertEquals("Node must be below the other node.", map.getNode(10, 11), map.getAdjecentNode(baseNode, Direction.Down));
-        assertEquals("Node must be left of the other node.", map.getNode(9, 10), map.getAdjecentNode(baseNode, Direction.Left));
-        assertEquals("Node must be right of the other node.", map.getNode(11, 10), map.getAdjecentNode(baseNode, Direction.Right));
+        assertEquals("Node must be above the other node.", map.getNode(10, 11), map.getAdjacentNode(baseNode, Direction.Up));
+        assertEquals("Node must be below the other node.", map.getNode(10, 9), map.getAdjacentNode(baseNode, Direction.Down));
+        assertEquals("Node must be left of the other node.", map.getNode(9, 10), map.getAdjacentNode(baseNode, Direction.Left));
+        assertEquals("Node must be right of the other node.", map.getNode(11, 10), map.getAdjacentNode(baseNode, Direction.Right));
     }
 
     @Test

@@ -176,8 +176,10 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
      * Force sets this {@link Node} to a wall.
      *
      * @param value If true, this {@link Node} is a wall.
+     * @deprecated Method only used for testing collision. Do not use in game loop!
      */
-    public void setWall(boolean value) {
+    @Deprecated
+    public void setWallForced(boolean value) {
         isForcedWall = value;
     }
 
@@ -323,7 +325,7 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
 
         for (Direction dir : Direction.values()) {
             // Get adjacent node if not null and isn't a wall.
-            Node adjacentNode = getMap().getAdjecentNode(curNode, dir);
+            Node adjacentNode = getMap().getAdjacentNode(curNode, dir);
             if (adjacentNode == null || adjacentNode.isWall()) continue;
 
             // Add adjacent node to connections.

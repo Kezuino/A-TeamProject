@@ -39,7 +39,7 @@ public class TestItem {
         Item item = new Item("Small gold nugger", this.map, node.getX(), node.getY(), ItemType.BigObject);
         assertNotNull(item);
 
-        assertEquals("Small Dot/Item", item.getName());
+        assertEquals("Item name must be the same as given by constructor and returned by item.getName().", "Small gold nugger", item.getName());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class TestItem {
          */
 
         Item item = new Item("Small gold nugget", this.map, node.getX(), node.getY(), ItemType.BigObject);
-        GameObject UserPactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.CLEAR);
+        GameObject UserPactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.WHITE);
 
         item.activate(UserPactale);
 

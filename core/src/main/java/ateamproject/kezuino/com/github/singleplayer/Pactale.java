@@ -14,7 +14,6 @@ public class Pactale extends GameObject {
     private int lives;
     private Portal portal;
     private Collection<Projectile> projectiles;
-
     /**
      * Initialize a {@link Pactale}.
      *
@@ -45,6 +44,10 @@ public class Pactale extends GameObject {
 
     public Portal getPortal() {
         return this.portal;
+    }
+
+    void setPortal(Portal portal) {
+        this.portal = portal;
     }
 
     public int getLives() {

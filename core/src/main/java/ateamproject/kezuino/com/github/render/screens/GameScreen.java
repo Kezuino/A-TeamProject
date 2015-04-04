@@ -5,8 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.render.IRenderer;
-import ateamproject.kezuino.com.github.render.orthographic.DebugRenderer;
+import ateamproject.kezuino.com.github.render.orthographic.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import ateamproject.kezuino.com.github.singleplayer.Map;
@@ -24,11 +23,12 @@ import com.badlogic.gdx.graphics.Texture;
 public class GameScreen extends BaseScreen {
 
     private GameSession session;
-
     private final Pactale player;
+    private DebugRenderManager debugRenderer;
 
     public GameScreen(Game game) {
         super(game);
+        Assets.create();
 
         session = new GameSession();
         session.setMap(Map.load(session, "maps/0.tmx"));
@@ -37,9 +37,8 @@ public class GameScreen extends BaseScreen {
         player.setTexture(Assets.get("textures/foreground/pactale.png", Texture.class));
         session.getMap().addGameObject(5, 5, this.player);
 
-        // Add renderer.
+        // Renderers.
         addRenderer(new GameRenderer(session.getMap()));
-        addRenderer(new DebugRenderer(session.getMap()));
 
         // Gameplay controls handling:
         inputs.addProcessor(new InputAdapter() {

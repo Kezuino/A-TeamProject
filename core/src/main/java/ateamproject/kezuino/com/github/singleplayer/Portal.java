@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.render.IRenderable;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -26,6 +27,7 @@ public class Portal implements IRenderable {
         if (position == null) throw new IllegalArgumentException("Parameter wall must not be null.");
         if (direction == null) throw new IllegalArgumentException("Parameter direction must not be null.");
         this.owner = owner;
+        owner.setPortal(this);
         this.node = position;
         this.direction = direction;
     }

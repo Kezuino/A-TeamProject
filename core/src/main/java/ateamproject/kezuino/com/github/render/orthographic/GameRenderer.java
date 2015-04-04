@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.render.orthographic;
 import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;

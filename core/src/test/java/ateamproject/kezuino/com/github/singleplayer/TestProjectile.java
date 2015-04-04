@@ -6,18 +6,28 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
+import org.junit.Before;
+import org.junit.Test;
 
 import static org.junit.Assert.*;
-
-import org.junit.Test;
 
 /**
  * @author Jip
  */
 public class TestProjectile {
 
+    private GameSession session;
+    private Map map;
+
+    @Before
+    public void setUp() throws Exception {
+        session = new GameSession();
+        session.setMap(new Map(session, 3));
+        map = session.getMap();
+    }
+
     @Test
-    public void Projectile() {
+    public void testProjectileConstructor() {
         /**
          * Initializes a new projectile.
          *
@@ -27,15 +37,13 @@ public class TestProjectile {
          * @param walkingDirection
          * @param color
          */
-        GameSession g = new GameSession();
-        g.setMap(3);
-        Node position = new Node(g.getMap(), 1, 1);
+        Node position = map.getNode(1, 1);
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Left;
         Color color = new Color(1, 111, 11, 111);
-        Pactale owner = new Pactale(g.getMap(), 1, 1, 1, movementSpeed, walkingDirection, color);
+        Pactale owner = new Pactale(map, 1, 1, 1, movementSpeed, walkingDirection, color);
 
-        Projectile p = new Projectile(g.getMap(), 1, 1, owner, movementSpeed, walkingDirection, color);
+        Projectile p = new Projectile(map, 1, 1, owner, movementSpeed, walkingDirection, color);
         assertEquals("The color needs to be set", p.getColor(), color);
         assertEquals("The direction needs to be set", p.getDirection(), walkingDirection);
         assertEquals("The movementspeed needs to be set", p.getMovementSpeed(), movementSpeed, 0.000005);
@@ -51,20 +59,19 @@ public class TestProjectile {
          *
          * @param direction
          */
-        GameSession g = new GameSession();
-        g.setMap(3);
-        Node position = new Node(g.getMap(), 0, 0);
-        g.getMap().getNode(1, 0).setTileId(0);
+        map.getNode(2, 1).setWallForced(true);
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Right;
         Color color = new Color(1, 111, 11, 111);
-        Pactale owner = new Pactale(g.getMap(), 1, 1, 1, movementSpeed, walkingDirection, color);
-        Projectile p = new Projectile(g.getMap(), 1, 1, owner, movementSpeed, walkingDirection, color);
-/*
-        assertTrue("It needs to collide with the wall when it goes rights", p.hasCollision(Direction.Right));
-        assertFalse("It needs not to collide with the wall when it goes down", p.hasCollision(Direction.Down));
-        assertFalse("It needs not to collide with the wall when it goes up", p.hasCollision(Direction.Up));        
-        assertNull("Wrong value givven as parameter for HasCollision", p.hasCollision(null));
-*/
+        Pactale owner = new Pactale(map, 1, 1, 1, movementSpeed, walkingDirection, color);
+        Projectile p = new Projectile(map, 1, 1, owner, movementSpeed, walkingDirection, color);
+
+        assertTrue("It must collide with the wall when the pactale moves to the right.", p.hasCollision());
+        p.setDirection(Direction.Left);
+        assertFalse("It musn't collide with the wall when the pactale moves to the left.", p.hasCollision());
+        p.setDirection(Direction.Up);
+        assertFalse("It musn't collide with the wall when the pactale moves up.", p.hasCollision());
+        p.setDirection(Direction.Down);
+        assertFalse("It musn't collide with the wall when the pactale moves down.", p.hasCollision());
     }
 }

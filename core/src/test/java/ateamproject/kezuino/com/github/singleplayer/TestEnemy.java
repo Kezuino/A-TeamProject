@@ -36,7 +36,7 @@ public class TestEnemy {
     public void testConstructorEnemey() {
         /**
          * Initializes an enemy. Default isDead = False, isEatable = False.
-         * @param pactaleToFollow Pactale object to follow, CAN BE NULL
+         * @param pactaleToFollow TestPactaleConstructor object to follow, CAN BE NULL
          * @param position
          * @param map
          * @param spawningpoint
@@ -79,7 +79,7 @@ public class TestEnemy {
     @Test
     public void testEnemyRespawn() {
         /**
-         * Will move a Enemy to its spawn and reset some of its properties.
+         * Will testMove a Enemy to its spawn and reset some of its properties.
          */
         assertEquals("Enemy hasn't moved and should be on spawn.", spawn, enemy.getNode());
         assertTrue("Movement must succeed.", enemy.setPosition(15, 14));
@@ -91,7 +91,7 @@ public class TestEnemy {
     @Test
     public void testEnemyTeleport() {
         /**
-         * Will move the enemy to a specific location.
+         * Will testMove the enemy to a specific location.
          *
          * @param position Node, cannot be null
          */

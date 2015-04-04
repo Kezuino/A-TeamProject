@@ -27,7 +27,7 @@ public class TestNode {
         this.testSession.setMap(10);
 
         this.nodeForPactale = new Node(this.testSession.getMap(), 1, 5);
-        this.testPactale = new Pactale(this.testSession.getMap(), 1, 5, 3, 0.1f, Direction.Left, Color.CLEAR);
+        this.testPactale = new Pactale(this.testSession.getMap(), 1, 5, 3, 0.1f, Direction.Left, Color.WHITE);
         this.nodeForPactale.addGameObject(testPactale);
 
         this.nodeforEnemy = new Node(this.testSession.getMap(), 3, 1);
@@ -35,6 +35,7 @@ public class TestNode {
 
         this.nodeForItem = new Node(this.testSession.getMap(), 0, 8);
         this.testItem = new Item(testSession.getMap(), this.nodeForItem.getX(), this.nodeForItem.getY(), ItemType.BigObject);
+        this.nodeForItem.setItem(this.testItem);
 
         this.nodeForWall = new Node(this.testSession.getMap(), 1, 10);
     }
@@ -86,7 +87,8 @@ public class TestNode {
         nodeForItem.removeItem();
         assertNull("Item must have been removed from the node.", nodeForItem.getItem());
         Item item = new Item(this.testSession.getMap(), nodeForItem.getX(), nodeForItem.getY(), ItemType.BigObject);
-        assertSame("Item must have been set on the node.", item, nodeForItem.getItem());
+        nodeForItem.setItem(item);
+        assertNotNull("Item must have been set on the node.", nodeForItem.getItem());
     }
 
     @Test

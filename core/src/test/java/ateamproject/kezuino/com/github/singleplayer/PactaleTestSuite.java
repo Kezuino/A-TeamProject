@@ -36,7 +36,7 @@ public class PactaleTestSuite {
         if (result.wasSuccessful()) {
             System.out.println("All tests in the pactale suite passed.");
         } else {
-            System.out.println("Pactale test suite was NOT succesful");
+            System.out.println("TestPactaleConstructor test suite was NOT succesful");
         }
     }
 }

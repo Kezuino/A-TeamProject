@@ -4,7 +4,6 @@ import java.util.Date;
 
 public class GameSession {
     private Date startTime;
-    private String pathToSkin;
     private Map map;
     private Score score;
 
@@ -20,22 +19,17 @@ public class GameSession {
         return this.startTime;
     }
 
-    public String getPathToSkin() {
-        return this.pathToSkin;
-    }
-
     public Map getMap() {
         return this.map;
     }
 
     /**
-     * Returns a pactale if found with the specific playerIndex. If not found, null will be returned.
+     * Returns a {@link Pactale} if found with the specific {@code playerIndex}. If not found, null will be returned.
      *
      * @param playerIndex
      */
     public Pactale getPlayer(int playerIndex) {
-        //this.map.getAllGameObjects().stream().filter(gameObject -> gameObject instanceof Pactale).filter((Pactale pactale) -> pactale.getPlayerIndex());
-        
+        //this.map.getAllGameObjects().stream().filter(gameObject -> gameObject instanceof Pactale).filter((Pactale pactale) -> pactale.getPlayerIndex().equals(playerIndex);
         
         // TODO - NOT IN FIRST IMPLEMENTATION. SEEN <- OK
         throw new UnsupportedOperationException();

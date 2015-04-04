@@ -1,4 +1,4 @@
-package ateamproject.kezuino.com.github.singleplayer;
+package ateamproject.kezuino.com.github.render;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;

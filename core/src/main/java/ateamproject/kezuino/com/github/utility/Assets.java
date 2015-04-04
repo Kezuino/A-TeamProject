@@ -57,6 +57,7 @@ public class Assets {
      * @return Resource from the {@link AssetManager} or null if not found
      */
     public static <T> T get(String asset, Class<T> type) {
+        if (manager == null) return null;
         if (manager.isLoaded(asset, type)) {
             return manager.get(asset, type);
         }
