@@ -404,6 +404,12 @@ public abstract class GameObject implements IRenderable, IPositionable {
         }
 
         Node targetNode = this.getMap().getAdjacentNode(getNode(), this.direction);
+        
+        //Target node is beyond bounds, do not check for collision beyond this point
+        if(targetNode == null) {
+            return;
+        }
+        
         for (GameObject obj : targetNode.getGameObjects()) {
             if (obj.equals(this)) break;
             if (collisionWithGameObject(obj)) {
