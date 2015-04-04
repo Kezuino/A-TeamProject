@@ -2,6 +2,7 @@ package ateamproject.kezuino.com.github.render.debug;
 
 import ateamproject.kezuino.com.github.render.IRenderable;
 import ateamproject.kezuino.com.github.singleplayer.IPositionable;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public abstract class DebugRenderer<T extends IPositionable> implements IDebugRenderer<T> {
     protected DebugLayers layer;
     protected SpriteBatch batch;
+    protected Camera camera;
 
     /**
      * Initializes a {@link IDebugRenderer} and starts it with listening to a specific {@link DebugLayers Layer}.

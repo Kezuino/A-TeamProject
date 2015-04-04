@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugPathfinding;
+import ateamproject.kezuino.com.github.render.debug.renderers.DebugStatistics;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -30,16 +31,10 @@ public class GameRenderer implements IRenderer {
         tileMapRenderer.setView(camera);
 
         // Init visual debugger.
+        DebugRenderManager.setCamera(camera);
+        DebugRenderManager.addRenderer(new DebugStatistics());
         DebugRenderManager.addRenderer(new DebugPathfinding());
         DebugRenderManager.show();
-    }
-
-    public SpriteBatch getBatch() {
-        return batch;
-    }
-
-    public Camera getCamera() {
-        return camera;
     }
 
     @Override

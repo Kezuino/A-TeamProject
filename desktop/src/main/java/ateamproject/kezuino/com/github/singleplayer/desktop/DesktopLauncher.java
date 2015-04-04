@@ -14,7 +14,7 @@ public class DesktopLauncher {
 
         //cfg.samples = 8;
 
-        //frameRateTest(cfg);
+        frameRateTest(cfg);
 
         new LwjglApplication(new PactaleGame(), cfg);
     }

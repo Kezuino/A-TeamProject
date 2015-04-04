@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.render.debug;
 
 import ateamproject.kezuino.com.github.singleplayer.IPositionable;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
@@ -17,10 +18,18 @@ public class DebugRenderManager {
      */
     private static List<IDebugRenderer> renderers;
 
+    /**
+     * {@link Camera} used for setting the {@link SpriteBatch#projectionMatrix} when calling the {@link DebugRenderer#render(IPositionable)}.
+     */
+    private static Camera camera;
 
     static {
         renderers = new ArrayList<>();
         layerSpriteBatches = new HashMap<>();
+    }
+
+    public static void setCamera(Camera camera) {
+        DebugRenderManager.camera = camera;
     }
 
     /**
@@ -70,7 +79,9 @@ public class DebugRenderManager {
     public static <T extends IDebugRenderer> T addRenderer(T renderer) {
         renderers.add(renderer);
         if (renderer instanceof DebugRenderer) {
-            ((DebugRenderer) renderer).batch = getSpriteBatch(renderer.getLayer());
+            DebugRenderer debugRenderer = (DebugRenderer) renderer;
+            debugRenderer.batch = getSpriteBatch(renderer.getLayer());
+            debugRenderer.camera = camera;
         }
         return renderer;
     }

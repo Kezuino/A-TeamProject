@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.utility;
 
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -11,24 +12,16 @@ import java.util.HashMap;
 public class Assets {
 
     public static AssetManager manager;
-    public static HashMap<String, BitmapFont> fonts;
 
     public static void create() {
         manager = new AssetManager();
-        fonts = new HashMap<>();
+        manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));
         load();
     }
 
     private static void load() {
         // Fonts.
-        BitmapFont font = new BitmapFont();
-        font.setColor(Color.BLACK);
-        fonts.put("default", font);
-        font = new BitmapFont();
-        font.setColor(Color.YELLOW);
-        font.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        font.setScale(0.9f);
-        fonts.put("fps", font);
+        manager.load("fonts/opensans.ttf", BitmapFont.class);
 
         // Textures.
         manager.load("textures/foreground/pactale.png", Texture.class);
@@ -80,5 +73,9 @@ public class Assets {
      */
     public static void dispose() {
         manager.dispose();
+    }
+
+    public static BitmapFont getFont(String asset) {
+        return get(asset, BitmapFont.class);
     }
 }

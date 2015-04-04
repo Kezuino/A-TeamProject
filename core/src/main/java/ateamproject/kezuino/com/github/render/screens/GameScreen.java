@@ -82,10 +82,7 @@ public class GameScreen extends BaseScreen {
         
         // Render Game and UI.
         super.render(delta);
-        Gdx.graphics.setTitle(String.valueOf(Gdx.graphics.getFramesPerSecond()));
     }
-
-
     @Override
     public void pause() {
         // TODO: If singleplayer: pause game.
