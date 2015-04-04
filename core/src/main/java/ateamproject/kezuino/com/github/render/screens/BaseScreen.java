@@ -6,6 +6,8 @@
 package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.render.IRenderer;
+import ateamproject.kezuino.com.github.render.debug.DebugLayers;
+import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -13,7 +15,7 @@ import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
@@ -52,7 +54,7 @@ public abstract class BaseScreen implements Screen {
 
         // Bootstrap view.
         camera = stage.getCamera();
-        viewport = new FitViewport(stage.getWidth(), stage.getHeight(), camera);
+        viewport = new StretchViewport(stage.getWidth(), stage.getHeight(), camera);
         stage.setViewport(viewport);
     }
 
@@ -67,12 +69,14 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        stage.act(delta);
-        stage.draw();
-
         for (IRenderer renderer : renderers) {
             renderer.render();
         }
+
+        stage.act(delta);
+        stage.draw();
+
+        DebugRenderManager.render(DebugLayers.UI);
     }
 
     @Override

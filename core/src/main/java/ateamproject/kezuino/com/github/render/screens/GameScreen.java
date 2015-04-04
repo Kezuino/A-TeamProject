@@ -5,7 +5,8 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.render.orthographic.debug.DebugRenderManager;
+import ateamproject.kezuino.com.github.render.debug.DebugLayers;
+import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import ateamproject.kezuino.com.github.singleplayer.Map;
@@ -24,7 +25,6 @@ public class GameScreen extends BaseScreen {
 
     private GameSession session;
     private final Pactale player;
-    private DebugRenderManager debugRenderer;
 
     public GameScreen(Game game) {
         super(game);
@@ -80,8 +80,9 @@ public class GameScreen extends BaseScreen {
         Gdx.gl.glClearColor(1, 1, 1, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        // Render UI and Game.
+        // Render Game and UI.
         super.render(delta);
+        Gdx.graphics.setTitle(String.valueOf(Gdx.graphics.getFramesPerSecond()));
     }
 
 

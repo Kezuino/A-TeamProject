@@ -4,7 +4,7 @@ import ateamproject.kezuino.com.github.render.IRenderable;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class Item implements IRenderable {
+public class Item implements IRenderable, IPositionable {
 
     private final int x;
     private final int y;
@@ -121,11 +121,6 @@ public class Item implements IRenderable {
     }
 
 
-    /**
-     * Returns the {@link Node} based on the X and Y dimensions on the {@link Map}.
-     *
-     * @return {@link Node} based on the X and Y dimensions on the {@link Map}.
-     */
     public Node getNode() {
         return this.getMap().getNode(this.x, this.y);
     }

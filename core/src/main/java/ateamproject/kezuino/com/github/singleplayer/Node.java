@@ -10,18 +10,20 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.stream.Collectors;
 
-public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
-    /**
-     * {@link Map} that contains this {@link Node}.
-     */
+public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, IPositionable {
+
     private final Map map;
     /**
      * All {@link GameObject GameObjects} on this {@link Node}.
      */
     private final List<GameObject> gameObjects;
+    private int x;
+    private int y;
     private int tileId;
     /**
      * List of {@link Portal portals} that can be on a side of this {@link Node}.
@@ -31,14 +33,6 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
      * {@link Item} that is on this {@link Node}.
      */
     private Item item;
-    /**
-     * Gets the X position that this {@link Node} is on.
-     */
-    private int x;
-    /**
-     * Gets the Y position that this {@link Node} is on.
-     */
-    private int y;
 
     /**
      * If true, this {@link Node} is a wall (no matter what).
@@ -142,6 +136,11 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node> {
      */
     public Map getMap() {
         return this.map;
+    }
+
+    @Override
+    public Node getNode() {
+        return this;
     }
 
     /**

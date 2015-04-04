@@ -56,9 +56,9 @@ public class NodeIterator implements Iterator<Node> {
     }
 
     /**
-     * Retrieves the Node at the current cursor position.
+     * Retrieves the Background at the current cursor position.
      *
-     * @return Node at the current position of the cursor.
+     * @return Background at the current position of the cursor.
      */
     public Node current() {
         return nodes[x][y];

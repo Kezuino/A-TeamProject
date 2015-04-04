@@ -5,7 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public abstract class GameObject implements IRenderable {
+public abstract class GameObject implements IRenderable, IPositionable {
 
     /**
      * If true, all movement done by this {@link GameObject} will use
@@ -264,10 +264,7 @@ public abstract class GameObject implements IRenderable {
     public void setDirection(Direction direction) {
         this.nextDirection = this.isMoving ? direction : (this.direction = direction);
     }
-
-    /**
-     * Returns the node where the {@link GameObject} currently resides.
-     */
+    
     public Node getNode() {
         if (map == null) {
             return null;

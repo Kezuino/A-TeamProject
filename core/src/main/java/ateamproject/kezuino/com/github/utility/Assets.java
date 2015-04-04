@@ -1,17 +1,12 @@
 package ateamproject.kezuino.com.github.utility;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.MusicLoader;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 
 import java.util.HashMap;
-import java.util.logging.FileHandler;
 
 public class Assets {
 
@@ -62,6 +57,22 @@ public class Assets {
             return manager.get(asset, type);
         }
         return null;
+    }
+
+    public static Sound playSound(String asset) {
+        Sound sound = Assets.get(asset, Sound.class);
+        if (sound != null) {
+            sound.play();
+        }
+        return sound;
+    }
+
+    public static Sound loopSound(String asset) {
+        Sound sound = Assets.get(asset, Sound.class);
+        if (sound != null) {
+            sound.loop();
+        }
+        return sound;
     }
 
     /**

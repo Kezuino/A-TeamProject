@@ -4,7 +4,7 @@ import ateamproject.kezuino.com.github.render.IRenderable;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-public class Portal implements IRenderable {
+public class Portal implements IRenderable, IPositionable {
 
     private Node node;
     private Pactale owner;
@@ -30,6 +30,11 @@ public class Portal implements IRenderable {
         owner.setPortal(this);
         this.node = position;
         this.direction = direction;
+    }
+
+    @Override
+    public Map getMap() {
+        return getNode().getMap();
     }
 
     public Node getNode() {
