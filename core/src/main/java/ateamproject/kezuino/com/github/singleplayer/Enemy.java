@@ -1,9 +1,11 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.pathfinding.AStar;
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.Iterator;
 
@@ -64,11 +66,10 @@ public class Enemy extends GameObject {
         this.dead = false;
         this.edible = false;
         this.edibleTime = 2f;
-        //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
-         /*if (objectToFollow!=null){
-             graphPath  = new DefaultGraphPath<>();
-            map.getPathfinder().searchNodePath(this.getNode(), this.objectToFollow.getNode(), (node1, endNode1) -> 0, graphPath);            
-        }*/
+        this.graphPath = new DefaultGraphPath<>();
+        
+        //DBG purpose, set its texture
+        this.setTexture(Assets.get("textures/foreground/enemy.png", Texture.class));
     }
 
     /**
@@ -157,20 +158,31 @@ public class Enemy extends GameObject {
             }
         }
         
-        //Take the first node out of the created Path, and try to move to it. 
-        if (this.graphPath!=null){
-            Iterator<Node> nodeFromPath = graphPath.iterator();
-            this.move(nodeFromPath.next());
-            nodeFromPath.remove();
-            graphPath.clear();
-            while (nodeFromPath.hasNext()){
-                graphPath.add(nodeFromPath.next());
+        if(!this.isMoving) {
+            //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
+             if (this.objectToFollow != null){
+                this.getNode().getMap().getPathfinder().searchNodePath(this.getNode(), this.objectToFollow.getNode(), (node1, endNode1) -> 0, graphPath);            
             }
-            
-           /*for (Node n : nodeFromPath){
-              this.move(n);
-              break;
-           }*/
+
+            //Take the first node out of the created Path, and try to move to it. 
+            if (this.graphPath != null){
+                Iterator<Node> nodeFromPath = graphPath.iterator();
+                nodeFromPath.next();
+                
+                if(nodeFromPath.hasNext()) {
+                    Node nextNode = nodeFromPath.next();
+                    this.setDirection(Direction.valueOf(nextNode.getX() - this.getNode().getX(), nextNode.getY() - this.getNode().getY()));
+                    //System.out.println("OWN POS: " + this.getNode().getX() + " / " + this.getNode().getY());
+                    //System.out.println("NEXT POS: " + nextNode.getX() + " / " + nextNode.getY());
+                    //System.out.println(this.direction + " / " + this.nextDirection);
+
+                    nodeFromPath.remove();
+                    graphPath.clear();
+                    while (nodeFromPath.hasNext()){
+                        graphPath.add(nodeFromPath.next());
+                    }
+                }
+            }
         }
         
         super.update();

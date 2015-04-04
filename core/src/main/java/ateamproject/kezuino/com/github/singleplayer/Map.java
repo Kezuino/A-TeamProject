@@ -1,7 +1,9 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.pathfinding.AStar;
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.tiled.*;
 
@@ -86,6 +88,8 @@ public class Map {
             for (int y = 0; y < map.height; y++) {
                 Node node = map.getNode(x, y);
                 node.setTileId(background.getCell(x, y).getTile().getId());
+                
+                //System.out.println("TILE ID ON BACK: " + background.getCell(x, y).getTile().getId() + " POSITION: " + Integer.toString(x) + " / " + Integer.toString(y));
 
                 if (foreground.getCell(x, y) != null) {//check if there is something that can be placed on the foreground
                     createGameObjectFromTileMap(x, y, map);//create a gameobject or item
@@ -140,13 +144,11 @@ public class Map {
      */
     private static Object createGameObjectFromTileMap(int x, int y, Map map) {
         TiledMapTileLayer foreground = (TiledMapTileLayer) map.baseMap.getLayers().get(1);
-        int gObjectID = foreground.getCell(x, y).getTile().getId();
-
-        TiledMapTileSet tileSet;
-        tileSet = map.getBaseMap().getTileSets().getTileSet(1);
-
-        TiledMapTile tile = tileSet.getTile(gObjectID);
-        MapProperties properties = tile.getProperties();
+        
+        //int gObjectID = foreground.getCell(x, y).getTile().getId();
+        //System.out.println("TILE ID ON BACK: " + gObjectID + " POSITION: " + Integer.toString(x) + " / " + Integer.toString(y));
+        
+        MapProperties properties = foreground.getCell(x, y).getTile().getProperties();
 
         Object gObjectProperties = properties.get("isPactale");
         if (gObjectProperties != null) {

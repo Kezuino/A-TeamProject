@@ -397,6 +397,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * Updates this {@link GameObject}.
      */
+    @Override
     public void update() {
         if (!this.isMoving) {
             this.moveAdjacent();
@@ -406,14 +407,14 @@ public abstract class GameObject implements IRenderable, IPositionable {
         for (GameObject obj : targetNode.getGameObjects()) {
             if (obj.equals(this)) break;
             if (collisionWithGameObject(obj)) {
+                System.out.println("COLLISION FUCK!");
                 break;
+
             }
         }
         if (targetNode.isWall()) {
             collisionWithWall(targetNode);
-            return;
         }
-        ;
     }
 
     /**

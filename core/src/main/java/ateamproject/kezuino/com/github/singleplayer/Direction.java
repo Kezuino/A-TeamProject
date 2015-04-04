@@ -48,4 +48,16 @@ public enum Direction {
                 return null;
         }
     }
+    
+    public static Direction valueOf(int x, int y) {
+        if(Direction.Up.x == x && Direction.Up.y == y) {
+            return Direction.Up.reverse();
+        } else if(Direction.Down.x == x && Direction.Down.y == y) {
+            return Direction.Down.reverse();
+        } else if(Direction.Left.x == x && Direction.Left.y == y) {
+            return Direction.Left;
+        } else {
+            return Direction.Right;
+        }
+    }
 }
