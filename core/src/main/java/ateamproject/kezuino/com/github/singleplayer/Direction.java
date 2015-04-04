@@ -55,9 +55,9 @@ public enum Direction {
         } else if(Direction.Down.x == x && Direction.Down.y == y) {
             return Direction.Down.reverse();
         } else if(Direction.Left.x == x && Direction.Left.y == y) {
-            return Direction.Left;
+            return Direction.Left.reverse();
         } else {
-            return Direction.Right;
+            return Direction.Right.reverse();
         }
     }
 }

@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.render.IRenderable;
+import ateamproject.kezuino.com.github.utility.Assets;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -28,6 +29,7 @@ public class Item implements IRenderable, IPositionable {
         this.map = map;
         this.x = x;
         this.y = y;
+        this.setTexture(Assets.get("textures/foreground/smallObject.png", Texture.class));
     }
 
     /**

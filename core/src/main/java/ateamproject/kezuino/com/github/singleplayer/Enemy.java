@@ -171,7 +171,7 @@ public class Enemy extends GameObject {
                 
                 if(nodeFromPath.hasNext()) {
                     Node nextNode = nodeFromPath.next();
-                    this.setDirection(Direction.valueOf(nextNode.getX() - this.getNode().getX(), nextNode.getY() - this.getNode().getY()));
+                    this.setDirection(Direction.valueOf(this.getNode().getX() - nextNode.getX(), this.getNode().getY() - nextNode.getY()));
                     //System.out.println("OWN POS: " + this.getNode().getX() + " / " + this.getNode().getY());
                     //System.out.println("NEXT POS: " + nextNode.getX() + " / " + nextNode.getY());
                     //System.out.println(this.direction + " / " + this.nextDirection);
