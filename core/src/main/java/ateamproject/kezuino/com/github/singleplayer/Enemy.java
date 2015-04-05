@@ -67,8 +67,6 @@ public class Enemy extends GameObject {
         this.edible = false;
         this.edibleTime = 2f;
         this.graphPath = new DefaultGraphPath<>();
-
-        //DBG purpose, set its texture
         this.setTexture(Assets.get("textures/foreground/enemy.png", Texture.class));
     }
 
@@ -129,7 +127,7 @@ public class Enemy extends GameObject {
      * This {@link Enemy} is edible if true.
      * This {@link Enemy} is not edible if false.
      *
-     * @param eatable Boolean, cannot be null
+     * @param edible Boolean, cannot be null
      */
     public void setEdible(boolean edible) {
         if (edible) {
