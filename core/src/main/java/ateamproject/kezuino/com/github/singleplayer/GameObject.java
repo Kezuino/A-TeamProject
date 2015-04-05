@@ -266,6 +266,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         this.nextDirection = this.isMoving ? direction : (this.direction = direction);
     }
     
+    @Override
     public Node getNode() {
         if (map == null) {
             return null;
@@ -414,7 +415,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         for (GameObject obj : targetNode.getGameObjects()) {
             if (obj.equals(this)) break;
             if (collisionWithGameObject(obj)) {
-                System.out.println("COLLISION FUCK!");
+                System.out.println("Collision handled");
                 break;
 
             }
@@ -442,17 +443,21 @@ public abstract class GameObject implements IRenderable, IPositionable {
         //TextureRegion region = new TextureRegion(texture, 0, 0, 26, 32);
         // Set draw offset when moving.
         if (movementInterpolation && isMoving) {
+            
+            
             // Calculate the amount of offset.
             float secondsFromStart = (System.nanoTime() - movementStartTime) / 1000000000.0f;
 
             drawOffsetX = direction.getX() * (secondsFromStart * (1 / movementSpeed)) + .5f;
             drawOffsetY = direction.getY() * (secondsFromStart * (1 / movementSpeed)) + .5f;
             if (secondsFromStart >= movementSpeed) {
+                //this.getNode().removeGameObject(this);
                 isMoving = false;
                 drawOffsetX = .5f;
                 drawOffsetY = .5f;
                 this.x += direction.getX();
                 this.y += direction.getY();
+                //this.getNode().addGameObject(this);
                 //this.map.getNode(this.x, this.y).addGameObject(this);
             }
         }
