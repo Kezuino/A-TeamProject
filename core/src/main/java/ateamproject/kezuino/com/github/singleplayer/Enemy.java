@@ -165,7 +165,7 @@ public class Enemy extends GameObject {
             }
 
             //Take the first node out of the created Path, and try to move to it. 
-            if (this.graphPath != null) {
+            if (this.graphPath != null && this.graphPath.getCount() > 0) {
                 Iterator<Node> nodeFromPath = graphPath.iterator();
                 nodeFromPath.next();
 
