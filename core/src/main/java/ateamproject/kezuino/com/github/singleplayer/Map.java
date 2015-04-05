@@ -69,10 +69,9 @@ public class Map {
      * @param mapPath
      * @return
      */
-    public static Map load(GameSession session, String mapPath) {
-        if (mapPath == null || mapPath.isEmpty()) {
-            throw new IllegalArgumentException();
-        }
+    public static Map load(GameSession session, int mapToLoad) {
+        String mapPath = "maps/"+mapToLoad+"/map.tmx";
+        
         if (mapPath == null || mapPath.isEmpty()) throw new IllegalArgumentException();
 
         TiledMap tiledMap = new TmxMapLoader().load(mapPath);

@@ -10,23 +10,23 @@ public class Assets {
 
     public static AssetManager manager;
 
-    public static void create() {
+    public static void create(int tilesetToLoad) {
         manager = new AssetManager();
         manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));
-        load();
+        load(tilesetToLoad);
     }
 
-    private static void load() {
+    private static void load(int tilesetToLoad) {
         // Fonts.
         manager.load("fonts/opensans.ttf", BitmapFont.class);
 
         // Textures.
-        manager.load("textures/foreground/pactale.png", Texture.class);
-        manager.load("textures/foreground/enemy.png", Texture.class);
-        manager.load("textures/foreground/projectile.png", Texture.class);
-        manager.load("textures/foreground/bigObject.png", Texture.class);
-        manager.load("textures/foreground/smallObject.png", Texture.class);
-        manager.load("textures/foreground/item.png", Texture.class);
+        manager.load("textures/"+tilesetToLoad+"/Foreground/pactale.png", Texture.class);
+        manager.load("textures/"+tilesetToLoad+"/Foreground/enemy.png", Texture.class);
+        manager.load("textures/"+tilesetToLoad+"/Foreground/projectile.png", Texture.class);
+        manager.load("textures/"+tilesetToLoad+"/Foreground/bigObject.png", Texture.class);
+        manager.load("textures/"+tilesetToLoad+"/Foreground/smallObject.png", Texture.class);
+        manager.load("textures/"+tilesetToLoad+"/Foreground/item.png", Texture.class);
 
         // Sounds.
         //manager.load("sounds/Background.mp3", Sound.class); //Takes a long time..

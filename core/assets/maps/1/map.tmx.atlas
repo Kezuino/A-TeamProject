@@ -1,0 +1,68 @@
+
+map.tmx.png
+size: 128,64
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+textures/0/Background/floor
+  rotate: false
+  xy: 2, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+textures/0/Background/wall
+  rotate: false
+  xy: 36, 2
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+
+map.tmx2.png
+size: 256,64
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+textures/0/Foreground/bigObject
+  rotate: false
+  xy: 37, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+textures/0/Foreground/enemy
+  rotate: false
+  xy: 71, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+textures/0/Foreground/item
+  rotate: false
+  xy: 105, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+textures/0/Foreground/pactale
+  rotate: false
+  xy: 139, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1
+textures/0/Foreground/projectile
+  rotate: false
+  xy: 2, 2
+  size: 33, 33
+  orig: 33, 33
+  offset: 0, 0
+  index: -1
+textures/0/Foreground/smallObject
+  rotate: false
+  xy: 173, 3
+  size: 32, 32
+  orig: 32, 32
+  offset: 0, 0
+  index: -1

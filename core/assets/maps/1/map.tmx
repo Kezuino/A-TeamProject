@@ -5,51 +5,51 @@
    <properties>
     <property name="isGround" value="True"/>
    </properties>
-   <image width="32" height="32" source="../textures/Background/floor.png"/>
+   <image width="32" height="32" source="../../textures/0/Background/floor.png"/>
   </tile>
   <tile id="1">
    <properties>
     <property name="isWall" value="True"/>
    </properties>
-   <image width="32" height="32" source="../textures/Background/wall.png"/>
+   <image width="32" height="32" source="../../textures/0/Background/wall.png"/>
   </tile>
  </tileset>
- <tileset firstgid="3" name="Foreground" tilewidth="32" tileheight="32">
+ <tileset firstgid="3" name="../../textures/0/Foreground" tilewidth="32" tileheight="32">
   <tile id="0">
    <properties>
     <property name="isPactale" value="True"/>
    </properties>
-   <image width="32" height="32" source="../textures/Foreground/pactale.png"/>
+   <image width="32" height="32" source="../../textures/0/Foreground/pactale.png"/>
   </tile>
   <tile id="1">
    <properties>
     <property name="isEnemy" value="True"/>
    </properties>
-   <image width="32" height="32" source="../textures/Foreground/enemy.png"/>
+   <image width="32" height="32" source="../../textures/0/Foreground/enemy.png"/>
   </tile>
   <tile id="2">
    <properties>
     <property name="isItem" value="True"/>
     <property name="name" value="bigObject"/>
    </properties>
-   <image width="32" height="32" source="../textures/Foreground/bigObject.png"/>
+   <image width="32" height="32" source="../../textures/0/Foreground/bigObject.png"/>
   </tile>
   <tile id="3">
    <properties>
     <property name="isItem" value="True"/>
     <property name="name" value="watch"/>
    </properties>
-   <image width="32" height="32" source="../textures/Foreground/item.png"/>
+   <image width="32" height="32" source="../../textures/0/Foreground/item.png"/>
   </tile>
  </tileset>
  <layer name="Background" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjZGBgYETDTDhobPLoctjMYsKhBxuNy05s5hFyHz5z8JlJLqaXudTwA73NpKa/qR2OtIiTwWoetdIhtdI2E43NpEU+pKY7hzoGAO09Aq4=
+   eJxjZGBgYETDTFjE6I1JcQM13EuufdQOq8EQ9vRyGxOVzSTXLHz6Bkt8UMsdTGh4IN2MLk8oHgYyr9EibZGjn9JwwKUflz347AOJAwBA9wG2
   </data>
  </layer>
  <layer name="Foreground" width="20" height="20">
   <data encoding="base64" compression="zlib">
-   eJxjZGBgYIRiBiSaUoBs5igYfICFTDl6AlYixQYasEHxYDKPmRoOGQUYYLDkjcECAL/sADg=
+   eJxjYBgFIxGwkClHT8CKxGbGIjZYABsUD1bzRgH1wGDJG4MFAACezAAy
   </data>
  </layer>
 </map>
