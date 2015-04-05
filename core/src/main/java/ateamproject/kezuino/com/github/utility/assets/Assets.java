@@ -1,10 +1,14 @@
 package ateamproject.kezuino.com.github.utility.assets;
 
+import ateamproject.kezuino.com.github.utility.FilenameUtils;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import jdk.nashorn.internal.codegen.CompilationException;
 
 public class Assets {
 
@@ -63,6 +67,16 @@ public class Assets {
             sound.loop();
         }
         return sound;
+    }
+
+    public static ShaderProgram getShaderProgram(String shaderName) {
+        ShaderProgram.pedantic = false;
+        String assetName = FilenameUtils.getFileNameWithoutExtension(shaderName);
+        ShaderProgram shader = new ShaderProgram(Gdx.files.internal("shaders/vertex/" + assetName + ".vsh").readString(), Gdx.files.internal("shaders/fragment/" + assetName + ".fsh").readString());
+        if (!shader.isCompiled()) {
+            System.out.println(shader.getLog());
+        }
+        return shader;
     }
 
     /**

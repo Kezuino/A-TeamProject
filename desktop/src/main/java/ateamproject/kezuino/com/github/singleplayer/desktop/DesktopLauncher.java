@@ -11,6 +11,7 @@ public class DesktopLauncher {
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.foregroundFPS = 60;
         cfg.backgroundFPS = 30;
+        cfg.useGL30 = false;
 
         //cfg.samples = 8;
 
