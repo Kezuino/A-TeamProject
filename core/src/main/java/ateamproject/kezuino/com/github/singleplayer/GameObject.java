@@ -410,7 +410,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if(targetNode == null) {
             return;
         }
-        
+
         for (GameObject obj : targetNode.getGameObjects()) {
             if (obj.equals(this)) break;
             if (collisionWithGameObject(obj)) {
@@ -427,6 +427,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * Draws this {@link GameObject} inside the {@link Map}.
      */
+    @Override
     public void draw(SpriteBatch batch) {
         // Capture node and texture.
         Node node = getNode();
@@ -452,6 +453,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
                 drawOffsetY = .5f;
                 this.x += direction.getX();
                 this.y += direction.getY();
+                //this.map.getNode(this.x, this.y).addGameObject(this);
             }
         }
 

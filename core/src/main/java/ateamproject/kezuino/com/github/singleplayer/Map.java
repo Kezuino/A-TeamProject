@@ -310,6 +310,11 @@ public class Map {
         object.setMap(this);
         return object;
     }
+    
+    public void removeGameObject(GameObject object) {
+        if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
+        this.nodes.stream().filter(n -> n.hasGameObject(object)).forEach((Node n) -> n.removeGameObject(object));
+    }
 
     /**
      * Gets all the {@link Node nodes} of this {@link Map}.

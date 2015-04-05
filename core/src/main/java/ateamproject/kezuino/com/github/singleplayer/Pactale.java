@@ -13,7 +13,7 @@ public class Pactale extends GameObject {
     private int playerIndex;
     private int lives;
     private Portal portal;
-    private Collection<Projectile> projectiles;
+    private final Collection<Projectile> projectiles;
     /**
      * Initialize a {@link Pactale}.
      *
@@ -91,6 +91,24 @@ public class Pactale extends GameObject {
             ReturnVal = 2;
         }
         return ReturnVal;
+    }
+    
+    @Override
+    protected boolean collisionWithGameObject(GameObject object) {
+        if(object instanceof Enemy) {
+            this.lives -= 1;
+            this.setPosition(10, 10);
+            //this.getNode().getMap().removeGameObject(this);
+            return true;
+        } else if(object instanceof Projectile) {
+            Projectile p = (Projectile)object;
+            Pactale pac = p.getOwner();
+            if(pac.getPortal() != null) {
+                this.setPosition(pac.getPortal().getNode().getX(), pac.getPortal().getNode().getY());
+            }
+            this.getNode().getMap().removeGameObject(object);
+        }
+        return false;
     }
 
     public boolean addPortal(Portal portal) {

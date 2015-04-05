@@ -29,7 +29,7 @@ public class Item implements IRenderable, IPositionable {
         this.map = map;
         this.x = x;
         this.y = y;
-        this.setTexture(Assets.get("textures/foreground/smallObject.png", Texture.class));
+        this.texture = Assets.get("textures/foreground/smallObject.png", Texture.class);
     }
 
     /**
@@ -44,14 +44,17 @@ public class Item implements IRenderable, IPositionable {
         this(String.valueOf(type), map, x, y, type);
     }
 
+    @Override
     public Texture getTexture() {
         return texture;
     }
 
+    @Override
     public void setTexture(Texture texture) {
         this.texture = texture;
     }
 
+    @Override
     public Map getMap() {
         return map;
     }
