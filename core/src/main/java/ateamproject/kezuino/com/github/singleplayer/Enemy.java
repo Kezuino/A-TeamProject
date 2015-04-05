@@ -14,12 +14,12 @@ public class Enemy extends GameObject {
      * If true, {@link Enemy} is currently dead and doesn't participate in the game until respawned.
      */
     private boolean dead;
-    
+
     /**
      * If true, {@link Enemy} can be eaten by a {@link Pactale}.
      */
     private boolean edible;
-    
+
     /**
      * The {@link GameObject} this {@link Enemy} currently follows. Can be null.
      */
@@ -34,22 +34,23 @@ public class Enemy extends GameObject {
      * The space to store the start time when the edible state has been set to this {@link Enemy}.
      */
     private float edibleStartTime;
-    
+
     /**
      * The time this {@link Enemy} will be edible, if set edible.
      */
     private float edibleTime;
-    
-     
+
+
     /**
      * The path created by pathfinding
      */
     private GraphPath<Node> graphPath;
+
     /**
      * Constructs a new {@link Enemy}.
      * The newly constructed {@link Enemy} is not dead.
      * The newly constructed {@link Enemy} is not edible.
-     * 
+     *
      * @param objectToFollow {@link GameObject} to follow. Can be null.
      * @param map            {@link Map} this {@link Enemy} is currently in.
      * @param x              X position of this {@link Enemy}.
@@ -60,13 +61,13 @@ public class Enemy extends GameObject {
      */
     public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
         super(map, x, y, movementSpeed, direction, color);
-        this.objectToFollow = objectToFollow;       
+        this.objectToFollow = objectToFollow;
         this.respawnNode = map.getNode(x, y);
         this.dead = false;
         this.edible = false;
         this.edibleTime = 2f;
         this.graphPath = new DefaultGraphPath<>();
-        
+
         //DBG purpose, set its texture
         this.setTexture(Assets.get("textures/foreground/enemy.png", Texture.class));
     }
@@ -98,7 +99,7 @@ public class Enemy extends GameObject {
     /**
      * Gets the current state of this {@link Enemy).
      * If this enemy is currently dead it will return true, else false.
-     * 
+     *
      * @return The current state of this {@link Enemy}.
      */
     public boolean isDead() {
@@ -116,7 +117,7 @@ public class Enemy extends GameObject {
 
     /**
      * Gets wether this {@link Enemy} is edbile.
-     * 
+     *
      * @return True if the enemy is edible at the moment, false if the enemy is not edible.
      */
     public boolean isEdible() {
@@ -131,11 +132,11 @@ public class Enemy extends GameObject {
      * @param eatable Boolean, cannot be null
      */
     public void setEdible(boolean edible) {
-        if(edible) {
+        if (edible) {
             this.setColor(Color.WHITE);
             this.edibleStartTime = System.nanoTime();
         }
-        
+
         this.edible = edible;
     }
 
@@ -148,27 +149,27 @@ public class Enemy extends GameObject {
 
     @Override
     public void update() {
-        if(this.edible) {
+        if (this.edible) {
             float secondsFromStart = (System.nanoTime() - this.edibleStartTime) / 1000000000.0f;
-            
-            if(secondsFromStart >= this.edibleTime) {
+
+            if (secondsFromStart >= this.edibleTime) {
                 this.edible = false;
                 this.setColor(this.previousColor);
             }
         }
-        
-        if(!this.isMoving) {
+
+        if (!this.isMoving) {
             //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
-             if (this.objectToFollow != null){
-                 graphPath = this.getMap().getPathfinder().searchNodePath(this.getNode(), this.objectToFollow.getNode());
+            if (this.objectToFollow != null) {
+                graphPath = this.getMap().getPathfinder().searchNodePath(this.getNode(), this.objectToFollow.getNode());
             }
 
             //Take the first node out of the created Path, and try to move to it. 
-            if (this.graphPath != null){
+            if (this.graphPath != null) {
                 Iterator<Node> nodeFromPath = graphPath.iterator();
                 nodeFromPath.next();
-                
-                if(nodeFromPath.hasNext()) {
+
+                if (nodeFromPath.hasNext()) {
                     Node nextNode = nodeFromPath.next();
                     this.setDirection(Direction.getDirection(this.getNode().getX(), this.getNode().getY(), nextNode.getX(), nextNode.getY()));
                     //System.out.println("OWN POS: " + this.getNode().getX() + " / " + this.getNode().getY());
@@ -177,13 +178,13 @@ public class Enemy extends GameObject {
 
                     nodeFromPath.remove();
                     graphPath.clear();
-                    while (nodeFromPath.hasNext()){
+                    while (nodeFromPath.hasNext()) {
                         graphPath.add(nodeFromPath.next());
                     }
                 }
             }
         }
-        
+
         super.update();
-    }   
+    }
 }
