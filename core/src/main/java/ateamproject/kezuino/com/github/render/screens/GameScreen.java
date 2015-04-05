@@ -5,13 +5,11 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.render.debug.DebugLayers;
-import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.singleplayer.Pactale;
-import ateamproject.kezuino.com.github.utility.Assets;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import ateamproject.kezuino.com.github.singleplayer.Direction;

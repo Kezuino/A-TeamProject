@@ -1,13 +1,10 @@
-package ateamproject.kezuino.com.github.utility;
+package ateamproject.kezuino.com.github.utility.assets;
 
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
-
-import java.util.HashMap;
 
 public class Assets {
 

@@ -1,12 +1,11 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import ateamproject.kezuino.com.github.pathfinding.AStar;
-import ateamproject.kezuino.com.github.utility.Assets;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import java.util.Iterator;
 
 public class Enemy extends GameObject {

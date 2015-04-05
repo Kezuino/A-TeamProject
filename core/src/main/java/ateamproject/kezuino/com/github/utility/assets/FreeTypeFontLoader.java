@@ -1,4 +1,4 @@
-package ateamproject.kezuino.com.github.utility;
+package ateamproject.kezuino.com.github.utility.assets;
 
 import com.badlogic.gdx.assets.AssetDescriptor;
 import com.badlogic.gdx.assets.AssetLoaderParameters;
