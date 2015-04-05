@@ -170,11 +170,7 @@ public class Enemy extends GameObject {
                 
                 if(nodeFromPath.hasNext()) {
                     Node nextNode = nodeFromPath.next();
-                    // If this node's x and y are the same as next node's x and y. Then null will be returned by getDirection.
-                    Direction nextDirection = Direction.getDirection(this.getNode().getX(), this.getNode().getY(), nextNode.getX(), nextNode.getY());
-                    if (nextDirection != null) {
-                        this.setDirection(nextDirection);
-                    }
+                    this.setDirection(Direction.getDirection(this.getNode().getX(), this.getNode().getY(), nextNode.getX(), nextNode.getY()));
                     //System.out.println("OWN POS: " + this.getNode().getX() + " / " + this.getNode().getY());
                     //System.out.println("NEXT POS: " + nextNode.getX() + " / " + nextNode.getY());
                     //System.out.println(this.direction + " / " + this.nextDirection);

@@ -262,6 +262,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      *                  currently facing towards.
      */
     public void setDirection(Direction direction) {
+        if (direction == null) return;
         this.nextDirection = this.isMoving ? direction : (this.direction = direction);
     }
     
