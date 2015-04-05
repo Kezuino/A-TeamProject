@@ -65,7 +65,7 @@ public enum Direction {
         int resultX = x2 - x1;
         int resultY = y2 - y1;
 
-        return valueOf(MathUtils.clamp(resultX, -1, 1), MathUtils.clamp(resultY, -1, 1));
+        return valueOf(resultX, resultY);
     }
 
     /**
