@@ -41,4 +41,49 @@ public class TestDirection {
         assertSame("Direction should be Left.", Direction.Left, Direction.valueOf(-1, 0));
         assertSame("Direction should be Right.", Direction.Right, Direction.valueOf(1, 0));
     }
+
+    @Test
+    public void testGetDirection() throws Exception {
+        assertSame("Direction 0,0 to 0,1 should be Up.", Direction.Up, Direction.getDirection(0, 0, 0, 1));
+        assertSame("Direction 0,1 to 0,10 should be Up.", Direction.Up, Direction.getDirection(0, 1, 0, 10));
+        assertSame("Direction 0,10 to 0,12 should be Up.", Direction.Up, Direction.getDirection(0, 10, 0, 12));
+        assertSame("Direction 0,-1 to 0,0 should be Up.", Direction.Up, Direction.getDirection(0, -1, 0, 0));
+        assertSame("Direction 0,-1 to 0,1 should be Up.", Direction.Up, Direction.getDirection(0, -1, 0, 1));
+        assertSame("Direction 0,-12 to 0,12 should be Up.", Direction.Up, Direction.getDirection(0, -12, 0, 12));
+
+        assertSame("Direction 0,1 to 0,0 should be Down.", Direction.Down, Direction.getDirection(0, 1, 0, 0));
+        assertSame("Direction 0,10 to 0,1 should be Down.", Direction.Down, Direction.getDirection(0, 10, 0, 1));
+        assertSame("Direction 0,12 to 0,10 should be Down.", Direction.Down, Direction.getDirection(0, 12, 0, 10));
+        assertSame("Direction 0,1 to 0,0 should be Down.", Direction.Down, Direction.getDirection(0, 1, 0, 0));
+        assertSame("Direction 0,1 to 0,-1 should be Down.", Direction.Down, Direction.getDirection(0, 1, 0, -1));
+        assertSame("Direction 0,12 to 0,-12 should be Down.", Direction.Down, Direction.getDirection(0, 12, 0, -12));
+
+        assertSame("Direction 0,0 to 1,0 should be Right.", Direction.Right, Direction.getDirection(0, 0, 1, 0));
+        assertSame("Direction -1,0 to 1,0 should be Right.", Direction.Right, Direction.getDirection(-1, 0, 1, 0));
+        assertSame("Direction -12,0 to 1,0 should be Right.", Direction.Right, Direction.getDirection(-12, 0, 1, 0));
+        assertSame("Direction 0,0 to 10,0 should be Right.", Direction.Right, Direction.getDirection(0, 0, 10, 0));
+        assertSame("Direction -1,0 to 0,0 should be Right.", Direction.Right, Direction.getDirection(-1, 0, 0, 0));
+        assertSame("Direction -12,0 to -1,0 should be Right.", Direction.Right, Direction.getDirection(-12, 0, -1, 0));
+
+        assertSame("Direction 0,0 to -1,0 should be Left.", Direction.Left, Direction.getDirection(0, 0, -1, 0));
+        assertSame("Direction 1,0 to -1,0 should be Left.", Direction.Left, Direction.getDirection(1, 0, -1, 0));
+        assertSame("Direction 12,0 to -1,0 should be Left.", Direction.Left, Direction.getDirection(12, 0, -1, 0));
+        assertSame("Direction 0,0 to -10,0 should be Left.", Direction.Left, Direction.getDirection(0, 0, -10, 0));
+        assertSame("Direction 1,0 to 0,0 should be Left.", Direction.Left, Direction.getDirection(1, 0, 0, 0));
+        assertSame("Direction 12,0 to 1,0 should be Left.", Direction.Left, Direction.getDirection(12, 0, 1, 0));
+
+        // Test diagonal direction.
+        assertNull("Direction must not be diagonal.", Direction.getDirection(0, 0, 1, 1));
+        assertNull("Direction must not be diagonal.", Direction.getDirection(0, 0, 12, 15));
+        assertNull("Direction must not be diagonal.", Direction.getDirection(0, 0, -1, -1));
+        assertNull("Direction must not be diagonal.", Direction.getDirection(1, 1, 0, 0));
+        assertNull("Direction must not be diagonal.", Direction.getDirection(12, 15, 0, 0));
+        assertNull("Direction must not be diagonal.", Direction.getDirection(-1, -1, 0, 0));
+
+        // Test for null values.
+        assertNull("Direction should be null because all values are the same.", Direction.getDirection(0, 0, 0, 0));
+        assertNull("Direction should be null because all values are the same.", Direction.getDirection(-1, -1, -1, -1));
+        assertNull("Direction should be null because all values are the same.", Direction.getDirection(-10, -10, -10, -10));
+        assertNull("Direction should be null because all values are the same.", Direction.getDirection(-100, -100, -100, -100));
+    }
 }

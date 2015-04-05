@@ -25,12 +25,12 @@ public enum Direction {
     }
 
     /**
-     * Normalizes the {@link Direction} and returns the reversed {@link Direction} based on the difference between {@code x: 0, y: 0}
+     * Normalizes the {@link Direction} and returns the {@link Direction} based on the difference between {@code x: 0, y: 0}
      * and the parameters {@code x} and {@code y}. If {@code x: 0, y: 0} are given. Null will be returned.
      *
-     * @param x X axis to determine reversed {@link Direction}.
-     * @param y Y axis to determine reversed {@link Direction}.
-     * @return Reversed {@link Direction} based on the offset given by {@code x} and {@code y} from a {@code x: 0, y: 0} standpoint.
+     * @param x X axis to determine {@link Direction}.
+     * @param y Y axis to determine {@link Direction}.
+     * @return {@link Direction} based on the offset given by {@code x} and {@code y} from a {@code x: 0, y: 0} standpoint.
      */
     public static Direction valueOf(int x, int y) {
         // Normalize x and y.
@@ -60,6 +60,24 @@ public enum Direction {
 //        } else {
 //            return Direction.Right.reverse();
 //        }
+    }
+
+    /**
+     * Gets the {@link Direction} given a source and target x-axis and y-axis.
+     * Returns null when x1, y1, x2 and y2 are all the same or if combination axis result in a diagonal direction.
+     *
+     * @param x1 Source x-axis.
+     * @param y1 Source y-axis.
+     * @param x2 Target x-axis.
+     * @param y2 Target y-axis.
+     * @return {@link Direction} given a source and target x-axis and y-axis.
+     */
+    public static Direction getDirection(int x1, int y1, int x2, int y2) {
+        // Target - Source = direction.
+        int resultX = x2 - x1;
+        int resultY = y2 - y1;
+
+        return valueOf(MathUtils.clamp(resultX, -1, 1), MathUtils.clamp(resultY, -1, 1));
     }
 
     /**

@@ -160,7 +160,7 @@ public class Enemy extends GameObject {
         if(!this.isMoving) {
             //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
              if (this.objectToFollow != null){
-                this.getNode().getMap().getPathfinder().searchNodePath(this.getNode(), this.objectToFollow.getNode(), (node1, endNode1) -> 0, graphPath);            
+                 graphPath = this.getMap().getPathfinder().searchNodePath(this.getNode(), this.objectToFollow.getNode());
             }
 
             //Take the first node out of the created Path, and try to move to it. 
@@ -170,7 +170,11 @@ public class Enemy extends GameObject {
                 
                 if(nodeFromPath.hasNext()) {
                     Node nextNode = nodeFromPath.next();
-                    this.setDirection(Direction.valueOf(this.getNode().getX() - nextNode.getX(), this.getNode().getY() - nextNode.getY()));
+                    // If this node's x and y are the same as next node's x and y. Then null will be returned by getDirection.
+                    Direction nextDirection = Direction.getDirection(this.getNode().getX(), this.getNode().getY(), nextNode.getX(), nextNode.getY());
+                    if (nextDirection != null) {
+                        this.setDirection(nextDirection);
+                    }
                     //System.out.println("OWN POS: " + this.getNode().getX() + " / " + this.getNode().getY());
                     //System.out.println("NEXT POS: " + nextNode.getX() + " / " + nextNode.getY());
                     //System.out.println(this.direction + " / " + this.nextDirection);
