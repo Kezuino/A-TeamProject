@@ -61,6 +61,7 @@ gradle-app.setting
 build/
 
 ## OS Specific
+Thumbs.db
 .DS_Store
 /.nb-gradle/private/
 /Pactales/.nb-gradle/private/
