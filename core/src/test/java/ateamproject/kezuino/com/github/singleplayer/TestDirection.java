@@ -86,4 +86,56 @@ public class TestDirection {
         assertNull("Direction should be null because all values are the same.", Direction.getDirection(-10, -10, -10, -10));
         assertNull("Direction should be null because all values are the same.", Direction.getDirection(-100, -100, -100, -100));
     }
+
+    @Test
+    public void testGetDirectionDiagonal() throws Exception {
+        assertSame("Direction 0,0 to 0,1 should be Up.", Direction.Up, Direction.getDirectionDiagonal(0, 0, 0, 1));
+        assertSame("Direction 0,1 to 0,10 should be Up.", Direction.Up, Direction.getDirectionDiagonal(0, 1, 0, 10));
+        assertSame("Direction 0,10 to 0,12 should be Up.", Direction.Up, Direction.getDirectionDiagonal(0, 10, 0, 12));
+        assertSame("Direction 0,-1 to 0,0 should be Up.", Direction.Up, Direction.getDirectionDiagonal(0, -1, 0, 0));
+        assertSame("Direction 0,-1 to 0,1 should be Up.", Direction.Up, Direction.getDirectionDiagonal(0, -1, 0, 1));
+        assertSame("Direction 0,-12 to 0,12 should be Up.", Direction.Up, Direction.getDirectionDiagonal(0, -12, 0, 12));
+
+        assertSame("Direction 0,1 to 0,0 should be Down.", Direction.Down, Direction.getDirectionDiagonal(0, 1, 0, 0));
+        assertSame("Direction 0,10 to 0,1 should be Down.", Direction.Down, Direction.getDirectionDiagonal(0, 10, 0, 1));
+        assertSame("Direction 0,12 to 0,10 should be Down.", Direction.Down, Direction.getDirectionDiagonal(0, 12, 0, 10));
+        assertSame("Direction 0,1 to 0,0 should be Down.", Direction.Down, Direction.getDirectionDiagonal(0, 1, 0, 0));
+        assertSame("Direction 0,1 to 0,-1 should be Down.", Direction.Down, Direction.getDirectionDiagonal(0, 1, 0, -1));
+        assertSame("Direction 0,12 to 0,-12 should be Down.", Direction.Down, Direction.getDirectionDiagonal(0, 12, 0, -12));
+
+        assertSame("Direction 0,0 to 1,0 should be Right.", Direction.Right, Direction.getDirectionDiagonal(0, 0, 1, 0));
+        assertSame("Direction -1,0 to 1,0 should be Right.", Direction.Right, Direction.getDirectionDiagonal(-1, 0, 1, 0));
+        assertSame("Direction -12,0 to 1,0 should be Right.", Direction.Right, Direction.getDirectionDiagonal(-12, 0, 1, 0));
+        assertSame("Direction 0,0 to 10,0 should be Right.", Direction.Right, Direction.getDirectionDiagonal(0, 0, 10, 0));
+        assertSame("Direction -1,0 to 0,0 should be Right.", Direction.Right, Direction.getDirectionDiagonal(-1, 0, 0, 0));
+        assertSame("Direction -12,0 to -1,0 should be Right.", Direction.Right, Direction.getDirectionDiagonal(-12, 0, -1, 0));
+
+        assertSame("Direction 0,0 to -1,0 should be Left.", Direction.Left, Direction.getDirectionDiagonal(0, 0, -1, 0));
+        assertSame("Direction 1,0 to -1,0 should be Left.", Direction.Left, Direction.getDirectionDiagonal(1, 0, -1, 0));
+        assertSame("Direction 12,0 to -1,0 should be Left.", Direction.Left, Direction.getDirectionDiagonal(12, 0, -1, 0));
+        assertSame("Direction 0,0 to -10,0 should be Left.", Direction.Left, Direction.getDirectionDiagonal(0, 0, -10, 0));
+        assertSame("Direction 1,0 to 0,0 should be Left.", Direction.Left, Direction.getDirectionDiagonal(1, 0, 0, 0));
+        assertSame("Direction 12,0 to 1,0 should be Left.", Direction.Left, Direction.getDirectionDiagonal(12, 0, 1, 0));
+
+        // Test diagonal direction.
+        assertEquals("Direction is diagonal and should return Up.", Direction.Up, Direction.getDirectionDiagonal(0, 0, 1, 1));
+        assertEquals("Direction is diagonal and should return Up.", Direction.Up, Direction.getDirectionDiagonal(0, 0, 12, 15));
+        assertEquals("Direction is diagonal and should return Up.", Direction.Up, Direction.getDirectionDiagonal(-1, -1, 0, 0));
+        assertEquals("Direction is diagonal and should return Down.", Direction.Down, Direction.getDirectionDiagonal(0, 0, -1, -1));
+        assertEquals("Direction is diagonal and should return Down.", Direction.Down, Direction.getDirectionDiagonal(1, 1, 0, 0));
+        assertEquals("Direction is diagonal and should return Down.", Direction.Down, Direction.getDirectionDiagonal(12, 15, 0, 0));
+        assertEquals("Direction is diagonal and should return Up.", Direction.Down, Direction.getDirectionDiagonal(-5, 4, -1, 0));
+        assertEquals("Direction is diagonal and should return Left.", Direction.Left, Direction.getDirectionDiagonal(16, 15, 0, 0));
+        assertEquals("Direction is diagonal and should return Left.", Direction.Left, Direction.getDirectionDiagonal(0, 0, -1, 0));
+        assertEquals("Direction is diagonal and should return Left.", Direction.Left, Direction.getDirectionDiagonal(4, -2, -4, 0));
+        assertEquals("Direction is diagonal and should return Right.", Direction.Right, Direction.getDirectionDiagonal(0, 0, 16, 15));
+        assertEquals("Direction is diagonal and should return Right.", Direction.Right, Direction.getDirectionDiagonal(-5, 4, 0, 8));
+        assertEquals("Direction is diagonal and should return Right.", Direction.Right, Direction.getDirectionDiagonal(152, 100, 255, 200));
+
+        // Test for null values.
+        assertNull("Direction should be null because all values are the same.", Direction.getDirectionDiagonal(0, 0, 0, 0));
+        assertNull("Direction should be null because all values are the same.", Direction.getDirectionDiagonal(-1, -1, -1, -1));
+        assertNull("Direction should be null because all values are the same.", Direction.getDirectionDiagonal(-10, -10, -10, -10));
+        assertNull("Direction should be null because all values are the same.", Direction.getDirectionDiagonal(-100, -100, -100, -100));
+    }
 }

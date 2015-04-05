@@ -11,10 +11,10 @@ import com.badlogic.gdx.math.MathUtils;
  * Right    =   positive x-axis     =   +1.
  */
 public enum Direction {
-    Left(-1, 0),
-    Right(1, 0),
     Up(0, 1),
-    Down(0, -1);
+    Down(0, -1),
+    Left(-1, 0),
+    Right(1, 0);
 
     private int x;
     private int y;
@@ -48,18 +48,6 @@ public enum Direction {
         } else {
             return null;
         }
-
-        /* TODO: Hey Ken, ik heb hem null laten returnen als the x and y 0 is. Eerst gaf hij Left terug als het 0, 0 is. Maar indien dit gewenst was, dan zet die code maar weer terug ;P
-         * Ook heb je .reverse() gedaan. Dus de valueOf geeft altijd het tegenovergestelde. Maar je zit wel midden in het debuggen.. FYI :) */
-//        if (Direction.Up.x == x && Direction.Up.y == y) {
-//            return Direction.Up.reverse();
-//        } else if (Direction.Down.x == x && Direction.Down.y == y) {
-//            return Direction.Down.reverse();
-//        } else if (Direction.Left.x == x && Direction.Left.y == y) {
-//            return Direction.Left.reverse();
-//        } else {
-//            return Direction.Right.reverse();
-//        }
     }
 
     /**
@@ -78,6 +66,38 @@ public enum Direction {
         int resultY = y2 - y1;
 
         return valueOf(MathUtils.clamp(resultX, -1, 1), MathUtils.clamp(resultY, -1, 1));
+    }
+
+    /**
+     * Gets the {@link Direction} given a source and target x-axis and y-axis.
+     * If direction is diagonal, it'll return the longest direction (prefers y-axis).
+     *
+     * (Example: (0,0,10,5) returns Direction.Right).
+     * (Example: (0,0,5,5) returns Direction.Up (y-axis is preferred)).
+     *
+     * Returns null when x1, y1, x2 and y2 are all the same.
+     *
+     * @param x1 Source x-axis.
+     * @param y1 Source y-axis.
+     * @param x2 Target x-axis.
+     * @param y2 Target y-axis.
+     * @return {@link Direction} given a source and target x-axis and y-axis.
+     *
+     * @see Direction#getDirection(int, int, int, int)
+     */
+    public static Direction getDirectionDiagonal(int x1, int y1, int x2, int y2) {
+        // Target - Source = direction.
+        int resultX = x2 - x1;
+        int resultY = y2 - y1;
+
+        // Flatten to one axis.
+        if (Math.abs(resultX) > Math.abs(resultY)) {
+            resultY = 0;
+        } else {
+            resultX = 0;
+        }
+
+        return valueOf(resultX, resultY);
     }
 
     /**
