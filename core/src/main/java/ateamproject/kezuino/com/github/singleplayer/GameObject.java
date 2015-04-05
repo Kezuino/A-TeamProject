@@ -352,10 +352,16 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * @return True if collision has been handled and {@link GameObject}.
      */
     protected boolean collisionWithGameObject(GameObject object) {
-        // TODO: Handle collision with a GameObject.
         return false;
     }
 
+    /**
+     * Called when collision was detected by this {@link GameObject}, with a wall.
+     * Return true of collision has been handled.
+     * 
+     * @param node {@link Node} this {@link GameObject} collided with.
+     * @return True if the collision has been handled.
+     */
     protected boolean collisionWithWall(Node node) {
 
         return false;
@@ -473,6 +479,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link Map#getPathfinder()} based on the {@link #movementSpeed}.
      *
      * @param targetNode {@link Node} to move towards.
+     * @deprecated unused, prepared for removed on cleanup, if still unused
      */
     public void move(Node targetNode) {
         throw new UnsupportedOperationException();//no movement inplemented
