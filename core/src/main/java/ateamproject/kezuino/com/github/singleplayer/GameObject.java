@@ -356,6 +356,10 @@ public abstract class GameObject implements IRenderable, IPositionable {
     protected boolean collisionWithWall(Node node) {
         return false;
     }
+    
+    protected boolean collisionWithItem(Item item) {
+        return false;
+    }
 
     /**
      * Moves this {@link GameObject} to another adjacent {@link Node} based on
@@ -415,6 +419,11 @@ public abstract class GameObject implements IRenderable, IPositionable {
                 break;
             }
         }
+        
+        if(getNode().hasItem()) {
+            collisionWithItem(getNode().getItem());
+        }
+
         if (collisionWithWall(getNode())) {
             return;
         }

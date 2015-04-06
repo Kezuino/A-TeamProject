@@ -29,7 +29,7 @@ public class Item implements IRenderable, IPositionable {
         this.map = map;
         this.x = x;
         this.y = y;
-        this.texture = Assets.get("textures/foreground/smallObject.png", Texture.class);
+        this.texture = Assets.get("textures/0/Foreground/smallObject.png", Texture.class);
     }
 
     /**
@@ -123,6 +123,7 @@ public class Item implements IRenderable, IPositionable {
         }
 
         this.getMap().getSession().getScore().incrementScore(this.type.getScore());
+        System.out.println(this.getMap().getSession().getScore().getScore());
     }
 
 

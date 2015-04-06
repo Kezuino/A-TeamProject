@@ -87,6 +87,10 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
         this.item = item;
         return this.item;
     }
+    
+    public boolean hasItem() {
+        return this.item != null;
+    }
 
     /**
      * Removes the {@link Item} and returns true if succeeded.

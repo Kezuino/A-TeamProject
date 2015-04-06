@@ -10,6 +10,7 @@ import java.util.Collection;
 
 public class Pactale extends GameObject {
 
+    private static int playerIndexCounter = 0;
     private int playerIndex;
     private int lives;
     private Portal portal;
@@ -36,6 +37,7 @@ public class Pactale extends GameObject {
         super(map, x, y, movementSpeed, walkingDirection, color);
         this.lives = lives;
         this.projectiles = new ArrayList<>();
+        this.playerIndex = playerIndexCounter++;
     }
 
     public int getPlayerIndex() {
@@ -96,18 +98,25 @@ public class Pactale extends GameObject {
     @Override
     protected boolean collisionWithGameObject(GameObject object) {
         if(object instanceof Enemy) {
-            this.lives -= 1;
-            this.setActive(false);
-            return true;
-        } /*else if(object instanceof Projectile) {
-            Projectile p = (Projectile)object;
-            Pactale pac = p.getOwner();
-            if(pac.getPortal() != null) {
-                this.setPosition(pac.getPortal().getNode().getX(), pac.getPortal().getNode().getY());
+            Enemy e = (Enemy) object;
+            
+            if(e.isEdible()) {
+                this.getMap().getSession().getScore().incrementScore(500);
+                e.setActive(false);
+            } else {
+                this.lives -= 1;
+                this.setActive(false);
             }
-            this.getMap().removeGameObject(object);
-        }*/
+            return true;
+        }
         return false;
+    }
+    
+    @Override
+    protected boolean collisionWithItem(Item item) {
+        item.activate(this);
+        item.getNode().removeItem();
+        return true;
     }
 
     public void addPortal(Portal portal) {
