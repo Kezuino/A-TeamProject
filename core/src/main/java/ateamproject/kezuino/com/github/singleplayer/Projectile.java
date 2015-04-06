@@ -78,7 +78,7 @@ public class Projectile extends GameObject {
 
         // TODO: Collision
         GameObject obj = object;
-        if (this.getOwner().getPortal() != null) {
+        if (this.getOwner().getPortal() != null && this.getActive()) {
             obj.setPosition(this.getOwner().getPortal().getNode().getX(), this.getOwner().getPortal().getNode().getY());
             //TODO force next direction
             //obj.setDirection(this.direction);
@@ -91,7 +91,7 @@ public class Projectile extends GameObject {
     @Override
     protected boolean collisionWithWall(Node node) {
         Node NextNode = getMap().getAdjacentNode(node, this.direction);
-        if (NextNode.isWall()) {
+        if (NextNode.isWall() && this.getActive()) {
             new Portal(owner, node, this.direction.reverse());
             this.setActive(false);
             return true;
