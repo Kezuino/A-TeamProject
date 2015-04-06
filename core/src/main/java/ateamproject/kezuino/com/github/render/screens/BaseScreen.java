@@ -12,7 +12,10 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -26,6 +29,9 @@ import java.util.List;
  */
 public abstract class BaseScreen implements Screen {
 
+    protected boolean clearOnRender;
+    protected Color clearOnRenderColor;
+    protected Music backgroundMusic;
     protected Viewport viewport;
     protected Camera camera;
 
@@ -41,6 +47,8 @@ public abstract class BaseScreen implements Screen {
         renderers = new ArrayList<>();
         inputs = new InputMultiplexer();
         stage = new Stage();
+        clearOnRender = true;
+        clearOnRenderColor = Color.BLACK;
 
         // Bootstrap game objects.
         this.game = game;
@@ -65,10 +73,19 @@ public abstract class BaseScreen implements Screen {
         for (IRenderer renderer : renderers) {
             renderer.active();
         }
+        if (backgroundMusic != null) {
+            if (!backgroundMusic.isLooping()) backgroundMusic.setLooping(true);
+            if (!backgroundMusic.isPlaying()) backgroundMusic.play();
+        }
     }
 
     @Override
     public void render(float delta) {
+        if (clearOnRender) {
+            Gdx.gl.glClearColor(clearOnRenderColor.r, clearOnRenderColor.g, clearOnRenderColor.b, clearOnRenderColor.a);
+            Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        }
+
         for (IRenderer renderer : renderers) {
             renderer.render();
         }
@@ -86,18 +103,22 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void pause() {
+        if (backgroundMusic != null) backgroundMusic.pause();
     }
 
     @Override
     public void resume() {
+        if (backgroundMusic != null) backgroundMusic.play();
     }
 
     @Override
     public void hide() {
+        if (backgroundMusic != null) backgroundMusic.pause();
     }
 
     @Override
     public void dispose() {
+        if (backgroundMusic != null) backgroundMusic.dispose();
     }
 
     /**

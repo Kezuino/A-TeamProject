@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -118,10 +119,7 @@ public class ClanManagementScreen extends BaseScreen {
         
         table.setPosition(xOfLoginButton, yOfLoginButton);
         this.stage.addActor(table);
-    }
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        super.render(delta);
+
+        backgroundMusic = Assets.getMusicStream("menu.mp3");
     }
 }

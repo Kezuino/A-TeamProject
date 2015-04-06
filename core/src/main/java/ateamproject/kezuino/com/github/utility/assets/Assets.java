@@ -4,39 +4,55 @@ import ateamproject.kezuino.com.github.utility.FilenameUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import jdk.nashorn.internal.codegen.CompilationException;
 
+import java.util.HashMap;
+
 public class Assets {
 
     public static AssetManager manager;
+    private static HashMap<String, Music> musicInstances;
 
-    public static void create(int tilesetToLoad) {
+    static {
         manager = new AssetManager();
+        musicInstances = new HashMap<>();
+
+        // Add loaders to the ContentManager.
         manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));
-        load(tilesetToLoad);
     }
 
-    private static void load(int tilesetToLoad) {
-        // Fonts.
+    public static void create() {
+        loadFonts();
+
+        // Load all the skin assets.
+        load();
+    }
+
+    private static void loadFonts() {
         manager.load("fonts/opensans.ttf", BitmapFont.class);
+    }
+
+    private static void load() {
 
         // Textures.
-        manager.load("textures/"+tilesetToLoad+"/Foreground/pactale.png", Texture.class);
-        manager.load("textures/"+tilesetToLoad+"/Foreground/enemy.png", Texture.class);
-        manager.load("textures/"+tilesetToLoad+"/Foreground/projectile.png", Texture.class);
-        manager.load("textures/"+tilesetToLoad+"/Foreground/bigObject.png", Texture.class);
-        manager.load("textures/"+tilesetToLoad+"/Foreground/smallObject.png", Texture.class);
-        manager.load("textures/"+tilesetToLoad+"/Foreground/item.png", Texture.class);        
-        manager.load("textures/"+tilesetToLoad+"/Foreground/portal.png", Texture.class);
+        manager.load("textures/pactale.png", Texture.class);
+        manager.load("textures/enemy.png", Texture.class);
+        manager.load("textures/projectile.png", Texture.class);
+        manager.load("textures/bigObject.png", Texture.class);
+        manager.load("textures/smallObject.png", Texture.class);
+        manager.load("textures/item.png", Texture.class);
+        manager.load("textures/portal.png", Texture.class);
 
 
         // Sounds.
-        //manager.load("sounds/Background.mp3", Sound.class); //Takes a long time..
-        //manager.load("sounds/Defeat.wav", Sound.class); //Takes a long time..
+        //manager.load("sounds/menu.mp3", Sound.class); //Takes a long time..
+        //manager.load("sounds/defeat.wav", Sound.class); //Takes a long time..
         // Wait for assets to load.
         manager.finishLoading();
     }
@@ -70,6 +86,34 @@ public class Assets {
         }
         return sound;
     }
+
+    public static Music getMusicStream(String fileName) {
+        if (fileName == null || fileName.isEmpty()) return null;
+        String asset = "audio/music/" + fileName;
+
+        Music music;
+
+        // If music exists in cache, retrieve it.
+        if (musicInstances.containsKey(fileName)) {
+            music = musicInstances.get(fileName);
+            if (music == null) {
+                musicInstances.remove(fileName);
+            } else {
+                return music;
+            }
+        }
+
+        // Music not yet in cache, create a new music stream.
+        FileHandle file = Gdx.files.internal(asset);
+        music = Gdx.audio.newMusic(file);
+
+        if (music != null) {
+            musicInstances.put(fileName, music);
+        }
+
+        return music;
+    }
+
 
     public static ShaderProgram getShaderProgram(String shaderName) {
         ShaderProgram.pedantic = false;

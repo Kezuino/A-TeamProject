@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -48,11 +49,7 @@ public class RandomGamesScreen extends BaseScreen{
         //stage.addActor(btnLogin);        
         stage.addActor(table);
 
-    }
+        backgroundMusic = Assets.getMusicStream("menu.mp3");
 
-    @Override
-    public void resize(int width, int height) {
-        // Reset controls of this screen to align with new resolution.
-        viewport.update(width, height);
     }
 }

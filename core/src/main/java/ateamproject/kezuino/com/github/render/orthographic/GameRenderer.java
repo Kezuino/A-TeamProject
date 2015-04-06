@@ -50,7 +50,7 @@ public class GameRenderer implements IRenderer {
         }
 
         // Render background only.
-        tileMapRenderer.render(new int[]{0});
+        tileMapRenderer.render();
 
         // Render nodes.
         batch.begin();

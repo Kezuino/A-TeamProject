@@ -31,7 +31,7 @@ public class Portal implements IRenderable, IPositionable {
         owner.setPortal(this);
         this.node = position;
         this.direction = direction;
-        this.setTexture(Assets.get("textures/0/Foreground/portal.png", Texture.class));
+        this.setTexture(Assets.get("textures/portal.png", Texture.class));
     }
 
     @Override

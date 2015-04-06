@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Sound;
@@ -28,14 +29,11 @@ import java.util.TreeMap;
 public class HighscoreScreen extends BaseScreen {
     public HighscoreScreen(Game game) {
         super(game);
-        Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/Background.mp3"));
-        sound.loop();
 
         TextButton btnBack = new TextButton("Terug", skin);
         btnBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                sound.dispose();
                 game.setScreen(new MainScreen(game));
             }
         });
@@ -86,14 +84,8 @@ public class HighscoreScreen extends BaseScreen {
         stage.addActor(btnBack);
         stage.addActor(lblTitle);
         stage.addActor(table);
-    }
 
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        super.render(delta);
+        backgroundMusic = Assets.getMusicStream("menu.mp3");
     }
 }
 

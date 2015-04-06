@@ -26,13 +26,11 @@ public class GameScreen extends BaseScreen {
 
     public GameScreen(Game game) {
         super(game);
-        int mapToLoad = 0;
-        int tilesetToLoad = 0;
         
-        Assets.create(tilesetToLoad);
+        Assets.create();
 
         session = new GameSession();
-        session.setMap(Map.load(session, mapToLoad));
+        session.setMap(Map.load(session, "0"));
 
         player = new Pactale(session.getMap(), 9, 5, 3, .5f, Direction.Down, Color.RED);
         player.setTexture(Assets.get("textures/0/Foreground/pactale.png", Texture.class));

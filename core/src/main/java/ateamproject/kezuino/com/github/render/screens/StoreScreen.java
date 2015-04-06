@@ -25,7 +25,7 @@ public class StoreScreen extends BaseScreen {
 
     public StoreScreen(Game game) {
         super(game); 
-        Sound sound = Assets.manager.get("sounds/Background.mp3",Sound.class);
+        Sound sound = Assets.manager.get("sounds/menu.mp3",Sound.class);
         if (sound != null){
             sound.loop();
         }
@@ -80,13 +80,7 @@ public class StoreScreen extends BaseScreen {
         stage.addActor(btnBack);
         stage.addActor(lblStore);
         stage.addActor(listStoreItems);
-    }
 
-    @Override
-    public void render(float delta) {
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
-        super.render(delta);
+        backgroundMusic = Assets.getMusicStream("menu.mp3");
     }
 }

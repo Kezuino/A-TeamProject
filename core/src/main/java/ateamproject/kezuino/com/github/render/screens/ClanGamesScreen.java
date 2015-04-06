@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -35,7 +36,7 @@ public class ClanGamesScreen extends BaseScreen{
          btnBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new MainScreen(game));
             }
         });
         btnBack.setSize(300, 400);
@@ -48,13 +49,7 @@ public class ClanGamesScreen extends BaseScreen{
         //stage.addActor(btnLogin);        
         stage.addActor(table);
 
-    }    
- 
-
-    /*@Override
-    public void resize(int width, int height) {
-        // Reset controls of this screen to align with new resolution.
-        viewport.update(width, height);
-    }*/
+        backgroundMusic = Assets.getMusicStream("menu.mp3");
+    }
 
 }

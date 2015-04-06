@@ -5,8 +5,10 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -16,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  * @author David
  */
 public class MainScreen extends BaseScreen {
-
     public MainScreen(Game game) {
         super(game);
 
@@ -64,7 +65,7 @@ public class MainScreen extends BaseScreen {
         tbLogout.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //game.setScreen(new GameScreen(game));
+                game.setScreen(new LoginScreen(game));
             }
         });
         
@@ -92,16 +93,18 @@ public class MainScreen extends BaseScreen {
         tbHighscores.setPosition(xOfSearchGameButton, yOfSearchGameButton - 100);
         tbChangeLook.setPosition(xOfSearchGameButton, yOfSearchGameButton - 150);
         tbOptions.setPosition(xOfSearchGameButton, yOfSearchGameButton - 200);
-        tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
-        tbClanManagement.setPosition(xOfSearchGameButton, yOfSearchGameButton - 300);
+        tbClanManagement.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
+        tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 300);
 
         stage.addActor(tbSearchGame);
         stage.addActor(tbClanGame);
         stage.addActor(tbHighscores);
         stage.addActor(tbChangeLook);
         stage.addActor(tbOptions);
-        stage.addActor(tbLogout);
         stage.addActor(tbClanManagement);
+        stage.addActor(tbLogout);
+
+        backgroundMusic = Assets.getMusicStream("menu.mp3");
     }
 
     @Override
