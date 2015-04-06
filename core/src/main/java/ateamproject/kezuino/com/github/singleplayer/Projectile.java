@@ -25,7 +25,7 @@ public class Projectile extends GameObject {
     public Projectile(Map map, int x, int y, Pactale owner, float movementSpeed, Direction direction, Color color) {
         super(map, x, y, movementSpeed, direction, color);
         this.owner = owner;
-        this.setTexture(Assets.get("textures/foreground/projectile.png", Texture.class));
+        this.setTexture(Assets.get("textures/0/Foreground/projectile.png", Texture.class));
     }
 
     /**
