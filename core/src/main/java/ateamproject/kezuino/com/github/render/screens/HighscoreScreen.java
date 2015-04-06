@@ -29,15 +29,11 @@ import java.util.TreeMap;
 public class HighscoreScreen extends BaseScreen {
     public HighscoreScreen(Game game) {
         super(game);
-        if (sound!=null){
-        }
 
         TextButton btnBack = new TextButton("Terug", skin);
         btnBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (sound!=null){
-                }
                 game.setScreen(new MainScreen(game));
             }
         });

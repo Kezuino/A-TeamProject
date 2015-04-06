@@ -36,7 +36,7 @@ public class GameRenderer implements IRenderer {
         DebugRenderManager.setCamera(camera);
         DebugRenderManager.addRenderer(new DebugStatistics());
         DebugRenderManager.addRenderer(new DebugPathfinding());
-        DebugRenderManager.show();
+        //DebugRenderManager.show();
     }
 
     @Override
@@ -45,11 +45,6 @@ public class GameRenderer implements IRenderer {
 
     @Override
     public void render() {
-        if (!DebugRenderManager.isHidden()) {
-            renderWithDebugger();
-            return;
-        }
-
         // Render background only.
         tileMapRenderer.render();
 
@@ -68,62 +63,18 @@ public class GameRenderer implements IRenderer {
                 portal.update();
                 portal.draw(batch);
             }
+        }
 
-            // Render dynamic objects.
-            for (GameObject obj : this.map.getAllGameObjects().stream().filter(o -> o.getActive()).collect(Collectors.toList())) {
-                obj.update();
-                obj.draw(batch);
-            }
-            
-            for(GameObject obj : this.map.getAllGameObjects().stream().filter(o -> !o.getActive()).collect(Collectors.toList())) {
-                this.map.removeGameObject(obj);
-            }
+        // Cleanup gameobjects ready for deletion.
+        for(GameObject obj : this.map.getAllGameObjects().stream().filter(o -> !o.getActive()).collect(Collectors.toList())) {
+            this.map.removeGameObject(obj);
+        }
+
+        // Render dynamic objects.
+        for (GameObject obj : this.map.getAllGameObjects()) {
+            obj.update();
+            obj.draw(batch);
         }
         batch.end();
-    }
-
-    public void renderWithDebugger() {
-        DebugRenderManager.render(DebugLayers.First);
-
-        // Render background only.
-        tileMapRenderer.render(new int[]{0});
-
-        // Render nodes.
-        for (Node node : map.getNodes()) {
-            // Background.
-            DebugRenderManager.render(DebugLayers.Background);
-
-            // Render items.
-            batch.begin();
-            Item item = node.getItem();
-            if (item != null) {
-                item.update();
-                item.draw(batch);
-            }
-            batch.end();
-            DebugRenderManager.render(DebugLayers.Item, item);
-
-            // Render portals.
-            for (Portal portal : node.getPortals()) {
-                batch.begin();
-                portal.update();
-                portal.draw(batch);
-                batch.end();
-                DebugRenderManager.render(DebugLayers.Portal, portal);
-            }
-
-            // Render dynamic objects.
-            for (GameObject obj : this.map.getAllGameObjects().stream().filter(o -> o.getActive()).collect(Collectors.toList())) {
-                batch.begin();
-                obj.update();
-                obj.draw(batch);
-                batch.end();
-                DebugRenderManager.render(DebugLayers.GameObject, obj);
-            }
-            
-            for(GameObject obj : this.map.getAllGameObjects().stream().filter(o -> !o.getActive()).collect(Collectors.toList())) {
-                this.map.removeGameObject(obj);
-            }
-        }
     }
 }

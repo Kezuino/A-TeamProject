@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public abstract class GameObject implements IRenderable, IPositionable {
 
-    private boolean isActive;
     /**
      * If true, all movement done by this {@link GameObject} will use
      * interpolation to smoothly move it to an adjacent {@link Node}. If false,
@@ -52,6 +51,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link com.badlogic.gdx.graphics.Color} this {@link GameObject} previously originated from.
      */
     protected Color previousColor;
+    private boolean isActive;
     /**
      * {@link Map} that contains this {@link GameObject}.
      */
@@ -267,7 +267,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (direction == null) return;
         this.nextDirection = this.isMoving ? direction : (this.direction = direction);
     }
-    
+
     @Override
     public Node getNode() {
         if (map == null) {
@@ -291,35 +291,16 @@ public abstract class GameObject implements IRenderable, IPositionable {
             return false;
         }
 
-        /*Node targetNode = map.getNode(x, y);
-        if (targetNode == null) {
-            return false;
-        }
-
-        Node currentNode = map.getNode(this.x, this.y);
-        // Remove GameObject from current Node.
-        if (currentNode.removeGameObject(this) == null) {
-            // GameObject wasn't on current node. It might be set from outside of the map.
-            //return false;
-        }
-
-        // Add GameObject to new Node or revert if failing.
-        if (!targetNode.addGameObject(this)) {
-            // Revert position back because we failed.
-            currentNode.addGameObject(this);
-            return false;
-        }*/
-
         this.x = x;
         this.y = y;
 
         return true;
     }
-    
+
     public boolean getActive() {
         return this.isActive;
     }
-    
+
     protected void setActive(boolean active) {
         this.isActive = active;
     }
@@ -368,12 +349,11 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * Called when collision was detected by this {@link GameObject}, with a wall.
      * Return true of collision has been handled.
-     * 
+     *
      * @param node {@link Node} this {@link GameObject} collided with.
      * @return True if the collision has been handled.
      */
     protected boolean collisionWithWall(Node node) {
-
         return false;
     }
 
@@ -422,9 +402,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
         }
 
         Node targetNode = this.getMap().getAdjacentNode(getNode(), this.direction);
-        
+
         //Target node is beyond bounds, do not check for collision beyond this point
-        if(targetNode == null) {
+        if (targetNode == null) {
             return;
         }
 
@@ -435,7 +415,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
                 break;
             }
         }
-        if (collisionWithWall(getNode())){
+        if (collisionWithWall(getNode())) {
             return;
         }
     }
@@ -455,11 +435,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
         batch.setColor(getColor());
 
         // TODO: Animate from sprite region.
-        //TextureRegion region = new TextureRegion(texture, 0, 0, 26, 32);
+
         // Set draw offset when moving.
         if (movementInterpolation && isMoving) {
-            
-            
             // Calculate the amount of offset.
             float secondsFromStart = (System.nanoTime() - movementStartTime) / 1000000000.0f;
 

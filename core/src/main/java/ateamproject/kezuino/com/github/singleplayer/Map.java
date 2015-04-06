@@ -3,10 +3,16 @@ package ateamproject.kezuino.com.github.singleplayer;
 import ateamproject.kezuino.com.github.pathfinding.AStar;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.tiled.*;
+import com.badlogic.gdx.maps.objects.TextureMapObject;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,7 +42,7 @@ public class Map {
      * {@link GameSession} that hosts the {@link Map} and allows multiplayer.
      */
     private GameSession gameSession;
-    
+
     private List<GameObject> gameObjects;
 
     /**
@@ -80,124 +86,55 @@ public class Map {
         if (mapPath == null || mapPath.isEmpty()) throw new IllegalArgumentException();
 
         TiledMap tiledMap = new TmxMapLoader().load(mapPath);
-        MapProperties props = tiledMap.getProperties();
-        Map map = new Map(session, props.get("width", Integer.class), props.get("height", Integer.class));
+        MapProperties mapProps = tiledMap.getProperties();
+        Map map = new Map(session, mapProps.get("width", Integer.class), mapProps.get("height", Integer.class));
         map.baseMap = tiledMap;
 
+        // Convert TMX data to game tiles.
         TiledMapTileLayer background = (TiledMapTileLayer) map.baseMap.getLayers().get(0);
-        MapLayer objects = map.baseMap.getLayers().get(1);
         for (int x = 0; x < map.width; x++) {
             for (int y = 0; y < map.height; y++) {
                 Node node = map.getNode(x, y);
 
                 // Set background tiles.
                 node.setTileId(background.getCell(x, y).getTile().getId());
-
-                // TODO: Read object layer and create objects on map.
-
-
-//                if (objects.getCell(x, y) != null) {//check if there is something that can be placed on the foreground
-//                    createGameObjectFromTileMap(x, y, map);//create a gameobject or item
-//                } else if (isPlaceForSmallObject(x, y, map)) {//check if a small object can be placed
-//                    createItemFromTileMap(x, y, map);//create a small object
-//                }
             }
-
         }
+
+        // Convert TMX data to game objects.
+        MapLayer objLayer = map.baseMap.getLayers().get(1);
+        TiledMapTileSet objTileLayer = map.baseMap.getTileSets().getTileSet(1);
+        for (MapObject obj : objLayer.getObjects()) {
+            if (!(obj instanceof TextureMapObject)) continue;
+
+            MapProperties objProps = obj.getProperties();
+            MapProperties objTileProps = objTileLayer.getTile(objProps.get("gid", int.class)).getProperties();
+
+            int posX = (int) (objProps.get("x", float.class) / 32);
+            int posY = (int) (objProps.get("y", float.class) / 32);
+            Node posNode = map.getNode(posX, posY);
+
+            if (objTileProps.containsKey("item")) {
+                // Create item.
+                ItemType itemType = Arrays.stream(ItemType.values())
+                        .filter(e -> e.name().equalsIgnoreCase(objProps.get("item", String.class))).findAny().orElse(null);
+                Item item = new Item(map, posX, posY, itemType);
+                item.setTexture(((TextureMapObject) obj).getTextureRegion().getTexture());
+                posNode.setItem(item);
+            } else if (objTileProps.containsKey("isEnemy")) {
+                // Create enemy.
+                Enemy enemy = new Enemy(null, map, posX, posY, 1, Direction.Down);
+                enemy.setTexture(((TextureMapObject) obj).getTextureRegion().getTexture());
+                map.addGameObject(enemy);
+            } else if (objTileProps.containsKey("isPactale")) {
+                // Create pactale.
+                Pactale pactale = new Pactale(map, posX, posY, 3, 1, Direction.Down, Color.WHITE);
+                pactale.setTexture(((TextureMapObject) obj).getTextureRegion().getTexture());
+                map.addGameObject(pactale);
+            }
+        }
+
         return map;
-    }
-
-    private static boolean isPlaceForSmallObject(int x, int y, Map map) {
-        TiledMapTileLayer background = (TiledMapTileLayer) map.baseMap.getLayers().get(0);
-        int gObjectID = background.getCell(x, y).getTile().getId();
-
-        TiledMapTileSet tileSet;
-        tileSet = map.getBaseMap().getTileSets().getTileSet(0);
-
-        TiledMapTile tile = tileSet.getTile(gObjectID);
-        MapProperties properties = tile.getProperties();
-
-        Object tileProperties = properties.get("isWall");
-        if (tileProperties == null) {
-            return true;
-        } else {
-            return !Boolean.valueOf((String) tileProperties);
-        }
-    }
-
-    /**
-     * places a small object at the given position
-     *
-     * @param x
-     * @param y
-     * @param map
-     */
-    private static void createItemFromTileMap(int x, int y, Map map) {
-        Item i = new Item(map, x, y, ItemType.SmallObject);
-        Node currNode = map.getNode(x, y);
-        currNode.setItem(i);
-    }
-
-    /**
-     * Creates and returns a (game)object at a given position. if nothing is
-     * found, null will be returned
-     *
-     * @param x
-     * @param y
-     * @param map
-     * @return
-     */
-    private static Object createGameObjectFromTileMap(int x, int y, Map map) {
-        TiledMapTileLayer foreground = (TiledMapTileLayer) map.baseMap.getLayers().get(1);
-
-        //int gObjectID = foreground.getCell(x, y).getTile().getId();
-        //System.out.println("TILE ID ON BACK: " + gObjectID + " POSITION: " + Integer.toString(x) + " / " + Integer.toString(y));
-
-        MapProperties properties = foreground.getCell(x, y).getTile().getProperties();
-
-        Object gObjectProperties = properties.get("isPactale");
-        if (gObjectProperties != null) {
-            Pactale p = new Pactale(map, x, y, 3, 3, Direction.Down, Color.BLUE);
-            map.addGameObject(x, y, p);
-            return p;
-        }
-
-        gObjectProperties = properties.get("isEnemy");
-        if (gObjectProperties != null) {
-            for (GameObject gObject : map.getAllGameObjects()) {
-                if (gObject.getClass().equals(Pactale.class)) {//check if there is a pactale on allgameobject
-                    Enemy e = new Enemy(gObject, map, x, y, 3, Direction.Down);//follow pactale
-                    map.addGameObject(x, y, e);
-                    return e;
-                }
-            }
-
-            Enemy e = new Enemy(null, map, x, y, 3, Direction.Down);//follow nothing
-            map.addGameObject(x, y, e);
-            return e;
-        }
-
-        gObjectProperties = properties.get("isItem");
-        if (gObjectProperties != null) {
-            gObjectProperties = properties.get("name");
-            if (gObjectProperties != null) {
-                if (gObjectProperties == "bigObject") {
-                    Item i = new Item(map, x, y, ItemType.BigObject);
-                    Node currNode = map.getNode(x, y);
-                    currNode.setItem(i);
-                    return i;
-                } else if (gObjectProperties == "watch") {
-                    Item i = new Item(map, x, y, ItemType.Watch);
-                    Node currNode = map.getNode(x, y);
-                    currNode.setItem(i);
-                    return i;
-                }
-            }
-
-            return null;
-        }
-
-        return null;
     }
 
     public TiledMap getBaseMap() {
@@ -284,7 +221,7 @@ public class Map {
         if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
         this.gameObjects.remove(object);
     }
-    
+
     /**
      * Adds a {@link GameObject} to this {@link Map} if it doesn't exist and returns true if it succeeded.
      *
@@ -296,7 +233,7 @@ public class Map {
         gameObjects.add(object);
         return true;
     }
-    
+
     /**
      * Adds a {@link GameObject} to a position on this {@link Map}.
      *
@@ -305,12 +242,9 @@ public class Map {
      */
     public GameObject addGameObject(int x, int y, GameObject object) {
         if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
-        if (node == null)
-            throw new IllegalArgumentException("Cannot add GameObject to an x and y node because node is null.");
 
         if (!this.addGameObject(object)) return null;
         object.setPosition(x, y);
-        object.setMap(this);
         return object;
     }
 
@@ -322,10 +256,10 @@ public class Map {
     public boolean hasGameObject(GameObject object) {
         return this.gameObjects.contains(object);
     }
-    
+
     /**
      * Gets all {@link GameObject gameobjects} on a certain {@link Node}.
-     * 
+     *
      * @param node The {@link Node} to look for {@link GameObject gameobjects}.
      * @return All {@link GameObject gameobjects} on the given {@link Node}.
      */
