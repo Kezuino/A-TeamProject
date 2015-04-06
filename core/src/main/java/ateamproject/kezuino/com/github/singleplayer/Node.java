@@ -220,7 +220,7 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
      * @param portal    to set on the side of the {@link Node}.
      */
     public boolean setPortal(Direction direction, Portal portal) {
-        portals.put(direction, portal);
+        this.portals.put(direction, portal);
         return true;
     }
 
@@ -232,7 +232,7 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
      */
     public boolean removePortal(Direction direction) {
         if (!portals.containsKey(direction)) return false;
-        portals.put(direction, null);
+        this.portals.remove(direction);
         return true;
     }
 

@@ -45,7 +45,7 @@ public class Projectile extends GameObject {
      * @return True if it will collide with a different object or impenetrable
      * {@link Node}, else false.
      */
-    public Boolean hasCollision() {
+    /*public Boolean hasCollision() {
         if (direction == null) {
             return null;
         }
@@ -60,21 +60,17 @@ public class Projectile extends GameObject {
 
         NextNode = this.getMap().getNode(x + direction.getX(), y + direction.getY());
         if (NextNode.isWall()) {
-            // Next Node is a wall, colision detected, return true
-            return true;
+            return this.collisionWithWall(NextNode);
         } else if (!this.getMap().getAllGameObjects().isEmpty()) {
             // Collision with a GameObject.;
             for (GameObject obj : this.getMap().getAllGameObjects()) {
-                boolean result = collisionWithGameObject(obj);
-                if (result) {
-                    return true;
-                }
+                return collisionWithGameObject(obj);
             }
         }
 
         // No collision.
         return false;
-    }
+    }*/
 
     @Override
     protected boolean collisionWithGameObject(GameObject object) {
@@ -84,6 +80,8 @@ public class Projectile extends GameObject {
         GameObject obj = object;
         if (this.getOwner().getPortal() != null) {
             obj.setPosition(this.getOwner().getPortal().getNode().getX(), this.getOwner().getPortal().getNode().getY());
+            this.setActive(false);
+            return true;
         }
         return super.collisionWithGameObject(object); //To change body of generated methods, choose Tools | Templates.
     }
@@ -92,8 +90,8 @@ public class Projectile extends GameObject {
     protected boolean collisionWithWall(Node node) {
         Node NextNode = getMap().getAdjacentNode(node, this.direction);
         if (NextNode.isWall()) {
-            Portal p = new Portal(owner, node, direction.reverse());
-            this.owner.addPortal(p);
+            new Portal(owner, node, this.direction.reverse());
+            this.setActive(false);
             return true;
         }
 

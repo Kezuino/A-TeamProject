@@ -99,14 +99,14 @@ public class Pactale extends GameObject {
             this.lives -= 1;
             this.setActive(false);
             return true;
-        } else if(object instanceof Projectile) {
+        } /*else if(object instanceof Projectile) {
             Projectile p = (Projectile)object;
             Pactale pac = p.getOwner();
             if(pac.getPortal() != null) {
                 this.setPosition(pac.getPortal().getNode().getX(), pac.getPortal().getNode().getY());
             }
             this.getMap().removeGameObject(object);
-        }
+        }*/
         return false;
     }
 
@@ -115,8 +115,8 @@ public class Pactale extends GameObject {
         removePortal();
 
         // add portal to new node
-        this.portal = portal;
-        this.getMap().getNode(this.getX(), this.getY()).setPortal(direction, portal);
+        this.setPortal(portal);
+        this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).setPortal(portal.getDirection(), portal);
     }
 
     /**
@@ -124,9 +124,8 @@ public class Pactale extends GameObject {
      */
     public void removePortal() {
          if (this.portal != null) {
-            //portal.getNode().removePortal(portal.getDirection());
             this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).removePortal(portal.getDirection());
-            portal = null;
+            this.portal = null;
         }
     }
 
