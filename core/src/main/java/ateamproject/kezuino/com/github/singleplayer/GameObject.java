@@ -432,7 +432,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         }
 
         for (GameObject obj : this.map.getGameObjectsOnNode(this.getNode())) {
-            if (obj.equals(this)) break;
+            //if (obj.equals(this)) break;
             if (collisionWithGameObject(obj)) {
                 System.out.println("Collision handled");
                 break;

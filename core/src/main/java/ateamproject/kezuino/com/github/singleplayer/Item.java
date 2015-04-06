@@ -127,6 +127,7 @@ public class Item implements IRenderable, IPositionable {
     }
 
 
+    @Override
     public Node getNode() {
         return this.getMap().getNode(this.x, this.y);
     }
