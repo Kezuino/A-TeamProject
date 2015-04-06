@@ -99,15 +99,15 @@ public class Pactale extends GameObject {
             this.lives -= 1;
             this.setActive(false);
             return true;
-        } /*else if(object instanceof Projectile) {
-            Projectile p = (Projectile)object;
-            Pactale pac = p.getOwner();
-            if(pac.getPortal() != null) {
-                this.setPosition(pac.getPortal().getNode().getX(), pac.getPortal().getNode().getY());
-            }
-            this.getMap().removeGameObject(object);
-        }*/
+        }
         return false;
+    }
+    
+    @Override
+    protected boolean collisionWithItem(Item item) {
+        item.activate(this);
+        item.getNode().removeItem();
+        return true;
     }
 
     public void addPortal(Portal portal) {
