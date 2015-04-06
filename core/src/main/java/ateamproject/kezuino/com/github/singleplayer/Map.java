@@ -68,8 +68,8 @@ public class Map {
         this.height = height;
 
         nodes = new Nodes(width, height);
-        resetNodes(width, height);
         gameObjects = new ArrayList<>();
+        resetNodes(width, height);
         pathfinder = new AStar(this);
     }
 

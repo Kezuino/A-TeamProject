@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class Pactale extends GameObject {
         this.lives = lives;
         this.projectiles = new ArrayList<>();
         this.playerIndex = playerIndexCounter++;
+        this.texture = Assets.get("textures/0/Foreground/pactale.png", Texture.class);
     }
 
     public int getPlayerIndex() {
