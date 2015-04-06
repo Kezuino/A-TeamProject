@@ -80,6 +80,8 @@ public class Projectile extends GameObject {
         GameObject obj = object;
         if (this.getOwner().getPortal() != null) {
             obj.setPosition(this.getOwner().getPortal().getNode().getX(), this.getOwner().getPortal().getNode().getY());
+            //TODO force next direction
+            //obj.setDirection(this.direction);
             this.setActive(false);
             return true;
         }
