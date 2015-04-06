@@ -6,26 +6,26 @@ import com.badlogic.gdx.graphics.Texture;
 
 public class Projectile extends GameObject {
     /*
-        Field created for the {@link Pactale} this {@link Projectile}
-        origined from.
-    */
+     Field created for the {@link Pactale} this {@link Projectile}
+     origined from.
+     */
+
     private final Pactale owner;
 
     /**
      * Initializes a new {@link Projectile}.
      *
-     * @param owner         {@link Pactale} this {@link Projectile} origined from.
+     * @param owner {@link Pactale} this {@link Projectile} origined from.
      * @param movementSpeed Speed in seconds it takes for this
-     *                      {@link Projectile} to move to another adjacent {@link Node}.
-     * @param direction     Direction this {@link Projectile} is moviong
-     *                      towards.
-     * @param color         {@link com.badlogic.gdx.graphics.Color} of this
-     *                      {@link Projectile}.
+     * {@link Projectile} to move to another adjacent {@link Node}.
+     * @param direction Direction this {@link Projectile} is moviong towards.
+     * @param color {@link com.badlogic.gdx.graphics.Color} of this
+     * {@link Projectile}.
      */
     public Projectile(Map map, int x, int y, Pactale owner, float movementSpeed, Direction direction, Color color) {
         super(map, x, y, movementSpeed, direction, color);
         this.owner = owner;
-        this.setTexture(Assets.get("textures/foreground/projectile.png", Texture.class));
+        this.setTexture(Assets.get("textures/0/Foreground/projectile.png", Texture.class));
     }
 
     /**
@@ -39,12 +39,16 @@ public class Projectile extends GameObject {
 
     /**
      * Checks whether the next {@link Node} this {@link Projectile} is heading
-     * will collide with a different {@link GameObject} or impenetrable tile {@link Node}.
+     * will collide with a different {@link GameObject} or impenetrable tile
+     * {@link Node}.
      *
-     * @return True if it will collide with a different object or impenetrable {@link Node}, else false.
+     * @return True if it will collide with a different object or impenetrable
+     * {@link Node}, else false.
      */
     public Boolean hasCollision() {
-        if (direction == null) return null;
+        if (direction == null) {
+            return null;
+        }
 
         Node NextNode;
         int x = this.getX();
@@ -62,8 +66,9 @@ public class Projectile extends GameObject {
             // Collision with a GameObject.;
             for (GameObject obj : NextNode.getGameObjects()) {
                 boolean result = collisionWithGameObject(obj);
-                if (result)
+                if (result) {
                     return true;
+                }
             }
         }
 
@@ -76,22 +81,23 @@ public class Projectile extends GameObject {
         if (object.equals(owner)) return false;
 
         // TODO: Collision
-        
+        GameObject obj = object;
+        if (this.getOwner().getPortal() != null) {
+            obj.setPosition(this.getOwner().getPortal().getNode().getX(), this.getOwner().getPortal().getNode().getY());
+        }
         return super.collisionWithGameObject(object); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
     protected boolean collisionWithWall(Node node) {
-        if (node.isWall()) {
+        Node NextNode = getMap().getAdjacentNode(node, this.direction);
+        if (NextNode.isWall()) {
             Portal p = new Portal(owner, node, direction.reverse());
             this.owner.addPortal(p);
             return true;
         }
-        
+
         return super.collisionWithWall(node); //To change body of generated methods, choose Tools | Templates.
     }
 
-    
-
 }
-

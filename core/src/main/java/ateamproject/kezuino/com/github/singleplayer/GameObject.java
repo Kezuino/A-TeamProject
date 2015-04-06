@@ -426,8 +426,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
             }
         }
-        if (targetNode.isWall()) {
-            collisionWithWall(targetNode);
+        if (collisionWithWall(getNode())){
+            return;
         }
     }
 

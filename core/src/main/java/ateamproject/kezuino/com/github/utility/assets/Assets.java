@@ -30,7 +30,9 @@ public class Assets {
         manager.load("textures/"+tilesetToLoad+"/Foreground/projectile.png", Texture.class);
         manager.load("textures/"+tilesetToLoad+"/Foreground/bigObject.png", Texture.class);
         manager.load("textures/"+tilesetToLoad+"/Foreground/smallObject.png", Texture.class);
-        manager.load("textures/"+tilesetToLoad+"/Foreground/item.png", Texture.class);
+        manager.load("textures/"+tilesetToLoad+"/Foreground/item.png", Texture.class);        
+        manager.load("textures/"+tilesetToLoad+"/Foreground/portal.png", Texture.class);
+
 
         // Sounds.
         //manager.load("sounds/Background.mp3", Sound.class); //Takes a long time..
