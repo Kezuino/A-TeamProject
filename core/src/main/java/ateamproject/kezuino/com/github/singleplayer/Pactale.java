@@ -39,7 +39,6 @@ public class Pactale extends GameObject {
         this.lives = lives;
         this.projectiles = new ArrayList<>();
         this.playerIndex = playerIndexCounter++;
-        this.texture = Assets.get("textures/0/Foreground/pactale.png", Texture.class);
     }
 
     public int getPlayerIndex() {
