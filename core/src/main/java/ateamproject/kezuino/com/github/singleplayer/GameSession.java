@@ -24,21 +24,36 @@ public class GameSession {
     }
 
     /**
-     * Returns a {@link Pactale} if found with the specific {@code playerIndex}. If not found, null will be returned.
-     *
-     * @param playerIndex
-     */
-    public Pactale getPlayer(int playerIndex) {
-        return this.map.getAllGameObjects().stream().filter(gameObject -> gameObject instanceof Pactale).map(gameObject -> (Pactale)gameObject).filter((Pactale pactale) -> pactale.getPlayerIndex() == playerIndex).findFirst().orElse(null);
-    }
-
-    /**
      * Sets a new {@link Map} for this {@link GameSession}. Connected clients should be synced here if current computer is the host.
      *
      * @param map {@link Map} to change to.
      */
     public void setMap(Map map) {
         this.map = map;
+    }
+
+    /**
+     * Sets a new {@link Map} for this {@link GameSession}. Connected clients should be synced here if the current computer is the host.
+     *
+     * @param squareSize X and Y dimension of the {@link Map}.
+     */
+    public void setMap(int squareSize) {
+        setMap(new Map(this, squareSize));
+    }
+
+    /**
+     * Returns a {@link Pactale} if found with the specific {@code playerIndex}. If not found, null will be returned.
+     *
+     * @param playerIndex
+     */
+    public Pactale getPlayer(int playerIndex) {
+        return this.map.getAllGameObjects()
+                       .stream()
+                       .filter(gameObject -> gameObject instanceof Pactale)
+                       .map(gameObject -> (Pactale) gameObject)
+                       .filter((Pactale pactale) -> pactale.getPlayerIndex() == playerIndex)
+                       .findFirst()
+                       .orElse(null);
     }
 
     /**
@@ -52,17 +67,8 @@ public class GameSession {
     }
 
     /**
-     * Sets a new {@link Map} for this {@link GameSession}. Connected clients should be synced here if the current computer is the host.
-     *
-     * @param squareSize X and Y dimension of the {@link Map}.
-     */
-    public void setMap(int squareSize) {
-        setMap(new Map(this, squareSize));
-    }
-    
-    /**
      * Gets the current game {@link Score} this {@link GameSession} is applied to.
-     * 
+     *
      * @return The current {@link Score} from this {@link GameSession}.
      */
     public Score getScore() {

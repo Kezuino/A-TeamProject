@@ -67,7 +67,6 @@ public class Enemy extends GameObject {
         this.edible = false;
         this.edibleTime = 2f;
         this.graphPath = new DefaultGraphPath<>();
-        this.setTexture(Assets.get("textures/0/Foreground/enemy.png", Texture.class));
     }
 
     /**

@@ -104,10 +104,11 @@ public class Map {
         // Convert TMX data to game objects.
         MapLayer objLayer = map.baseMap.getLayers().get(1);
         TiledMapTileSet objTileLayer = map.baseMap.getTileSets().getTileSet(1);
-        for (MapObject obj : objLayer.getObjects()) {
-            if (!(obj instanceof TextureMapObject)) continue;
+        for (MapObject loopObj : objLayer.getObjects()) {
+            if (!(loopObj instanceof TextureMapObject)) continue;
+            TextureMapObject obj = (TextureMapObject)loopObj;
 
-            MapProperties objProps = obj.getProperties();
+            MapProperties objProps = loopObj.getProperties();
             MapProperties objTileProps = objTileLayer.getTile(objProps.get("gid", int.class)).getProperties();
 
             int posX = (int) (objProps.get("x", float.class) / 32);
@@ -117,19 +118,21 @@ public class Map {
             if (objTileProps.containsKey("item")) {
                 // Create item.
                 ItemType itemType = Arrays.stream(ItemType.values())
-                        .filter(e -> e.name().equalsIgnoreCase(objProps.get("item", String.class))).findAny().orElse(null);
+                                          .filter(e -> e.name().equalsIgnoreCase(objProps.get("item", String.class)))
+                                          .findAny()
+                                          .orElse(null);
                 Item item = new Item(map, posX, posY, itemType);
-                item.setTexture(((TextureMapObject) obj).getTextureRegion().getTexture());
+                item.setTexture(obj.getTextureRegion().getTexture());
                 posNode.setItem(item);
             } else if (objTileProps.containsKey("isEnemy")) {
                 // Create enemy.
                 Enemy enemy = new Enemy(null, map, posX, posY, 1, Direction.Down);
-                enemy.setTexture(((TextureMapObject) obj).getTextureRegion().getTexture());
+                enemy.setTexture(obj.getTextureRegion().getTexture());
                 map.addGameObject(enemy);
             } else if (objTileProps.containsKey("isPactale")) {
                 // Create pactale.
                 Pactale pactale = new Pactale(map, posX, posY, 3, 1, Direction.Down, Color.WHITE);
-                pactale.setTexture(((TextureMapObject) obj).getTextureRegion().getTexture());
+                pactale.setTexture(obj.getTextureRegion().getTexture());
                 map.addGameObject(pactale);
             }
         }
@@ -241,8 +244,6 @@ public class Map {
      * @return {@link GameObject} that was added to the {@link Map}.
      */
     public GameObject addGameObject(int x, int y, GameObject object) {
-        if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
-
         if (!this.addGameObject(object)) return null;
         object.setPosition(x, y);
         return object;

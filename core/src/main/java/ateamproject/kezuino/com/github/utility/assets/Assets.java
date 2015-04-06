@@ -64,6 +64,8 @@ public class Assets {
      * @return Resource from the {@link AssetManager} or null if not found
      */
     public static <T> T get(String asset, Class<T> type) {
+        FileHandle file = Gdx.files.internal(asset);
+        if (!file.exists()) throw new NullPointerException(String.format("Asset '%s' could not be found.", asset));
         if (manager == null) return null;
         if (manager.isLoaded(asset, type)) {
             return manager.get(asset, type);

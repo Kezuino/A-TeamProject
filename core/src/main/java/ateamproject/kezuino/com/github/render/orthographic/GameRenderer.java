@@ -1,16 +1,15 @@
 package ateamproject.kezuino.com.github.render.orthographic;
 
 import ateamproject.kezuino.com.github.render.IRenderer;
-import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugPathfinding;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugStatistics;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
-import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+
 import java.util.stream.Collectors;
 
 public class GameRenderer implements IRenderer {
@@ -66,7 +65,10 @@ public class GameRenderer implements IRenderer {
         }
 
         // Cleanup gameobjects ready for deletion.
-        for(GameObject obj : this.map.getAllGameObjects().stream().filter(o -> !o.getActive()).collect(Collectors.toList())) {
+        for (GameObject obj : this.map.getAllGameObjects()
+                                      .stream()
+                                      .filter(o -> !o.getActive())
+                                      .collect(Collectors.toList())) {
             this.map.removeGameObject(obj);
         }
 

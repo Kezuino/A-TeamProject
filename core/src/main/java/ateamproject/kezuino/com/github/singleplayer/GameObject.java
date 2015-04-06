@@ -221,6 +221,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
                 + ", direction=" + direction
                 + ", drawOffsetX=" + drawOffsetX
                 + ", drawOffsetY=" + drawOffsetY
+                + ", texture=" + texture
                 + '}';
     }
 
@@ -436,7 +437,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     public void draw(SpriteBatch batch) {
         // Capture node and texture.
         Node node = getNode();
-        if (node == null || texture == null) {
+        if (node == null || this.texture == null) {
             return;
         }
 

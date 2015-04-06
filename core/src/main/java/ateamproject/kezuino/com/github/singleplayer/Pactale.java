@@ -137,9 +137,4 @@ public class Pactale extends GameObject {
             this.portal = null;
         }
     }
-
-    @Override
-    public void draw(SpriteBatch batch) {
-        super.draw(batch);
-    }
 }

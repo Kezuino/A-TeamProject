@@ -29,7 +29,6 @@ public class Item implements IRenderable, IPositionable {
         this.map = map;
         this.x = x;
         this.y = y;
-        this.texture = Assets.get("textures/0/Foreground/smallObject.png", Texture.class);
     }
 
     /**
