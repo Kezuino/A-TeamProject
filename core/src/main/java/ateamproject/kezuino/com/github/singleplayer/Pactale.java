@@ -10,6 +10,7 @@ import java.util.Collection;
 
 public class Pactale extends GameObject {
 
+    private static int playerIndexCounter = 0;
     private int playerIndex;
     private int lives;
     private Portal portal;
@@ -36,6 +37,7 @@ public class Pactale extends GameObject {
         super(map, x, y, movementSpeed, walkingDirection, color);
         this.lives = lives;
         this.projectiles = new ArrayList<>();
+        this.playerIndex = playerIndexCounter++;
     }
 
     public int getPlayerIndex() {

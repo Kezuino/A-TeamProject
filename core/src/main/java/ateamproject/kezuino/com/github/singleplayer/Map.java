@@ -153,7 +153,7 @@ public class Map {
 
         Object gObjectProperties = properties.get("isPactale");
         if (gObjectProperties != null) {
-            Pactale p = new Pactale(map, x, y, 3, 3, Direction.Down, Color.BLUE);
+            Pactale p = new Pactale(map, x, y, 3, .5f, Direction.Down, Color.RED);
             map.addGameObject(x, y, p);
             return p;
         }
