@@ -106,7 +106,7 @@ public class Pactale extends GameObject {
             if(pac.getPortal() != null) {
                 this.setPosition(pac.getPortal().getNode().getX(), pac.getPortal().getNode().getY());
             }
-            this.getNode().getMap().removeGameObject(object);
+            this.getNode().removeGameObject(object);
         }
         return false;
     }
