@@ -62,9 +62,9 @@ public class Projectile extends GameObject {
         if (NextNode.isWall()) {
             // Next Node is a wall, colision detected, return true
             return true;
-        } else if (!NextNode.getGameObjects().isEmpty()) {
+        } else if (!this.getMap().getAllGameObjects().isEmpty()) {
             // Collision with a GameObject.;
-            for (GameObject obj : NextNode.getGameObjects()) {
+            for (GameObject obj : this.getMap().getAllGameObjects()) {
                 boolean result = collisionWithGameObject(obj);
                 if (result) {
                     return true;

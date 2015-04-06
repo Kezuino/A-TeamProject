@@ -123,7 +123,7 @@ public class TestMap {
         assertEquals("There must be 4 GameObjects in the map.", 4, map.getAllGameObjects().size());
         assertEquals("There must be 1 testProjectileConstructor in the map.", 1, map.getAllGameObjects().stream().filter(o -> o.getClass().equals(Projectile.class)).count());
         assertEquals("There must be 2 Enemies in the map.", 2, map.getAllGameObjects().stream().filter(o -> o.getClass().equals(Enemy.class)).count());
-        map.getNode(13, 14).removeGameObject(map.getNode(13, 14).getGameObjects().get(0));
+        map.removeGameObject(map.getAllGameObjects().get(0));
         assertEquals("There must be 1 Enemy in the map.", 1, map.getAllGameObjects().stream().filter(o -> o.getClass().equals(Enemy.class)).count());
     }
 
@@ -152,6 +152,6 @@ public class TestMap {
          */
         Node baseNode = map.getNode(10, 10);
         Pactale p = (Pactale) map.addGameObject(10, 10, new Pactale(map, 10, 10, 1, 1, Direction.Down, Color.WHITE));
-        assertTrue("GameObject was not added to the Node.", baseNode.getGameObjects().stream().anyMatch(o -> o.equals(p)));
+        assertTrue("GameObject was not added to the Node.", map.getAllGameObjects().stream().anyMatch(o -> o.equals(p)));
     }
 }

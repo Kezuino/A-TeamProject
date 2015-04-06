@@ -87,7 +87,7 @@ public class Pactale extends GameObject {
         if (NextNode.isWall()) {
             // Next Node is a wall, colision detected, return true
             ReturnVal = 1;
-        } else if (!NextNode.getGameObjects().isEmpty()) {
+        } else if (!this.getMap().getAllGameObjects().isEmpty()) {
             ReturnVal = 2;
         }
         return ReturnVal;
@@ -97,8 +97,7 @@ public class Pactale extends GameObject {
     protected boolean collisionWithGameObject(GameObject object) {
         if(object instanceof Enemy) {
             this.lives -= 1;
-            this.setPosition(10, 10);
-            //this.getNode().getMap().removeGameObject(this);
+            this.setActive(false);
             return true;
         } else if(object instanceof Projectile) {
             Projectile p = (Projectile)object;
@@ -106,7 +105,7 @@ public class Pactale extends GameObject {
             if(pac.getPortal() != null) {
                 this.setPosition(pac.getPortal().getNode().getX(), pac.getPortal().getNode().getY());
             }
-            this.getNode().removeGameObject(object);
+            this.getMap().removeGameObject(object);
         }
         return false;
     }

@@ -10,7 +10,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.utils.Array;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,14 +20,14 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
     /**
      * All {@link GameObject GameObjects} on this {@link Node}.
      */
-    private final List<GameObject> gameObjects;
-    private int x;
-    private int y;
+    //private final List<GameObject> gameObjects;
+    private final int x;
+    private final int y;
     private int tileId;
     /**
      * List of {@link Portal portals} that can be on a side of this {@link Node}.
      */
-    private HashMap<Direction, Portal> portals;
+    private final HashMap<Direction, Portal> portals;
     /**
      * {@link Item} that is on this {@link Node}.
      */
@@ -47,8 +46,8 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
      * @param y   position that the {@link Node} is at.
      */
     Node(Map map, int x, int y) {
-        gameObjects = new ArrayList<>();
-        portals = new HashMap<Direction, Portal>();
+        //gameObjects = new ArrayList<>();
+        portals = new HashMap<>();
         this.tileId = 0;
         this.map = map;
         this.x = x;
@@ -61,38 +60,6 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
 
     public void setTileId(int tileId) {
         this.tileId = tileId;
-    }
-
-    /**
-     * Gives a boolean value based on if the given object exists.
-     *
-     * @param object to check if already exists on this {@link Node}.
-     */
-    public boolean hasGameObject(GameObject object) {
-        return gameObjects.contains(object);
-    }
-
-    /**
-     * Adds a {@link GameObject} to a {@link Node} if it doesn't exist and returns true if it succeeded.
-     *
-     * @param object to add to the {@link Node}.
-     */
-    public boolean addGameObject(GameObject object) {
-        if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
-        if (hasGameObject(object)) return false;
-        gameObjects.add(object);
-        return true;
-    }
-
-    /**
-     * Removes the given {@link GameObject} and returns if succeeded.
-     *
-     * @param object {@link GameObject} to remove.
-     * @return {@link GameObject} that was removed.
-     */
-    public GameObject removeGameObject(GameObject object) {
-        if (!gameObjects.remove(object)) return null;
-        return object;
     }
 
     /**
@@ -134,6 +101,7 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
     /**
      * Returns the {@link Map} from where the node currently resides.
      */
+    @Override
     public Map getMap() {
         return this.map;
     }
@@ -211,9 +179,9 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
      *
      * @return all {@link GameObject GameObjects} on this {@link Node}.
      */
-    public List<GameObject> getGameObjects() {
+    /*public List<GameObject> getGameObjects() {
         return gameObjects;
-    }
+    }*/
 
     @Override
     public String toString() {
