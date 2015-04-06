@@ -117,8 +117,9 @@ public class Map {
 
             if (objTileProps.containsKey("item")) {
                 // Create item.
+                String itemTypeName = objTileProps.get("item", String.class);
                 ItemType itemType = Arrays.stream(ItemType.values())
-                                          .filter(e -> e.name().equalsIgnoreCase(objProps.get("item", String.class)))
+                                          .filter(e -> e.name().equalsIgnoreCase(itemTypeName))
                                           .findAny()
                                           .orElse(null);
                 Item item = new Item(map, posX, posY, itemType);

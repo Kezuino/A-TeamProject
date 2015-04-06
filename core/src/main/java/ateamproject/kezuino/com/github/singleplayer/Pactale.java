@@ -63,7 +63,6 @@ public class Pactale extends GameObject {
             Sound sound = Assets.get("sounds/defeat.wav", Sound.class);
             if (sound != null) {
                 sound.play();
-                sound.dispose();
             }
         }
         this.lives = lives;

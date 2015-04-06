@@ -18,12 +18,13 @@ public class Item implements IRenderable, IPositionable {
      * Initializes an {@link Item} at the given {@link Node}.
      *
      * @param name Name of the {@link Item}.
-     * @param map  {@link Map} that hosts the {@link Item}.
+     * @param map  {@link Map} that hosts the {@link Item}. Can be null.
      * @param x    X dimension of the {@link Node} that should contain this {@link Item}.
      * @param y    Y dimension of the {@link Node} that should contain this {@link Item}.
      * @param type {@link ItemType} dat determines the {@code name} and {@link #activate(GameObject)}'s body.
      */
     public Item(String name, Map map, int x, int y, ItemType type) {
+        if (type == null) throw new IllegalArgumentException("Parameter type must not be null.");
         this.name = name;
         this.type = type;
         this.map = map;
@@ -34,7 +35,7 @@ public class Item implements IRenderable, IPositionable {
     /**
      * Initializes an {@link Item} at the given {@link Node} using the default name of the {@link ItemType}.
      *
-     * @param map  {@link Map} that hosts the {@link Item}.
+     * @param map  {@link Map} that hosts the {@link Item}. Can be null.
      * @param x    X dimension of the {@link Node} that should contain this {@link Item}.
      * @param y    Y dimension of the {@link Node} that should contain this {@link Item}.
      * @param type {@link ItemType} dat determines the {@code name} and {@link #activate(GameObject)}'s body.
