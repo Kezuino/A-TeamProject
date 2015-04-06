@@ -96,8 +96,15 @@ public class Pactale extends GameObject {
     @Override
     protected boolean collisionWithGameObject(GameObject object) {
         if(object instanceof Enemy) {
-            this.lives -= 1;
-            this.setActive(false);
+            Enemy e = (Enemy) object;
+            
+            if(e.isEdible()) {
+                this.getMap().getSession().getScore().incrementScore(500);
+                e.setActive(false);
+            } else {
+                this.lives -= 1;
+                this.setActive(false);
+            }
             return true;
         }
         return false;
