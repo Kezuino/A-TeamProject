@@ -111,21 +111,24 @@ public class Pactale extends GameObject {
         return false;
     }
 
-    public boolean addPortal(Portal portal) {
-        if (portal != null) {
-            this.portal = portal;
-            return true;
-        } else {
-            return false;
-        }
+    public void addPortal(Portal portal) {
+        // remove current portal
+        removePortal();
+
+        // add portal to new node
+        this.portal = portal;
+        this.getMap().getNode(this.getX(), this.getY()).setPortal(direction, portal);
     }
 
     /**
      * Will remove all listed portals from this {@link Pactale}.
      */
     public void removePortal() {
-        portal.getNode().removePortal(portal.getDirection());
-        portal = null;
+         if (this.portal != null) {
+            //portal.getNode().removePortal(portal.getDirection());
+            this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).removePortal(portal.getDirection());
+            portal = null;
+        }
     }
 
     @Override

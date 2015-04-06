@@ -82,7 +82,8 @@ public class Projectile extends GameObject {
 
     @Override
     protected boolean collisionWithWall(Node node) {
-        if (node.isWall()) {
+        Node NextNode = getMap().getAdjacentNode(node, this.direction);
+        if (NextNode.isWall()) {
             Portal p = new Portal(owner, node, direction.reverse());
             this.owner.addPortal(p);
             return true;

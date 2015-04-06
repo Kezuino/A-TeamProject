@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.render.IRenderable;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -30,6 +31,7 @@ public class Portal implements IRenderable, IPositionable {
         owner.setPortal(this);
         this.node = position;
         this.direction = direction;
+        this.setTexture(Assets.get("textures/0/Foreground/portal.png", Texture.class));
     }
 
     @Override
