@@ -373,7 +373,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * @return True if the collision has been handled.
      */
     protected boolean collisionWithWall(Node node) {
-
         return false;
     }
     
@@ -442,7 +441,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
         
         if(getNode().hasItem()) {
             collisionWithItem(getNode().getItem());
-            return;
         }
 
         if (collisionWithWall(getNode())){
