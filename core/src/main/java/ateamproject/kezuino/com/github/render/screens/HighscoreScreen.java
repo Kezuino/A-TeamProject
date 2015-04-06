@@ -29,13 +29,17 @@ public class HighscoreScreen extends BaseScreen {
     public HighscoreScreen(Game game) {
         super(game);
         Sound sound = Gdx.audio.newSound(Gdx.files.internal("sounds/Background.mp3"));
+        if (sound!=null){
         sound.loop();
+        }
 
         TextButton btnBack = new TextButton("Terug", skin);
         btnBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                if (sound!=null){
                 sound.dispose();
+                }
                 game.setScreen(new MainScreen(game));
             }
         });
