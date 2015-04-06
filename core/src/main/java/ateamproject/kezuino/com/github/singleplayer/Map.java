@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Map {
 
@@ -35,6 +36,8 @@ public class Map {
      * {@link GameSession} that hosts the {@link Map} and allows multiplayer.
      */
     private GameSession gameSession;
+    
+    private List<GameObject> gameObjects;
 
     /**
      * Initializes a map with a 2D array filled with {@link Node nodes}.
@@ -60,6 +63,7 @@ public class Map {
 
         nodes = new Nodes(width, height);
         resetNodes(width, height);
+        gameObjects = new ArrayList<>();
         pathfinder = new AStar(this);
     }
 
@@ -271,17 +275,69 @@ public class Map {
     }
 
     /**
+     * Removes the given {@link GameObject} and returns if succeeded.
+     *
+     * @param object {@link GameObject} to remove.
+     * @return {@link GameObject} that was removed.
+     */
+    public void removeGameObject(GameObject object) {
+        if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
+        this.gameObjects.remove(object);
+    }
+    
+    /**
+     * Adds a {@link GameObject} to this {@link Map} if it doesn't exist and returns true if it succeeded.
+     *
+     * @param object to add to this {@link Map}.
+     */
+    public boolean addGameObject(GameObject object) {
+        if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
+        if (hasGameObject(object)) return false;
+        gameObjects.add(object);
+        return true;
+    }
+    
+    /**
+     * Adds a {@link GameObject} to a position on this {@link Map}.
+     *
+     * @param object to add to a {@link ateamproject.kezuino.com.github.singleplayer.Node} on this {@link ateamproject.kezuino.com.github.singleplayer.Map}.
+     * @return {@link GameObject} that was added to the {@link Map}.
+     */
+    public GameObject addGameObject(int x, int y, GameObject object) {
+        if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
+        if (node == null)
+            throw new IllegalArgumentException("Cannot add GameObject to an x and y node because node is null.");
+
+        if (!this.addGameObject(object)) return null;
+        object.setPosition(x, y);
+        object.setMap(this);
+        return object;
+    }
+
+    /**
+     * Gives a boolean value based on if the given object exists.
+     *
+     * @param object to check if already exists on this {@link Map}.
+     */
+    public boolean hasGameObject(GameObject object) {
+        return this.gameObjects.contains(object);
+    }
+    
+    /**
+     * Gets all {@link GameObject gameobjects} on a certain {@link Node}.
+     * 
+     * @param node The {@link Node} to look for {@link GameObject gameobjects}.
+     * @return All {@link GameObject gameobjects} on the given {@link Node}.
+     */
+    public List<GameObject> getGameObjectsOnNode(Node node) {
+        return this.gameObjects.stream().filter(go -> go.getNode().equals(node)).collect(Collectors.toList());
+    }
+
+    /**
      * Returns all {@link GameObject gameobjects} within a {@link Map}.
      */
     public List<GameObject> getAllGameObjects() {
-        List<GameObject> objs = new ArrayList<>();
-        for (int x = 0; x < width; x++) {
-            for (int y = 0; y < height; y++) {
-                Node node = getNode(x, y);
-                objs.addAll(node.getGameObjects());
-            }
-        }
-        return objs;
+        return this.gameObjects;
     }
 
     /**
@@ -294,30 +350,6 @@ public class Map {
         if (node == null) throw new NullPointerException("Parameter node must not be null.");
         if (direction == null) throw new NullPointerException("Parameter direction must not be null.");
         return getNode(node.getX() + direction.getX(), node.getY() + direction.getY());
-    }
-
-    /**
-     * Adds a {@link GameObject} to a position on this {@link Map}.
-     *
-     * @param object to add to a {@link ateamproject.kezuino.com.github.singleplayer.Node} on this {@link ateamproject.kezuino.com.github.singleplayer.Map}.
-     * @return {@link GameObject} that was added to the {@link Map}.
-     */
-    public GameObject addGameObject(int x, int y, GameObject object) {
-        if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
-        Node node = getNode(x, y);
-        if (node == null)
-            throw new IllegalArgumentException("Cannot add GameObject to an x and y node because node is null.");
-
-        if (node.hasGameObject(object)) return null;
-        if (!node.addGameObject(object)) return null;
-        object.setPosition(x, y);
-        object.setMap(this);
-        return object;
-    }
-
-    public void removeGameObject(GameObject object) {
-        if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
-        this.nodes.stream().filter(n -> n.hasGameObject(object)).forEach((Node n) -> n.removeGameObject(object));
     }
 
     /**

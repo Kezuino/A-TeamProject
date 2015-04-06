@@ -11,6 +11,7 @@ import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import java.util.stream.Collectors;
 
 public class GameRenderer implements IRenderer {
     private SpriteBatch batch;
@@ -69,9 +70,13 @@ public class GameRenderer implements IRenderer {
             }
 
             // Render dynamic objects.
-            for (GameObject obj : node.getGameObjects()) {
+            for (GameObject obj : this.map.getAllGameObjects().stream().filter(o -> o.getActive()).collect(Collectors.toList())) {
                 obj.update();
                 obj.draw(batch);
+            }
+            
+            for(GameObject obj : this.map.getAllGameObjects().stream().filter(o -> !o.getActive()).collect(Collectors.toList())) {
+                this.map.removeGameObject(obj);
             }
         }
         batch.end();
@@ -108,12 +113,16 @@ public class GameRenderer implements IRenderer {
             }
 
             // Render dynamic objects.
-            for (GameObject obj : node.getGameObjects()) {
+            for (GameObject obj : this.map.getAllGameObjects().stream().filter(o -> o.getActive()).collect(Collectors.toList())) {
                 batch.begin();
                 obj.update();
                 obj.draw(batch);
                 batch.end();
                 DebugRenderManager.render(DebugLayers.GameObject, obj);
+            }
+            
+            for(GameObject obj : this.map.getAllGameObjects().stream().filter(o -> !o.getActive()).collect(Collectors.toList())) {
+                this.map.removeGameObject(obj);
             }
         }
     }

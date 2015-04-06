@@ -87,7 +87,7 @@ public class Pactale extends GameObject {
         if (NextNode.isWall()) {
             // Next Node is a wall, colision detected, return true
             ReturnVal = 1;
-        } else if (!NextNode.getGameObjects().isEmpty()) {
+        } else if (!this.getMap().getAllGameObjects().isEmpty()) {
             ReturnVal = 2;
         }
         return ReturnVal;
@@ -97,17 +97,16 @@ public class Pactale extends GameObject {
     protected boolean collisionWithGameObject(GameObject object) {
         if(object instanceof Enemy) {
             this.lives -= 1;
-            this.setPosition(10, 10);
-            //this.getNode().getMap().removeGameObject(this);
+            this.setActive(false);
             return true;
-        } else if(object instanceof Projectile) {
+        } /*else if(object instanceof Projectile) {
             Projectile p = (Projectile)object;
             Pactale pac = p.getOwner();
             if(pac.getPortal() != null) {
                 this.setPosition(pac.getPortal().getNode().getX(), pac.getPortal().getNode().getY());
             }
-            this.getNode().getMap().removeGameObject(object);
-        }
+            this.getMap().removeGameObject(object);
+        }*/
         return false;
     }
 
@@ -116,8 +115,8 @@ public class Pactale extends GameObject {
         removePortal();
 
         // add portal to new node
-        this.portal = portal;
-        this.getMap().getNode(this.getX(), this.getY()).setPortal(direction, portal);
+        this.setPortal(portal);
+        this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).setPortal(portal.getDirection(), portal);
     }
 
     /**
@@ -125,9 +124,8 @@ public class Pactale extends GameObject {
      */
     public void removePortal() {
          if (this.portal != null) {
-            //portal.getNode().removePortal(portal.getDirection());
             this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).removePortal(portal.getDirection());
-            portal = null;
+            this.portal = null;
         }
     }
 

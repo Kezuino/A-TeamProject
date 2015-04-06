@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 public abstract class GameObject implements IRenderable, IPositionable {
 
+    private boolean isActive;
     /**
      * If true, all movement done by this {@link GameObject} will use
      * interpolation to smoothly move it to an adjacent {@link Node}. If false,
@@ -115,6 +116,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         this.movementInterpolation = true;
         this.drawOffsetX = .5f;
         this.drawOffsetY = .5f;
+        this.isActive = true;
     }
 
     /**
@@ -289,7 +291,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
             return false;
         }
 
-        Node targetNode = map.getNode(x, y);
+        /*Node targetNode = map.getNode(x, y);
         if (targetNode == null) {
             return false;
         }
@@ -306,12 +308,20 @@ public abstract class GameObject implements IRenderable, IPositionable {
             // Revert position back because we failed.
             currentNode.addGameObject(this);
             return false;
-        }
+        }*/
 
         this.x = x;
         this.y = y;
 
         return true;
+    }
+    
+    public boolean getActive() {
+        return this.isActive;
+    }
+    
+    protected void setActive(boolean active) {
+        this.isActive = active;
     }
 
     /**
@@ -418,12 +428,11 @@ public abstract class GameObject implements IRenderable, IPositionable {
             return;
         }
 
-        for (GameObject obj : targetNode.getGameObjects()) {
+        for (GameObject obj : this.map.getGameObjectsOnNode(this.getNode())) {
             if (obj.equals(this)) break;
             if (collisionWithGameObject(obj)) {
                 System.out.println("Collision handled");
                 break;
-
             }
         }
         if (collisionWithWall(getNode())){
@@ -457,14 +466,11 @@ public abstract class GameObject implements IRenderable, IPositionable {
             drawOffsetX = direction.getX() * (secondsFromStart * (1 / movementSpeed)) + .5f;
             drawOffsetY = direction.getY() * (secondsFromStart * (1 / movementSpeed)) + .5f;
             if (secondsFromStart >= movementSpeed) {
-                //this.getNode().removeGameObject(this);
                 isMoving = false;
                 drawOffsetX = .5f;
                 drawOffsetY = .5f;
                 this.x += direction.getX();
                 this.y += direction.getY();
-                //this.getNode().addGameObject(this);
-                //this.map.getNode(this.x, this.y).addGameObject(this);
             }
         }
 

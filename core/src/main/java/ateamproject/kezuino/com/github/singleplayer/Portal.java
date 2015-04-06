@@ -28,10 +28,10 @@ public class Portal implements IRenderable, IPositionable {
         if (position == null) throw new IllegalArgumentException("Parameter wall must not be null.");
         if (direction == null) throw new IllegalArgumentException("Parameter direction must not be null.");
         this.owner = owner;
-        owner.setPortal(this);
         this.node = position;
         this.direction = direction;
         this.setTexture(Assets.get("textures/portal.png", Texture.class));
+        owner.addPortal(this);
     }
 
     @Override
