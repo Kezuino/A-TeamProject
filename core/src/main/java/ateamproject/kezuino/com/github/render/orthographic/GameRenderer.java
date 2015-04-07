@@ -1,11 +1,13 @@
 package ateamproject.kezuino.com.github.render.orthographic;
 
 import ateamproject.kezuino.com.github.render.IRenderer;
+import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugPathfinding;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugStatistics;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -35,7 +37,7 @@ public class GameRenderer implements IRenderer {
         DebugRenderManager.setCamera(camera);
         DebugRenderManager.addRenderer(new DebugStatistics());
         DebugRenderManager.addRenderer(new DebugPathfinding());
-        //DebugRenderManager.show();
+        DebugRenderManager.show();
     }
 
     @Override
@@ -78,5 +80,7 @@ public class GameRenderer implements IRenderer {
             obj.draw(batch);
         }
         batch.end();
+
+        DebugRenderManager.render(DebugLayers.UI);
     }
 }
