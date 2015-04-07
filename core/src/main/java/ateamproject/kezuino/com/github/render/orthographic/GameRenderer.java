@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.render.orthographic;
 
 import ateamproject.kezuino.com.github.render.IRenderer;
+import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugPathfinding;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugStatistics;
@@ -25,7 +26,6 @@ public class GameRenderer implements IRenderer {
 
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
-        batch.setShader(Assets.getShaderProgram("grayscale"));
 
         this.map = map;
 
@@ -37,7 +37,7 @@ public class GameRenderer implements IRenderer {
         DebugRenderManager.setCamera(camera);
         DebugRenderManager.addRenderer(new DebugStatistics());
         DebugRenderManager.addRenderer(new DebugPathfinding());
-        //DebugRenderManager.show();
+        DebugRenderManager.show();
     }
 
     @Override
@@ -80,5 +80,7 @@ public class GameRenderer implements IRenderer {
             obj.draw(batch);
         }
         batch.end();
+
+        DebugRenderManager.render(DebugLayers.UI);
     }
 }
