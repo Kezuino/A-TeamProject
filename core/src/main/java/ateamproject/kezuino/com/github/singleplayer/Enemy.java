@@ -7,6 +7,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 
 import java.util.Iterator;
+import java.util.stream.Collectors;
 
 public class Enemy extends GameObject {
 
@@ -153,6 +154,11 @@ public class Enemy extends GameObject {
                 this.edible = false;
                 this.setColor(this.previousColor);
             }
+        }
+        
+        for(Pactale p : this.getNode().getMap().getAllGameObjects().stream().filter(go -> go instanceof Pactale).map(go -> (Pactale) go).collect(Collectors.toList())) {
+            this.objectToFollow = p;
+            break;
         }
 
         if (!this.isMoving) {

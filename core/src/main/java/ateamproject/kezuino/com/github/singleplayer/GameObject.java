@@ -442,7 +442,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         }
 
         // Preprocess batch.
-        batch.setColor(getColor());
+        batch.setColor(this.getColor());
 
         // TODO: Animate from sprite region.
 
