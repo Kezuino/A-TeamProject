@@ -31,7 +31,7 @@ public class GameScreen extends BaseScreen {
         Assets.create();
 
         session = new GameSession();
-        session.setMap(Map.load(session, "0"));
+        session.setMap(Map.load(session, "1"));
 
         player = session.getPlayer(0);
         //session.getMap().addGameObject(9, 5, this.player);
