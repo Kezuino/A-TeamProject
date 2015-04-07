@@ -15,7 +15,6 @@ public class Pactale extends GameObject {
     private int playerIndex;
     private int lives;
     private Portal portal;
-    private final Collection<Projectile> projectiles;
     /**
      * Initialize a {@link Pactale}.
      *
@@ -37,7 +36,6 @@ public class Pactale extends GameObject {
     public Pactale(Map map, int x, int y, int lives, float movementSpeed, Direction walkingDirection, Color color) {
         super(map, x, y, movementSpeed, walkingDirection, color);
         this.lives = lives;
-        this.projectiles = new ArrayList<>();
         this.playerIndex = playerIndexCounter++;
     }
 

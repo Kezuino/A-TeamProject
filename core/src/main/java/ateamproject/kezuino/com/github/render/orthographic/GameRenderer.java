@@ -6,6 +6,7 @@ import ateamproject.kezuino.com.github.render.debug.renderers.DebugPathfinding;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugStatistics;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -24,6 +25,7 @@ public class GameRenderer implements IRenderer {
 
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
+        batch.setShader(Assets.getShaderProgram("grayscale"));
 
         this.map = map;
 

@@ -10,8 +10,10 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.utils.GdxRuntimeException;
 import jdk.nashorn.internal.codegen.CompilationException;
 
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 
 public class Assets {
@@ -27,6 +29,9 @@ public class Assets {
         manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));
     }
 
+    /**
+     * Loads the fonts and textures used by the {@link ateamproject.kezuino.com.github.PactaleGame}.
+     */
     public static void create() {
         loadFonts();
 
@@ -34,10 +39,16 @@ public class Assets {
         load();
     }
 
+    /**
+     * Loads all the fonts used throughout the {@link ateamproject.kezuino.com.github.PactaleGame}.
+     */
     private static void loadFonts() {
         manager.load("fonts/opensans.ttf", BitmapFont.class);
     }
 
+    /**
+     * Loads all the basic textures required for the {@link ateamproject.kezuino.com.github.PactaleGame}.
+     */
     private static void load() {
 
         // Textures.
@@ -73,6 +84,12 @@ public class Assets {
         return null;
     }
 
+    /**
+     * Loads a {@link Sound} from the assets folder and plays it.
+     *
+     * @param asset Name of {@link Sound} to search for in the assets folder.
+     * @return {@link Sound} from the assets folder and plays it.
+     */
     public static Sound playSound(String asset) {
         Sound sound = Assets.get(asset, Sound.class);
         if (sound != null) {
@@ -81,6 +98,12 @@ public class Assets {
         return sound;
     }
 
+    /**
+     * Loads a {@link Sound} from the assets folder and loops it.
+     *
+     * @param asset Name of {@link Sound} to search for in the assets folder.
+     * @return {@link Sound} from the assets folder and loops it.
+     */
     public static Sound loopSound(String asset) {
         Sound sound = Assets.get(asset, Sound.class);
         if (sound != null) {
@@ -89,6 +112,12 @@ public class Assets {
         return sound;
     }
 
+    /**
+     * Creates a {@link Music Musicstream} to stream {@link Music} while it's playing.
+     *
+     * @param fileName Name of {@link Music} to search for in the assets folder.
+     * @return {@link Music Musicstream} to stream {@link Music} while it's playing
+     */
     public static Music getMusicStream(String fileName) {
         if (fileName == null || fileName.isEmpty()) return null;
         String asset = "audio/music/" + fileName;
@@ -117,10 +146,23 @@ public class Assets {
     }
 
 
+    /**
+     * Gets the vertex and fragement shaders and creates a new {@link ShaderProgram}.
+     *
+     * @param shaderName Name of the shader to search for in the assets folder.
+     * @return {@link ShaderProgram} that has been created by the two shader files.
+     */
     public static ShaderProgram getShaderProgram(String shaderName) {
         ShaderProgram.pedantic = false;
         String assetName = FilenameUtils.getFileNameWithoutExtension(shaderName);
-        ShaderProgram shader = new ShaderProgram(Gdx.files.internal("shaders/vertex/" + assetName + ".vsh").readString(), Gdx.files.internal("shaders/fragment/" + assetName + ".fsh").readString());
+
+        FileHandle vertexFile = Gdx.files.internal("shaders/vertex/" + assetName + ".vsh");
+        FileHandle fragmentFile = Gdx.files.internal("shaders/fragment/" + assetName + ".fsh");
+        if (!vertexFile.exists() || !fragmentFile.exists()) {
+            throw new GdxRuntimeException("Couldn't find shader files.");
+        }
+
+        ShaderProgram shader = new ShaderProgram(vertexFile.readString(), fragmentFile.readString());
         if (!shader.isCompiled()) {
             System.out.println(shader.getLog());
         }
@@ -134,6 +176,12 @@ public class Assets {
         manager.dispose();
     }
 
+    /**
+     * Returns the {@link BitmapFont} that was loaded in the {@link AssetManager} with the given name.
+     *
+     * @param asset Name of the {@link BitmapFont} to get.
+     * @return {@link BitmapFont} if it was found. Or null.
+     */
     public static BitmapFont getFont(String asset) {
         return get(asset, BitmapFont.class);
     }
