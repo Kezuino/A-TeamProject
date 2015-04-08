@@ -79,6 +79,10 @@ public class GameScreen extends BaseScreen {
         Gdx.gl.glClearColor(1, 1, 1, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
+            this.session.getScore().decrementScore(60);
+            System.out.println("Update in score");
+        }
+        
         // Render Game and UI.
         super.render(delta);
         
