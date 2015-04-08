@@ -156,7 +156,11 @@ public class Enemy extends GameObject {
             }
         }
         
-        for(Pactale p : this.getNode().getMap().getAllGameObjects().stream().filter(go -> go instanceof Pactale).map(go -> (Pactale) go).collect(Collectors.toList())) {
+        for(Pactale p : this.getNode().getMap().getAllGameObjects()
+                .stream()
+                .filter(go -> go instanceof Pactale)
+                .map(go -> (Pactale) go)
+                .collect(Collectors.toList())) {
             this.objectToFollow = p;
             break;
         }

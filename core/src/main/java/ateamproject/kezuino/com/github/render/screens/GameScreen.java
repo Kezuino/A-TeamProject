@@ -81,6 +81,7 @@ public class GameScreen extends BaseScreen {
         
         // Render Game and UI.
         super.render(delta);
+        
     }
     @Override
     public void pause() {
