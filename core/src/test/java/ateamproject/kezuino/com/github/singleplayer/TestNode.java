@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,11 +28,11 @@ public class TestNode {
         this.testSession.setMap(10);
 
         this.nodeForPactale = new Node(this.testSession.getMap(), 1, 5);
-        this.testPactale = new Pactale(this.testSession.getMap(), 1, 5, 3, 0.1f, Direction.Left, Color.WHITE);
-        //this.nodeForPactale.addGameObject(testPactale);
+        this.testPactale = new Pactale(new Vector2(1, 5), 3, 0.1f, Direction.Left, Color.WHITE);
+        this.testSession.getMap().addGameObject(testPactale);
 
         this.nodeforEnemy = new Node(this.testSession.getMap(), 3, 1);
-        this.testEnemy = new Enemy(this.testPactale, this.testSession.getMap(), 3, 1, 0.1f, Direction.Right);
+        this.testEnemy = new Enemy(this.testPactale, new Vector2(3, 1), 0.1f, Direction.Right);
 
         this.nodeForItem = new Node(this.testSession.getMap(), 0, 8);
         this.testItem = new Item(testSession.getMap(), this.nodeForItem.getX(), this.nodeForItem.getY(), ItemType.BigObject);

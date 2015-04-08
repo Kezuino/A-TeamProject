@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,9 +42,9 @@ public class TestProjectile {
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Left;
         Color color = new Color(1, 111, 11, 111);
-        Pactale owner = new Pactale(map, 1, 1, 1, movementSpeed, walkingDirection, color);
+        Pactale owner = new Pactale(new Vector2(1, 1), 1, movementSpeed, walkingDirection, color);
 
-        Projectile p = new Projectile(map, 1, 1, owner, movementSpeed, walkingDirection, color);
+        Projectile p = new Projectile(new Vector2(1, 1), owner, movementSpeed, walkingDirection, color);
         assertEquals("The color needs to be set", p.getColor(), color);
         assertEquals("The direction needs to be set", p.getDirection(), walkingDirection);
         assertEquals("The movementspeed needs to be set", p.getMovementSpeed(), movementSpeed, 0.000005);
@@ -63,8 +64,8 @@ public class TestProjectile {
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Right;
         Color color = new Color(1, 111, 11, 111);
-        Pactale owner = new Pactale(map, 1, 1, 1, movementSpeed, walkingDirection, color);
-        Projectile p = new Projectile(map, 1, 1, owner, movementSpeed, walkingDirection, color);
+        Pactale owner = new Pactale(new Vector2(1, 1), 1, movementSpeed, walkingDirection, color);
+        Projectile p = new Projectile(new Vector2(1, 1), owner, movementSpeed, walkingDirection, color);
 
 //        assertTrue("It must collide with the wall when the pactale moves to the right.", p.hasCollision());
 //        p.setDirection(Direction.Left);

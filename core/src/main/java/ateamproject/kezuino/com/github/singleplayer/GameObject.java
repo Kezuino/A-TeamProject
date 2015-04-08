@@ -1,19 +1,13 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.render.IRenderable;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 public abstract class GameObject implements IRenderable, IPositionable {
-
-    /**
-     * If true, all movement done by this {@link GameObject} will use
-     * interpolation to smoothly move it to an adjacent {@link Node}. If false,
-     * ignores interlopation and just waits based on the {link #movementSpeed}
-     * until it can {@link #move(Node)} again.
-     */
-    protected boolean movementInterpolation;
     /**
      * {@link Direction} that this {@link GameObject} is currently facing
      * towards.
@@ -23,16 +17,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link Direction} this {@link GameObject} will continue onto next.
      */
     protected Direction nextDirection;
-    /**
-     * Offset in the X dimension to draw this {@link GameObject} from where 0 is
-     * the most left spot and 1 is the most right spot.
-     */
-    protected float drawOffsetX;
-    /**
-     * Offset in the Y dimension to draw this {@link GameObject} from where 0 is
-     * the most bottom spot and 1 is the most top spot.
-     */
-    protected float drawOffsetY;
+    protected Node nextNode;
     /**
      * If true, this {@link GameObject} is currently transitioning between
      * {@link Node nodes}.
@@ -43,6 +28,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link Node}.
      */
     protected float movementStartTime;
+    protected float lifeTime;
     /**
      * {@link Texture} of this {@link GameObject} for drawing.
      */
@@ -51,19 +37,18 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link com.badlogic.gdx.graphics.Color} this {@link GameObject} previously originated from.
      */
     protected Color previousColor;
+    /**
+     * If false, this {@link GameObject} will be removed whenever possible and won't be visible or usuable in the {@link ateamproject.kezuino.com.github.PactaleGame}.
+     */
     private boolean isActive;
     /**
      * {@link Map} that contains this {@link GameObject}.
      */
     private Map map;
     /**
-     * X position of this {@link GameObject}.
+     * Exact world position of this {@link GameObject}. Use {@link #getNode()} to get the {@link Node} at the current position.
      */
-    private int x;
-    /**
-     * Y position of this {@link GameObject}.
-     */
-    private int y;
+    private Vector2 position;
     /**
      * Speed in seconds that it takes for this {@link GameObject} to move to
      * another adjacent {@link Node}.
@@ -78,11 +63,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * Initializes this {@link GameObject}.
      *
-     * @param map           That hosts this
-     *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
-     * @param x             X position of this
-     *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
-     * @param y             Y position of this
      *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
      * @param movementSpeed Speed in seconds that this
      *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes to
@@ -94,7 +74,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * @param color         {@link com.badlogic.gdx.graphics.Color} that this
      *                      {@link GameObject} will be
      */
-    public GameObject(Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
+    public GameObject(Vector2 exactPosition, float movementSpeed, Direction direction, Color color) {
         if (direction == null) {
             throw new IllegalArgumentException("Parameter direction must not be null.");
         }
@@ -107,15 +87,10 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (color.equals(Color.CLEAR)) {
             throw new IllegalArgumentException("Parameter color must not be Color.CLEAR.");
         }
-        this.map = map;
-        this.x = x;
-        this.y = y;
         this.movementSpeed = movementSpeed;
         this.direction = direction;
+        this.setNodePosition(exactPosition);
         this.color = color;
-        this.movementInterpolation = true;
-        this.drawOffsetX = .5f;
-        this.drawOffsetY = .5f;
         this.isActive = true;
     }
 
@@ -123,16 +98,49 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * Initializes this {@link GameObject} with a default {@code Color.WHITE}
      * color.
      *
-     * @param map           That hosts this {@link GameObject}.
-     * @param x             X position of this {@link GameObject}.
-     * @param y             Y position of this {@link GameObject}.
      * @param movementSpeed Speed in seconds that this {@link GameObject} takes
      *                      to move to another adjacent {@link Node}.
      * @param direction     {@link Direction} that this {@link GameObject} is
      *                      currently facing.
      */
-    public GameObject(Map map, int x, int y, float movementSpeed, Direction direction) {
-        this(map, x, y, movementSpeed, direction, Color.WHITE);
+    public GameObject(Vector2 position, float movementSpeed, Direction direction) {
+        this(position, movementSpeed, direction, Color.WHITE);
+    }
+
+    /**
+     * Gets the position based on the {@link Map#nodes}.
+     *
+     * @return Position based on the {@link Map#nodes}.
+     */
+    public Vector2 getNodePosition() {
+        return new Vector2(this.position.x / 32, this.position.y / 32);
+    }
+
+    /**
+     * Sets the position based on the {@link Map#nodes}.
+     *
+     * @param nodePosition Position based on the {@link Map#nodes}.
+     */
+    public void setNodePosition(Vector2 nodePosition) {
+        position = new Vector2(nodePosition.x * 32, nodePosition.y * 32);
+    }
+
+    /**
+     * Gets the absolute X and Y position of this {@link GameObject}.
+     *
+     * @return
+     */
+    public Vector2 getPosition() {
+        return position;
+    }
+
+    /**
+     * Sets the absolute X and Y position of this {@link GameObject}.
+     *
+     * @param position Absolute X and Y position of this {@link GameObject}.
+     */
+    public void setPosition(Vector2 position) {
+        this.position = position;
     }
 
     public boolean isMoving() {
@@ -151,24 +159,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     public void setTexture(Texture texture) {
         this.texture = texture;
-    }
-
-    /**
-     * Gets the X dimension that this {@link GameObject} is on.
-     *
-     * @return X dimension that this {@link GameObject} is on.
-     */
-    public int getX() {
-        return x;
-    }
-
-    /**
-     * Gets the Y dimension that this {@link GameObject} is on.
-     *
-     * @return Y dimension that this {@link GameObject} is on.
-     */
-    public int getY() {
-        return y;
     }
 
     /**
@@ -213,16 +203,15 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
     @Override
     public String toString() {
-        return "GameObject{"
-                + "x=" + x
-                + ", y=" + y
-                + ", movementSpeed=" + movementSpeed
-                + ", color=" + color
-                + ", direction=" + direction
-                + ", drawOffsetX=" + drawOffsetX
-                + ", drawOffsetY=" + drawOffsetY
-                + ", texture=" + texture
-                + '}';
+        return "GameObject{" +
+                "position=" + position +
+                ", movementSpeed=" + movementSpeed +
+                ", isMoving=" + isMoving +
+                ", direction=" + direction +
+                ", nextDirection=" + nextDirection +
+                ", color=" + color +
+                ", texture=" + texture +
+                '}';
     }
 
     /**
@@ -237,7 +226,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     }
 
     /**
-     * Sets / changes the current color of the this {@link GameObject}
+     * Changes the current color of the this {@link GameObject}
      *
      * @param color Color this {@link GameObject} will be.
      */
@@ -274,7 +263,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (map == null) {
             return null;
         }
-        return map.getNode(x, y);
+        return map.getNode(position);
     }
 
     /**
@@ -286,14 +275,13 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * @param y Y position to set this {@link GameObject} to.
      * @return True if succesfully changed the Position, false if it didn't.
      */
-    public boolean setPosition(int x, int y) {
+    public boolean setPosition(float x, float y) {
         // Pre-check if all input data is valid.
         if (map == null) {
             return false;
         }
 
-        this.x = x;
-        this.y = y;
+        this.position = new Vector2(x, y);
 
         return true;
     }
@@ -302,17 +290,16 @@ public abstract class GameObject implements IRenderable, IPositionable {
         return this.isActive;
     }
 
-    protected void setActive(boolean active) {
-        this.isActive = active;
+    /**
+     * Marks this {@link GameObject} for deletion. Must not be undone.
+     */
+    protected void setInactive() {
+        this.isActive = false;
     }
 
     /**
      * Moves this {@link GameObject} to another adjacent {@link Node} based on
-     * the given {@code direction}. If {@link #movementInterpolation} is true,
-     * this movement should be pixel-perfectly smooth between the nodes. If
-     * {@link #movementInterpolation} is false, this movement should move
-     * immediately and wait until it can move again based on
-     * {@link #movementSpeed}.
+     * the given {@code direction}.
      *
      * @param direction {@link Direction} to move in (to an adjacent
      *                  {@link Node}).
@@ -320,18 +307,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
     public void moveAdjacent(Direction direction) {
         this.direction = direction;
 
-        if (movementInterpolation) {
-            if (!isMoving) {
-                isMoving = true;
-                drawOffsetX = .5f;
-                drawOffsetY = .5f;
-                movementStartTime = System.nanoTime();
-            }
-        } else {
-            // The enum Direction contains information about which offset x and y is should return based on the value of the enum.
-            // Change this value if Y are inverted.. do not change this code.
-            this.x += direction.getX();
-            this.y += direction.getY();
+        if (!isMoving) {
+            isMoving = true;
+            movementStartTime = System.nanoTime();
         }
     }
 
@@ -357,20 +335,18 @@ public abstract class GameObject implements IRenderable, IPositionable {
     protected boolean collisionWithWall(Node node) {
         return false;
     }
-    
+
     protected boolean collisionWithItem(Item item) {
         return false;
     }
 
     /**
      * Moves this {@link GameObject} to another adjacent {@link Node} based on
-     * the given {@code direction}. If {@link #movementInterpolation} is true,
-     * this movement should be pixel-perfectly smooth between the nodes. If
-     * {@link #movementInterpolation} is false, this movement should move
-     * immediately and wait until it can move again based on
-     * {@link #movementSpeed}.
+     * the given {@code direction}.
      */
     public void moveAdjacent() {
+        if (map == null) throw new IllegalArgumentException("Field map must not be null.");
+
         Direction previousDirection = this.direction;
         this.direction = this.nextDirection != null ? this.nextDirection : direction;
         Node targetNode = getMap().getAdjacentNode(getNode(), this.direction);
@@ -382,18 +358,10 @@ public abstract class GameObject implements IRenderable, IPositionable {
             }
         }
 
-        if (movementInterpolation) {
-            if (!isMoving) {
-                isMoving = true;
-                drawOffsetX = .5f;
-                drawOffsetY = .5f;
-                movementStartTime = System.nanoTime();
-            }
-        } else {
-            // The enum Direction contains information about which offset x and y should return based on the value set in the enum.
-            // Change this value if X or Y are inverted.. do not change this code.
-            this.x += direction.getX();
-            this.y += direction.getY();
+        if (!isMoving) {
+            isMoving = true;
+            nextNode = getMap().getAdjacentNode(getNode(), direction);
+            movementStartTime = System.nanoTime();
         }
     }
 
@@ -420,8 +388,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
                 break;
             }
         }
-        
-        if(getNode().hasItem()) {
+
+        if (getNode().hasItem()) {
             collisionWithItem(getNode().getItem());
         }
 
@@ -435,6 +403,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     @Override
     public void draw(SpriteBatch batch) {
+        lifeTime += Gdx.graphics.getDeltaTime();
+
         // Capture node and texture.
         Node node = getNode();
         if (node == null || this.texture == null) {
@@ -446,26 +416,20 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
         // TODO: Animate from sprite region.
 
-        // Set draw offset when moving.
-        if (movementInterpolation && isMoving) {
-            // Calculate the amount of offset.
-            float secondsFromStart = (System.nanoTime() - movementStartTime) / 1000000000.0f;
+        // Move object in direction.
+        if (isMoving) {
+            this.position.add(direction.getX() * movementSpeed * Gdx.graphics.getDeltaTime(), direction.getY() * movementSpeed * Gdx.graphics.getDeltaTime());
 
-            drawOffsetX = direction.getX() * (secondsFromStart * (1 / movementSpeed)) + .5f;
-            drawOffsetY = direction.getY() * (secondsFromStart * (1 / movementSpeed)) + .5f;
-            if (secondsFromStart >= movementSpeed) {
+            // Check target reached.
+            if (movementSpeed / lifeTime) {
                 isMoving = false;
-                drawOffsetX = .5f;
-                drawOffsetY = .5f;
-                this.x += direction.getX();
-                this.y += direction.getY();
             }
         }
 
         // Draw centered in node.
-        float xOffset = (32 - texture.getWidth()) / 2f - (16 - 32 * drawOffsetX);
-        float yOffset = (32 - texture.getHeight()) / 2f - (16 - 32 * drawOffsetY);
-        batch.draw(texture, this.x * 32 + xOffset, this.y * 32 + yOffset);
+        float xOffset = (32 - texture.getWidth()) / 2f;
+        float yOffset = (32 - texture.getHeight()) / 2f;
+        batch.draw(texture, this.getNodePosition().x * 32, this.getNodePosition().y * 32);
     }
 
     /**

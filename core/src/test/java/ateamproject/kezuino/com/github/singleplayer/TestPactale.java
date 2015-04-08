@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,8 +27,8 @@ public class TestPactale {
         session = new GameSession();
         session.setMap(3);
         map = session.getMap();
-        pactale = new Pactale(map, 1, 1, 25, .5f, Direction.Down, Color.WHITE);
-        map.addGameObject(1, 1, pactale);
+        pactale = new Pactale(new Vector2(1, 1), 25, .5f, Direction.Down, Color.WHITE);
+        map.addGameObject(pactale);
     }
 
     @Test
@@ -48,7 +49,7 @@ public class TestPactale {
         Direction walkingDirection = Direction.Left;
         Color color = new Color(1, 111, 11, 111);
         int lives = 3;
-        Pactale p = new Pactale(map, 1, 1, lives, movementSpeed, walkingDirection, color);
+        Pactale p = new Pactale(new Vector2(1, 1), lives, movementSpeed, walkingDirection, color);
 
         assertEquals("Color needs to be equal.", p.getColor(), color);
         assertEquals("Direction needs to be equal.", p.getDirection(), walkingDirection);
@@ -77,7 +78,7 @@ public class TestPactale {
         Direction walkingDirection = Direction.Left;
         Color color = new Color(1, 111, 11, 111);
         int lives = 3;
-        Pactale p = new Pactale(map, 1, 1, lives, movementSpeed, walkingDirection, color);
+        Pactale p = new Pactale(new Vector2(1, 1), lives, movementSpeed, walkingDirection, color);
 
         Portal portal = new Portal(p, map.getNode(0, 0), Direction.Right);
         assertEquals("The newly created portal must not be null.", portal, p.getPortal());
@@ -92,13 +93,11 @@ public class TestPactale {
          *
          * @param direction
          */
-        Node position = new Node(map, 1, 1);
         float movementSpeed = 3;
         Direction walkingDirection = Direction.Left;
         Color color = new Color(1, 111, 11, 111);
         int lives = 3;
-        int playerIndex = 2;
-        Pactale p = new Pactale(map, 1, 1, lives, movementSpeed, walkingDirection, color);
+        Pactale p = new Pactale(new Vector2(1, 1), lives, movementSpeed, walkingDirection, color);
 
         assertEquals("The direction should equal the init value.", Direction.Left, p.getDirection());
         Assert.assertNotEquals("The direction should not equal the init value.", Direction.Up, p.getDirection());

@@ -10,6 +10,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -27,11 +28,11 @@ public class Map {
      */
     private TiledMap baseMap;
     /**
-     * X dimension of the size of this {@link Map}.
+     * Amount of nodes in the X-axis of this {@link Map}.
      */
     private int width;
     /**
-     * Y dimension of the size of this {@link Map}.
+     * Amount of nodes in the Y-axis of this {@link Map}.
      */
     private int height;
     /**
@@ -106,7 +107,7 @@ public class Map {
         TiledMapTileSet objTileLayer = map.baseMap.getTileSets().getTileSet(1);
         for (MapObject loopObj : objLayer.getObjects()) {
             if (!(loopObj instanceof TextureMapObject)) continue;
-            TextureMapObject obj = (TextureMapObject)loopObj;
+            TextureMapObject obj = (TextureMapObject) loopObj;
 
             MapProperties objProps = loopObj.getProperties();
             MapProperties objTileProps = objTileLayer.getTile(objProps.get("gid", int.class)).getProperties();
@@ -127,12 +128,12 @@ public class Map {
                 posNode.setItem(item);
             } else if (objTileProps.containsKey("isEnemy")) {
                 // Create enemy.
-                Enemy enemy = new Enemy(null, map, posX, posY, 1, Direction.Down);
+                Enemy enemy = new Enemy(null, new Vector2(posX, posY), 1, Direction.Down);
                 enemy.setTexture(obj.getTextureRegion().getTexture());
                 map.addGameObject(enemy);
             } else if (objTileProps.containsKey("isPactale")) {
                 // Create pactale.
-                Pactale pactale = new Pactale(map, posX, posY, 3, .25f, Direction.Down, Color.WHITE);
+                Pactale pactale = new Pactale(new Vector2(posX, posY), 3, 1f, Direction.Down, Color.WHITE);
                 pactale.setTexture(obj.getTextureRegion().getTexture());
                 map.addGameObject(pactale);
             }
@@ -216,6 +217,19 @@ public class Map {
     }
 
     /**
+     * Returns a {@link Node} if found, else it will return null.
+     *
+     * @param position 2D position exact position of the node. Will be divided by the tile size to get the correct {@link Node}.
+     * @return {@link Node} if found, else it will return null.
+     */
+    public Node getNode(Vector2 position) {
+        Vector2 fixedPos = position.cpy();
+        fixedPos.x /= 32;
+        fixedPos.y /= 32;
+        return getNode((int) fixedPos.x, (int) fixedPos.y);
+    }
+
+    /**
      * Removes the given {@link GameObject} and returns if succeeded.
      *
      * @param object {@link GameObject} to remove.
@@ -231,11 +245,14 @@ public class Map {
      *
      * @param object to add to this {@link Map}.
      */
-    public boolean addGameObject(GameObject object) {
+    public GameObject addGameObject(GameObject object) {
         if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
-        if (hasGameObject(object)) return false;
-        gameObjects.add(object);
-        return true;
+        if (hasGameObject(object)) return null;
+        if (gameObjects.add(object)) {
+            object.setMap(this);
+            return object;
+        }
+        return null;
     }
 
     /**
@@ -244,9 +261,9 @@ public class Map {
      * @param object to add to a {@link ateamproject.kezuino.com.github.singleplayer.Node} on this {@link ateamproject.kezuino.com.github.singleplayer.Map}.
      * @return {@link GameObject} that was added to the {@link Map}.
      */
-    public GameObject addGameObject(int x, int y, GameObject object) {
-        if (!this.addGameObject(object)) return null;
-        object.setPosition(x, y);
+    public GameObject addGameObject(Vector2 position, GameObject object) {
+        if (this.addGameObject(object) == null) return null;
+        object.setPosition(position);
         return object;
     }
 

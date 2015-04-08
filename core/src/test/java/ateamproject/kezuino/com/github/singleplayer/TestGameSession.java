@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -27,7 +28,8 @@ public class TestGameSession {
     public void setUp() {
         this.testSession = new GameSession();
         this.testSession.setMap(4);
-        this.testPactale = new Pactale(this.testSession.getMap(), 0, 0, 3, 0.1f, Direction.Left, Color.WHITE);
+        this.testPactale = new Pactale(Vector2.Zero, 3, 0.1f, Direction.Left, Color.WHITE);
+        this.testSession.getMap().addGameObject(testPactale);
     }
 
     /**

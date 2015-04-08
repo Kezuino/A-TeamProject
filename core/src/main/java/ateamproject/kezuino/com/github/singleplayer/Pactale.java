@@ -3,11 +3,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import java.util.ArrayList;
-import java.util.Collection;
+import com.badlogic.gdx.math.Vector2;
 
 public class Pactale extends GameObject {
 
@@ -33,8 +29,8 @@ public class Pactale extends GameObject {
      * @param color            Distinct color of this
      *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
      */
-    public Pactale(Map map, int x, int y, int lives, float movementSpeed, Direction walkingDirection, Color color) {
-        super(map, x, y, movementSpeed, walkingDirection, color);
+    public Pactale(Vector2 nodePosition, int lives, float movementSpeed, Direction walkingDirection, Color color) {
+        super(nodePosition, movementSpeed, walkingDirection, color);
         this.lives = lives;
         this.playerIndex = playerIndexCounter++;
     }
@@ -72,11 +68,11 @@ public class Pactale extends GameObject {
      */
     public void shootProjectile() {
         // create projectile
-        Projectile prjtl = new Projectile(this.getMap(), this.getX(), getY(), this, this.getMovementSpeed() / 3, this.getDirection(), this.getColor());
-        prjtl.getMap().addGameObject(this.getX(), this.getY(), prjtl);
+        Projectile proj = new Projectile(this.getPosition(), this, this.getMovementSpeed() / 3, this.getDirection(), this.getColor());
+        getMap().addGameObject(proj);
 
         // check if next node has collision
-        prjtl.moveAdjacent(direction);
+        proj.moveAdjacent(direction);
     }
 
 
@@ -100,10 +96,10 @@ public class Pactale extends GameObject {
             
             if(e.isEdible()) {
                 this.getMap().getSession().getScore().incrementScore(500);
-                e.setActive(false);
+                e.setInactive();
             } else {
                 this.lives -= 1;
-                this.setActive(false);
+                this.setInactive();
             }
             return true;
         }

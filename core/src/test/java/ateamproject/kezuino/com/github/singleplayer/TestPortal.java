@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -37,7 +38,7 @@ public class TestPortal {
          * @param direction Side on the {@link Wall} that this {@link Portal} should appear on.
          */
 
-        Pactale pactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.WHITE);
+        Pactale pactale = new Pactale(new Vector2(1, 1), 1, 1.1f, Direction.Right, Color.WHITE);
         Portal p = new Portal(pactale, node, Direction.Left);
         assertNotNull("Portal must not be null. It was just created.", p);
         assertNotNull("Pactale must be owner of a portal.", pactale.getPortal());

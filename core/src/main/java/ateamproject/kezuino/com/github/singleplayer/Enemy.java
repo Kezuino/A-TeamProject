@@ -1,13 +1,11 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
 
 import java.util.Iterator;
-import java.util.stream.Collectors;
 
 public class Enemy extends GameObject {
 
@@ -27,9 +25,9 @@ public class Enemy extends GameObject {
     private GameObject objectToFollow;
 
     /**
-     * The {@link Node} this {@link Enemy} spawned on.
+     * The {@link Vector2 Position} that this {@link Enemy} will respawn on.
      */
-    private Node respawnNode;
+    private Vector2 respawnPosition;
 
     /**
      * The space to store the start time when the edible state has been set to this {@link Enemy}.
@@ -60,10 +58,10 @@ public class Enemy extends GameObject {
      * @param direction      Direction this {@link Enemy} is currently facing.
      * @param color          Color of this {@link Enemy}.
      */
-    public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction, Color color) {
-        super(map, x, y, movementSpeed, direction, color);
+    public Enemy(GameObject objectToFollow, Vector2 position, float movementSpeed, Direction direction, Color color) {
+        super(position, movementSpeed, direction, color);
         this.objectToFollow = objectToFollow;
-        this.respawnNode = map.getNode(x, y);
+        this.respawnPosition = position.cpy();
         this.dead = false;
         this.edible = false;
         this.edibleTime = 2f;
@@ -77,21 +75,19 @@ public class Enemy extends GameObject {
      * The default draw color is set to {@code Color.WHITE}.
      *
      * @param objectToFollow {@link GameObject} to follow. Can be null.
-     * @param map            {@link Map} that this {@link Enemy} is currently in.
-     * @param x              X position of this {@link Enemy}.
-     * @param y              Y position of this {@link Enemy}.
+     * @param position       {@link Vector2 Position} that this {@link Enemy} should have.
      * @param movementSpeed  Speed in seconds that it takes to move to another {@link Node}.
      * @param direction      Direction this {@link Enemy} is currently facing.
      */
-    public Enemy(GameObject objectToFollow, Map map, int x, int y, float movementSpeed, Direction direction) {
-        this(objectToFollow, map, x, y, movementSpeed, direction, Color.WHITE);
+    public Enemy(GameObject objectToFollow, Vector2 position, float movementSpeed, Direction direction) {
+        this(objectToFollow, position, movementSpeed, direction, Color.WHITE);
     }
 
     /**
      * Move an Enemy to its spawn and reset some of its properties.
      */
     public void respawn() {
-        setPosition(respawnNode.getX(), respawnNode.getY());
+        setPosition(respawnPosition);
     }
 
     /**
@@ -155,11 +151,16 @@ public class Enemy extends GameObject {
                 this.setColor(this.previousColor);
             }
         }
-        
-        for(Pactale p : this.getNode().getMap().getAllGameObjects().stream().filter(go -> go instanceof Pactale).map(go -> (Pactale) go).collect(Collectors.toList())) {
-            this.objectToFollow = p;
-            break;
-        }
+
+        // Set first Pactale as target.
+        this.objectToFollow = this.getNode()
+                                  .getMap()
+                                  .getAllGameObjects()
+                                  .stream()
+                                  .filter(go -> go instanceof Pactale)
+                                  .map(go -> (Pactale) go)
+                                  .max((p1, p2) -> (int) p1.getPosition().len(p2.getPosition().x, p2.getPosition().y))
+                                  .orElse(null);
 
         if (!this.isMoving) {
             //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
@@ -174,7 +175,9 @@ public class Enemy extends GameObject {
 
                 if (nodeFromPath.hasNext()) {
                     Node nextNode = nodeFromPath.next();
-                    this.setDirection(Direction.getDirection(this.getNode().getX(), this.getNode().getY(), nextNode.getX(), nextNode.getY()));
+                    this.setDirection(Direction.getDirection(this.getNode().getX(), this.getNode()
+                                                                                        .getY(), nextNode.getX(), nextNode
+                            .getY()));
                     nodeFromPath.remove();
                     graphPath.clear();
                     while (nodeFromPath.hasNext()) {

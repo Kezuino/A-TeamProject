@@ -31,8 +31,8 @@ public class TestGameObject {
         session.setMap(20);
         map = session.getMap();
         spawn = map.getNode(19, 19);
-        enemy = new Enemy(null, map, spawn.getX(), spawn.getY(), 100, Direction.Down, Color.BLACK);
-        map.addGameObject(spawn.getX(), spawn.getY(), enemy);
+        enemy = new Enemy(null, spawn.getPosition(), 100, Direction.Down, Color.BLACK);
+        map.addGameObject(spawn.getPosition(), enemy);
     }
 
     //Game object is an abstract class, in this unittest we will test the child class Enemey to check it's parents methods.
@@ -75,7 +75,7 @@ public class TestGameObject {
          * currently facing.
          */
         //Create a enemy without colour
-        Enemy enemy2 = new Enemy(null, map, spawn.getX(), spawn.getY(), 100, Direction.Down);
+        Enemy enemy2 = new Enemy(null, spawn.getPosition(), 100, Direction.Down);
         assertEquals("The constructor without colour didn't make it default white.", Color.WHITE, enemy2.getColor());
     }
 
@@ -101,34 +101,6 @@ public class TestGameObject {
      * @deprecated Test method cannot be tested through unittesting without running the game loop here.
      */
     @Deprecated
-    public void testMoveAdjecentNode() {
-        /**
-         * Moves this {@link GameObject} to another adjacent {@link Node} based on
-         * the given {@code direction}. If {@link #movementInterpolation} is true,
-         * this movement should be pixel-perfectly smooth between the nodes. If
-         * {@link #movementInterpolation} is false, this movement should testMove
-         * immediately and wait until it can testMove again based on
-         * {@link #movementSpeed}.
-         *
-         * @param direction {@link Direction} to testMove in (to an adjacent
-         *                  {@link Node}).
-         */
-
-        // Disable interpolation because we cannot test with interpolation. It requires the game loop to be running.
-        enemy.movementInterpolation = false;
-
-        // Enemy was spawned on default 19 19. If we testMove it up one the y should go -1.
-        enemy.moveAdjacent(Direction.Up);
-        assertEquals(18, enemy.getY());
-        // If we go back down, should be 19 again
-        enemy.moveAdjacent(Direction.Down);
-        assertEquals(19, enemy.getY());
-    }
-
-    /**
-     * @deprecated Test method cannot be tested through unittesting without running the game loop here.
-     */
-    @Deprecated
     public void testMove() {
         /**
          * Tries to testMove this {@link GameObject} to another {@link Node} using
@@ -140,8 +112,8 @@ public class TestGameObject {
         //Create a node and testMove the enemy to that node.
         moveNode = map.getNode(10, 10);
         enemy.move(moveNode);
-        assertEquals(10, enemy.getX());
-        assertEquals(10, enemy.getY());
+        assertEquals(10, enemy.getPosition().x);
+        assertEquals(10, enemy.getPosition().y);
     }
 
 }

@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -64,7 +65,7 @@ public class TestItem {
          */
 
         Item item = new Item("Small gold nugget", this.map, node.getX(), node.getY(), ItemType.BigObject);
-        GameObject UserPactale = new Pactale(map, 1, 1, 1, 1.1f, Direction.Right, Color.WHITE);
+        GameObject UserPactale = new Pactale(new Vector2(1, 1), 1, 1.1f, Direction.Right, Color.WHITE);
 
         item.activate(UserPactale);
 

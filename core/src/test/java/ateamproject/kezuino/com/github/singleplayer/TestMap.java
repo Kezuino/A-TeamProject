@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -20,10 +21,10 @@ public class TestMap {
         map.getNode(13, 13).setWallForced(true);
 
         // GameObjects.
-        Pactale pac = (Pactale) map.addGameObject(13, 13, new Pactale(map, 13, 13, 1, 1, Direction.Down, Color.WHITE));
-        map.addGameObject(13, 14, new Enemy(null, map, 13, 14, 1, Direction.Up, Color.WHITE));
-        map.addGameObject(13, 14, new Enemy(null, map, 13, 14, 1, Direction.Left, Color.WHITE));
-        map.addGameObject(0, 0, new Projectile(map, 0, 0, pac, 1, Direction.Right, Color.WHITE));
+        Pactale pac = (Pactale) map.addGameObject(new Pactale(new Vector2(13, 13), 1, 1, Direction.Down, Color.WHITE));
+        map.addGameObject(new Enemy(null, new Vector2(13, 14), 1, Direction.Up, Color.WHITE));
+        map.addGameObject(new Enemy(null, new Vector2(13, 14), 1, Direction.Left, Color.WHITE));
+        map.addGameObject(new Projectile(Vector2.Zero, pac, 1, Direction.Right, Color.WHITE));
     }
 
     @Test
@@ -121,10 +122,20 @@ public class TestMap {
          * Returns all {@link GameObject gameobjects} within a {@link Map}.
          */
         assertEquals("There must be 4 GameObjects in the map.", 4, map.getAllGameObjects().size());
-        assertEquals("There must be 1 testProjectileConstructor in the map.", 1, map.getAllGameObjects().stream().filter(o -> o.getClass().equals(Projectile.class)).count());
-        assertEquals("There must be 2 Enemies in the map.", 2, map.getAllGameObjects().stream().filter(o -> o.getClass().equals(Enemy.class)).count());
+        assertEquals("There must be 1 testProjectileConstructor in the map.", 1, map.getAllGameObjects()
+                                                                                    .stream()
+                                                                                    .filter(o -> o.getClass()
+                                                                                                  .equals(Projectile.class))
+                                                                                    .count());
+        assertEquals("There must be 2 Enemies in the map.", 2, map.getAllGameObjects()
+                                                                  .stream()
+                                                                  .filter(o -> o.getClass().equals(Enemy.class))
+                                                                  .count());
         map.removeGameObject(map.getAllGameObjects().get(0));
-        assertEquals("There must be 1 Enemy in the map.", 1, map.getAllGameObjects().stream().filter(o -> o.getClass().equals(Enemy.class)).count());
+        assertEquals("There must be 1 Enemy in the map.", 1, map.getAllGameObjects()
+                                                                .stream()
+                                                                .filter(o -> o.getClass().equals(Enemy.class))
+                                                                .count());
     }
 
     @Test
@@ -150,8 +161,9 @@ public class TestMap {
          * @param object to add to a {@link ateamproject.kezuino.com.github.singleplayer.Node} on this {@link ateamproject.kezuino.com.github.singleplayer.Map}.
          * @return {@link GameObject} that was added to the {@link Map}.
          */
-        Node baseNode = map.getNode(10, 10);
-        Pactale p = (Pactale) map.addGameObject(10, 10, new Pactale(map, 10, 10, 1, 1, Direction.Down, Color.WHITE));
-        assertTrue("GameObject was not added to the Node.", map.getAllGameObjects().stream().anyMatch(o -> o.equals(p)));
+        Pactale p = (Pactale) map.addGameObject(new Pactale(new Vector2(10, 10), 1, 1, Direction.Down, Color.WHITE));
+        assertTrue("GameObject was not added to the Node.", map.getAllGameObjects()
+                                                               .stream()
+                                                               .anyMatch(o -> o.equals(p)));
     }
 }

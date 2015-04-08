@@ -8,6 +8,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.HashMap;
@@ -23,11 +24,11 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
     //private final List<GameObject> gameObjects;
     private final int x;
     private final int y;
-    private int tileId;
     /**
      * List of {@link Portal portals} that can be on a side of this {@link Node}.
      */
     private final HashMap<Direction, Portal> portals;
+    private int tileId;
     /**
      * {@link Item} that is on this {@link Node}.
      */
@@ -46,7 +47,6 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
      * @param y   position that the {@link Node} is at.
      */
     Node(Map map, int x, int y) {
-        //gameObjects = new ArrayList<>();
         portals = new HashMap<>();
         this.tileId = 0;
         this.map = map;
@@ -87,7 +87,7 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
         this.item = item;
         return this.item;
     }
-    
+
     public boolean hasItem() {
         return this.item != null;
     }
@@ -186,7 +186,6 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
     /*public List<GameObject> getGameObjects() {
         return gameObjects;
     }*/
-
     @Override
     public String toString() {
         return "Node{" +
@@ -304,5 +303,14 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
             connections.add(con);
         }
         return connections;
+    }
+
+    /**
+     * Gets the {@link Vector2 Position} of this {@link Node}.
+     *
+     * @return {@link Vector2 Position} of this {@link Node}.
+     */
+    public Vector2 getPosition() {
+        return new Vector2(getX() * 32, getY() * 32);
     }
 }
