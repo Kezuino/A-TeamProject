@@ -99,6 +99,27 @@ public enum Direction {
         return valueOf(resultX, resultY);
     }
 
+    public float getRotation()
+    {
+        float rotation = 0;
+        switch(this)
+            {
+                case Up:
+                    rotation = 180;
+                    break;
+                case  Left:
+                    rotation = 270;
+                    break;
+                case Right:
+                    rotation = 90;
+                    break;
+            }
+        
+        return rotation;
+        
+        
+    }
+    
     /**
      * Gets the difference in the X dimension that should take place when moving in a {@link Direction}.
      *

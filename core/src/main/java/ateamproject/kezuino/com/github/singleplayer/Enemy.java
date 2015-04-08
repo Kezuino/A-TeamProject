@@ -68,6 +68,7 @@ public class Enemy extends GameObject {
         this.edible = false;
         this.edibleTime = 2f;
         this.graphPath = new DefaultGraphPath<>();
+        this.drawOnDirection=false;
     }
 
     /**

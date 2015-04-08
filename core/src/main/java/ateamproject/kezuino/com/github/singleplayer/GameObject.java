@@ -75,6 +75,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     private Color color;
 
+    
+    protected boolean drawOnDirection;
     /**
      * Initializes this {@link GameObject}.
      *
@@ -445,6 +447,10 @@ public abstract class GameObject implements IRenderable, IPositionable {
         batch.setColor(this.getColor());
 
         // TODO: Animate from sprite region.
+        float rotation = 0;
+        if (drawOnDirection) {
+            rotation = this.getDirection().getRotation();
+        }
 
         // Set draw offset when moving.
         if (movementInterpolation && isMoving) {
@@ -465,7 +471,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         // Draw centered in node.
         float xOffset = (32 - texture.getWidth()) / 2f - (16 - 32 * drawOffsetX);
         float yOffset = (32 - texture.getHeight()) / 2f - (16 - 32 * drawOffsetY);
-        batch.draw(texture, this.x * 32 + xOffset, this.y * 32 + yOffset);
+        batch.draw(texture, this.x * 32 + xOffset, this.y * 32 + yOffset, texture.getWidth() / 2, texture.getHeight() / 2, texture.getWidth(), texture.getHeight(), 1, 1, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
     }
 
     /**

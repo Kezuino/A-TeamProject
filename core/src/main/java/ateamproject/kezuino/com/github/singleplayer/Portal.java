@@ -68,6 +68,8 @@ public class Portal implements IRenderable, IPositionable {
         if (texture == null) return;
         float xOffset = (32 - texture.getWidth()) / 2f;
         float yOffset = (32 - texture.getHeight()) / 2f;
-        batch.draw(texture, this.node.getX() * 32 + xOffset, this.node.getY() * 32 + yOffset);
+        float rotation = this.getDirection().getRotation();
+        batch.draw(texture, this.node.getX()* 32 + xOffset, this.node.getY() * 32 + yOffset, texture.getWidth() / 2, texture.getHeight() / 2, texture.getWidth(), texture.getHeight(), 1, 1, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
+   
     }
 }
