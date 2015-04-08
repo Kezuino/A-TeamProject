@@ -26,6 +26,7 @@ public class Projectile extends GameObject {
     public Projectile(Vector2 exactPosition, Pactale owner, float movementSpeed, Direction direction, Color color) {
         super(exactPosition, movementSpeed, direction, color);
         this.owner = owner;
+        this.drawOnDirection=true;
         this.setTexture(Assets.get("textures/projectile.png", Texture.class));
     }
 

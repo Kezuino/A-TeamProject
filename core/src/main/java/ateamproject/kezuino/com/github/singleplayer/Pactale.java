@@ -33,6 +33,7 @@ public class Pactale extends GameObject {
         super(nodePosition, movementSpeed, walkingDirection, color);
         this.lives = lives;
         this.playerIndex = playerIndexCounter++;
+        this.drawOnDirection=false;
     }
 
     public int getPlayerIndex() {

@@ -11,7 +11,7 @@ public class Score {
      * @param session The {@link GameSession} of this score.
      */
     public Score(GameSession session) {
-        this.score = 0;
+        this.score = 5000;
         this.gameSession = session;
     }
 
