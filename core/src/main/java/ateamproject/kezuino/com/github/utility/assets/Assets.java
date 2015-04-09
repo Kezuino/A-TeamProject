@@ -120,7 +120,7 @@ public class Assets {
      */
     public static Music getMusicStream(String fileName) {
         if (fileName == null || fileName.isEmpty()) return null;
-        String asset = "audio/music/" + fileName;
+        String asset = "audio/" + fileName;
 
         Music music;
 
