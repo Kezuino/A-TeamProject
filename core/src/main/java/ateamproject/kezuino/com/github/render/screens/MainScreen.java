@@ -104,7 +104,7 @@ public class MainScreen extends BaseScreen {
         stage.addActor(tbClanManagement);
         stage.addActor(tbLogout);
 
-        backgroundMusic = Assets.getMusicStream("music/menu.mp3");
+        backgroundMusic = Assets.getMusicStream("menu.mp3");
     }
 
     @Override

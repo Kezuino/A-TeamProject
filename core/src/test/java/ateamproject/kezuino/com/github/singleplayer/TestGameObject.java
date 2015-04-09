@@ -92,9 +92,9 @@ public class TestGameObject {
          */
 
         // If we try to set the position to a location on the map should return true
-        assertTrue(enemy.setPosition(10, 10));
+        assertTrue(enemy.setNodePosition(10, 10));
         // If we try to set the position to a X and Y so high it should never be on anny map, should return false.
-        assertFalse(enemy.setPosition(214700000, 2147000000));
+        assertFalse(enemy.setNodePosition(214700000, 2147000000));
     }
 
     /**
@@ -112,8 +112,8 @@ public class TestGameObject {
         //Create a node and testMove the enemy to that node.
         moveNode = map.getNode(10, 10);
         enemy.move(moveNode);
-        assertEquals(10, enemy.getPosition().x);
-        assertEquals(10, enemy.getPosition().y);
+        assertEquals(10, enemy.getExactPosition().x);
+        assertEquals(10, enemy.getExactPosition().y);
     }
 
 }

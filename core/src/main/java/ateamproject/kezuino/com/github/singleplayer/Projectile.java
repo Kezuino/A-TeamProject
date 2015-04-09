@@ -43,11 +43,13 @@ public class Projectile extends GameObject {
     protected boolean collisionWithGameObject(GameObject object) {
         if (object.equals(owner)) return false;
 
-        // TODO: Collision
         GameObject obj = object;
         if (this.getOwner().getPortal() != null && this.getActive()) {
-            obj.setPosition(this.getOwner().getPortal().getNode().getX(), this.getOwner().getPortal().getNode().getY());
-            //TODO force next direction
+            obj.setNodePosition(this.getOwner().getPortal().getNode().getX(), this.getOwner()
+                                                                                  .getPortal()
+                                                                                  .getNode()
+                                                                                  .getY());
+            // TODO: Fix bug that GameObjects can be inside the wall when teleported to the portal.
 
             this.setInactive();
             return true;

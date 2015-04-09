@@ -37,7 +37,8 @@ public class TestItem {
          * @param name the name of the item
          * @param node the node the item is located on
          */
-        Item item = new Item("Small gold nugger", this.map, node.getX(), node.getY(), ItemType.BigObject);
+        Item item = new Item("Small gold nugger", node.getPosition(), ItemType.BigObject);
+        item.setMap(this.map);
         assertNotNull(item);
 
         assertEquals("Item name must be the same as given by constructor and returned by item.getName().", "Small gold nugger", item.getName());
@@ -50,7 +51,8 @@ public class TestItem {
          *
          * @param name Name of the item
          */
-        Item item = new Item("Small gold nugget", this.map, node.getX(), node.getY(), ItemType.BigObject);
+        Item item = new Item("Small gold nugget", node.getPosition(), ItemType.BigObject);
+        item.setMap(this.map);
         item.setName("Big gold nugget");
         assertEquals("Big gold nugget", item.getName());
     }
@@ -64,7 +66,8 @@ public class TestItem {
          * @param target target standing on the node with the item
          */
 
-        Item item = new Item("Small gold nugget", this.map, node.getX(), node.getY(), ItemType.BigObject);
+        Item item = new Item("Small gold nugget", node.getPosition(), ItemType.BigObject);
+        item.setMap(map);
         GameObject UserPactale = new Pactale(new Vector2(1, 1), 1, 1.1f, Direction.Right, Color.WHITE);
 
         item.activate(UserPactale);

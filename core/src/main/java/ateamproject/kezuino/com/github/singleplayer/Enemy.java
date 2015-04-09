@@ -51,22 +51,20 @@ public class Enemy extends GameObject {
      * The newly constructed {@link Enemy} is not edible.
      *
      * @param objectToFollow {@link GameObject} to follow. Can be null.
-     * @param map            {@link Map} this {@link Enemy} is currently in.
-     * @param x              X position of this {@link Enemy}.
-     * @param y              Y position of this {@link Enemy}.
+     * @param exactPosition  Absolute position (in pixels) that this {@link Enemy} is on.
      * @param movementSpeed  Speed in seconds that it takes to move to another {@link Node}.
      * @param direction      Direction this {@link Enemy} is currently facing.
      * @param color          Color of this {@link Enemy}.
      */
-    public Enemy(GameObject objectToFollow, Vector2 position, float movementSpeed, Direction direction, Color color) {
-        super(position, movementSpeed, direction, color);
+    public Enemy(GameObject objectToFollow, Vector2 exactPosition, float movementSpeed, Direction direction, Color color) {
+        super(exactPosition, movementSpeed, direction, color);
         this.objectToFollow = objectToFollow;
-        this.respawnPosition = position.cpy();
+        this.respawnPosition = exactPosition.cpy();
         this.dead = false;
         this.edible = false;
         this.edibleTime = 2f;
         this.graphPath = new DefaultGraphPath<>();
-        this.drawOnDirection=false;
+        this.drawOnDirection = false;
     }
 
     /**
@@ -76,19 +74,19 @@ public class Enemy extends GameObject {
      * The default draw color is set to {@code Color.WHITE}.
      *
      * @param objectToFollow {@link GameObject} to follow. Can be null.
-     * @param position       {@link Vector2 Position} that this {@link Enemy} should have.
+     * @param exactPosition  {@link Vector2 Position} that this {@link Enemy} should have.
      * @param movementSpeed  Speed in seconds that it takes to move to another {@link Node}.
      * @param direction      Direction this {@link Enemy} is currently facing.
      */
-    public Enemy(GameObject objectToFollow, Vector2 position, float movementSpeed, Direction direction) {
-        this(objectToFollow, position, movementSpeed, direction, Color.WHITE);
+    public Enemy(GameObject objectToFollow, Vector2 exactPosition, float movementSpeed, Direction direction) {
+        this(objectToFollow, exactPosition, movementSpeed, direction, Color.WHITE);
     }
 
     /**
      * Move an Enemy to its spawn and reset some of its properties.
      */
     public void respawn() {
-        setPosition(respawnPosition);
+        setExactPosition(respawnPosition);
     }
 
     /**
@@ -141,14 +139,14 @@ public class Enemy extends GameObject {
     public GameObject getObjectToFollow() {
         return this.objectToFollow;
     }
-    
+
     @Override
     protected boolean collisionWithGameObject(GameObject object) {
         if (object instanceof Pactale) {
             if (this.isEdible()) {
                 //this.setDead(true);
                 this.getMap().getSession().getScore().incrementScore(500);
-                this.setPosition(this.getStartingPosition().x, this.getStartingPosition().y);
+                this.setNodePosition(this.getStartingPosition().x, this.getStartingPosition().y);
             }
             return true;
         }
@@ -173,7 +171,8 @@ public class Enemy extends GameObject {
                                   .stream()
                                   .filter(go -> go instanceof Pactale)
                                   .map(go -> (Pactale) go)
-                                  .max((p1, p2) -> (int) p1.getPosition().len(p2.getPosition().x, p2.getPosition().y))
+                                  .max((p1, p2) -> (int) p1.getExactPosition()
+                                                           .len(p2.getExactPosition().x, p2.getExactPosition().y))
                                   .orElse(null);
 
         if (!this.isMoving) {

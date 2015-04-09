@@ -82,7 +82,7 @@ public class TestEnemy {
          * Will testMove a Enemy to its spawn and reset some of its properties.
          */
         assertEquals("Enemy hasn't moved and should be on spawn.", spawn, enemy.getNode());
-        assertTrue("Movement must succeed.", enemy.setPosition(15, 14));
+        assertTrue("Movement must succeed.", enemy.setNodePosition(15, 14));
         assertNotEquals("Enemy position has been moved and should not be on spawn.", spawn, enemy.getNode());
         enemy.respawn();
         assertEquals("Enemy has respawned and should be on spawn.", spawn, enemy.getNode());
@@ -95,7 +95,7 @@ public class TestEnemy {
          *
          * @param position Node, cannot be null
          */
-        enemy.setPosition(teleportNode.getX(), teleportNode.getY());
+        enemy.setNodePosition(teleportNode.getX(), teleportNode.getY());
         assertEquals(teleportNode, enemy.getNode());
     }
 }

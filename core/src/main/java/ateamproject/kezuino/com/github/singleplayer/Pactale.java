@@ -2,7 +2,6 @@ package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
@@ -16,20 +15,14 @@ public class Pactale extends GameObject {
     /**
      * Initialize a {@link Pactale}.
      *
-     * @param x position of this
-     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see
-     * Map.
-     * @param y position of this
-     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see
-     * Map.
-     * @param lives Times that the
-     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} can be hit.
-     * Defaults to 1 for a multiplayer session.
-     * @param movementSpeed Amount of seconds that it will take to move to
-     * another node.
+     * @param lives            Times that the
+     *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} can be hit.
+     *                         Defaults to 1 for a multiplayer session.
+     * @param movementSpeed    Amount of seconds that it will take to move to
+     *                         another node.
      * @param walkingDirection Looking direction to start with.
-     * @param color Distinct color of this
-     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
+     * @param color            Distinct color of this
+     *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
      */
     public Pactale(Vector2 nodePosition, int lives, float movementSpeed, Direction walkingDirection, Color color) {
         super(nodePosition, movementSpeed, walkingDirection, color);
@@ -73,7 +66,8 @@ public class Pactale extends GameObject {
      */
     public void shootProjectile() {
         // create projectile
-        Projectile proj = new Projectile(this.getPosition(), this, this.getMovementSpeed() / 3, this.getDirection(), this.getColor());
+        Projectile proj = new Projectile(this.getExactPosition(), this, this.getMovementSpeed() / 3, this.getDirection(), this
+                .getColor());
         getMap().addGameObject(proj);
 
         // check if next node has collision
@@ -100,7 +94,7 @@ public class Pactale extends GameObject {
 
             if (!e.isEdible()) {
                 this.setLives(this.getLives() - 1);
-                this.setPosition(this.getStartingPosition().x, this.getStartingPosition().y);
+                this.setNodePosition(this.getStartingPosition().x / 32, this.getStartingPosition().y / 32);
             }
             return true;
         }
@@ -120,16 +114,17 @@ public class Pactale extends GameObject {
 
         // add portal to new node
         this.setPortal(portal);
-        this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).setPortal(portal.getDirection(), portal);
+        this.getMap()
+            .getNode(portal.getNode().getX(), portal.getNode().getY())
+            .setPortal(portal.getDirection(), portal);
     }
 
     /**
      * Will remove all listed portals from this {@link Pactale}.
      */
     public void removePortal() {
-        if (this.portal != null) {
-            this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).removePortal(portal.getDirection());
-            this.portal = null;
-        }
+        if (this.portal == null) return;
+        this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).removePortal(portal.getDirection());
+        this.portal = null;
     }
 }

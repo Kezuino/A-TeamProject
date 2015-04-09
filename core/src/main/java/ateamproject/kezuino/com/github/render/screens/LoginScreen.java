@@ -38,6 +38,6 @@ public class LoginScreen extends BaseScreen {
 
         stage.addActor(btnLogin);
 
-        backgroundMusic = Assets.getMusicStream("music/menu.mp3");
+        backgroundMusic = Assets.getMusicStream("menu.mp3");
     }
 }
