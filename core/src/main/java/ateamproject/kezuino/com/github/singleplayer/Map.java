@@ -112,9 +112,8 @@ public class Map {
             MapProperties objProps = loopObj.getProperties();
             MapProperties objTileProps = objTileLayer.getTile(objProps.get("gid", int.class)).getProperties();
 
-            int posX = (int) (objProps.get("x", float.class) / 32);
-            int posY = (int) (objProps.get("y", float.class) / 32);
-            Node posNode = map.getNode(posX, posY);
+            Vector2 curPos = new Vector2(objProps.get("x", float.class), objProps.get("y", float.class));
+            Node posNode = map.getNode(curPos);
 
             if (objTileProps.containsKey("item")) {
                 // Create item.
@@ -123,17 +122,20 @@ public class Map {
                                           .filter(e -> e.name().equalsIgnoreCase(itemTypeName))
                                           .findAny()
                                           .orElse(null);
-                Item item = new Item(map, posX, posY, itemType);
+                Item item = new Item(curPos, itemType);
+                item.setMap(map);
                 item.setTexture(obj.getTextureRegion().getTexture());
                 posNode.setItem(item);
             } else if (objTileProps.containsKey("isEnemy")) {
                 // Create enemy.
-                Enemy enemy = new Enemy(null, new Vector2(posX, posY), 1, Direction.Down);
+                Enemy enemy = new Enemy(null, curPos, 1, Direction.Down);
                 enemy.setTexture(obj.getTextureRegion().getTexture());
+                enemy.setMap(map);
                 map.addGameObject(enemy);
             } else if (objTileProps.containsKey("isPactale")) {
                 // Create pactale.
-                Pactale pactale = new Pactale(new Vector2(posX, posY), 3, 1f, Direction.Down, Color.WHITE);
+                Pactale pactale = new Pactale(curPos, 3, 1f, Direction.Down, Color.WHITE);
+                pactale.setMap(map);
                 pactale.setTexture(obj.getTextureRegion().getTexture());
                 map.addGameObject(pactale);
             }
@@ -263,7 +265,7 @@ public class Map {
      */
     public GameObject addGameObject(Vector2 position, GameObject object) {
         if (this.addGameObject(object) == null) return null;
-        object.setPosition(position);
+        object.setExactPosition(position);
         return object;
     }
 

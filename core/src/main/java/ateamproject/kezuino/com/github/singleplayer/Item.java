@@ -1,14 +1,13 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.render.IRenderable;
-import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 public class Item implements IRenderable, IPositionable {
 
-    private final int x;
-    private final int y;
+    private Vector2 exactPosition;
     private String name;
     private ItemType type;
     private Map map;
@@ -18,30 +17,23 @@ public class Item implements IRenderable, IPositionable {
      * Initializes an {@link Item} at the given {@link Node}.
      *
      * @param name Name of the {@link Item}.
-     * @param map  {@link Map} that hosts the {@link Item}. Can be null.
-     * @param x    X dimension of the {@link Node} that should contain this {@link Item}.
-     * @param y    Y dimension of the {@link Node} that should contain this {@link Item}.
      * @param type {@link ItemType} dat determines the {@code name} and {@link #activate(GameObject)}'s body.
      */
-    public Item(String name, Map map, int x, int y, ItemType type) {
+    public Item(String name, Vector2 exactPosition, ItemType type) {
         if (type == null) throw new IllegalArgumentException("Parameter type must not be null.");
         this.name = name;
         this.type = type;
-        this.map = map;
-        this.x = x;
-        this.y = y;
+        this.exactPosition = exactPosition.cpy();
     }
 
     /**
      * Initializes an {@link Item} at the given {@link Node} using the default name of the {@link ItemType}.
      *
-     * @param map  {@link Map} that hosts the {@link Item}. Can be null.
-     * @param x    X dimension of the {@link Node} that should contain this {@link Item}.
-     * @param y    Y dimension of the {@link Node} that should contain this {@link Item}.
-     * @param type {@link ItemType} dat determines the {@code name} and {@link #activate(GameObject)}'s body.
+     * @param exactPosition {@link Vector2 Position} op this {@link Item}.
+     * @param type          {@link ItemType} dat determines the {@code name} and {@link #activate(GameObject)}'s body.
      */
-    public Item(Map map, int x, int y, ItemType type) {
-        this(String.valueOf(type), map, x, y, type);
+    public Item(Vector2 exactPosition, ItemType type) {
+        this(String.valueOf(type), exactPosition, type);
     }
 
     @Override
@@ -55,8 +47,27 @@ public class Item implements IRenderable, IPositionable {
     }
 
     @Override
+    public void update() {
+
+    }
+
+    /**
+     * Gets the {@link Map} that hosts this {@link Item}.
+     *
+     * @return {@link Map} that hosts this {@link Item}.
+     */
+    @Override
     public Map getMap() {
         return map;
+    }
+
+    /**
+     * Sets the {@link Map} that hosts this {@link Item}.
+     *
+     * @param map {@link Map} that hosts this {@link Item}.
+     */
+    public void setMap(Map map) {
+        this.map = map;
     }
 
     /**
@@ -106,7 +117,12 @@ public class Item implements IRenderable, IPositionable {
         // TODO - implement Item.activate
         switch (this.type) {
             case BigObject:
-                this.getMap().getAllGameObjects().stream().filter((GameObject o) -> o instanceof Enemy).map((GameObject e) -> (Enemy) e).forEach(e -> e.setEdible(true));
+                this.getMap()
+                    .getAllGameObjects()
+                    .stream()
+                    .filter((GameObject o) -> o instanceof Enemy)
+                    .map((GameObject e) -> (Enemy) e)
+                    .forEach(e -> e.setEdible(true));
                 break;
             case Diamond:
                 //TODO apply powerup
@@ -129,12 +145,25 @@ public class Item implements IRenderable, IPositionable {
 
     @Override
     public Node getNode() {
-        return this.getMap().getNode(this.x, this.y);
+        return this.getMap().getNode((int) this.exactPosition.x / 32, (int) this.exactPosition.y / 32);
     }
 
-    @Override
-    public void update() {
+    /**
+     * Gets the absolute position of this {@link Item}.
+     *
+     * @return Absolute position of this {@link Item}.
+     */
+    public Vector2 getExactPosition() {
+        return exactPosition;
+    }
 
+    /**
+     * Sets the absolute position of this {@link Item}.
+     *
+     * @param exactPosition Absolute position of this {@link Item}.
+     */
+    public void setExactPosition(Vector2 exactPosition) {
+        this.exactPosition = exactPosition;
     }
 
     @Override
@@ -142,15 +171,14 @@ public class Item implements IRenderable, IPositionable {
         if (texture == null) return;
         float xOffset = (32 - texture.getWidth()) / 2f;
         float yOffset = (32 - texture.getHeight()) / 2f;
-        batch.draw(texture, this.x * 32 + xOffset, this.y * 32 + yOffset);
+        batch.draw(texture, this.getExactPosition().x * 32 + xOffset, this.getExactPosition().y * 32 + yOffset);
     }
 
     @Override
     public String toString() {
         return "Item{" +
                 "name='" + name + '\'' +
-                ", x=" + x +
-                ", y=" + y +
+                ", exactPosition=" + exactPosition +
                 ", type=" + type +
                 '}';
     }

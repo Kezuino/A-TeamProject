@@ -35,7 +35,7 @@ public class TestNode {
         this.testEnemy = new Enemy(this.testPactale, new Vector2(3, 1), 0.1f, Direction.Right);
 
         this.nodeForItem = new Node(this.testSession.getMap(), 0, 8);
-        this.testItem = new Item(testSession.getMap(), this.nodeForItem.getX(), this.nodeForItem.getY(), ItemType.BigObject);
+        this.testItem = new Item(new Vector2(this.nodeForItem.getX(), this.nodeForItem.getY()), ItemType.BigObject);
         this.nodeForItem.setItem(this.testItem);
 
         this.nodeForWall = new Node(this.testSession.getMap(), 1, 10);
@@ -87,7 +87,8 @@ public class TestNode {
         assertNotNull("An item must be set on the node.", nodeForItem.getItem());
         nodeForItem.removeItem();
         assertNull("Item must have been removed from the node.", nodeForItem.getItem());
-        Item item = new Item(this.testSession.getMap(), nodeForItem.getX(), nodeForItem.getY(), ItemType.BigObject);
+        Item item = new Item(nodeForItem.getPosition(), ItemType.BigObject);
+        item.setMap(this.testSession.getMap());
         nodeForItem.setItem(item);
         assertNotNull("Item must have been set on the node.", nodeForItem.getItem());
     }

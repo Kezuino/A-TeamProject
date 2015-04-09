@@ -72,7 +72,8 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
     public Item setItem(String itemName, ItemType type) {
         if (itemName == null || itemName.isEmpty())
             throw new IllegalArgumentException("Parameter itemName must not be null or empty.");
-        this.item = new Item(itemName, getMap(), this.x, this.y, type);
+        this.item = new Item(itemName, this.getPosition().cpy().mulAdd(new Vector2(1, 1), 32), type);
+        this.item.setMap(getMap());
         return this.item;
     }
 

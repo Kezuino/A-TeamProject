@@ -17,6 +17,10 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link Direction} this {@link GameObject} will continue onto next.
      */
     protected Direction nextDirection;
+
+    /**
+     * {@link Node} that's adjacent to this {@link GameObject} based on the {@link #direction}.
+     */
     protected Node nextNode;
     /**
      * If true, this {@link GameObject} is currently transitioning between
@@ -28,7 +32,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link Node}.
      */
     protected float movementStartTime;
-    protected float moveTime;
     /**
      * {@link Texture} of this {@link GameObject} for drawing.
      */
@@ -39,6 +42,10 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     protected Color previousColor;
     /**
+     * If true, this {@link GameObject} will be rotated based on it's direction (assuming texture is facing downwards by default).
+     */
+    protected boolean drawOnDirection;
+    /**
      * If false, this {@link GameObject} will be removed whenever possible and won't be visible or usuable in the {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
     private boolean isActive;
@@ -47,9 +54,12 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     private Map map;
     /**
-     * Exact world position of this {@link GameObject}. Use {@link #getNode()} to get the {@link Node} at the current position.
+     * Exact world exactPosition of this {@link GameObject}. Use {@link #getNode()} to get the {@link Node} at the current exactPosition.
      */
-    private Vector2 position;
+    private Vector2 exactPosition;
+    /**
+     * Position that this {@link GameObject} was created on.
+     */
     private Vector2 startingPosition;
     /**
      * Speed in seconds that it takes for this {@link GameObject} to move to
@@ -62,31 +72,25 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     private Color color;
 
-    protected boolean drawOnDirection;
-
     /**
-     * Gets the starting position of this {@link GameObject} when it was created.
-     *
-     * @return Starting position of this {@link GameObject} when it was created.
+     * Total added deltatime since last {@link Node} movement occured.
      */
-    public Vector2 getStartingPosition() {
-        return startingPosition;
-    }
+    private float moveTime;
 
     /**
      * Initializes this {@link GameObject}.
-     *
+     * <p>
      * {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
+     *
      * @param movementSpeed Speed in seconds that this
-     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes to
-     * move to another adjacent
-     * {@link ateamproject.kezuino.com.github.singleplayer.Node}.
-     * @param direction
-     * {@link ateamproject.kezuino.com.github.singleplayer.Direction} that this
-     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject} is
-     * currently facing.
-     * @param color {@link com.badlogic.gdx.graphics.Color} that this
-     * {@link GameObject} will be
+     *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes to
+     *                      move to another adjacent
+     *                      {@link ateamproject.kezuino.com.github.singleplayer.Node}.
+     * @param direction     {@link ateamproject.kezuino.com.github.singleplayer.Direction} that this
+     *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject} is
+     *                      currently facing.
+     * @param color         {@link com.badlogic.gdx.graphics.Color} that this
+     *                      {@link GameObject} will be
      */
     public GameObject(Vector2 exactPosition, float movementSpeed, Direction direction, Color color) {
         if (direction == null) {
@@ -104,7 +108,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         this.startingPosition = exactPosition.cpy();
         this.movementSpeed = movementSpeed;
         this.direction = direction;
-        this.setNodePosition(exactPosition);
+        this.exactPosition = exactPosition.cpy();
         this.color = color;
         this.isActive = true;
     }
@@ -114,48 +118,39 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * color.
      *
      * @param movementSpeed Speed in seconds that this {@link GameObject} takes
-     * to move to another adjacent {@link Node}.
-     * @param direction {@link Direction} that this {@link GameObject} is
-     * currently facing.
+     *                      to move to another adjacent {@link Node}.
+     * @param direction     {@link Direction} that this {@link GameObject} is
+     *                      currently facing.
      */
-    public GameObject(Vector2 position, float movementSpeed, Direction direction) {
-        this(position, movementSpeed, direction, Color.WHITE);
+    public GameObject(Vector2 exactPosition, float movementSpeed, Direction direction) {
+        this(exactPosition, movementSpeed, direction, Color.WHITE);
     }
 
     /**
-     * Gets the position based on the {@link Map#nodes}.
+     * Gets the starting exactPosition of this {@link GameObject} when it was created.
      *
-     * @return Position based on the {@link Map#nodes}.
+     * @return Starting exactPosition of this {@link GameObject} when it was created.
      */
-    public Vector2 getNodePosition() {
-        return new Vector2(this.position.x / 32, this.position.y / 32);
+    public Vector2 getStartingPosition() {
+        return startingPosition;
     }
 
     /**
-     * Sets the position based on the {@link Map#nodes}.
-     *
-     * @param nodePosition Position based on the {@link Map#nodes}.
-     */
-    public void setNodePosition(Vector2 nodePosition) {
-        position = new Vector2(nodePosition.x * 32, nodePosition.y * 32);
-    }
-
-    /**
-     * Gets the absolute X and Y position of this {@link GameObject}.
+     * Gets the absolute X and Y exactPosition of this {@link GameObject}.
      *
      * @return
      */
-    public Vector2 getPosition() {
-        return position;
+    public Vector2 getExactPosition() {
+        return exactPosition;
     }
 
     /**
-     * Sets the absolute X and Y position of this {@link GameObject}.
+     * Sets the absolute X and Y exactPosition of this {@link GameObject}.
      *
-     * @param position Absolute X and Y position of this {@link GameObject}.
+     * @param exactPosition Absolute X and Y exactPosition of this {@link GameObject}.
      */
-    public void setPosition(Vector2 position) {
-        this.position = position;
+    public void setExactPosition(Vector2 exactPosition) {
+        this.exactPosition = exactPosition;
     }
 
     public boolean isMoving() {
@@ -212,7 +207,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * move to another adjacent {@link Node}.
      *
      * @param movementSpeed Speed in seconds that it takes for this
-     * {@link GameObject} to move to another adjacent {@link Node}.
+     *                      {@link GameObject} to move to another adjacent {@link Node}.
      */
     public void setMovementSpeed(float movementSpeed) {
         this.movementSpeed = movementSpeed;
@@ -221,7 +216,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     @Override
     public String toString() {
         return "GameObject{" +
-                "position=" + position +
+                "exactPosition=" + exactPosition +
                 ", movementSpeed=" + movementSpeed +
                 ", isMoving=" + isMoving +
                 ", direction=" + direction +
@@ -268,7 +263,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * facing towards.
      *
      * @param direction {@link Direction} that this {@link GameObject} is
-     * currently facing towards.
+     *                  currently facing towards.
      */
     public void setDirection(Direction direction) {
         if (direction == null) {
@@ -282,7 +277,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (map == null) {
             return null;
         }
-        return map.getNode(position);
+        return map.getNode((int) this.getExactPosition().x / 32, (int) this.getExactPosition().y / 32);
     }
 
     /**
@@ -290,18 +285,16 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@code y} coordinates. Doesn't take into account
      * {@link GameObject#movementSpeed} and doesn't use pathfinding.
      *
-     * @param x X position to set this {@link GameObject} to.
-     * @param y Y position to set this {@link GameObject} to.
+     * @param x X {@link Node} position to set this {@link GameObject} to.
+     * @param y Y {@link Node} position to set this {@link GameObject} to.
      * @return True if succesfully changed the Position, false if it didn't.
      */
-    public boolean setPosition(float x, float y) {
-        // Pre-check if all input data is valid.
-        if (map == null) {
-            return false;
-        }
+    public boolean setNodePosition(float x, float y) {
+        return setExactPosition(x * 32, y * 32);
+    }
 
-        this.position = new Vector2(x, y);
-
+    public boolean setExactPosition(float x, float y) {
+        this.exactPosition = new Vector2(x, y);
         return true;
     }
 
@@ -321,7 +314,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * the given {@code direction}.
      *
      * @param direction {@link Direction} to move in (to an adjacent
-     * {@link Node}).
+     *                  {@link Node}).
      */
     public void moveAdjacent(Direction direction) {
         this.direction = direction;
@@ -337,7 +330,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * true if collision has been handled and shouldn't continue.
      *
      * @param object {@link GameObject} that this {@link GameObject} is
-     * colliding with.
+     *               colliding with.
      * @return True if collision has been handled and {@link GameObject}.
      */
     protected boolean collisionWithGameObject(GameObject object) {
@@ -443,11 +436,12 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
         // Move object in direction.
         if (isMoving) {
-            this.position.add(direction.getX() * movementSpeed * Gdx.graphics.getDeltaTime(), direction.getY() * movementSpeed * Gdx.graphics.getDeltaTime());
+            this.exactPosition.add(direction.getX() * movementSpeed * Gdx.graphics.getDeltaTime(), direction.getY() * movementSpeed * Gdx.graphics
+                    .getDeltaTime());
 
             // TODO: BROKEN (Anton is fixing this).
             // Check target reached.
-//            if (getPosition().lerp(getNode().getMap().getAdjacentNode(movementSpeed / moveTime))) {
+//            if (getExactPosition().lerp(getNode().getMap().getAdjacentNode(movementSpeed / moveTime))) {
 //                isMoving = false;
 //            }
 
@@ -456,7 +450,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
         // Draw centered in node.
         float xOffset = (32 - texture.getWidth()) / 2f;
         float yOffset = (32 - texture.getHeight()) / 2f;
-        batch.draw(texture, this.position.x * 32 + xOffset, this.position.y * 32 + yOffset, texture.getWidth() / 2, texture.getHeight() / 2, texture.getWidth(), texture.getHeight(), 1, 1, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
+        batch.draw(texture, this.exactPosition.x + xOffset, this.exactPosition.y + yOffset, texture.getWidth() / 2, texture
+                .getHeight() / 2, texture
+                .getWidth(), texture.getHeight(), 1, 1, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
     }
 
     /**
