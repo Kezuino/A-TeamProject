@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.utility.assets.Assets;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -11,29 +12,30 @@ public class Pactale extends GameObject {
     private int playerIndex;
     private int lives;
     private Portal portal;
+
     /**
      * Initialize a {@link Pactale}.
      *
-     * @param x                position of this
-     *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see
-     *                         Map.
-     * @param y                position of this
-     *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see
-     *                         Map.
-     * @param lives            Times that the
-     *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} can be hit.
-     *                         Defaults to 1 for a multiplayer session.
-     * @param movementSpeed    Amount of seconds that it will take to move to
-     *                         another node.
+     * @param x position of this
+     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see
+     * Map.
+     * @param y position of this
+     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} on the @see
+     * Map.
+     * @param lives Times that the
+     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} can be hit.
+     * Defaults to 1 for a multiplayer session.
+     * @param movementSpeed Amount of seconds that it will take to move to
+     * another node.
      * @param walkingDirection Looking direction to start with.
-     * @param color            Distinct color of this
-     *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
+     * @param color Distinct color of this
+     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
      */
     public Pactale(Vector2 nodePosition, int lives, float movementSpeed, Direction walkingDirection, Color color) {
         super(nodePosition, movementSpeed, walkingDirection, color);
         this.lives = lives;
         this.playerIndex = playerIndexCounter++;
-        this.drawOnDirection=false;
+        this.drawOnDirection = false;
     }
 
     public int getPlayerIndex() {
@@ -54,13 +56,15 @@ public class Pactale extends GameObject {
 
     public void setLives(int lives) {
         //Checks if the lives that are getting set is lower than the current lives, if so pactale got defeated.
-        if (lives > this.lives) {
-            Sound sound = Assets.get("sounds/defeat.wav", Sound.class);
-            if (sound != null) {
-                sound.play();
-            }
-        }
         this.lives = lives;
+        if (this.lives == 0) {
+            Music defeat = Assets.getMusicStream("sound/defeat.wav");
+            if (defeat != null) {
+                defeat.play();
+            }
+
+            this.setActive(false);
+        }
     }
 
     /**
@@ -76,7 +80,6 @@ public class Pactale extends GameObject {
         proj.moveAdjacent(direction);
     }
 
-
     int getCollisionObject(int x, int y) {
         Node NextNode;
         int ReturnVal = 0;
@@ -89,24 +92,21 @@ public class Pactale extends GameObject {
         }
         return ReturnVal;
     }
-    
+
     @Override
     protected boolean collisionWithGameObject(GameObject object) {
-        if(object instanceof Enemy) {
+        if (object instanceof Enemy) {
             Enemy e = (Enemy) object;
-            
-            if(e.isEdible()) {
-                this.getMap().getSession().getScore().incrementScore(500);
-                e.setInactive();
-            } else {
-                this.lives -= 1;
-                this.setInactive();
+
+            if (!e.isEdible()) {
+                this.setLives(this.getLives() - 1);
+                this.setPosition(this.getStartingX(), this.getStartingY());
             }
             return true;
         }
         return false;
     }
-    
+
     @Override
     protected boolean collisionWithItem(Item item) {
         item.activate(this);
@@ -127,7 +127,7 @@ public class Pactale extends GameObject {
      * Will remove all listed portals from this {@link Pactale}.
      */
     public void removePortal() {
-         if (this.portal != null) {
+        if (this.portal != null) {
             this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).removePortal(portal.getDirection());
             this.portal = null;
         }

@@ -6,6 +6,7 @@ import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugPathfinding;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugStatistics;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
+import ateamproject.kezuino.com.github.render.screens.Hud;
 import ateamproject.kezuino.com.github.singleplayer.*;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -15,12 +16,12 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import java.util.stream.Collectors;
 
 public class GameRenderer implements IRenderer {
-    private SpriteBatch batch;
-    private Map map;
-    private MapRenderer tileMapRenderer;
-    private Camera camera;
+    private final SpriteBatch batch;
+    private final Map map;
+    private final MapRenderer tileMapRenderer;
+    private final Camera camera;
 
-    public GameRenderer(Map map) {
+    public GameRenderer(Map map, Score score) {
         // Camera.
         camera = new Camera(map.getWidth() * 32 + 100, map.getHeight() * 32 + 100, map, 32);
 
@@ -37,6 +38,11 @@ public class GameRenderer implements IRenderer {
         DebugRenderManager.setCamera(camera);
         DebugRenderManager.addRenderer(new DebugStatistics());
         DebugRenderManager.addRenderer(new DebugPathfinding());
+        for (GameObject gObject : map.getAllGameObjects()) {
+            if (gObject.getClass().equals(Pactale.class)) {
+                DebugRenderManager.addRenderer(new Hud((Pactale)gObject,score));  
+            }
+        }
         DebugRenderManager.show();
     }
 
@@ -79,6 +85,13 @@ public class GameRenderer implements IRenderer {
             obj.update();
             obj.draw(batch);
         }
+        
+        if(!this.map.getNodes().stream().anyMatch(n -> n.hasItem())) {
+            for (GameObject obj : this.map.getAllGameObjects()) {
+                obj.setActive(false);
+            }             
+        }
+        
         batch.end();
 
         DebugRenderManager.render(DebugLayers.UI);

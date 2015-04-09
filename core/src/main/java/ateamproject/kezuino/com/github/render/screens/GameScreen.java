@@ -13,6 +13,7 @@ import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import ateamproject.kezuino.com.github.singleplayer.Direction;
+import ateamproject.kezuino.com.github.singleplayer.GameObject;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 
@@ -23,8 +24,6 @@ public class GameScreen extends BaseScreen {
 
     private GameSession session;
     private final Pactale player;
-    private long startTijd = System.currentTimeMillis();
-    private long volgendeScoreUpdate = 1000;
 
     public GameScreen(Game game) {
         super(game);
@@ -36,9 +35,9 @@ public class GameScreen extends BaseScreen {
         session.setMap(Map.load(session, "1"));
 
         player = session.getPlayer(0);
-
+        
         // Renderers.
-        addRenderer(new GameRenderer(session.getMap()));
+        addRenderer(new GameRenderer(session.getMap(),session.getScore()));
 
         // Gameplay controls handling:
         inputs.addProcessor(new InputAdapter() {
@@ -80,10 +79,7 @@ public class GameScreen extends BaseScreen {
         Gdx.gl.glClearColor(1, 1, 1, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        if (System.currentTimeMillis() - startTijd > volgendeScoreUpdate){
-            this.session.getScore().decrementScore(60);
-            volgendeScoreUpdate = volgendeScoreUpdate + 1000;            
-        }
+        session.getScore().generateNewScore(session.getMap().getAllGameObjects());//will calculate/decrement score once in a period
         
         // Render Game and UI.
         super.render(delta);

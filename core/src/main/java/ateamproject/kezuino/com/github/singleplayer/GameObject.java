@@ -34,7 +34,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     protected Texture texture;
     /**
-     * {@link com.badlogic.gdx.graphics.Color} this {@link GameObject} previously originated from.
+     * {@link com.badlogic.gdx.graphics.Color} this {@link GameObject}
+     * previously originated from.
      */
     protected Color previousColor;
     /**
@@ -50,6 +51,14 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     private Vector2 position;
     /**
+     * starting X position of this {@link GameObject}.
+     */
+    private int startingX;
+    /**
+     * starting Y position of this {@link GameObject}.
+     */
+    private int startingY;
+    /**
      * Speed in seconds that it takes for this {@link GameObject} to move to
      * another adjacent {@link Node}.
      */
@@ -60,21 +69,27 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     private Color color;
 
-    
     protected boolean drawOnDirection;
+
     /**
      * Initializes this {@link GameObject}.
      *
-     *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
+     * @param map That hosts this
+     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
+     * @param x X position of this
+     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
+     * @param y Y position of this
+     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
      * @param movementSpeed Speed in seconds that this
-     *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes to
-     *                      move to another adjacent
-     *                      {@link ateamproject.kezuino.com.github.singleplayer.Node}.
-     * @param direction     {@link ateamproject.kezuino.com.github.singleplayer.Direction} that this
-     *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject} is
-     *                      currently facing.
-     * @param color         {@link com.badlogic.gdx.graphics.Color} that this
-     *                      {@link GameObject} will be
+     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes to
+     * move to another adjacent
+     * {@link ateamproject.kezuino.com.github.singleplayer.Node}.
+     * @param direction
+     * {@link ateamproject.kezuino.com.github.singleplayer.Direction} that this
+     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject} is
+     * currently facing.
+     * @param color {@link com.badlogic.gdx.graphics.Color} that this
+     * {@link GameObject} will be
      */
     public GameObject(Vector2 exactPosition, float movementSpeed, Direction direction, Color color) {
         if (direction == null) {
@@ -89,6 +104,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (color.equals(Color.CLEAR)) {
             throw new IllegalArgumentException("Parameter color must not be Color.CLEAR.");
         }
+        this.startingX = x;
+        this.startingY = y;
         this.movementSpeed = movementSpeed;
         this.direction = direction;
         this.setNodePosition(exactPosition);
@@ -100,10 +117,13 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * Initializes this {@link GameObject} with a default {@code Color.WHITE}
      * color.
      *
+     * @param map That hosts this {@link GameObject}.
+     * @param x X position of this {@link GameObject}.
+     * @param y Y position of this {@link GameObject}.
      * @param movementSpeed Speed in seconds that this {@link GameObject} takes
-     *                      to move to another adjacent {@link Node}.
-     * @param direction     {@link Direction} that this {@link GameObject} is
-     *                      currently facing.
+     * to move to another adjacent {@link Node}.
+     * @param direction {@link Direction} that this {@link GameObject} is
+     * currently facing.
      */
     public GameObject(Vector2 position, float movementSpeed, Direction direction) {
         this(position, movementSpeed, direction, Color.WHITE);
@@ -164,10 +184,29 @@ public abstract class GameObject implements IRenderable, IPositionable {
     }
 
     /**
+     * Gets the startingX dimension that this {@link GameObject} is on.
+     *
+     * @return startingX dimension that this {@link GameObject} is on.
+     */
+    public int getStartingX() {
+        return startingX;
+    }
+
+    /**
+     * Gets the startingY dimension that this {@link GameObject} is on.
+     *
+     * @return startingY dimension that this {@link GameObject} is on.
+     */
+    public int getStartingY() {
+        return startingY;
+    }
+
+    /**
      * Gets the {@link Map} that hosts this {@link GameObject}.
      *
      * @return {@link Map} that hosts this {@link GameObject}.
      */
+    @Override
     public Map getMap() {
         return map;
     }
@@ -197,7 +236,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * move to another adjacent {@link Node}.
      *
      * @param movementSpeed Speed in seconds that it takes for this
-     *                      {@link GameObject} to move to another adjacent {@link Node}.
+     * {@link GameObject} to move to another adjacent {@link Node}.
      */
     public void setMovementSpeed(float movementSpeed) {
         this.movementSpeed = movementSpeed;
@@ -253,10 +292,12 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * facing towards.
      *
      * @param direction {@link Direction} that this {@link GameObject} is
-     *                  currently facing towards.
+     * currently facing towards.
      */
     public void setDirection(Direction direction) {
-        if (direction == null) return;
+        if (direction == null) {
+            return;
+        }
         this.nextDirection = this.isMoving ? direction : (this.direction = direction);
     }
 
@@ -304,7 +345,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * the given {@code direction}.
      *
      * @param direction {@link Direction} to move in (to an adjacent
-     *                  {@link Node}).
+     * {@link Node}).
      */
     public void moveAdjacent(Direction direction) {
         this.direction = direction;
@@ -320,7 +361,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * true if collision has been handled and shouldn't continue.
      *
      * @param object {@link GameObject} that this {@link GameObject} is
-     *               colliding with.
+     * colliding with.
      * @return True if collision has been handled and {@link GameObject}.
      */
     protected boolean collisionWithGameObject(GameObject object) {
@@ -328,8 +369,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
     }
 
     /**
-     * Called when collision was detected by this {@link GameObject}, with a wall.
-     * Return true of collision has been handled.
+     * Called when collision was detected by this {@link GameObject}, with a
+     * wall. Return true of collision has been handled.
      *
      * @param node {@link Node} this {@link GameObject} collided with.
      * @return True if the collision has been handled.
@@ -384,7 +425,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
         }
 
         for (GameObject obj : this.map.getGameObjectsOnNode(this.getNode())) {
-            if (obj.equals(this)) continue;
+            if (obj.equals(this)) {
+                continue;
+            }
             if (collisionWithGameObject(obj)) {
                 System.out.println("Collision handled");
                 break;

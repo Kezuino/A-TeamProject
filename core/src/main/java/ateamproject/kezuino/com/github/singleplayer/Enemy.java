@@ -141,6 +141,19 @@ public class Enemy extends GameObject {
     public GameObject getObjectToFollow() {
         return this.objectToFollow;
     }
+    
+    @Override
+    protected boolean collisionWithGameObject(GameObject object) {
+        if (object instanceof Pactale) {
+            if (this.isEdible()) {
+                //this.setDead(true);
+                this.getMap().getSession().getScore().incrementScore(500);
+                this.setPosition(this.getStartingX(), this.getStartingY());
+            }
+            return true;
+        }
+        return false;
+    }
 
     @Override
     public void update() {
