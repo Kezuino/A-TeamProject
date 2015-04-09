@@ -13,6 +13,7 @@ import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import ateamproject.kezuino.com.github.singleplayer.Direction;
+import ateamproject.kezuino.com.github.singleplayer.GameObject;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 
@@ -23,8 +24,12 @@ public class GameScreen extends BaseScreen {
 
     private GameSession session;
     private final Pactale player;
-    private long startTijd = System.currentTimeMillis();
-    private long volgendeScoreUpdate = 1000;
+    
+    //score manipulation
+    private long startTime = System.currentTimeMillis();
+    private long nextScoreUpdate = 1000;//amount of miliseconds that a score will be decremented
+    private int maxScoreManipulation;//the maximal amount of score that will be decremented
+    private int currentScoreManipulation = 0;//the current amount of decremented score
 
     public GameScreen(Game game) {
         super(game);
@@ -38,8 +43,10 @@ public class GameScreen extends BaseScreen {
         player = session.getPlayer(0);
         //session.getMap().addGameObject(9, 5, this.player);
 
+        maxScoreManipulation = session.getScore().getScore();
+        
         // Renderers.
-        addRenderer(new GameRenderer(session.getMap()));
+        addRenderer(new GameRenderer(session.getMap(),session.getScore()));
 
         // Gameplay controls handling:
         inputs.addProcessor(new InputAdapter() {
@@ -81,9 +88,17 @@ public class GameScreen extends BaseScreen {
         Gdx.gl.glClearColor(1, 1, 1, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        if (System.currentTimeMillis() - startTijd > volgendeScoreUpdate){
-            this.session.getScore().decrementScore(60);
-            volgendeScoreUpdate = volgendeScoreUpdate + 1000;            
+        if (System.currentTimeMillis() - startTime > nextScoreUpdate && currentScoreManipulation < maxScoreManipulation){//make sure that the score wont be decremented beyond its initial starting value
+            int scoreToDecrement = 0;
+            for (GameObject gObject : this.session.getMap().getAllGameObjects()) {
+                if (gObject instanceof Pactale) {
+                    scoreToDecrement += 60;
+                }
+            }
+            
+            this.session.getScore().decrementScore(scoreToDecrement);
+            this.currentScoreManipulation += scoreToDecrement;
+            nextScoreUpdate = nextScoreUpdate + 1000;            
         }
         
         // Render Game and UI.
