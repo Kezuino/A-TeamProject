@@ -16,10 +16,10 @@ import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import java.util.stream.Collectors;
 
 public class GameRenderer implements IRenderer {
-    private SpriteBatch batch;
-    private Map map;
-    private MapRenderer tileMapRenderer;
-    private Camera camera;
+    private final SpriteBatch batch;
+    private final Map map;
+    private final MapRenderer tileMapRenderer;
+    private final Camera camera;
 
     public GameRenderer(Map map, Score score) {
         // Camera.
@@ -85,6 +85,13 @@ public class GameRenderer implements IRenderer {
             obj.update();
             obj.draw(batch);
         }
+        
+        if(!this.map.getNodes().stream().anyMatch(n -> n.hasItem())) {
+            for (GameObject obj : this.map.getAllGameObjects()) {
+                obj.setActive(false);
+            }             
+        }
+        
         batch.end();
 
         DebugRenderManager.render(DebugLayers.UI);

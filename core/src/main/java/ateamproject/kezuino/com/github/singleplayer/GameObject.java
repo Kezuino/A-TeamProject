@@ -156,6 +156,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * Gets the {@link Texture} of this {@link GameObject} for drawing.
      */
+    @Override
     public Texture getTexture() {
         return texture;
     }
@@ -163,6 +164,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * Sets the {@link Texture} of this {@link GameObject} for drawing.
      */
+    @Override
     public void setTexture(Texture texture) {
         this.texture = texture;
     }
@@ -208,6 +210,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      *
      * @return {@link Map} that hosts this {@link GameObject}.
      */
+    @Override
     public Map getMap() {
         return map;
     }
@@ -336,7 +339,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         return this.isActive;
     }
 
-    protected void setActive(boolean active) {
+    public void setActive(boolean active) {
         this.isActive = active;
     }
 

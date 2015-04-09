@@ -3,7 +3,7 @@ package ateamproject.kezuino.com.github.singleplayer.client;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.backends.gwt.GwtApplication;
 import com.badlogic.gdx.backends.gwt.GwtApplicationConfiguration;
-import ateamproject.kezuino.com.github.singleplayer.PactaleGame;
+import ateamproject.kezuino.com.github.PactaleGame;
 
 public class HtmlLauncher extends GwtApplication {
 

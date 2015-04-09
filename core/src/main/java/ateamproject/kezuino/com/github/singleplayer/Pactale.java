@@ -102,12 +102,9 @@ public class Pactale extends GameObject {
         if (object instanceof Enemy) {
             Enemy e = (Enemy) object;
 
-            if (e.isEdible()) {
-                this.getMap().getSession().getScore().incrementScore(500);
-                e.setActive(false);
-            } else {
+            if (!e.isEdible()) {
                 this.setLives(this.getLives() - 1);
-                super.setPosition(super.getStartingX(), super.getStartingY());
+                this.setPosition(this.getStartingX(), this.getStartingY());
             }
             return true;
         }
