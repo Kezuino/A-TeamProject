@@ -436,15 +436,15 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
         // Move object in direction.
         if (isMoving) {
-            this.exactPosition.add(direction.getX() * movementSpeed * Gdx.graphics.getDeltaTime(), direction.getY() * movementSpeed * Gdx.graphics
-                    .getDeltaTime());
+            this.exactPosition.mulAdd(this.direction.getVector2(), Gdx.graphics.getDeltaTime() * 10);
 
             // TODO: BROKEN (Anton is fixing this).
             // Check target reached.
-//            if (getExactPosition().lerp(getNode().getMap().getAdjacentNode(movementSpeed / moveTime))) {
-//                isMoving = false;
-//            }
-
+            if (moveTime >= 1) {
+                isMoving = false;
+                moveTime = 0;
+                this.exactPosition = getNode().getAdjacentNode(direction).getExactPosition();
+            }
         }
 
         // Draw centered in node.

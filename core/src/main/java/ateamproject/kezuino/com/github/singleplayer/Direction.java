@@ -2,6 +2,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Vector2;
 
 /**
  * {@link Direction} specifies which x-axis and y-axis are linked to a {@link Direction} and are used throughout the {@link Game}.
@@ -99,27 +100,22 @@ public enum Direction {
         return valueOf(resultX, resultY);
     }
 
-    public float getRotation()
-    {
+    public float getRotation() {
         float rotation = 0;
-        switch(this)
-            {
-                case Up:
-                    rotation = 180;
-                    break;
-                case  Left:
-                    rotation = 270;
-                    break;
-                case Right:
-                    rotation = 90;
-                    break;
-            }
-        
+        switch (this) {
+            case Up:
+                rotation = 180;
+                break;
+            case Left:
+                rotation = 270;
+                break;
+            case Right:
+                rotation = 90;
+                break;
+        }
         return rotation;
-        
-        
     }
-    
+
     /**
      * Gets the difference in the X dimension that should take place when moving in a {@link Direction}.
      *
@@ -156,5 +152,14 @@ public enum Direction {
             default:
                 return null;
         }
+    }
+
+    /**
+     * Gets the {@link Vector2} version of {@link #getX()} and {@link #getY()} combined.
+     *
+     * @return {@link Vector2} version of {@link #getX()} and {@link #getY()} combined.
+     */
+    public Vector2 getVector2() {
+        return new Vector2(getX(), getY());
     }
 }

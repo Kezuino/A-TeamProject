@@ -28,7 +28,7 @@ public class TestEnemy {
         session.setMap(20);
         map = session.getMap();
         spawn = map.getNode(19, 19);
-        enemy = new Enemy(null, spawn.getPosition(), 100, Direction.Down, Color.BLACK);
+        enemy = new Enemy(null, spawn.getExactPosition(), 100, Direction.Down, Color.BLACK);
         teleportNode = map.getNode(19, 19);
     }
 
@@ -45,7 +45,7 @@ public class TestEnemy {
          * @param walkingDirection
          * @param color
          */
-        enemy = new Enemy(null, spawn.getPosition().cpy(), 100, Direction.Down);
+        enemy = new Enemy(null, spawn.getExactPosition().cpy(), 100, Direction.Down);
         assertEquals("Enemy should not follow any object.", null, enemy.getObjectToFollow());
         assertFalse("Enemy should not be dead.", enemy.isDead());
         assertFalse("Enemy's status should not be edible.", enemy.isEdible());
@@ -56,12 +56,12 @@ public class TestEnemy {
 
     @Test(expected = IllegalArgumentException.class)
     public void testWrongConstructor() {
-        Enemy wrongEnemy = new Enemy(null, spawn.getPosition().cpy(), 10, null, null);
+        Enemy wrongEnemy = new Enemy(null, spawn.getExactPosition().cpy(), 10, null, null);
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void testWrongConstructorSpeed0() {
-        Enemy wrongEnemy = new Enemy(null, spawn.getPosition().cpy(), 0, Direction.Up, Color.YELLOW);
+        Enemy wrongEnemy = new Enemy(null, spawn.getExactPosition().cpy(), 0, Direction.Up, Color.YELLOW);
     }
 
     @Test
