@@ -28,7 +28,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link Node}.
      */
     protected float movementStartTime;
-    protected float lifeTime;
+    protected float moveTime;
     /**
      * {@link Texture} of this {@link GameObject} for drawing.
      */
@@ -50,14 +50,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * Exact world position of this {@link GameObject}. Use {@link #getNode()} to get the {@link Node} at the current position.
      */
     private Vector2 position;
-    /**
-     * starting X position of this {@link GameObject}.
-     */
-    private int startingX;
-    /**
-     * starting Y position of this {@link GameObject}.
-     */
-    private int startingY;
+    private Vector2 startingPosition;
     /**
      * Speed in seconds that it takes for this {@link GameObject} to move to
      * another adjacent {@link Node}.
@@ -72,13 +65,17 @@ public abstract class GameObject implements IRenderable, IPositionable {
     protected boolean drawOnDirection;
 
     /**
+     * Gets the starting position of this {@link GameObject} when it was created.
+     *
+     * @return Starting position of this {@link GameObject} when it was created.
+     */
+    public Vector2 getStartingPosition() {
+        return startingPosition;
+    }
+
+    /**
      * Initializes this {@link GameObject}.
      *
-     * @param map That hosts this
-     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
-     * @param x X position of this
-     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
-     * @param y Y position of this
      * {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
      * @param movementSpeed Speed in seconds that this
      * {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes to
@@ -104,8 +101,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (color.equals(Color.CLEAR)) {
             throw new IllegalArgumentException("Parameter color must not be Color.CLEAR.");
         }
-        this.startingX = x;
-        this.startingY = y;
+        this.startingPosition = exactPosition.cpy();
         this.movementSpeed = movementSpeed;
         this.direction = direction;
         this.setNodePosition(exactPosition);
@@ -117,9 +113,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * Initializes this {@link GameObject} with a default {@code Color.WHITE}
      * color.
      *
-     * @param map That hosts this {@link GameObject}.
-     * @param x X position of this {@link GameObject}.
-     * @param y Y position of this {@link GameObject}.
      * @param movementSpeed Speed in seconds that this {@link GameObject} takes
      * to move to another adjacent {@link Node}.
      * @param direction {@link Direction} that this {@link GameObject} is
@@ -183,23 +176,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
         this.texture = texture;
     }
 
-    /**
-     * Gets the startingX dimension that this {@link GameObject} is on.
-     *
-     * @return startingX dimension that this {@link GameObject} is on.
-     */
-    public int getStartingX() {
-        return startingX;
-    }
-
-    /**
-     * Gets the startingY dimension that this {@link GameObject} is on.
-     *
-     * @return startingY dimension that this {@link GameObject} is on.
-     */
-    public int getStartingY() {
-        return startingY;
-    }
 
     /**
      * Gets the {@link Map} that hosts this {@link GameObject}.
@@ -336,7 +312,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * Marks this {@link GameObject} for deletion. Must not be undone.
      */
-    protected void setInactive() {
+    public void setInactive() {
         this.isActive = false;
     }
 
@@ -448,7 +424,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     @Override
     public void draw(SpriteBatch batch) {
-        lifeTime += Gdx.graphics.getDeltaTime();
+        moveTime += Gdx.graphics.getDeltaTime();
 
         // Capture node and texture.
         Node node = getNode();
@@ -469,16 +445,18 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (isMoving) {
             this.position.add(direction.getX() * movementSpeed * Gdx.graphics.getDeltaTime(), direction.getY() * movementSpeed * Gdx.graphics.getDeltaTime());
 
+            // TODO: BROKEN (Anton is fixing this).
             // Check target reached.
-            if (movementSpeed / lifeTime) {
-                isMoving = false;
-            }
+//            if (getPosition().lerp(getNode().getMap().getAdjacentNode(movementSpeed / moveTime))) {
+//                isMoving = false;
+//            }
+
         }
 
         // Draw centered in node.
         float xOffset = (32 - texture.getWidth()) / 2f;
         float yOffset = (32 - texture.getHeight()) / 2f;
-        batch.draw(texture, this.x * 32 + xOffset, this.y * 32 + yOffset, texture.getWidth() / 2, texture.getHeight() / 2, texture.getWidth(), texture.getHeight(), 1, 1, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
+        batch.draw(texture, this.position.x * 32 + xOffset, this.position.y * 32 + yOffset, texture.getWidth() / 2, texture.getHeight() / 2, texture.getWidth(), texture.getHeight(), 1, 1, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
     }
 
     /**

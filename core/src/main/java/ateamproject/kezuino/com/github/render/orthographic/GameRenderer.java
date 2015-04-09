@@ -88,7 +88,7 @@ public class GameRenderer implements IRenderer {
         
         if(!this.map.getNodes().stream().anyMatch(n -> n.hasItem())) {
             for (GameObject obj : this.map.getAllGameObjects()) {
-                obj.setActive(false);
+                obj.setInactive();
             }             
         }
         

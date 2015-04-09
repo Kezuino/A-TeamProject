@@ -239,6 +239,15 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
         return true;
     }
 
+    /**
+     * Returns a node which is in the direction of the given direction. Will return null if node does not exist.
+     *
+     * @param direction
+     */
+    public Node getAdjacentNode(Direction direction) {
+        if (direction == null) throw new NullPointerException("Parameter direction must not be null.");
+        return getMap().getNode(getX() + direction.getX(), getY() + direction.getY());
+    }
 
     /**
      * Gets all the {@link Portal portals} on this {@link Node}.

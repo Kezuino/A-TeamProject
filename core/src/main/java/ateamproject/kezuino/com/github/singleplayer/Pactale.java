@@ -63,7 +63,7 @@ public class Pactale extends GameObject {
                 defeat.play();
             }
 
-            this.setActive(false);
+            this.setInactive();
         }
     }
 
@@ -100,7 +100,7 @@ public class Pactale extends GameObject {
 
             if (!e.isEdible()) {
                 this.setLives(this.getLives() - 1);
-                this.setPosition(this.getStartingX(), this.getStartingY());
+                this.setPosition(this.getStartingPosition().x, this.getStartingPosition().y);
             }
             return true;
         }
