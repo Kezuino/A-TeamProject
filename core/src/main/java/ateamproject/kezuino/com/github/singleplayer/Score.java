@@ -62,7 +62,7 @@ public class Score {
      * @return The new current score value of this {@link Score}.
      */
     public int decrementScore(int decreaseBy) {
-        this.score -= decreaseBy;
+        this.score -= this.score - decreaseBy < 0 ? this.score : decreaseBy;
         return this.score;
     }
 
