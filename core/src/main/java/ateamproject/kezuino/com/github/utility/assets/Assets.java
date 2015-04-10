@@ -17,6 +17,7 @@ import java.util.HashMap;
 public class Assets {
     public static final String AUDIO_SOUND_DIR = "audio/sound/";
     public static final String AUDIO_MUSIC_DIR = "audio/music/";
+    public static final String FONTS_DIR = "fonts/";
 
     public static AssetManager manager;
     private static HashMap<String, Music> musicInstances;
@@ -180,6 +181,6 @@ public class Assets {
      * @return {@link BitmapFont} if it was found. Or null.
      */
     public static BitmapFont getFont(String asset) {
-        return get(asset, BitmapFont.class);
+        return get(FONTS_DIR + asset, BitmapFont.class);
     }
 }

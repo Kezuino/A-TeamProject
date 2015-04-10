@@ -1,6 +1,5 @@
 package ateamproject.kezuino.com.github.render.debug;
 
-import ateamproject.kezuino.com.github.render.screens.Hud;
 import ateamproject.kezuino.com.github.singleplayer.IPositionable;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -63,10 +62,7 @@ public class DebugRenderManager {
      * @param object {@link IPositionable} to be drawn on.
      */
     public static void render(DebugLayers layer, IPositionable object) {
-        if (layer == null) {
-            return;
-        }
-        if (!layer.isVisible()) {
+        if (layer == null || !layer.isVisible()) {
             return;
         }
         for (IDebugRenderer renderer : renderers) {

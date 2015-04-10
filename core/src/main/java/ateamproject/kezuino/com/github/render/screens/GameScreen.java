@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
+import ateamproject.kezuino.com.github.render.orthographic.GameUIRenderer;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.singleplayer.Pactale;
@@ -37,7 +38,8 @@ public class GameScreen extends BaseScreen {
         player = session.getPlayer(0);
         
         // Renderers.
-        addRenderer(new GameRenderer(session.getMap(),session.getScore()));
+        addRenderer(new GameRenderer(session.getMap()));
+        addRenderer(new GameUIRenderer(session.getMap()));
 
         // Gameplay controls handling:
         inputs.addProcessor(new InputAdapter() {
@@ -79,7 +81,7 @@ public class GameScreen extends BaseScreen {
         Gdx.gl.glClearColor(1, 1, 1, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         
-        session.getScore().generateNewScore(session.getMap().getAllGameObjects());//will calculate/decrement score once in a period
+        session.getScore().generateNewScore(session.getMap().getAllGameObjects()); // Will calculate/decrease score once in a period.
         
         // Render Game and UI.
         super.render(delta);

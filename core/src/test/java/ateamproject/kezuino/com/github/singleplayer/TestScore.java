@@ -23,7 +23,7 @@ public class TestScore {
         this.testSession = new GameSession();
         testSession.setMap(4);
         this.testScore = new Score(this.testSession);
-        this.testScore.incrementScore(25);
+        this.testScore.increase(25);
     }
     
     /**
@@ -31,15 +31,15 @@ public class TestScore {
     */
     @Test
     public void testIncrementScore() {
-        this.testScore.incrementScore(5);
-        assertEquals("Current session score should be equal to 30", 30, this.testScore.getScore());         
-        assertEquals("Current session score should be equal to 40", 40, this.testScore.incrementScore(10));
+        this.testScore.increase(5);
+        assertEquals("Current session score should be equal to 30", 30, this.testScore.valueOf());
+        assertEquals("Current session score should be equal to 40", 40, this.testScore.increase(10));
     }
     
     @Test
     public void testDecrementScore() {
-        this.testScore.decrementScore(5);
-        assertEquals("Current session score should be equal to 20", 20, this.testScore.getScore());
-        assertEquals("Current session score should be equal to 10", 10, this.testScore.decrementScore(10));
+        this.testScore.decrease(5);
+        assertEquals("Current session score should be equal to 20", 20, this.testScore.valueOf());
+        assertEquals("Current session score should be equal to 10", 10, this.testScore.decrease(10));
     }
 }

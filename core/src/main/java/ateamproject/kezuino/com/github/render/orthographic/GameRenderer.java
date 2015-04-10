@@ -6,9 +6,7 @@ import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugPathfinding;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugStatistics;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
-import ateamproject.kezuino.com.github.render.screens.Hud;
 import ateamproject.kezuino.com.github.singleplayer.*;
-import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
@@ -21,7 +19,7 @@ public class GameRenderer implements IRenderer {
     private final MapRenderer tileMapRenderer;
     private final Camera camera;
 
-    public GameRenderer(Map map, Score score) {
+    public GameRenderer(Map map) {
         // Camera.
         camera = new Camera(map.getWidth() * 32 + 100, map.getHeight() * 32 + 100, map, 32);
 
@@ -34,15 +32,10 @@ public class GameRenderer implements IRenderer {
         tileMapRenderer = new OrthogonalTiledMapRenderer(map.getBaseMap());
         tileMapRenderer.setView(camera);
 
-        // Init visual debugger.
+        // Init visual debugger (For debugging only! Don't use this for gameplay render).
         DebugRenderManager.setCamera(camera);
         DebugRenderManager.addRenderer(new DebugStatistics());
         DebugRenderManager.addRenderer(new DebugPathfinding());
-        for (GameObject gObject : map.getAllGameObjects()) {
-            if (gObject.getClass().equals(Pactale.class)) {
-                DebugRenderManager.addRenderer(new Hud((Pactale)gObject,score));  
-            }
-        }
         DebugRenderManager.show();
     }
 

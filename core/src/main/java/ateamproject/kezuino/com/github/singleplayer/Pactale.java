@@ -1,8 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.utility.assets.Assets;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
@@ -49,11 +47,22 @@ public class Pactale extends GameObject {
     }
 
     public void setLives(int lives) {
-        //Checks if the lives that are getting set is lower than the current lives, if so pactale got defeated.
+        if (lives < 0) return;
         this.lives = lives;
+    }
+
+    /**
+     * Hurts the {@link Pactale} so that it loses one life and resets it's position to spawn.
+     *
+     */
+    public void hurt() {
+        if (this.lives < 0) return;
+        this.lives--;
         if (this.lives == 0) {
             Assets.playSound("defeat.wav");
             this.setInactive();
+        } else {
+
         }
     }
 
@@ -92,9 +101,9 @@ public class Pactale extends GameObject {
             Enemy e = (Enemy) object;
 
             if (!e.isEdible()) {
-                this.setLives(this.getLives() - 1);
+                this.hurt();
                 this.setNodePosition(this.getStartingPosition().x / 32, this.getStartingPosition().y / 32);
-                this.getMap().getSession().getScore().decrementScore(100);
+                this.getMap().getSession().getScore().decrease(100);
             }
             return true;
         }

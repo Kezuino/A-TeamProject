@@ -20,7 +20,7 @@ public class DebugStatistics extends DebugRenderer {
     public DebugStatistics() {
         super(DebugLayers.UI);
 
-        font = Assets.getFont("fonts/opensans.ttf");
+        font = Assets.getFont("opensans.ttf");
     }
 
     @Override

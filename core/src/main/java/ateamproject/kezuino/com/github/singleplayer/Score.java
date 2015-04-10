@@ -5,12 +5,21 @@ import java.util.stream.Collectors;
 
 public class Score {
 
-    private int score;
     private final GameSession gameSession;
     private final long startTime = System.currentTimeMillis();
-    private long nextScoreUpdate = 1000;//amount of miliseconds that a score will be decremented
-    private final int maxScoreManipulation;//the maximal amount of score that will be decremented
-    private int currentScoreManipulation = 0;//the current amount of decremented score
+    /**
+     * The maximal amount of score that will be decremented.
+     */
+    private final int maxScoreManipulation;
+    private int score;
+    /**
+     * Amount of miliseconds that a score will be decremented.
+     */
+    private long nextScoreUpdate = 1000;
+    /**
+     * The current amount of decremented score.
+     */
+    private int currentScoreManipulation = 0;
 
     /**
      * Constructs a new {@link Score} for the set {@link GameSession}.
@@ -28,7 +37,7 @@ public class Score {
      *
      * @return The current {@link Score} of this {@link GameSession}.
      */
-    public int getScore() {
+    public int valueOf() {
         return this.score;
     }
 
@@ -46,10 +55,11 @@ public class Score {
      * {@link Score} value.
      *
      * @param increaseBy The value to increase the current {@link Score} value
-     * with.
+     *                   with.
      * @return The new current score value of this {@link Score}.
      */
-    public int incrementScore(int increaseBy) {
+    public int increase(int increaseBy) {
+        if (increaseBy < 0) throw new IllegalArgumentException("Parameter increaseBy must not be negative.");
         this.score += increaseBy;
         return this.score;
     }
@@ -60,23 +70,28 @@ public class Score {
      * it will decrease the score by itself (turning it into 0).
      *
      * @param decreaseBy The value to decrease the current {@link Score} value
-     * with.
+     *                   with.
      * @return The new current score value of this {@link Score}.
      */
-    public int decrementScore(int decreaseBy) {
+    public int decrease(int decreaseBy) {
+        if (decreaseBy < 0) throw new IllegalArgumentException("Parameter decreaseBy must not be negative.");
         this.score -= this.score - decreaseBy < 0 ? this.score : decreaseBy;
         return this.score;
     }
 
     /**
-     * Will decrement the score every nextScoreUpdate
-     * @param gameObjects 
+     * Will decrease the score every nextScoreUpdate
+     *
+     * @param gameObjects
      */
     public void generateNewScore(List<GameObject> gameObjects) {
         if (System.currentTimeMillis() - startTime > nextScoreUpdate && currentScoreManipulation < maxScoreManipulation) {//make sure that the score wont be decremented beyond its initial starting value
-            int scoreToDecrement = gameObjects.stream().filter(go -> go instanceof Pactale).collect(Collectors.counting()).intValue() * 60;
+            int scoreToDecrement = gameObjects.stream()
+                                              .filter(go -> go instanceof Pactale)
+                                              .collect(Collectors.counting())
+                                              .intValue() * 60;
 
-            this.decrementScore(scoreToDecrement);
+            this.decrease(scoreToDecrement);
             this.currentScoreManipulation += scoreToDecrement;
             nextScoreUpdate = nextScoreUpdate + 1000;
         }

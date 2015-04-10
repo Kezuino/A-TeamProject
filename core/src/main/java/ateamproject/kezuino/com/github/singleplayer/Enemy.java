@@ -145,7 +145,7 @@ public class Enemy extends GameObject {
         if (object instanceof Pactale) {
             if (this.isEdible()) {
                 //this.setDead(true);
-                this.getMap().getSession().getScore().incrementScore(500);
+                this.getMap().getSession().getScore().increase(500);
                 this.setNodePosition(this.getStartingPosition().x, this.getStartingPosition().y);
             }
             return true;

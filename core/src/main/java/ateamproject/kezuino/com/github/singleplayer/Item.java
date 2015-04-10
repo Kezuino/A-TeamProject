@@ -138,8 +138,8 @@ public class Item implements IRenderable, IPositionable {
                 break;
         }
 
-        this.getMap().getSession().getScore().incrementScore(this.type.getScore());
-        System.out.println(this.getMap().getSession().getScore().getScore());
+        this.getMap().getSession().getScore().increase(this.type.getScore());
+        System.out.println(this.getMap().getSession().getScore().valueOf());
     }
 
 
