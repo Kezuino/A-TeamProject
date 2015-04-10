@@ -30,6 +30,7 @@ public class TestEnemy {
         spawn = map.getNode(19, 19);
         enemy = new Enemy(null, spawn.getExactPosition(), 100, Direction.Down, Color.BLACK);
         teleportNode = map.getNode(19, 19);
+        map.addGameObject(enemy);
     }
 
     @Test
@@ -46,6 +47,7 @@ public class TestEnemy {
          * @param color
          */
         enemy = new Enemy(null, spawn.getExactPosition().cpy(), 100, Direction.Down);
+        map.addGameObject(enemy);
         assertEquals("Enemy should not follow any object.", null, enemy.getObjectToFollow());
         assertFalse("Enemy should not be dead.", enemy.isDead());
         assertFalse("Enemy's status should not be edible.", enemy.isEdible());
