@@ -72,7 +72,7 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
     public Item setItem(String itemName, ItemType type) {
         if (itemName == null || itemName.isEmpty())
             throw new IllegalArgumentException("Parameter itemName must not be null or empty.");
-        this.item = new Item(itemName, this.getPosition().cpy().mulAdd(new Vector2(1, 1), 32), type);
+        this.item = new Item(itemName, this.getExactPosition().cpy().mulAdd(new Vector2(1, 1), 32), type);
         this.item.setMap(getMap());
         return this.item;
     }
@@ -320,7 +320,7 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
      *
      * @return {@link Vector2 Position} of this {@link Node}.
      */
-    public Vector2 getPosition() {
+    public Vector2 getExactPosition() {
         return new Vector2(getX() * 32, getY() * 32);
     }
 }

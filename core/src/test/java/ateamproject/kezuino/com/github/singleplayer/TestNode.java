@@ -87,7 +87,7 @@ public class TestNode {
         assertNotNull("An item must be set on the node.", nodeForItem.getItem());
         nodeForItem.removeItem();
         assertNull("Item must have been removed from the node.", nodeForItem.getItem());
-        Item item = new Item(nodeForItem.getPosition(), ItemType.BigObject);
+        Item item = new Item(nodeForItem.getExactPosition(), ItemType.BigObject);
         item.setMap(this.testSession.getMap());
         nodeForItem.setItem(item);
         assertNotNull("Item must have been set on the node.", nodeForItem.getItem());

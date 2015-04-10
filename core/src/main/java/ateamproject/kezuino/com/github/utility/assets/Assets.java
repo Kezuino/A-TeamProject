@@ -11,12 +11,12 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import jdk.nashorn.internal.codegen.CompilationException;
 
-import java.io.FileNotFoundException;
 import java.util.HashMap;
 
 public class Assets {
+    public static final String AUDIO_SOUND_DIR = "audio/sound/";
+    public static final String AUDIO_MUSIC_DIR = "audio/music/";
 
     public static AssetManager manager;
     private static HashMap<String, Music> musicInstances;
@@ -50,20 +50,15 @@ public class Assets {
      * Loads all the basic textures required for the {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
     private static void load() {
-
-        // Textures.
-        manager.load("textures/pactale.png", Texture.class);
-        manager.load("textures/enemy.png", Texture.class);
+        // Textures (only load those that aren't loaded by the TmxMapLoader).
         manager.load("textures/projectile.png", Texture.class);
-        manager.load("textures/bigObject.png", Texture.class);
-        manager.load("textures/smallObject.png", Texture.class);
-        manager.load("textures/item.png", Texture.class);
         manager.load("textures/portal.png", Texture.class);
 
-
         // Sounds.
-        //manager.load("sounds/menu.mp3", Sound.class); //Takes a long time..
-        //manager.load("sounds/defeat.wav", Sound.class); //Takes a long time..
+        manager.load(AUDIO_SOUND_DIR + "defeat.wav", Sound.class);
+
+        // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
+
         // Wait for assets to load.
         manager.finishLoading();
     }
@@ -75,6 +70,8 @@ public class Assets {
      * @return Resource from the {@link AssetManager} or null if not found
      */
     public static <T> T get(String asset, Class<T> type) {
+        if (asset == null || asset.isEmpty())
+            throw new IllegalArgumentException("Parameter asset must not be null or empty.");
         FileHandle file = Gdx.files.internal(asset);
         if (!file.exists()) throw new NullPointerException(String.format("Asset '%s' could not be found.", asset));
         if (manager == null) return null;
@@ -91,7 +88,7 @@ public class Assets {
      * @return {@link Sound} from the assets folder and plays it.
      */
     public static Sound playSound(String asset) {
-        Sound sound = Assets.get(asset, Sound.class);
+        Sound sound = Assets.get(AUDIO_SOUND_DIR + asset, Sound.class);
         if (sound != null) {
             sound.play();
         }
@@ -105,7 +102,7 @@ public class Assets {
      * @return {@link Sound} from the assets folder and loops it.
      */
     public static Sound loopSound(String asset) {
-        Sound sound = Assets.get(asset, Sound.class);
+        Sound sound = Assets.get(AUDIO_SOUND_DIR + asset, Sound.class);
         if (sound != null) {
             sound.loop();
         }
@@ -120,7 +117,7 @@ public class Assets {
      */
     public static Music getMusicStream(String fileName) {
         if (fileName == null || fileName.isEmpty()) return null;
-        String asset = "audio/music/" + fileName;
+        String asset = AUDIO_MUSIC_DIR + fileName;
 
         Music music;
 

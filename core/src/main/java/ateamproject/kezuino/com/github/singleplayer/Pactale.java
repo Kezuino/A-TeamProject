@@ -2,6 +2,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
@@ -24,8 +25,8 @@ public class Pactale extends GameObject {
      * @param color            Distinct color of this
      *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
      */
-    public Pactale(Vector2 nodePosition, int lives, float movementSpeed, Direction walkingDirection, Color color) {
-        super(nodePosition, movementSpeed, walkingDirection, color);
+    public Pactale(Vector2 exactPosition, int lives, float movementSpeed, Direction walkingDirection, Color color) {
+        super(exactPosition, movementSpeed, walkingDirection, color);
         this.lives = lives;
         this.playerIndex = playerIndexCounter++;
         this.drawOnDirection = false;
@@ -51,11 +52,7 @@ public class Pactale extends GameObject {
         //Checks if the lives that are getting set is lower than the current lives, if so pactale got defeated.
         this.lives = lives;
         if (this.lives == 0) {
-            Music defeat = Assets.getMusicStream("sound/defeat.wav");
-            if (defeat != null) {
-                defeat.play();
-            }
-
+            Assets.playSound("defeat.wav");
             this.setInactive();
         }
     }

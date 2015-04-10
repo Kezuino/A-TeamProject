@@ -5,6 +5,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class GameObject implements IRenderable, IPositionable {
@@ -75,7 +76,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * Total added deltatime since last {@link Node} movement occured.
      */
-    private float moveTime;
+    private float moveTotalStep;
 
     /**
      * Initializes this {@link GameObject}.
@@ -269,6 +270,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (direction == null) {
             return;
         }
+
         this.nextDirection = this.isMoving ? direction : (this.direction = direction);
     }
 
@@ -373,7 +375,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (!isMoving) {
             isMoving = true;
             nextNode = getMap().getAdjacentNode(getNode(), direction);
-            movementStartTime = System.nanoTime();
+            movementStartTime = moveTotalStep;
         }
     }
 
@@ -388,7 +390,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
         Node targetNode = this.getMap().getAdjacentNode(getNode(), this.direction);
 
-        //Target node is beyond bounds, do not check for collision beyond this point
+        // Target node is beyond bounds, do not check for collision beyond this point
         if (targetNode == null) {
             return;
         }
@@ -417,7 +419,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     @Override
     public void draw(SpriteBatch batch) {
-        moveTime += Gdx.graphics.getDeltaTime();
+        moveTotalStep += movementSpeed * Gdx.graphics.getDeltaTime();
 
         // Capture node and texture.
         Node node = getNode();
@@ -428,23 +430,26 @@ public abstract class GameObject implements IRenderable, IPositionable {
         // Preprocess batch.
         batch.setColor(this.getColor());
 
-        // TODO: Animate from sprite region.
+        // Rotate texture based on direction.
         float rotation = 0;
         if (drawOnDirection) {
             rotation = this.getDirection().getRotation();
         }
 
+        // TODO: Animate from sprite region (spritesheet animation).
+
         // Move object in direction.
         if (isMoving) {
-            this.exactPosition.add(direction.getX() * movementSpeed * Gdx.graphics.getDeltaTime(), direction.getY() * movementSpeed * Gdx.graphics
-                    .getDeltaTime());
+            Vector2 curPos = getNode().getExactPosition();
+            Vector2 nextPos = nextNode.getExactPosition();
+            Vector2 interpolation = curPos.interpolate(nextPos, moveTotalStep - movementStartTime, Interpolation.linear);
+            this.exactPosition = interpolation;
 
-            // TODO: BROKEN (Anton is fixing this).
             // Check target reached.
-//            if (getExactPosition().lerp(getNode().getMap().getAdjacentNode(movementSpeed / moveTime))) {
-//                isMoving = false;
-//            }
-
+            if (moveTotalStep - movementStartTime >= 1) {
+                isMoving = false;
+                movementStartTime = moveTotalStep;
+            }
         }
 
         // Draw centered in node.

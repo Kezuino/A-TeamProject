@@ -31,8 +31,8 @@ public class TestGameObject {
         session.setMap(20);
         map = session.getMap();
         spawn = map.getNode(19, 19);
-        enemy = new Enemy(null, spawn.getPosition(), 100, Direction.Down, Color.BLACK);
-        map.addGameObject(spawn.getPosition(), enemy);
+        enemy = new Enemy(null, spawn.getExactPosition(), 100, Direction.Down, Color.BLACK);
+        map.addGameObject(spawn.getExactPosition(), enemy);
     }
 
     //Game object is an abstract class, in this unittest we will test the child class Enemey to check it's parents methods.
@@ -75,7 +75,7 @@ public class TestGameObject {
          * currently facing.
          */
         //Create a enemy without colour
-        Enemy enemy2 = new Enemy(null, spawn.getPosition(), 100, Direction.Down);
+        Enemy enemy2 = new Enemy(null, spawn.getExactPosition(), 100, Direction.Down);
         assertEquals("The constructor without colour didn't make it default white.", Color.WHITE, enemy2.getColor());
     }
 

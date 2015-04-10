@@ -30,7 +30,6 @@ public class Portal implements IRenderable, IPositionable {
         this.owner = owner;
         this.node = position;
         this.direction = direction;
-        this.setTexture(Assets.get("textures/portal.png", Texture.class));
         owner.addPortal(this);
     }
 
@@ -64,8 +63,9 @@ public class Portal implements IRenderable, IPositionable {
 
     @Override
     public void draw(SpriteBatch batch) {
-        // TODO: Draw portal on edge of Node.
-        if (texture == null) return;
+        if (texture == null) {
+            this.setTexture(Assets.get("textures/portal.png", Texture.class));
+        }
         float xOffset = (32 - texture.getWidth()) / 2f;
         float yOffset = (32 - texture.getHeight()) / 2f;
         float rotation = this.getDirection().getRotation();
