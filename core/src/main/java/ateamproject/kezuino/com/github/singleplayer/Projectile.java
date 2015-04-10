@@ -10,8 +10,7 @@ public class Projectile extends GameObject {
      Field created for the {@link Pactale} this {@link Projectile}
      origined from.
      */
-
-    private final Pactale owner;
+    private Pactale owner;
 
     /**
      * Initializes a new {@link Projectile}.
@@ -54,7 +53,8 @@ public class Projectile extends GameObject {
             this.setInactive();
             return true;
         }
-        return super.collisionWithGameObject(object); //To change body of generated methods, choose Tools | Templates.
+        
+        return super.collisionWithGameObject(object);
     }
 
     @Override
@@ -67,6 +67,13 @@ public class Projectile extends GameObject {
         }
 
         return super.collisionWithWall(node); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public void destroy() {
+        this.owner = null;
+        
+        super.destroy();
     }
 
 }

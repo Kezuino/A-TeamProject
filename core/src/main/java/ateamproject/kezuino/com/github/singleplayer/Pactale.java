@@ -61,8 +61,8 @@ public class Pactale extends GameObject {
     }
 
     /**
-     * Will shoot a portal in the direction that the {@link Pactale} currently
-     * is heading.
+     * If this {@link Pactale} is active, will shoot a portal in the direction
+     * that this {@link Pactale} currently is heading.
      */
     public void shootProjectile() {
         if (this.getActive()){
@@ -97,6 +97,7 @@ public class Pactale extends GameObject {
             if (!e.isEdible()) {
                 this.setLives(this.getLives() - 1);
                 this.setNodePosition(this.getStartingPosition().x / 32, this.getStartingPosition().y / 32);
+                this.getMap().getSession().getScore().decrementScore(100);
             }
             return true;
         }
@@ -122,11 +123,24 @@ public class Pactale extends GameObject {
     }
 
     /**
-     * Will remove all listed portals from this {@link Pactale}.
+     * If a portal has been set to this {@link Pactale},
+     * will remove the current set {@link Pactale}.
      */
     public void removePortal() {
         if (this.portal == null) return;
         this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).removePortal(portal.getDirection());
         this.portal = null;
+    }
+    
+    /**
+     * Destroys this {@link Pactale}.
+     */
+    @Override
+    public void destroy() {
+        this.removePortal();
+        this.playerIndex = -1;
+        this.lives = 0;
+        
+        super.destroy();
     }
 }

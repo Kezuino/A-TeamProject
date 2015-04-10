@@ -78,6 +78,7 @@ public class GameRenderer implements IRenderer {
                                       .filter(o -> !o.getActive())
                                       .collect(Collectors.toList())) {
             this.map.removeGameObject(obj);
+            obj.destroy();
         }
 
         // Render dynamic objects.
@@ -86,11 +87,11 @@ public class GameRenderer implements IRenderer {
             obj.draw(batch);
         }
         
-        /*if(!this.map.getNodes().stream().anyMatch(n -> n.hasItem())) {
+        if(!this.map.getNodes().stream().anyMatch(n -> n.hasItem())) {
             for (GameObject obj : this.map.getAllGameObjects()) {
-                obj.setInactive();
+                obj.destroy();
             }             
-        }*/
+        }
         
         batch.end();
 

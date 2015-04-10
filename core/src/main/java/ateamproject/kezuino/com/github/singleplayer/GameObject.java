@@ -305,7 +305,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * Marks this {@link GameObject} for deletion. Must not be undone.
      */
-    public void setInactive() {
+    protected void setInactive() {
         this.isActive = false;
     }
 
@@ -464,5 +464,24 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     public void move(Node targetNode) {
         throw new UnsupportedOperationException();//no movement inplemented
+    }
+    
+    /**
+     * Destroys this {@link GameObject}.
+     */
+    public void destroy() {
+        this.isActive = false;
+        this.direction = null;
+        this.nextDirection = null;
+        this.nextNode = null;
+        this.color = null;
+        this.previousColor = null;
+        this.isMoving = false;
+        this.movementSpeed = 0;
+        this.texture = null;
+        this.map = null;
+        this.exactPosition = null;
+        this.drawOnDirection = false;
+        this.startingPosition = null;
     }
 }

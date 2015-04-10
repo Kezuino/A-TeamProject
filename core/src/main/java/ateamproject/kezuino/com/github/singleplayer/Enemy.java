@@ -202,4 +202,16 @@ public class Enemy extends GameObject {
 
         super.update();
     }
+    
+    @Override
+    public void destroy() {
+        this.graphPath = null;
+        this.edible = false;
+        this.objectToFollow = null;
+        this.respawnPosition = null;
+        this.edibleStartTime = 0;
+        this.edibleTime = 0;
+        
+        super.destroy();
+    }
 }
