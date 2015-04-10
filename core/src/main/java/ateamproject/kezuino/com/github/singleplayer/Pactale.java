@@ -65,14 +65,14 @@ public class Pactale extends GameObject {
      * is heading.
      */
     public void shootProjectile() {
-        if (this.lives>0){
-        // create projectile
-        Projectile proj = new Projectile(this.getExactPosition(), this, this.getMovementSpeed() / 3, this.getDirection(), this
-                .getColor());
-        getMap().addGameObject(proj);
+        if (this.getActive()){
+            // create projectile
+            Projectile proj = new Projectile(this.getExactPosition(), this, this.getMovementSpeed() / 3, this.getDirection(), this
+                    .getColor());
+            getMap().addGameObject(proj);
 
-        // check if next node has collision
-        proj.moveAdjacent(direction);
+            // check if next node has collision
+            proj.moveAdjacent(direction);
         }
     }
 
