@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import org.junit.Assert;
 import org.junit.Before;
@@ -49,7 +50,8 @@ public class TestPactale {
         Direction walkingDirection = Direction.Left;
         Color color = new Color(1, 111, 11, 111);
         int lives = 3;
-        Pactale p = new Pactale(new Vector2(1, 1), lives, movementSpeed, walkingDirection, color);
+        Pactale p = new Pactale(new Vector2(32, 32), lives, movementSpeed, walkingDirection, color);
+        p.setMap(map);
 
         assertEquals("Color needs to be equal.", p.getColor(), color);
         assertEquals("Direction needs to be equal.", p.getDirection(), walkingDirection);
@@ -79,6 +81,7 @@ public class TestPactale {
         Color color = new Color(1, 111, 11, 111);
         int lives = 3;
         Pactale p = new Pactale(new Vector2(1, 1), lives, movementSpeed, walkingDirection, color);
+        p.setMap(map);
 
         Portal portal = new Portal(p, map.getNode(0, 0), Direction.Right);
         assertEquals("The newly created portal must not be null.", portal, p.getPortal());
