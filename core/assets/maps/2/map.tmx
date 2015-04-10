@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="1">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="5">
  <tileset firstgid="1" name="tiles" tilewidth="32" tileheight="32">
   <tile id="0">
    <properties>
@@ -732,7 +732,27 @@
    <image width="32" height="32" source="scenery/20884.png"/>
   </tile>
  </tileset>
- <tileset firstgid="203" name="objects" tilewidth="1" tileheight="1"/>
+ <tileset firstgid="203" name="objects" tilewidth="32" tileheight="32">
+  <tile id="0">
+   <properties>
+    <property name="isEnemy" value="true"/>
+   </properties>
+   <image width="32" height="32" source="objects/9017.png"/>
+   <animation>
+    <frame tileid="0" duration="250"/>
+    <frame tileid="1" duration="250"/>
+   </animation>
+  </tile>
+  <tile id="1">
+   <image width="32" height="32" source="objects/9018.png"/>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="isPactale" value="true"/>
+   </properties>
+   <image width="32" height="32" source="objects/2648.png"/>
+  </tile>
+ </tileset>
  <layer name="tiles" width="20" height="20">
   <data encoding="base64" compression="zlib">
    eJyVlMtOgkEMhceFgL6CgtyvGgWNAgYFRC4JJC5I1MQFG3FDArz/xjb5mr/5gwsXJzPTaTs9PTNTCCFkBOeCpKApeBBUBJfMbxhbgqrgWlAQnBGXJofGXwhGgg9Bif0z9tNu7ec6FgVvgqlgKHgVJAQ5waegQ969YCB4F7QFG8GK/Ta+Oo4ZTwVl7JovK+gKJm7/+A9o3GPMJwXHDflOBEf4jrEVXE89zyI+pQP2FbH39DpPfQnmA2L79Md4DsE7NZl9SqxpqbyXrgf9A9zL9Nhzth4MXL4betCNaaTzOj5X2J+d3y1x34I1Nr1LVXxn2Hxurb3memK1VbBlnZZ2RiXWvyxn6ryBT41zOq4Oi1Oudv8KIbqfS7Qr0nPbTzsf09feUw6uXss98VPOV649x32CTWOe4NxxZ7fRz3rvtVS9tuho3EcxrcvoMiK/cv1w/lZrnXWPGuz8hdPmLkRvwN6Bxr84vnbvaviqz4YajL/ut0L075i+eXy9ltsQ3cUGOeNvNxWiu2MamkZ63tz1rw03+4uSxDUZNU/V5dIcM3o3h6vpofXa3zM6kNv/fRly2d+mOXZOK/trrJ8L9pX/nnN0vaZHO3y/8P8J0Zuyv/xQr/4Lrcveyy+ueEIS
@@ -743,5 +763,10 @@
    eJylVO0OgjAM3EsT9akUNX4wIFF/wVNZIk0u5TZWvKRJ6Vba3nYLYYk3iXUkphgya7h+Ejs6cqPYWFA/l9+v7PmQGKv1Av/s7IPNjfGLiSv/to/GWbcUeN4RfMYd4+bqqIXcPcGfzrmZe0E+bon/VGKHsORuK3Zie9LXv8B5+/k7kn3Kq+XS8m3nXZu/lB+9W9M5tIU5HjCdKXJ8e+6W4pGI1+HHh85q9ZTSqQcj+GyuVI2ctre8fRbYi+WH6Rz7wVzU413sC0C7N4w=
   </data>
  </layer>
- <objectgroup name="objects" visible="0"/>
+ <objectgroup name="objects">
+  <object id="1" gid="203" x="480" y="96"/>
+  <object id="2" gid="203" x="576" y="544"/>
+  <object id="3" gid="203" x="32" y="544"/>
+  <object id="4" gid="205" x="64" y="96"/>
+ </objectgroup>
 </map>

@@ -86,11 +86,11 @@ public class GameRenderer implements IRenderer {
             obj.draw(batch);
         }
         
-        if(!this.map.getNodes().stream().anyMatch(n -> n.hasItem())) {
+        /*if(!this.map.getNodes().stream().anyMatch(n -> n.hasItem())) {
             for (GameObject obj : this.map.getAllGameObjects()) {
                 obj.setInactive();
             }             
-        }
+        }*/
         
         batch.end();
 

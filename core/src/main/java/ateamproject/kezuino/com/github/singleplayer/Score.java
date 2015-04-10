@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Score {
 
@@ -8,7 +9,7 @@ public class Score {
     private final GameSession gameSession;
     private final long startTime = System.currentTimeMillis();
     private long nextScoreUpdate = 1000;//amount of miliseconds that a score will be decremented
-    private int maxScoreManipulation;//the maximal amount of score that will be decremented
+    private final int maxScoreManipulation;//the maximal amount of score that will be decremented
     private int currentScoreManipulation = 0;//the current amount of decremented score
 
     /**
@@ -55,14 +56,15 @@ public class Score {
 
     /**
      * Decreases the score with the given value and returns the new current
-     * {@link Score} value.
+     * {@link Score} value. If the next step would cause the score to go beyond 0
+     * it will decrease the score by itself (turning it into 0).
      *
      * @param decreaseBy The value to decrease the current {@link Score} value
      * with.
      * @return The new current score value of this {@link Score}.
      */
     public int decrementScore(int decreaseBy) {
-        this.score -= decreaseBy;
+        this.score -= this.score - decreaseBy < 0 ? this.score : decreaseBy;
         return this.score;
     }
 
@@ -72,12 +74,7 @@ public class Score {
      */
     public void generateNewScore(List<GameObject> gameObjects) {
         if (System.currentTimeMillis() - startTime > nextScoreUpdate && currentScoreManipulation < maxScoreManipulation) {//make sure that the score wont be decremented beyond its initial starting value
-            int scoreToDecrement = 0;
-            for (GameObject gObject : gameObjects) {
-                if (gObject instanceof Pactale) {
-                    scoreToDecrement += 60;
-                }
-            }
+            int scoreToDecrement = gameObjects.stream().filter(go -> go instanceof Pactale).collect(Collectors.counting()).intValue() * 60;
 
             this.decrementScore(scoreToDecrement);
             this.currentScoreManipulation += scoreToDecrement;
