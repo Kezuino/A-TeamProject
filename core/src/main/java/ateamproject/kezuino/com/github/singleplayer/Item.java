@@ -171,7 +171,7 @@ public class Item implements IRenderable, IPositionable {
         if (texture == null) return;
         float xOffset = (32 - texture.getWidth()) / 2f;
         float yOffset = (32 - texture.getHeight()) / 2f;
-        batch.draw(texture, this.getExactPosition().x * 32 + xOffset, this.getExactPosition().y * 32 + yOffset);
+        batch.draw(texture, this.getExactPosition().x + xOffset, this.getExactPosition().y + yOffset);
     }
 
     @Override
