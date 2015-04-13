@@ -57,12 +57,12 @@ public class Pactale extends GameObject {
      */
     public void hurt() {
         if (this.lives < 0) return;
+
+        this.isMoving = false;
         this.lives--;
         if (this.lives == 0) {
             Assets.playSound("defeat.wav");
             this.setInactive();
-        } else {
-
         }
     }
 
@@ -73,26 +73,13 @@ public class Pactale extends GameObject {
     public void shootProjectile() {
         if (this.getActive()){
             // create projectile
-            Projectile proj = new Projectile(this.getExactPosition(), this, this.getMovementSpeed() / 3, this.getDirection(), this
+            Projectile proj = new Projectile(this.getExactPosition(), this, this.getMovementSpeed() * 3, this.getDirection(), this
                     .getColor());
             getMap().addGameObject(proj);
 
             // check if next node has collision
             proj.moveAdjacent(direction);
         }
-    }
-
-    int getCollisionObject(int x, int y) {
-        Node NextNode;
-        int ReturnVal = 0;
-        NextNode = this.getMap().getNode(x + direction.getX(), y + direction.getY());
-        if (NextNode.isWall()) {
-            // Next Node is a wall, colision detected, return true
-            ReturnVal = 1;
-        } else if (!this.getMap().getAllGameObjects().isEmpty()) {
-            ReturnVal = 2;
-        }
-        return ReturnVal;
     }
 
     @Override

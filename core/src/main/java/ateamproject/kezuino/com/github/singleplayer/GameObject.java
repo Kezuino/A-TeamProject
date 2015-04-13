@@ -470,7 +470,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     public void move(Node targetNode) {
         throw new UnsupportedOperationException();//no movement inplemented
     }
-    
+
     /**
      * Destroys this {@link GameObject}.
      */
@@ -478,7 +478,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         this.isActive = false;
         this.direction = null;
         this.nextDirection = null;
-        this.nextNode = null;
+        this.moveStartNode = null;
         this.color = null;
         this.previousColor = null;
         this.isMoving = false;

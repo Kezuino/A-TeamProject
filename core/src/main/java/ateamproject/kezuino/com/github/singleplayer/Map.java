@@ -285,7 +285,13 @@ public class Map {
      * @return All {@link GameObject gameobjects} on the given {@link Node}.
      */
     public List<GameObject> getGameObjectsOnNode(Node node) {
-        return this.gameObjects.stream().filter(go -> go.getNode().equals(node)).collect(Collectors.toList());
+        List<GameObject> matches = new ArrayList<>();
+        for (GameObject obj : gameObjects) {
+            if (obj.getNode().equals(node)) {
+                matches.add(obj);
+            }
+        }
+        return matches;
     }
 
     /**

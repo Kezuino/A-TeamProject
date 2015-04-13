@@ -1,8 +1,10 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.Iterator;
@@ -126,7 +128,7 @@ public class Enemy extends GameObject {
      */
     public void setEdible(boolean edible) {
         if (edible) {
-            this.setColor(Color.WHITE);
+            this.setColor(Color.BLACK);
             this.edibleStartTime = System.nanoTime();
         }
 
@@ -144,9 +146,9 @@ public class Enemy extends GameObject {
     protected boolean collisionWithGameObject(GameObject object) {
         if (object instanceof Pactale) {
             if (this.isEdible()) {
-                //this.setDead(true);
-                this.getMap().getSession().getScore().increase(500);
+                this.isMoving = false;
                 this.setNodePosition(this.getStartingPosition().x, this.getStartingPosition().y);
+                this.getMap().getSession().getScore().increase(500);
             }
             return true;
         }
@@ -202,7 +204,7 @@ public class Enemy extends GameObject {
 
         super.update();
     }
-    
+
     @Override
     public void destroy() {
         this.graphPath = null;
