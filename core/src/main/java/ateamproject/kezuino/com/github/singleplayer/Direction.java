@@ -73,9 +73,9 @@ public enum Direction {
      * Gets the {@link Direction} given a source and target x-axis and y-axis.
      * If direction is diagonal, it'll return the longest direction (prefers y-axis).
      * <p>
-     * (Example: (0,0,10,5) returns Direction.Right).<br>
+     * (Example: (0,0,10,5) returns Direction.Right).<br />
      * (Example: (0,0,5,5) returns Direction.Up (y-axis is preferred)).
-     * <p>
+     * </p>
      * Returns null when x1, y1, x2 and y2 are all the same.
      *
      * @param x1 Source x-axis.

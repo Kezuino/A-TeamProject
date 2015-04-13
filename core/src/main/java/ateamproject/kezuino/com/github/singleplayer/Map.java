@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.pathfinding.AStar;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
+import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -14,8 +15,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class Map {
 
@@ -90,7 +91,7 @@ public class Map {
         MapProperties mapProps = tiledMap.getProperties();
         Map map = new Map(session, mapProps.get("width", Integer.class), mapProps.get("height", Integer.class));
         map.baseMap = tiledMap;
-
+        
         // Convert TMX data to game tiles.
         TiledMapTileLayer background = (TiledMapTileLayer) map.baseMap.getLayers().get(0);
         for (int x = 0; x < map.width; x++) {
@@ -101,46 +102,47 @@ public class Map {
                 node.setTileId(background.getCell(x, y).getTile().getId());
             }
         }
+        
+        for(MapLayer layer : map.baseMap.getLayers()) 
+        {
+            for (MapObject loopObj : layer.getObjects()) {
+                if (!(loopObj instanceof TextureMapObject)) continue;
+                TextureMapObject obj = (TextureMapObject) loopObj;
 
-        // Convert TMX data to game objects.
-        MapLayer objLayer = map.baseMap.getLayers().get(1);
-        TiledMapTileSet objTileLayer = map.baseMap.getTileSets().getTileSet(1);
-        for (MapObject loopObj : objLayer.getObjects()) {
-            if (!(loopObj instanceof TextureMapObject)) continue;
-            TextureMapObject obj = (TextureMapObject) loopObj;
+                TiledMapTileSet objTileLayer = map.baseMap.getTileSets().getTileSet(layer.getName());
 
-            MapProperties objProps = loopObj.getProperties();
-            MapProperties objTileProps = objTileLayer.getTile(objProps.get("gid", int.class)).getProperties();
+                MapProperties objProps = loopObj.getProperties();
+                MapProperties objTileProps = objTileLayer.getTile(objProps.get("gid", int.class)).getProperties();
 
-            Vector2 curPos = new Vector2(objProps.get("x", float.class), objProps.get("y", float.class));
-            Node posNode = map.getNode(curPos);
+                Vector2 curPos = new Vector2(objProps.get("x", float.class), objProps.get("y", float.class));
+                Node posNode = map.getNode(curPos);
 
-            if (objTileProps.containsKey("item")) {
-                // Create item.
-                String itemTypeName = objTileProps.get("item", String.class);
-                ItemType itemType = Arrays.stream(ItemType.values())
-                                          .filter(e -> e.name().equalsIgnoreCase(itemTypeName))
-                                          .findAny()
-                                          .orElse(null);
-                Item item = new Item(curPos, itemType);
-                item.setMap(map);
-                item.setTexture(obj.getTextureRegion().getTexture());
-                posNode.setItem(item);
-            } else if (objTileProps.containsKey("isEnemy")) {
-                // Create enemy.
-                Enemy enemy = new Enemy(null, curPos, 1, Direction.Down);
-                enemy.setTexture(obj.getTextureRegion().getTexture());
-                enemy.setMap(map);
-                map.addGameObject(enemy);
-            } else if (objTileProps.containsKey("isPactale")) {
-                // Create pactale.
-                Pactale pactale = new Pactale(curPos, 3, 1f, Direction.Down, Color.WHITE);
-                pactale.setMap(map);
-                pactale.setTexture(obj.getTextureRegion().getTexture());
-                map.addGameObject(pactale);
-            }
+                if (objTileProps.containsKey("item")) {
+                    // Create item.
+                    String itemTypeName = objTileProps.get("item", String.class);
+                    ItemType itemType = Arrays.stream(ItemType.values())
+                                              .filter(e -> e.name().equalsIgnoreCase(itemTypeName))
+                                              .findAny()
+                                              .orElse(null);
+                    Item item = new Item(curPos, itemType);
+                    item.setMap(map);
+                    item.setTexture(obj.getTextureRegion().getTexture());
+                    posNode.setItem(item);
+                } else if (objTileProps.containsKey("isEnemy")) {
+                    // Create enemy.
+                    Enemy enemy = new Enemy(null, curPos, 1, Direction.Down);
+                    enemy.setTexture(obj.getTextureRegion().getTexture());
+                    enemy.setMap(map);
+                    map.addGameObject(enemy);
+                } else if (objTileProps.containsKey("isPactale")) {
+                    // Create pactale.
+                    Pactale pactale = new Pactale(curPos, 3, 1f, Direction.Down, Color.WHITE);
+                    pactale.setMap(map);
+                    pactale.setTexture(obj.getTextureRegion().getTexture());
+                    map.addGameObject(pactale);
+                }
+            }  
         }
-
         return map;
     }
 

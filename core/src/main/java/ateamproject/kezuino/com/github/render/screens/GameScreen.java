@@ -14,9 +14,7 @@ import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import ateamproject.kezuino.com.github.singleplayer.Direction;
-import ateamproject.kezuino.com.github.singleplayer.GameObject;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 
 /**
  * @author Anton
@@ -33,7 +31,7 @@ public class GameScreen extends BaseScreen {
         Assets.create();
 
         session = new GameSession();
-        session.setMap(Map.load(session, "1"));
+        session.setMap(Map.load(session, "2"));
 
         player = session.getPlayer(0);
         
