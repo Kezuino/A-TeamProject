@@ -148,7 +148,7 @@ public class Enemy extends GameObject {
             if (this.isEdible()) {
                 this.isMoving = false;
                 this.setNodePosition(this.getStartingPosition().x, this.getStartingPosition().y);
-                this.getMap().getSession().getScore().increase(500);
+                this.getMap().getSession().getScore().increase(300);
             }
             return true;
         }
