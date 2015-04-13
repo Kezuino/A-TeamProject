@@ -81,7 +81,7 @@ public class Enemy extends GameObject {
      * @param direction      Direction this {@link Enemy} is currently facing.
      */
     public Enemy(GameObject objectToFollow, Vector2 exactPosition, float movementSpeed, Direction direction) {
-        this(objectToFollow, exactPosition, movementSpeed, direction, Color.WHITE);
+        this(objectToFollow, exactPosition, movementSpeed, direction, Color.WHITE.cpy());
     }
 
     /**
@@ -173,8 +173,7 @@ public class Enemy extends GameObject {
                                   .stream()
                                   .filter(go -> go instanceof Pactale)
                                   .map(go -> (Pactale) go)
-                                  .max((p1, p2) -> (int) p1.getExactPosition()
-                                                           .len(p2.getExactPosition().x, p2.getExactPosition().y))
+                                  .max((p1, p2) -> (int) Vector2.len(p2.getExactPosition().x, p2.getExactPosition().y))
                                   .orElse(null);
 
         if (!this.isMoving) {
@@ -203,17 +202,5 @@ public class Enemy extends GameObject {
         }
 
         super.update();
-    }
-
-    @Override
-    public void destroy() {
-        this.graphPath = null;
-        this.edible = false;
-        this.objectToFollow = null;
-        this.respawnPosition = null;
-        this.edibleStartTime = 0;
-        this.edibleTime = 0;
-        
-        super.destroy();
     }
 }

@@ -28,7 +28,7 @@ public class GameScreen extends BaseScreen {
 
     public GameScreen(Game game) {
         super(game);
-        clearOnRenderColor = Color.WHITE;
+        clearOnRenderColor = Color.WHITE.cpy();
 
         Assets.create();
 

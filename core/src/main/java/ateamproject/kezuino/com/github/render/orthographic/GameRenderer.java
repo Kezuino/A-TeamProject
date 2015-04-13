@@ -7,14 +7,21 @@ import ateamproject.kezuino.com.github.render.debug.renderers.DebugPathfinding;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugStatistics;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.net.ServerSocketHints;
+import com.badlogic.gdx.net.SocketHints;
 
+import java.net.ServerSocket;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class GameRenderer implements IRenderer {
-    private final SpriteBatch batch;
+    private SpriteBatch batch;
     private final Map map;
     private final MapRenderer tileMapRenderer;
     private final Camera camera;
@@ -48,8 +55,9 @@ public class GameRenderer implements IRenderer {
         // Render background only.
         tileMapRenderer.render();
 
-        // Render nodes.
         batch.begin();
+
+        // Render nodes.
         for (Node node : map.getNodes()) {
             // Render items.
             Item item = node.getItem();
@@ -71,7 +79,6 @@ public class GameRenderer implements IRenderer {
                                       .filter(o -> !o.getActive())
                                       .collect(Collectors.toList())) {
             this.map.removeGameObject(obj);
-            obj.destroy();
         }
 
         // Render dynamic objects.
@@ -80,12 +87,6 @@ public class GameRenderer implements IRenderer {
             obj.draw(batch);
         }
 
-        if(!this.map.getNodes().stream().anyMatch(n -> n.hasItem())) {
-            for (GameObject obj : this.map.getAllGameObjects()) {
-                obj.destroy();
-            }
-        }
-        
         batch.end();
 
         DebugRenderManager.render(DebugLayers.UI);
