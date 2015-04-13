@@ -21,10 +21,12 @@ import java.util.Random;
 import java.util.stream.Collectors;
 
 public class GameRenderer implements IRenderer {
+
     private SpriteBatch batch;
     private final Map map;
     private final MapRenderer tileMapRenderer;
     private final Camera camera;
+    private boolean paused = false;
 
     public GameRenderer(Map map) {
         // Camera.
@@ -62,33 +64,58 @@ public class GameRenderer implements IRenderer {
             // Render items.
             Item item = node.getItem();
             if (item != null) {
-                item.update();
+                if (!paused) {
+                    item.update();
+                }
                 item.draw(batch);
             }
 
             // Render portals.
             for (Portal portal : node.getPortals()) {
-                portal.update();
+                if (!paused) {
+                    portal.update();
+                }
                 portal.draw(batch);
             }
         }
 
         // Cleanup gameobjects ready for deletion.
         for (GameObject obj : this.map.getAllGameObjects()
-                                      .stream()
-                                      .filter(o -> !o.getActive())
-                                      .collect(Collectors.toList())) {
+                .stream()
+                .filter(o -> !o.getActive())
+                .collect(Collectors.toList())) {
             this.map.removeGameObject(obj);
         }
 
         // Render dynamic objects.
         for (GameObject obj : this.map.getAllGameObjects()) {
-            obj.update();
+            if (!paused) {
+                obj.update();
+            }
             obj.draw(batch);
+        }
+        
+        if (paused){
+            
         }
 
         batch.end();
 
         DebugRenderManager.render(DebugLayers.UI);
     }
+
+    /**
+     * Change the status of pause. It will be set true meaning the game will stop updating
+     */
+    public void pause() {
+      this.paused = true;
+    }
+    
+    /**
+     * Change the status of pause to false. This will make the game start updating again
+     */
+    public void unpause(){
+        this.paused = false;
+    }
+
 }
