@@ -7,17 +7,26 @@ import ateamproject.kezuino.com.github.render.debug.renderers.DebugPathfinding;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugStatistics;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.net.ServerSocketHints;
+import com.badlogic.gdx.net.SocketHints;
 
+import java.net.ServerSocket;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 public class GameRenderer implements IRenderer {
-    private final SpriteBatch batch;
+
+    private SpriteBatch batch;
     private final Map map;
     private final MapRenderer tileMapRenderer;
     private final Camera camera;
+    private boolean paused = false;
 
     public GameRenderer(Map map) {
         // Camera.
@@ -48,46 +57,65 @@ public class GameRenderer implements IRenderer {
         // Render background only.
         tileMapRenderer.render();
 
-        // Render nodes.
         batch.begin();
+
+        // Render nodes.
         for (Node node : map.getNodes()) {
             // Render items.
             Item item = node.getItem();
             if (item != null) {
-                item.update();
+                if (!paused) {
+                    item.update();
+                }
                 item.draw(batch);
             }
 
             // Render portals.
             for (Portal portal : node.getPortals()) {
-                portal.update();
+                if (!paused) {
+                    portal.update();
+                }
                 portal.draw(batch);
             }
         }
 
         // Cleanup gameobjects ready for deletion.
         for (GameObject obj : this.map.getAllGameObjects()
-                                      .stream()
-                                      .filter(o -> !o.getActive())
-                                      .collect(Collectors.toList())) {
+                .stream()
+                .filter(o -> !o.getActive())
+                .collect(Collectors.toList())) {
             this.map.removeGameObject(obj);
-            obj.destroy();
         }
 
         // Render dynamic objects.
         for (GameObject obj : this.map.getAllGameObjects()) {
-            obj.update();
+            if (!paused) {
+                obj.update();
+            }
             obj.draw(batch);
         }
-
-        if(!this.map.getNodes().stream().anyMatch(n -> n.hasItem())) {
-            for (GameObject obj : this.map.getAllGameObjects()) {
-                obj.destroy();
-            }
-        }
         
+        if (paused){
+            
+        }
+
         batch.end();
 
         DebugRenderManager.render(DebugLayers.UI);
     }
+
+    /**
+     * Change the status of pause. It will be set true meaning the game will stop updating
+     */
+    public void pause() {
+      this.paused = true;
+    }
+    
+    /**
+     * Change the status of pause to false. This will make the game start updating again
+     */
+    public void unpause(){
+        this.paused = false;
+    }
+
 }
