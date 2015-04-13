@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 public abstract class GameObject implements IRenderable, IPositionable {
@@ -20,9 +21,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
     protected Direction nextDirection;
 
     /**
-     * {@link Node} that's adjacent to this {@link GameObject} based on the {@link #direction}.
+     * Current {@link Node} that was the origin or the current movement.
      */
-    protected Node nextNode;
+    protected Node moveStartNode;
     /**
      * If true, this {@link GameObject} is currently transitioning between
      * {@link Node nodes}.
@@ -279,7 +280,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (map == null) {
             return null;
         }
-        return map.getNode((int) this.getExactPosition().x / 32, (int) this.getExactPosition().y / 32);
+        return map.getNode((int)(this.exactPosition.x / 32f), (int)(this.exactPosition.y / 32f));
     }
 
     /**
@@ -312,22 +313,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
     }
 
     /**
-     * Moves this {@link GameObject} to another adjacent {@link Node} based on
-     * the given {@code direction}.
-     *
-     * @param direction {@link Direction} to move in (to an adjacent
-     *                  {@link Node}).
-     */
-    public void moveAdjacent(Direction direction) {
-        this.direction = direction;
-
-        if (!isMoving) {
-            isMoving = true;
-            movementStartTime = System.nanoTime();
-        }
-    }
-
-    /**
      * Called when a collision was detected by this {@link GameObject}. Return
      * true if collision has been handled and shouldn't continue.
      *
@@ -357,6 +342,23 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * Moves this {@link GameObject} to another adjacent {@link Node} based on
      * the given {@code direction}.
+     *
+     * @param direction {@link Direction} to move in (to an adjacent
+     *                  {@link Node}).
+     */
+    public void moveAdjacent(Direction direction) {
+        this.direction = direction;
+
+        if (!isMoving) {
+            isMoving = true;
+            moveStartNode = getMap().getAdjacentNode(getNode(), direction);
+            movementStartTime = moveTotalStep;
+        }
+    }
+
+    /**
+     * Moves this {@link GameObject} to another adjacent {@link Node} based on
+     * the given {@code direction}.
      */
     public void moveAdjacent() {
         if (map == null) throw new IllegalArgumentException("Field map must not be null.");
@@ -374,7 +376,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
         if (!isMoving) {
             isMoving = true;
-            nextNode = getMap().getAdjacentNode(getNode(), direction);
+            moveStartNode = getMap().getAdjacentNode(getNode(), direction);
             movementStartTime = moveTotalStep;
         }
     }
@@ -396,9 +398,11 @@ public abstract class GameObject implements IRenderable, IPositionable {
         }
 
         for (GameObject obj : this.map.getGameObjectsOnNode(this.getNode())) {
+            // Do not collide with itself.
             if (obj.equals(this)) {
                 continue;
             }
+
             if (collisionWithGameObject(obj)) {
                 System.out.println("Collision handled");
                 break;
@@ -441,9 +445,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
         // Move object in direction.
         if (isMoving) {
             Vector2 curPos = getNode().getExactPosition();
-            Vector2 nextPos = nextNode.getExactPosition();
-            Vector2 interpolation = curPos.interpolate(nextPos, moveTotalStep - movementStartTime, Interpolation.linear);
-            this.exactPosition = interpolation;
+            Vector2 nextPos = moveStartNode.getExactPosition();
+            this.exactPosition = curPos.interpolate(nextPos, moveTotalStep - movementStartTime, Interpolation.linear);
 
             // Check target reached.
             if (moveTotalStep - movementStartTime >= 1) {
