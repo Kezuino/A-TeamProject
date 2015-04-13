@@ -40,7 +40,7 @@ public abstract class BaseScreen implements Screen {
 
     protected Skin skin;
     protected InputMultiplexer inputs;
-    private List<IRenderer> renderers;
+    private final List<IRenderer> renderers;
 
     public BaseScreen(Game game) {
         // Bootstrap screen.
@@ -131,6 +131,10 @@ public abstract class BaseScreen implements Screen {
     public <T extends IRenderer> T addRenderer(T renderer) {
         renderers.add(renderer);
         return renderer;
+    }
+    
+    public <T extends IRenderer> void removeRenderer(T renderer) {
+        renderers.remove(renderer);
     }
 
 }

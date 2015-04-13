@@ -15,6 +15,7 @@ import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import ateamproject.kezuino.com.github.singleplayer.Direction;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
 /**
  * @author Anton
@@ -24,7 +25,9 @@ public class GameScreen extends BaseScreen {
     private GameSession session;
     private final Pactale player;
     private GameRenderer gameRenderer;
+    private GameUIRenderer UIRenderer;
     private boolean paused;
+    private Label lblPause;
 
     public GameScreen(Game game) {
         super(game);
@@ -32,21 +35,22 @@ public class GameScreen extends BaseScreen {
         Assets.create();
 
         session = new GameSession();
-        session.setMap(Map.load(session, "2"));
+        session.setMap(Map.load(session, "1"));
 
         player = session.getPlayer(0);
         
         //Initialize the pausing
-         paused = false;
-        Label lblStore = new Label("Game gepauzeerd",skin);
-        lblStore.setColor(Color.RED);
-        lblStore.setPosition(100,100 + 300);
-        //stage.addActor(lblStore);
+        paused = false;
+        lblPause = new Label("Game gepauzeerd", skin);
+        lblPause.setColor(Color.RED);
+        lblPause.setPosition(100,100 + 300);
+        lblPause.setVisible(false);
+        stage.addActor(lblPause);
         
         
         // Renderers.
         gameRenderer = addRenderer(new GameRenderer(session.getMap()));
-        addRenderer(new GameUIRenderer(session.getMap()));
+        UIRenderer = addRenderer(new GameUIRenderer(session.getMap()));
 
         // Gameplay controls handling:
         inputs.addProcessor(new InputAdapter() {
@@ -93,17 +97,25 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         Gdx.gl.glClearColor(1, 1, 1, 0);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
-        session.getScore().generateNewScore(session.getMap().getAllGameObjects()); // Will calculate/decrease score once in a period.
-        
+ 
         // Render Game and UI.
         super.render(delta);
-        
+
+        if(!this.session.getMap().getNodes().stream().anyMatch(n -> n.hasItem())) {
+            removeRenderer(gameRenderer);
+            removeRenderer(UIRenderer);
+            //this.dispose();
+            
+            game.setScreen(new EndGameScreen(game, this.session.getScore(), this));
+            //end game
+        }
     }
+    
     @Override
     public void pause() {
         // TODO: If singleplayer: pause game.
         gameRenderer.pause();
+        lblPause.setVisible(true);
         // TODO: If multiplayer: draw menu on top of game and capture input, but do NOT pause the game!
     }
 
@@ -111,6 +123,7 @@ public class GameScreen extends BaseScreen {
     public void resume() {
         // TODO: If singleplayer: unpause the game.
         gameRenderer.unpause();
+        lblPause.setVisible(false);
         // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
     }
 

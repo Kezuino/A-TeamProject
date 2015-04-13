@@ -7,17 +7,11 @@ import ateamproject.kezuino.com.github.render.debug.renderers.DebugPathfinding;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugStatistics;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net;
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.net.ServerSocketHints;
-import com.badlogic.gdx.net.SocketHints;
-
-import java.net.ServerSocket;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class GameRenderer implements IRenderer {
@@ -94,13 +88,10 @@ public class GameRenderer implements IRenderer {
             }
             obj.draw(batch);
         }
-        
-        if (paused){
-            
-        }
+
+        this.map.getSession().getScore().generateNewScore(this.map.getAllGameObjects()); // Will calculate/decrease score once in a period.
 
         batch.end();
-
         DebugRenderManager.render(DebugLayers.UI);
     }
 

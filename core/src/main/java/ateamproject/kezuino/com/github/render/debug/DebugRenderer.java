@@ -1,11 +1,8 @@
 package ateamproject.kezuino.com.github.render.debug;
 
-import ateamproject.kezuino.com.github.render.IRenderable;
 import ateamproject.kezuino.com.github.singleplayer.IPositionable;
 import com.badlogic.gdx.graphics.Camera;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /**
  * Created by Anton on 4/4/2015.
