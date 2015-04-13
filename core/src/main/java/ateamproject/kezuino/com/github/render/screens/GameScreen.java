@@ -23,11 +23,12 @@ public class GameScreen extends BaseScreen {
 
     private GameSession session;
     private final Pactale player;
+    private GameRenderer gameRenderer;
+    private boolean paused;
 
     public GameScreen(Game game) {
         super(game);
-        clearOnRenderColor = Color.WHITE;
-
+        clearOnRenderColor = Color.WHITE.cpy();       
         Assets.create();
 
         session = new GameSession();
@@ -35,8 +36,16 @@ public class GameScreen extends BaseScreen {
 
         player = session.getPlayer(0);
         
+        //Initialize the pausing
+         paused = false;
+        Label lblStore = new Label("Game gepauzeerd",skin);
+        lblStore.setColor(Color.RED);
+        lblStore.setPosition(100,100 + 300);
+        //stage.addActor(lblStore);
+        
+        
         // Renderers.
-        addRenderer(new GameRenderer(session.getMap()));
+        gameRenderer = addRenderer(new GameRenderer(session.getMap()));
         addRenderer(new GameUIRenderer(session.getMap()));
 
         // Gameplay controls handling:
@@ -64,7 +73,13 @@ public class GameScreen extends BaseScreen {
                         player.shootProjectile();
                         break;
                     case Input.Keys.ESCAPE:
-                        pause();
+                        if (paused){
+                            paused = false;
+                            resume();
+                        }else {
+                            paused = true;
+                            pause();
+                        }
                         break;
                     default:
                         return false;
@@ -88,14 +103,14 @@ public class GameScreen extends BaseScreen {
     @Override
     public void pause() {
         // TODO: If singleplayer: pause game.
-
+        gameRenderer.pause();
         // TODO: If multiplayer: draw menu on top of game and capture input, but do NOT pause the game!
     }
 
     @Override
     public void resume() {
         // TODO: If singleplayer: unpause the game.
-
+        gameRenderer.unpause();
         // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
     }
 

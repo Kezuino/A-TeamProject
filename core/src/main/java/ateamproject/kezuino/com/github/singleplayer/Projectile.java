@@ -68,12 +68,4 @@ public class Projectile extends GameObject {
 
         return super.collisionWithWall(node);
     }
-    
-    @Override
-    public void destroy() {
-        this.owner = null;
-        
-        super.destroy();
-    }
-
 }

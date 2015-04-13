@@ -111,7 +111,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         this.movementSpeed = movementSpeed;
         this.direction = direction;
         this.exactPosition = exactPosition.cpy();
-        this.color = color;
+        this.setColor(color);
         this.isActive = true;
     }
 
@@ -236,7 +236,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link GameObject}.
      */
     public Color getColor() {
-        return this.color;
+        return new Color(this.color);
     }
 
     /**
@@ -245,8 +245,11 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * @param color Color this {@link GameObject} will be.
      */
     public void setColor(Color color) {
-        this.previousColor = this.color;
-        this.color = color;
+        if (color == null) {
+            color = Color.WHITE;
+        }
+        this.previousColor = this.color == null ? color.cpy() : this.color.cpy();
+        this.color = color.cpy();
     }
 
     /**
@@ -280,7 +283,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (map == null) {
             return null;
         }
-        return map.getNode((int)(this.exactPosition.x / 32f), (int)(this.exactPosition.y / 32f));
+        return map.getNode((int) (this.exactPosition.x / 32f), (int) (this.exactPosition.y / 32f));
     }
 
     /**
@@ -432,6 +435,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         }
 
         // Preprocess batch.
+        Color oldColor = batch.getColor();
         batch.setColor(this.getColor());
 
         // Rotate texture based on direction.
@@ -461,6 +465,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
         batch.draw(texture, this.exactPosition.x + xOffset, this.exactPosition.y + yOffset, texture.getWidth() / 2, texture
                 .getHeight() / 2, texture
                 .getWidth(), texture.getHeight(), 1, 1, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
+
+        // Reset batch color for other draws.
+        batch.setColor(oldColor);
     }
 
     /**
@@ -471,25 +478,5 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * @deprecated unused, prepared for removed on cleanup, if still unused
      */
     public void move(Node targetNode) {
-        throw new UnsupportedOperationException();//no movement inplemented
-    }
-
-    /**
-     * Destroys this {@link GameObject}.
-     */
-    public void destroy() {
-        this.isActive = false;
-        this.direction = null;
-        this.nextDirection = null;
-        this.moveStartNode = null;
-        this.color = null;
-        this.previousColor = null;
-        this.isMoving = false;
-        this.movementSpeed = 0;
-        this.texture = null;
-        this.map = null;
-        this.exactPosition = null;
-        this.drawOnDirection = false;
-        this.startingPosition = null;
-    }
+        throw new UnsupportedOperationException(); }
 }

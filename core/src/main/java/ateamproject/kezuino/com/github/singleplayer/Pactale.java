@@ -124,16 +124,4 @@ public class Pactale extends GameObject {
         this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).removePortal(portal.getDirection());
         this.portal = null;
     }
-    
-    /**
-     * Destroys this {@link Pactale}.
-     */
-    @Override
-    public void destroy() {
-        this.removePortal();
-        this.playerIndex = -1;
-        this.lives = 0;
-        
-        super.destroy();
-    }
 }
