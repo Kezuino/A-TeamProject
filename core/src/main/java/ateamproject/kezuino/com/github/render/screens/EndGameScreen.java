@@ -23,13 +23,13 @@ public class EndGameScreen extends BaseScreen {
     public EndGameScreen(Game game, Score score) {
         super(game);
 
-        TextButton btnBack = new TextButton("Terug", skin);
+        TextButton btnBack = new TextButton("Doorgaan", skin);
         Label lblEndGameText = new Label("Your score was:", skin);
         Label lblScore = new Label(Integer.toString(score.valueOf()), skin);
         btnBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainScreen(game));
+                game.setScreen(new GameScreen(game, score));
             }
         });
 

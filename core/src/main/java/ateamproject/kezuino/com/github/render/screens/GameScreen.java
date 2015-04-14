@@ -12,8 +12,8 @@ import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.singleplayer.Pactale;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.*;
-import com.badlogic.gdx.graphics.GL20;
 import ateamproject.kezuino.com.github.singleplayer.Direction;
+import ateamproject.kezuino.com.github.singleplayer.Score;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 
@@ -27,13 +27,18 @@ public class GameScreen extends BaseScreen {
     private GameRenderer gameRenderer;
     private boolean paused;
     private Label lblPause;
-
+    
     public GameScreen(Game game) {
+        this(game, null);
+    }
+
+    public GameScreen(Game game, Score score) {
         super(game);
         clearOnRenderColor = Color.WHITE.cpy();       
         Assets.create();
 
         session = new GameSession();
+        session.setScore(score);
         session.setMap(Map.load(session, "1"));
 
         player = session.getPlayer(0);

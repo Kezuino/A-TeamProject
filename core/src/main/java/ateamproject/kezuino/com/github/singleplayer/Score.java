@@ -31,6 +31,11 @@ public class Score {
         this.gameSession = session;
         this.maxScoreManipulation = this.score;
     }
+    
+    public Score(GameSession session, int score) {
+        this(session);
+        this.score += score;
+    }
 
     /**
      * Get the current {@link Score} value of the set {@link GameSession}.

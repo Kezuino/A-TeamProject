@@ -40,6 +40,12 @@ public class GameSession {
     public void setMap(int squareSize) {
         setMap(new Map(this, squareSize));
     }
+    
+    public void setScore(Score score) {
+        if(score != null) {
+            this.score = new Score(this, score.valueOf());
+        }
+    }
 
     /**
      * Returns a {@link Pactale} if found with the specific {@code playerIndex}. If not found, null will be returned.
