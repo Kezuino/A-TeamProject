@@ -6,6 +6,7 @@ public class GameSession {
     private Date startTime;
     private Map map;
     private Score score;
+    private GameState state;
 
     /**
      * Creates a new @see GameSession with the default skin.
@@ -13,6 +14,39 @@ public class GameSession {
     public GameSession() {
         startTime = new Date();
         this.score = new Score(this);
+        this.state = GameState.Running;
+    }
+    
+    public GameState getState() {
+        return this.state;
+    }
+    
+    public void pause() {
+        this.state = GameState.Paused;
+    }
+    
+    public void resume() {
+        this.state = GameState.Running;
+    }
+    
+    public void complete() {
+        if(!this.hasEnded()) {
+            this.state = GameState.Completed;
+        }
+    }
+    
+    public void end() {
+        this.state = GameState.Ended;
+    }
+    
+    public void gameOver() {
+        if(!this.hasEnded()) {
+            this.state = GameState.GameOver;
+        }
+    }
+    
+    public boolean hasEnded() {
+        return this.state.equals(GameState.Ended);
     }
 
     public Date getStartTime() {

@@ -12,5 +12,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 public enum GameState {
     Running,
     Paused,
-    Finished
+    GameOver,
+    Completed,
+    Ended
 }

@@ -19,8 +19,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 /**
  * @author Sven
  */
-public class EndGameScreen extends BaseScreen {
-    public EndGameScreen(Game game, Score score) {
+public class GameOverScreen extends BaseScreen {
+    public GameOverScreen(Game game, Score score) {
         super(game);
 
         TextButton btnBack = new TextButton("Stoppen", skin);

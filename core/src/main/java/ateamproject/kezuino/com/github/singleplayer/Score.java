@@ -91,13 +91,15 @@ public class Score {
      */
     public void generateNewScore(List<GameObject> gameObjects) {
         if (System.currentTimeMillis() - startTime > nextScoreUpdate && currentScoreManipulation < maxScoreManipulation) {//make sure that the score wont be decremented beyond its initial starting value
-            int scoreToDecrement = gameObjects.stream()
-                                              .filter(go -> go instanceof Pactale)
-                                              .collect(Collectors.counting())
-                                              .intValue() * 60;
+            if(this.gameSession.getState().equals(GameState.Running)) {
+                int scoreToDecrement = gameObjects.stream()
+                                                  .filter(go -> go instanceof Pactale)
+                                                  .collect(Collectors.counting())
+                                                  .intValue() * 60;
 
-            this.decrease(scoreToDecrement);
-            this.currentScoreManipulation += scoreToDecrement;
+                this.decrease(scoreToDecrement);
+                this.currentScoreManipulation += scoreToDecrement;
+            }
             nextScoreUpdate = nextScoreUpdate + 1000;
         }
     }

@@ -30,7 +30,6 @@ public class GameScreen extends BaseScreen {
     private GameSession session;
     private Pactale player;
     private GameRenderer gameRenderer;
-    private GameState state;
     private Label lblPause;
     
     public GameScreen(Game game) {
@@ -70,11 +69,9 @@ public class GameScreen extends BaseScreen {
                         player.shootProjectile();
                         break;
                     case Input.Keys.ESCAPE:
-                        if (state.equals(GameState.Paused)){
-                            state = GameState.Running;
+                        if (session.getState().equals(GameState.Paused)){
                             resume();
-                        } else if(!state.equals(GameState.Finished)) {
-                            state = GameState.Paused;
+                        } else if(session.getState().equals(GameState.Running)) {
                             pause();
                         }
                         break;
@@ -93,8 +90,6 @@ public class GameScreen extends BaseScreen {
 
         player = session.getPlayer(0);
         
-        //Set current state to running
-        state = GameState.Running;
         //Initialize pause
         lblPause = new Label("Game gepauzeerd", skin);
         lblPause.setColor(Color.RED);
@@ -103,7 +98,7 @@ public class GameScreen extends BaseScreen {
         stage.addActor(lblPause);
 
         // Renderers.
-        gameRenderer = addRenderer(new GameRenderer(session.getMap()));
+        gameRenderer = addRenderer(new GameRenderer(session));
         addRenderer(new GameUIRenderer(session.getMap()));     
     }
 
@@ -112,51 +107,45 @@ public class GameScreen extends BaseScreen {
         // Render Game and UI.
         super.render(delta);
 
-        if(!this.session.getMap().getNodes().stream().anyMatch(n -> n.hasItem()) && !state.equals(GameState.Finished)) {
-            //clearRenderers();
-            
-            Actor btnContinue = new TextButton("Doorgaan", skin);
-            Actor lblEndGameText = new Label("Your score was:", skin);
-            Actor lblScore = new Label(Integer.toString(this.session.getScore().valueOf()), skin);
-            btnContinue.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    clearRenderers();
-                    
-                    btnContinue.remove();
-                    lblEndGameText.remove();
-                    lblScore.remove();
-                    start(session.getScore());
-                    //game.setScreen(new GameScreen(game, score));
-                }
-            });
-            
-            lblEndGameText.setPosition(stage.getWidth() / 2 - lblEndGameText.getWidth() / 2, stage.getHeight() - 80);
-            lblScore.setPosition(stage.getWidth() / 2 - lblScore.getWidth() / 2, stage.getHeight() - 100);
-            btnContinue.setSize(200, 40);
-            btnContinue.setPosition(stage.getWidth() / 2 - btnContinue.getWidth() / 2, stage.getHeight() / 4 - btnContinue.getHeight() / 2);
+        switch(this.session.getState()) {
+            case GameOver:
+                clearRenderers();
+                game.setScreen(new GameOverScreen(game, this.session.getScore()));
+                break;
+                
+            case Completed:
+                Actor btnContinue = new TextButton("Doorgaan", skin);
+                Actor lblEndGameText = new Label("Your score was:", skin);
+                Actor lblScore = new Label(Integer.toString(this.session.getScore().valueOf()), skin);
+                btnContinue.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        clearRenderers();
 
-            stage.addActor(btnContinue);
-            stage.addActor(lblEndGameText);
-            stage.addActor(lblScore);
-            
-            this.state = GameState.Finished;
-            gameRenderer.complete();
-            //game.setScreen(new EndGameScreen(game, this.session.getScore()));
+                        btnContinue.remove();
+                        lblEndGameText.remove();
+                        lblScore.remove();
+                        start(session.getScore());
+                    }
+                });
+
+                lblEndGameText.setPosition(stage.getWidth() / 2 - lblEndGameText.getWidth() / 2, stage.getHeight() - 80);
+                lblScore.setPosition(stage.getWidth() / 2 - lblScore.getWidth() / 2, stage.getHeight() - 100);
+                btnContinue.setSize(200, 40);
+                btnContinue.setPosition(stage.getWidth() / 2 - btnContinue.getWidth() / 2, stage.getHeight() / 4 - btnContinue.getHeight() / 2);
+
+                stage.addActor(btnContinue);
+                stage.addActor(lblEndGameText);
+                stage.addActor(lblScore);
+                this.session.end();
+                break;
         }
-        
-        if(!this.session.getMap().getAllGameObjects().stream().anyMatch(go -> go instanceof Pactale)) {
-            clearRenderers();
-            game.setScreen(new EndGameScreen(game, this.session.getScore()));
-        }
-        
-        
     }
     
     @Override
     public void pause() {
         // TODO: If singleplayer: pause game.
-        gameRenderer.pause();
+        this.session.pause();
         lblPause.setVisible(true);
         // TODO: If multiplayer: draw menu on top of game and capture input, but do NOT pause the game!
     }
@@ -164,7 +153,7 @@ public class GameScreen extends BaseScreen {
     @Override
     public void resume() {
         // TODO: If singleplayer: unpause the game.
-        gameRenderer.unpause();
+        this.session.resume();
         lblPause.setVisible(false);
         // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
     }

@@ -21,16 +21,17 @@ public class GameRenderer implements IRenderer {
     private final Map map;
     private final MapRenderer tileMapRenderer;
     private final Camera camera;
-    private GameState state = GameState.Running;
+    private final GameSession session;
 
-    public GameRenderer(Map map) {
+    public GameRenderer(GameSession session) {
+        this.session = session;
+        this.map = this.session.getMap();
+        
         // Camera.
         camera = new Camera(map.getWidth() * 32 + 100, map.getHeight() * 32 + 100, map, 32);
 
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
-
-        this.map = map;
 
         // Init tilemap.
         tileMapRenderer = new OrthogonalTiledMapRenderer(map.getBaseMap());
@@ -59,7 +60,7 @@ public class GameRenderer implements IRenderer {
             // Render items.
             Item item = node.getItem();
             if (item != null) {
-                if (state.equals(GameState.Running)) {
+                if (this.session.getState().equals(GameState.Running)) {
                     item.update();
                 }
                 item.draw(batch);
@@ -67,7 +68,7 @@ public class GameRenderer implements IRenderer {
 
             // Render portals.
             for (Portal portal : node.getPortals()) {
-                if (state.equals(GameState.Running)) {
+                if (this.session.getState().equals(GameState.Running)) {
                     portal.update();
                 }
                 portal.draw(batch);
@@ -84,13 +85,13 @@ public class GameRenderer implements IRenderer {
 
         // Render dynamic objects.
         for (GameObject obj : this.map.getAllGameObjects()) {
-            if (state.equals(GameState.Running)) {
+            if (this.session.getState().equals(GameState.Running)) {
                 obj.update();
             }
             obj.draw(batch);
         }
         
-        if(!state.equals(GameState.Running)) {
+        if(!this.session.getState().equals(GameState.Running)) {
             Pixmap pxTest = new Pixmap(map.getWidth() * 32, map.getHeight() * 32, Pixmap.Format.Alpha);
             pxTest.setColor(0, 0, 0, 0.5f);
             pxTest.fillRectangle(0, 0, map.getWidth() * 32, map.getHeight()* 32);
@@ -101,7 +102,15 @@ public class GameRenderer implements IRenderer {
         }
 
         this.map.getSession().getScore().generateNewScore(this.map.getAllGameObjects()); // Will calculate/decrease score once in a period.
-
+        
+        if(!this.map.getAllGameObjects().stream().anyMatch(go -> go instanceof Pactale)) {
+            this.session.gameOver();
+        }
+        
+        if(!this.map.getNodes().stream().anyMatch(n -> n.hasItem())) {
+            this.session.complete();
+        }
+        
         batch.end();
         DebugRenderManager.render(DebugLayers.UI);
     }
@@ -109,19 +118,19 @@ public class GameRenderer implements IRenderer {
     /**
      * Change the status of pause. It will be set true meaning the game will stop updating
      */
-    public void pause() {
+    /*public void pause() {
       this.state = GameState.Paused;
-    }
+    }*/
     
     /**
      * Change the status of pause to false. This will make the game start updating again
      */
-    public void unpause(){
+    /*public void unpause(){
         this.state = GameState.Running;
     }
-    
-    public void complete() {
-        this.state = GameState.Finished;
-    }
+
+    public GameState getState() {
+        return this.state;
+    }*/
 
 }
