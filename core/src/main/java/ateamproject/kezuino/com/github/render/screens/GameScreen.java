@@ -89,7 +89,7 @@ public class GameScreen extends BaseScreen {
     public void start(Score score) {
         session = new GameSession();
         session.setScore(score);
-        session.setMap(Map.load(session, "2"));
+        session.setMap(Map.load(session, "1"));
 
         player = session.getPlayer(0);
         
@@ -144,6 +144,13 @@ public class GameScreen extends BaseScreen {
             gameRenderer.complete();
             //game.setScreen(new EndGameScreen(game, this.session.getScore()));
         }
+        
+        if(!this.session.getMap().getAllGameObjects().stream().anyMatch(go -> go instanceof Pactale)) {
+            clearRenderers();
+            game.setScreen(new EndGameScreen(game, this.session.getScore()));
+        }
+        
+        
     }
     
     @Override

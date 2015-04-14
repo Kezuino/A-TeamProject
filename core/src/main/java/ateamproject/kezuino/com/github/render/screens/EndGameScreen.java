@@ -23,21 +23,32 @@ public class EndGameScreen extends BaseScreen {
     public EndGameScreen(Game game, Score score) {
         super(game);
 
-        TextButton btnBack = new TextButton("Doorgaan", skin);
-        Label lblEndGameText = new Label("Your score was:", skin);
+        TextButton btnBack = new TextButton("Stoppen", skin);
+        TextButton btnRetry = new TextButton("Opnieuw proberen", skin);
+        Label lblEndGameText = new Label("Game Over\nYour score was:", skin);
         Label lblScore = new Label(Integer.toString(score.valueOf()), skin);
         btnBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game, score));
+                game.setScreen(new MainScreen(game));
+            }
+        });
+        btnRetry.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new GameScreen(game));
             }
         });
 
         lblEndGameText.setPosition(stage.getWidth() / 2 - lblEndGameText.getWidth() / 2, stage.getHeight() - 50);
         lblScore.setPosition(stage.getWidth() / 2 - lblScore.getWidth() / 2, stage.getHeight() - 80);
+        btnRetry.setSize(200, 40);
         btnBack.setSize(200, 40);
-        btnBack.setPosition(stage.getWidth() / 2 - btnBack.getWidth() / 2, stage.getHeight() / 4 - btnBack.getHeight() / 2);
+        btnRetry.setPosition((stage.getWidth() / 2) - (btnRetry.getWidth() / 2) + (btnBack.getWidth() / 2) + 5, stage.getHeight() / 4 - btnRetry.getHeight() / 2);
+        btnBack.setPosition((stage.getWidth() / 2) - (btnBack.getWidth() / 2) - (btnRetry.getWidth() / 2) - 5, stage.getHeight() / 4 - btnBack.getHeight() / 2);
 
+
+        stage.addActor(btnRetry);
         stage.addActor(btnBack);
         stage.addActor(lblEndGameText);
         stage.addActor(lblScore);
