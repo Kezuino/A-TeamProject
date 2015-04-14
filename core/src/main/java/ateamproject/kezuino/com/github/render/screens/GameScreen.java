@@ -40,6 +40,9 @@ public class GameScreen extends BaseScreen {
     public GameScreen(Game game, Score score) {
         super(game);
         
+        clearOnRenderColor = Color.WHITE.cpy();       
+        Assets.create();
+        
         start(score);
         
         // Gameplay controls handling:
@@ -70,7 +73,7 @@ public class GameScreen extends BaseScreen {
                         if (state.equals(GameState.Paused)){
                             state = GameState.Running;
                             resume();
-                        } else {
+                        } else if(!state.equals(GameState.Finished)) {
                             state = GameState.Paused;
                             pause();
                         }
@@ -84,24 +87,21 @@ public class GameScreen extends BaseScreen {
     }
     
     public void start(Score score) {
-        clearOnRenderColor = Color.WHITE.cpy();       
-        Assets.create();
-
         session = new GameSession();
         session.setScore(score);
-        session.setMap(Map.load(session, "1"));
+        session.setMap(Map.load(session, "2"));
 
         player = session.getPlayer(0);
         
-        //Initialize the pausing
+        //Set current state to running
         state = GameState.Running;
+        //Initialize pause
         lblPause = new Label("Game gepauzeerd", skin);
         lblPause.setColor(Color.RED);
         lblPause.setPosition(100,100 + 300);
         lblPause.setVisible(false);
         stage.addActor(lblPause);
-        
-        
+
         // Renderers.
         gameRenderer = addRenderer(new GameRenderer(session.getMap()));
         addRenderer(new GameUIRenderer(session.getMap()));     
@@ -166,7 +166,6 @@ public class GameScreen extends BaseScreen {
     public void dispose() {
         // Once disposed. Assets cannot be reloaded.
         Assets.dispose();
-
         clearRenderers();
     }
 }
