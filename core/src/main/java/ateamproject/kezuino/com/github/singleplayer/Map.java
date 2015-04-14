@@ -136,8 +136,8 @@ public class Map {
                     map.addGameObject(enemy);
                 } else if (objTileProps.containsKey("isPactale")) {
                     // Create pactale.
-                    Pactale pactale = new Pactale(curPos, 3, 1f, Direction.Down, Color.WHITE);
-                    pactale.setMap(map);
+                    int playerIndex = Integer.valueOf(objProps.get("index", String.class));
+                    Pactale pactale = new Pactale(playerIndex, curPos, 3, 1f, Direction.Down, Color.WHITE);
                     pactale.setTexture(obj.getTextureRegion().getTexture());
                     map.addGameObject(pactale);
                 }

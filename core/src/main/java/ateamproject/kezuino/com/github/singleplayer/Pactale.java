@@ -5,8 +5,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 public class Pactale extends GameObject {
-
-    private static int playerIndexCounter = 0;
     private int playerIndex;
     private int lives;
     private Portal portal;
@@ -26,8 +24,13 @@ public class Pactale extends GameObject {
     public Pactale(Vector2 exactPosition, int lives, float movementSpeed, Direction walkingDirection, Color color) {
         super(exactPosition, movementSpeed, walkingDirection, color);
         this.lives = lives;
-        this.playerIndex = playerIndexCounter++;
+        this.playerIndex = -1;
         this.drawOnDirection = false;
+    }
+
+    public Pactale(int playerIndex, Vector2 exactPosition, int lives, float movementSpeed, Direction walkingDirection, Color color) {
+        this(exactPosition, lives, movementSpeed, walkingDirection, color);
+        this.playerIndex = playerIndex;
     }
 
     public int getPlayerIndex() {

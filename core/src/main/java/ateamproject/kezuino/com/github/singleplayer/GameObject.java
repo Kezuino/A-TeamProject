@@ -283,7 +283,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (map == null) {
             return null;
         }
-        return map.getNode((int) (this.exactPosition.x / 32f), (int) (this.exactPosition.y / 32f));
+
+        return map.getNode(MathUtils.floor(this.exactPosition.x / 32f), MathUtils.floor(this.exactPosition.y / 32f));
     }
 
     /**

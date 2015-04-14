@@ -25,7 +25,6 @@ public class GameScreen extends BaseScreen {
     private GameSession session;
     private final Pactale player;
     private GameRenderer gameRenderer;
-    private GameUIRenderer UIRenderer;
     private boolean paused;
     private Label lblPause;
 
@@ -50,7 +49,7 @@ public class GameScreen extends BaseScreen {
         
         // Renderers.
         gameRenderer = addRenderer(new GameRenderer(session.getMap()));
-        UIRenderer = addRenderer(new GameUIRenderer(session.getMap()));
+        addRenderer(new GameUIRenderer(session.getMap()));
 
         // Gameplay controls handling:
         inputs.addProcessor(new InputAdapter() {
@@ -95,19 +94,13 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 1, 0);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
- 
         // Render Game and UI.
         super.render(delta);
 
         if(!this.session.getMap().getNodes().stream().anyMatch(n -> n.hasItem())) {
-            removeRenderer(gameRenderer);
-            removeRenderer(UIRenderer);
-            //this.dispose();
-            
-            game.setScreen(new EndGameScreen(game, this.session.getScore(), this));
-            //end game
+            clearRenderers();
+
+            game.setScreen(new EndGameScreen(game, this.session.getScore()));
         }
     }
     
@@ -129,6 +122,9 @@ public class GameScreen extends BaseScreen {
 
     @Override
     public void dispose() {
+        // Once disposed. Assets cannot be reloaded.
         Assets.dispose();
+
+        clearRenderers();
     }
 }

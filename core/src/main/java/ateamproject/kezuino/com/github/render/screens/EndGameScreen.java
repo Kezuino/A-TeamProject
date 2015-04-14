@@ -20,10 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
  * @author Sven
  */
 public class EndGameScreen extends BaseScreen {
-    public EndGameScreen(Game game, Score score, BaseScreen base) {
+    public EndGameScreen(Game game, Score score) {
         super(game);
-        
-        base.dispose();
 
         TextButton btnBack = new TextButton("Terug", skin);
         Label lblEndGameText = new Label("Your score was:", skin);

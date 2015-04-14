@@ -29,18 +29,16 @@ import java.util.List;
  */
 public abstract class BaseScreen implements Screen {
 
+    private final List<IRenderer> renderers;
     protected boolean clearOnRender;
     protected Color clearOnRenderColor;
     protected Music backgroundMusic;
     protected Viewport viewport;
     protected Camera camera;
-
     protected Game game;
     protected Stage stage;
-
     protected Skin skin;
     protected InputMultiplexer inputs;
-    private final List<IRenderer> renderers;
 
     public BaseScreen(Game game) {
         // Bootstrap screen.
@@ -132,9 +130,21 @@ public abstract class BaseScreen implements Screen {
         renderers.add(renderer);
         return renderer;
     }
-    
+
+    /**
+     * Removes a specific {@link IRenderer} from this {@link Screen}.
+     *
+     * @param renderer {@link IRenderer} to remove.
+     * @param <T>      Type of instance to remove that extends from {@link IRenderer}.
+     */
     public <T extends IRenderer> void removeRenderer(T renderer) {
         renderers.remove(renderer);
     }
 
+    /**
+     * Removes all {@link IRenderer Renderers} from this {@link Screen}.
+     */
+    public void clearRenderers() {
+        renderers.clear();
+    }
 }
