@@ -39,6 +39,7 @@ public class TestPortal {
          */
 
         Pactale pactale = new Pactale(new Vector2(1, 1), 1, 1.1f, Direction.Right, Color.WHITE);
+        pactale.setMap(map);
         Portal p = new Portal(pactale, node, Direction.Left);
         assertNotNull("Portal must not be null. It was just created.", p);
         assertNotNull("Pactale must be owner of a portal.", pactale.getPortal());

@@ -301,8 +301,16 @@ public abstract class GameObject implements IRenderable, IPositionable {
     }
 
     public boolean setExactPosition(float x, float y) {
-        this.exactPosition = new Vector2(x, y);
-        return true;
+        if (this.getMap().getWidth() * 32 > x && this.getMap().getHeight()* 32 > y) {
+             this.exactPosition = new Vector2(x, y);
+             return true;
+        }
+        else
+            return false;
+        
+        
+        
+     
     }
 
     public boolean getActive() {

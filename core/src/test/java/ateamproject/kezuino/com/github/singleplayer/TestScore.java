@@ -32,14 +32,14 @@ public class TestScore {
     @Test
     public void testIncrementScore() {
         this.testScore.increase(5);
-        assertEquals("Current session score should be equal to 30", 30, this.testScore.valueOf());
-        assertEquals("Current session score should be equal to 40", 40, this.testScore.increase(10));
+        assertEquals("Current session score should be equal to 5030", 5030, this.testScore.valueOf());
+        assertEquals("Current session score should be equal to 5040", 5040, this.testScore.increase(10));
     }
     
     @Test
     public void testDecrementScore() {
         this.testScore.decrease(5);
-        assertEquals("Current session score should be equal to 20", 20, this.testScore.valueOf());
-        assertEquals("Current session score should be equal to 10", 10, this.testScore.decrease(10));
+        assertEquals("Current session score should be equal to 5020", 5020, this.testScore.valueOf());
+        assertEquals("Current session score should be equal to 5010", 5010, this.testScore.decrease(10));
     }
 }

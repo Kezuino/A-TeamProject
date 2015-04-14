@@ -44,7 +44,9 @@ public class TestProjectile {
         Color color = new Color(1, 111, 11, 111);
         Pactale owner = new Pactale(new Vector2(1, 1), 1, movementSpeed, walkingDirection, color);
 
-        Projectile p = new Projectile(new Vector2(1, 1), owner, movementSpeed, walkingDirection, color);
+        Projectile p;
+        p = new Projectile(new Vector2(1, 1), owner, movementSpeed, walkingDirection, color);
+        
         assertEquals("The color needs to be set", p.getColor(), color);
         assertEquals("The direction needs to be set", p.getDirection(), walkingDirection);
         assertEquals("The movementspeed needs to be set", p.getMovementSpeed(), movementSpeed, 0.000005);
