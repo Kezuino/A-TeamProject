@@ -13,9 +13,14 @@ import ateamproject.kezuino.com.github.singleplayer.Pactale;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.*;
 import ateamproject.kezuino.com.github.singleplayer.Direction;
+import ateamproject.kezuino.com.github.singleplayer.GameState;
 import ateamproject.kezuino.com.github.singleplayer.Score;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 /**
  * @author Anton
@@ -23,9 +28,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 public class GameScreen extends BaseScreen {
 
     private GameSession session;
-    private final Pactale player;
+    private Pactale player;
     private GameRenderer gameRenderer;
-    private boolean paused;
+    private GameState state;
     private Label lblPause;
     
     public GameScreen(Game game) {
@@ -34,28 +39,9 @@ public class GameScreen extends BaseScreen {
 
     public GameScreen(Game game, Score score) {
         super(game);
-        clearOnRenderColor = Color.WHITE.cpy();       
-        Assets.create();
-
-        session = new GameSession();
-        session.setScore(score);
-        session.setMap(Map.load(session, "1"));
-
-        player = session.getPlayer(0);
         
-        //Initialize the pausing
-        paused = false;
-        lblPause = new Label("Game gepauzeerd", skin);
-        lblPause.setColor(Color.RED);
-        lblPause.setPosition(100,100 + 300);
-        lblPause.setVisible(false);
-        stage.addActor(lblPause);
+        start(score);
         
-        
-        // Renderers.
-        gameRenderer = addRenderer(new GameRenderer(session.getMap()));
-        addRenderer(new GameUIRenderer(session.getMap()));
-
         // Gameplay controls handling:
         inputs.addProcessor(new InputAdapter() {
             @Override
@@ -81,11 +67,11 @@ public class GameScreen extends BaseScreen {
                         player.shootProjectile();
                         break;
                     case Input.Keys.ESCAPE:
-                        if (paused){
-                            paused = false;
+                        if (state.equals(GameState.Paused)){
+                            state = GameState.Running;
                             resume();
-                        }else {
-                            paused = true;
+                        } else {
+                            state = GameState.Paused;
                             pause();
                         }
                         break;
@@ -96,16 +82,67 @@ public class GameScreen extends BaseScreen {
             }
         });
     }
+    
+    public void start(Score score) {
+        clearOnRenderColor = Color.WHITE.cpy();       
+        Assets.create();
+
+        session = new GameSession();
+        session.setScore(score);
+        session.setMap(Map.load(session, "1"));
+
+        player = session.getPlayer(0);
+        
+        //Initialize the pausing
+        state = GameState.Running;
+        lblPause = new Label("Game gepauzeerd", skin);
+        lblPause.setColor(Color.RED);
+        lblPause.setPosition(100,100 + 300);
+        lblPause.setVisible(false);
+        stage.addActor(lblPause);
+        
+        
+        // Renderers.
+        gameRenderer = addRenderer(new GameRenderer(session.getMap()));
+        addRenderer(new GameUIRenderer(session.getMap()));     
+    }
 
     @Override
     public void render(float delta) {
         // Render Game and UI.
         super.render(delta);
 
-        if(!this.session.getMap().getNodes().stream().anyMatch(n -> n.hasItem())) {
-            clearRenderers();
+        if(!this.session.getMap().getNodes().stream().anyMatch(n -> n.hasItem()) && !state.equals(GameState.Finished)) {
+            //clearRenderers();
+            
+            Actor btnContinue = new TextButton("Doorgaan", skin);
+            Actor lblEndGameText = new Label("Your score was:", skin);
+            Actor lblScore = new Label(Integer.toString(this.session.getScore().valueOf()), skin);
+            btnContinue.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    clearRenderers();
+                    
+                    btnContinue.remove();
+                    lblEndGameText.remove();
+                    lblScore.remove();
+                    start(session.getScore());
+                    //game.setScreen(new GameScreen(game, score));
+                }
+            });
+            
+            lblEndGameText.setPosition(stage.getWidth() / 2 - lblEndGameText.getWidth() / 2, stage.getHeight() - 80);
+            lblScore.setPosition(stage.getWidth() / 2 - lblScore.getWidth() / 2, stage.getHeight() - 100);
+            btnContinue.setSize(200, 40);
+            btnContinue.setPosition(stage.getWidth() / 2 - btnContinue.getWidth() / 2, stage.getHeight() / 4 - btnContinue.getHeight() / 2);
 
-            game.setScreen(new EndGameScreen(game, this.session.getScore()));
+            stage.addActor(btnContinue);
+            stage.addActor(lblEndGameText);
+            stage.addActor(lblScore);
+            
+            this.state = GameState.Finished;
+            gameRenderer.complete();
+            //game.setScreen(new EndGameScreen(game, this.session.getScore()));
         }
     }
     
