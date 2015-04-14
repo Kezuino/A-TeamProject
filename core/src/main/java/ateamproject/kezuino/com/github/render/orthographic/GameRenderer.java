@@ -7,6 +7,7 @@ import ateamproject.kezuino.com.github.render.debug.renderers.DebugPathfinding;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugStatistics;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -20,7 +21,7 @@ public class GameRenderer implements IRenderer {
     private final Map map;
     private final MapRenderer tileMapRenderer;
     private final Camera camera;
-    private boolean paused = false;
+    private GameState state = GameState.Running;
 
     public GameRenderer(Map map) {
         // Camera.
@@ -58,7 +59,7 @@ public class GameRenderer implements IRenderer {
             // Render items.
             Item item = node.getItem();
             if (item != null) {
-                if (!paused) {
+                if (state.equals(GameState.Running)) {
                     item.update();
                 }
                 item.draw(batch);
@@ -66,7 +67,7 @@ public class GameRenderer implements IRenderer {
 
             // Render portals.
             for (Portal portal : node.getPortals()) {
-                if (!paused) {
+                if (state.equals(GameState.Running)) {
                     portal.update();
                 }
                 portal.draw(batch);
@@ -83,10 +84,20 @@ public class GameRenderer implements IRenderer {
 
         // Render dynamic objects.
         for (GameObject obj : this.map.getAllGameObjects()) {
-            if (!paused) {
+            if (state.equals(GameState.Running)) {
                 obj.update();
             }
             obj.draw(batch);
+        }
+        
+        if(!state.equals(GameState.Running)) {
+            Pixmap pxTest = new Pixmap(map.getWidth() * 32, map.getHeight() * 32, Pixmap.Format.Alpha);
+            pxTest.setColor(0, 0, 0, 0.5f);
+            pxTest.fillRectangle(0, 0, map.getWidth() * 32, map.getHeight()* 32);
+            
+            Texture tex = new Texture(pxTest);
+            
+            batch.draw(tex, 0, 0, tex.getWidth(), tex.getHeight());
         }
 
         this.map.getSession().getScore().generateNewScore(this.map.getAllGameObjects()); // Will calculate/decrease score once in a period.
@@ -99,14 +110,18 @@ public class GameRenderer implements IRenderer {
      * Change the status of pause. It will be set true meaning the game will stop updating
      */
     public void pause() {
-      this.paused = true;
+      this.state = GameState.Paused;
     }
     
     /**
      * Change the status of pause to false. This will make the game start updating again
      */
     public void unpause(){
-        this.paused = false;
+        this.state = GameState.Running;
+    }
+    
+    public void complete() {
+        this.state = GameState.Finished;
     }
 
 }

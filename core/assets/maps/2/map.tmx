@@ -919,6 +919,10 @@
   <object id="148" gid="203" x="576" y="64"/>
   <object id="149" gid="203" x="576" y="544"/>
   <object id="150" gid="203" x="32" y="608"/>
-  <object id="151" gid="205" x="64" y="96"/>
+  <object id="151" gid="205" x="64" y="96">
+   <properties>
+    <property name="index" value="0"/>
+   </properties>
+  </object>
  </objectgroup>
 </map>
