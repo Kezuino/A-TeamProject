@@ -69,10 +69,20 @@ public class GameScreen extends BaseScreen {
                         player.setDirection(Direction.Right);
                         break;
                     case Input.Keys.SPACE:
-                        player.shootProjectile();
+                        if (session.getState() != GameState.Paused) {
+                            player.shootProjectile();
+                        }
                         break;
                     case Input.Keys.F1:
                         DebugRenderManager.toggle();
+                        break;
+                    case Input.Keys.F2:
+                        if (Gdx.graphics.isFullscreen()) {
+                            Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+                        }
+                        else{
+                            Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+                        }
                         break;
                     case Input.Keys.ESCAPE:
                         if (session.getState().equals(GameState.Paused)) {
