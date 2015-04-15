@@ -77,12 +77,7 @@ public class GameScreen extends BaseScreen {
                         DebugRenderManager.toggle();
                         break;
                     case Input.Keys.F2:
-                        if (Gdx.graphics.isFullscreen()) {
-                            Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
-                        }
-                        else{
-                            Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-                        }
+                        gameRenderer.toggleFullscreen();
                         break;
                     case Input.Keys.ESCAPE:
                         if (session.getState().equals(GameState.Paused)) {

@@ -6,6 +6,7 @@ import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugMovement;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -80,9 +81,9 @@ public class GameRenderer implements IRenderer {
 
         // Cleanup gameobjects ready for deletion.
         for (GameObject obj : this.map.getAllGameObjects()
-                                      .stream()
-                                      .filter(o -> !o.getActive())
-                                      .collect(Collectors.toList())) {
+                .stream()
+                .filter(o -> !o.getActive())
+                .collect(Collectors.toList())) {
             this.map.removeGameObject(obj);
         }
 
@@ -125,22 +126,30 @@ public class GameRenderer implements IRenderer {
         DebugRenderManager.render(DebugLayers.UI);
     }
 
-    /**
-     * Change the status of pause. It will be set true meaning the game will stop updating
-     */
-    /*public void pause() {
-      this.state = GameState.Paused;
-    }*/
-
-    /**
-     * Change the status of pause to false. This will make the game start updating again
-     */
-    /*public void unpause(){
-        this.state = GameState.Running;
+    public void toggleFullscreen() {
+        if (Gdx.graphics.isFullscreen()) {
+            Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
+        } else {
+            Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
+        }
     }
 
-    public GameState getState() {
-        return this.state;
-    }*/
+    /**
+     * Change the status of pause. It will be set true meaning the game will
+     * stop updating
+     */
+    /*public void pause() {
+     this.state = GameState.Paused;
+     }*/
+    /**
+     * Change the status of pause to false. This will make the game start
+     * updating again
+     */
+    /*public void unpause(){
+     this.state = GameState.Running;
+     }
 
+     public GameState getState() {
+     return this.state;
+     }*/
 }
