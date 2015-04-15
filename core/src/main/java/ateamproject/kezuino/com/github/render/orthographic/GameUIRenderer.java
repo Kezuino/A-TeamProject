@@ -18,7 +18,7 @@ public class GameUIRenderer implements IRenderer {
 
     public GameUIRenderer(Map map) {
         // Camera.
-        camera = new Camera(map.getWidth() * 32 + 100, map.getHeight() * 32 + 100, map, 32);
+        camera = new Camera(map.getWidth() * 32, map.getHeight() * 32 + 50, map, 32);
 
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
@@ -37,7 +37,7 @@ public class GameUIRenderer implements IRenderer {
     @Override
     public void render() {
         batch.begin();
-        font.draw(batch, "levens: " + pactale.getLives() + ", score: " + session.getScore().valueOf(), 100, 0);
+        font.draw(batch, "levens: " + pactale.getLives() + ", score: " + session.getScore().valueOf(), 0, 0);
         batch.end();
     }
 }

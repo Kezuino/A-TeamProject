@@ -33,6 +33,7 @@ public class GameScreen extends BaseScreen {
     private Pactale player;
     private GameRenderer gameRenderer;
     private Label lblPause;
+    private Label lblPlayers;
 
     public GameScreen(Game game) {
         this(game, null);
@@ -79,11 +80,22 @@ public class GameScreen extends BaseScreen {
                     case Input.Keys.F2:
                         gameRenderer.toggleFullscreen();
                         break;
+                    case Input.Keys.TAB:
+                        if (!session.isPauseMenuShowing()) {
+                            if (session.isPlayerMenuShowing()) {
+                                hidePlayersView();
+                            } else {
+                                showPlayersView();
+                            }
+                        }
+                        break;
                     case Input.Keys.ESCAPE:
-                        if (session.getState().equals(GameState.Paused)) {
-                            resume();
-                        } else if (session.getState().equals(GameState.Running)) {
-                            pause();
+                        if (!session.isPlayerMenuShowing()) {
+                            if (session.isPauseMenuShowing()) {
+                                hidePauseView();
+                            } else {
+                                showPauseView();
+                            }
                         }
                         break;
                     default:
@@ -107,6 +119,13 @@ public class GameScreen extends BaseScreen {
         lblPause.setPosition(100, 100 + 300);
         lblPause.setVisible(false);
         stage.addActor(lblPause);
+
+        //Initialize lblPlayers
+        lblPlayers = new Label("sepelersoverzicht", skin);
+        lblPlayers.setColor(Color.RED);
+        lblPlayers.setPosition(100, 100 + 300);
+        lblPlayers.setVisible(false);
+        stage.addActor(lblPlayers);
 
         // Renderers.
         gameRenderer = addRenderer(new GameRenderer(session));
@@ -153,19 +172,23 @@ public class GameScreen extends BaseScreen {
         }
     }
 
-    @Override
-    public void pause() {
-        // TODO: If singleplayer: pause game.
-        this.session.pause();
+    public void showPauseView() {
         lblPause.setVisible(true);
         // TODO: If multiplayer: draw menu on top of game and capture input, but do NOT pause the game!
     }
 
-    @Override
-    public void resume() {
-        // TODO: If singleplayer: unpause the game.
-        this.session.resume();
+    public void hidePauseView() {
         lblPause.setVisible(false);
+        // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
+    }
+
+    public void showPlayersView() {
+        lblPlayers.setVisible(true);
+        // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
+    }
+
+    public void hidePlayersView() {
+        lblPlayers.setVisible(false);
         // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
     }
 
