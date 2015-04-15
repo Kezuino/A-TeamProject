@@ -174,21 +174,26 @@ public class GameScreen extends BaseScreen {
 
     public void showPauseView() {
         lblPause.setVisible(true);
+        this.session.showPauseMenu();
         // TODO: If multiplayer: draw menu on top of game and capture input, but do NOT pause the game!
     }
 
     public void hidePauseView() {
         lblPause.setVisible(false);
+        this.session.showPauseMenu();
+        //this.session.pause();
         // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
     }
 
     public void showPlayersView() {
         lblPlayers.setVisible(true);
+        this.session.showPlayerMenu();
         // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
     }
 
     public void hidePlayersView() {
         lblPlayers.setVisible(false);
+        this.session.showPlayerMenu();
         // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
     }
 

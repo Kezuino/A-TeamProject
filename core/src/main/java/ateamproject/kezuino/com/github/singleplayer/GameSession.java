@@ -66,12 +66,20 @@ public class GameSession {
         return this.map;
     }
 
-    public Boolean isPlayerMenuShowing() {
+    public boolean isPlayerMenuShowing() {
         return this.showingPlayerMenu;
     }
 
-    public Boolean isPauseMenuShowing() {
+    public boolean isPauseMenuShowing() {
         return this.showingPauseMenu;
+    }
+    
+    public void showPauseMenu() {
+        this.showingPauseMenu = !this.showingPauseMenu;
+    }
+    
+    public void showPlayerMenu() {
+        this.showingPlayerMenu = !this.showingPlayerMenu;
     }
 
     /**

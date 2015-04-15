@@ -1,13 +1,12 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.Iterator;
+import java.util.Random;
 
 public class Enemy extends GameObject {
 
@@ -46,6 +45,9 @@ public class Enemy extends GameObject {
      * The path created by pathfinding
      */
     private GraphPath<Node> graphPath;
+    
+    private float timeToChangePath;
+    private float timeToChangePathStart;
 
     /**
      * Constructs a new {@link Enemy}.
@@ -179,7 +181,19 @@ public class Enemy extends GameObject {
         if (!this.isMoving) {
             //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
             if (this.objectToFollow != null) {
-                graphPath = this.getMap().getPathfinder().searchNodePath(this.getNode(), this.objectToFollow.getNode());
+                if(graphPath == null || (System.nanoTime() - timeToChangePathStart) / 1000000000.0f >= timeToChangePath) {
+                    graphPath = this.getMap().getPathfinder().searchNodePath(this.getNode(), this.objectToFollow.getNode());
+                    
+                    System.out.println("Path changed! " + this.timeToChangePath + " / " + this.timeToChangePathStart);
+                    
+                    Random rand = new Random();
+                    this.timeToChangePath = rand.nextFloat() * (.5f - 2f) + .5f;
+                    this.timeToChangePathStart = System.nanoTime();
+                    
+                    System.out.println(this.timeToChangePath + " / " + this.timeToChangePathStart + "\n");
+                } else {
+                    System.out.println("Waiting");
+                }
             }
 
             //Take the first node out of the created Path, and try to move to it. 

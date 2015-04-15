@@ -143,6 +143,10 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
         if (isForcedWall) return true;
         return Boolean.valueOf(getProperty("isWall"));
     }
+    
+    public boolean hasGameObject() {
+        return this.map.getAllGameObjects().stream().anyMatch(go -> go.getNode().equals(this) && !(go instanceof Pactale) && !(go instanceof Projectile));
+    }
 
     /**
      * Force sets this {@link Node} to a wall.
@@ -306,7 +310,7 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
         for (Direction dir : Direction.values()) {
             // Get adjacent node if not null and isn't a wall.
             Node adjacentNode = getMap().getAdjacentNode(curNode, dir);
-            if (adjacentNode == null || adjacentNode.isWall()) continue;
+            if (adjacentNode == null || adjacentNode.isWall() || adjacentNode.hasGameObject()) continue;
 
             // Add adjacent node to connections.
             Connection<Node> con = new DefaultConnection<>(curNode, adjacentNode);
