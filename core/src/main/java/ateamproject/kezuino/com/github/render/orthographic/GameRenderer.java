@@ -41,8 +41,8 @@ public class GameRenderer implements IRenderer {
         //DebugRenderManager.addRenderer(new DebugStatistics());
         //DebugRenderManager.addRenderer(new DebugPathfinding());
         DebugRenderManager.addRenderer(new DebugMovement());
-        DebugRenderManager.active();
-        DebugRenderManager.show();
+        //DebugRenderManager.active();
+        //DebugRenderManager.show();
     }
 
     @Override

@@ -40,7 +40,7 @@ public class Projectile extends GameObject {
 
     @Override
     protected boolean collisionWithGameObject(GameObject object) {
-        if (object.equals(owner)) return false;
+        if (object.equals(owner) || object instanceof Projectile) return false;
 
         GameObject obj = object;
         if (this.getOwner().getPortal() != null && this.getActive()) {

@@ -90,7 +90,7 @@ public class GameScreen extends BaseScreen {
     public void start(Score score) {
         session = new GameSession();
         session.setScore(score);
-        session.setMap(Map.load(session, "1"));
+        session.setMap(Map.load(session, "2"));
 
         player = session.getPlayer(0);
         

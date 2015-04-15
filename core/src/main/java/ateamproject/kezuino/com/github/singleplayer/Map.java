@@ -131,7 +131,7 @@ public class Map {
                     posNode.setItem(item);
                 } else if (objTileProps.containsKey("isEnemy")) {
                     // Create enemy.
-                    Enemy enemy = new Enemy(null, curPos, 1, Direction.Down);
+                    Enemy enemy = new Enemy(null, curPos, 2.5f, Direction.Down);
                     enemy.setTexture(obj.getTextureRegion().getTexture());
                     enemy.setMap(map);
                     map.addGameObject(enemy);
@@ -144,7 +144,7 @@ public class Map {
                     }
 
                     // Create pactale.
-                    Pactale pactale = new Pactale(playerIndex, curPos, 3, 1f, Direction.Down, Color.WHITE);
+                    Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
                     pactale.setTexture(obj.getTextureRegion().getTexture());
                     map.addGameObject(pactale);
                 }
