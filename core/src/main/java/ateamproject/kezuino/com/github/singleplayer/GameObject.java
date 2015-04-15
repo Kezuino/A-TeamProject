@@ -19,22 +19,11 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link Direction} this {@link GameObject} will continue onto next.
      */
     protected Direction nextDirection;
-
-    public Node getMoveStartNode() {
-        return moveStartNode;
-    }
-
     /**
      * Current {@link Node} that was the origin or the current movement.
      */
     protected Node moveStartNode;
-
-    public Node getMoveEndNode() {
-        return moveEndNode;
-    }
-
     protected Node moveEndNode;
-
     /**
      * If true, this {@link GameObject} is currently transitioning between
      * {@link Node nodes}.
@@ -84,12 +73,10 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link GameObject}.
      */
     private Color color;
-
     /**
      * Total added deltatime since last {@link Node} movement occured.
      */
     private float moveTotalStep;
-
     /**
      * Initializes this {@link GameObject}.
      * <p>
@@ -139,6 +126,14 @@ public abstract class GameObject implements IRenderable, IPositionable {
         this(exactPosition, movementSpeed, direction, Color.WHITE);
     }
 
+    public Node getMoveStartNode() {
+        return moveStartNode;
+    }
+
+    public Node getMoveEndNode() {
+        return moveEndNode;
+    }
+
     /**
      * Gets the starting exactPosition of this {@link GameObject} when it was created.
      *
@@ -154,7 +149,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * @return
      */
     public Vector2 getExactPosition() {
-        return exactPosition;
+        return exactPosition.set(MathUtils.round(exactPosition.x), MathUtils.round(exactPosition.y));
     }
 
     /**
@@ -288,7 +283,13 @@ public abstract class GameObject implements IRenderable, IPositionable {
             return;
         }
 
-        this.nextDirection = this.isMoving ? direction : (this.direction = direction);
+        if (this.isMoving) {
+            this.nextDirection = direction;
+        } else {
+            if (getNode().getAdjacentNode(direction).isWall()) return;
+            this.direction = direction;
+
+        }
     }
 
     @Override
@@ -297,7 +298,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
             return null;
         }
 
-        return map.getNode(MathUtils.floor(this.exactPosition.x / 32f), MathUtils.floor(this.exactPosition.y / 32f));
+        return map.getNode(MathUtils.floor(this.getExactPosition().x / 32f), MathUtils.floor(this.getExactPosition().y / 32f));
     }
 
     /**
@@ -315,7 +316,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
     public boolean setExactPosition(float x, float y) {
         if (this.getMap().getWidth() * 32 > x && this.getMap().getHeight() * 32 > y) {
-            this.exactPosition = new Vector2(x, y);
+            this.exactPosition = new Vector2(MathUtils.round(x), MathUtils.round(y));
             return true;
         }
         return false;
@@ -367,7 +368,20 @@ public abstract class GameObject implements IRenderable, IPositionable {
      *                  {@link Node}).
      */
     public void moveAdjacent(Direction direction) {
-        this.direction = direction;
+        if (map == null) throw new IllegalArgumentException("Field map must not be null.");
+
+        setDirection(direction);
+        Node targetNode = getMap().getAdjacentNode(getNode(), this.direction);
+        Node nextDirNode = this.nextDirection != null ? getMap().getAdjacentNode(getNode(), this.nextDirection) : null;
+
+        if (nextDirNode != null && !nextDirNode.isWall()) {
+            this.direction = this.nextDirection;
+            this.nextDirection = null;
+        } else if (targetNode == null || targetNode.isWall()) {
+            this.direction = direction;
+            collisionWithWall(getNode());
+            return;
+        }
 
         if (!isMoving) {
             isMoving = true;
@@ -382,25 +396,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * the given {@code direction}.
      */
     public void moveAdjacent() {
-        if (map == null) throw new IllegalArgumentException("Field map must not be null.");
-
-        Direction previousDirection = this.direction;
-        this.direction = this.nextDirection != null ? this.nextDirection : direction;
-        Node targetNode = getMap().getAdjacentNode(getNode(), this.direction);
-        if (targetNode == null || targetNode.isWall()) {
-            this.direction = previousDirection;
-            targetNode = getMap().getAdjacentNode(getNode(), this.direction);
-            if (targetNode == null || targetNode.isWall()) {
-                return;
-            }
-        }
-
-        if (!isMoving) {
-            isMoving = true;
-            moveStartNode = getNode();
-            moveEndNode = getNode().getAdjacentNode(this.direction);
-            movementStartTime = moveTotalStep;
-        }
+        moveAdjacent(this.direction);
     }
 
     /**
@@ -417,7 +413,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
             // Move object in direction.
             Vector2 curPos = moveStartNode.getExactPosition();
             Vector2 nextPos = moveEndNode.getExactPosition();
-            this.exactPosition = curPos.interpolate(nextPos, moveTotalStep - movementStartTime, Interpolation.linear);
+            this.exactPosition = curPos.interpolate(nextPos, MathUtils.clamp(moveTotalStep - movementStartTime, 0, 1), Interpolation.linear);
 
             // Check target reached.
             if (moveTotalStep - movementStartTime >= 1) {
@@ -427,7 +423,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         }
 
         // Collision logic.
-        Node targetNode = this.getMap().getAdjacentNode(getNode(), this.direction);
+        Node targetNode = moveEndNode;
 
         // Target node is beyond bounds, do not check for collision beyond this point
         if (targetNode == null) {
@@ -448,10 +444,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
         if (getNode().hasItem()) {
             collisionWithItem(getNode().getItem());
-        }
-
-        if (collisionWithWall(getNode())) {
-            return;
         }
     }
 
@@ -481,7 +473,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         // Draw centered in node.
         float xOffset = (32 - texture.getWidth()) / 2f;
         float yOffset = (32 - texture.getHeight()) / 2f;
-        batch.draw(texture, this.exactPosition.x + xOffset, this.exactPosition.y + yOffset, texture.getWidth() / 2, texture
+        batch.draw(texture, this.getExactPosition().x + xOffset, this.getExactPosition().y + yOffset, texture.getWidth() / 2, texture
                 .getHeight() / 2, texture
                 .getWidth(), texture.getHeight(), 1, 1, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
 
