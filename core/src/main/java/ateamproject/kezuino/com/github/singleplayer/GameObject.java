@@ -379,6 +379,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
             this.nextDirection = null;
         } else if (targetNode == null || targetNode.isWall()) {
             this.direction = direction;
+            collisionWithWall(getNode());
             return;
         }
 
@@ -443,10 +444,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
         if (getNode().hasItem()) {
             collisionWithItem(getNode().getItem());
-        }
-
-        if (collisionWithWall(getNode())) {
-            return;
         }
     }
 
