@@ -79,6 +79,7 @@ public class Pactale extends GameObject {
             Projectile proj = new Projectile(this.getExactPosition(), this, this.getMovementSpeed() * 3, this.getDirection(), this
                     .getColor());
             getMap().addGameObject(proj);
+            Assets.playSound("portal_shot.mp3");
 
             // check if next node has collision
             proj.moveAdjacent(direction);

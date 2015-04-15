@@ -27,7 +27,7 @@ public class GameRenderer implements IRenderer {
         this.map = this.session.getMap();
 
         // Camera.
-        camera = new Camera(map.getWidth() * 32 + 100, map.getHeight() * 32 + 100, map, 32);
+        camera = new Camera(map.getWidth() * 32, map.getHeight() * 32, map, 32);
 
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);

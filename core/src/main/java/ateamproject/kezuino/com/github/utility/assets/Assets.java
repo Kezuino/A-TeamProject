@@ -57,6 +57,9 @@ public class Assets {
 
         // Sounds.
         manager.load(AUDIO_SOUND_DIR + "defeat.wav", Sound.class);
+        manager.load(AUDIO_SOUND_DIR + "portal_shot.mp3", Sound.class);
+        manager.load(AUDIO_SOUND_DIR + "portal_hit.mp3", Sound.class);
+        manager.load(AUDIO_SOUND_DIR + "enemy_eat.mp3", Sound.class);
 
         // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
 
