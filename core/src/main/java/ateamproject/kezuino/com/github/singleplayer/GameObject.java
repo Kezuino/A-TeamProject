@@ -20,10 +20,21 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     protected Direction nextDirection;
 
+    public Node getMoveStartNode() {
+        return moveStartNode;
+    }
+
     /**
      * Current {@link Node} that was the origin or the current movement.
      */
     protected Node moveStartNode;
+
+    public Node getMoveEndNode() {
+        return moveEndNode;
+    }
+
+    protected Node moveEndNode;
+
     /**
      * If true, this {@link GameObject} is currently transitioning between
      * {@link Node nodes}.
@@ -303,16 +314,11 @@ public abstract class GameObject implements IRenderable, IPositionable {
     }
 
     public boolean setExactPosition(float x, float y) {
-        if (this.getMap().getWidth() * 32 > x && this.getMap().getHeight()* 32 > y) {
-             this.exactPosition = new Vector2(x, y);
-             return true;
+        if (this.getMap().getWidth() * 32 > x && this.getMap().getHeight() * 32 > y) {
+            this.exactPosition = new Vector2(x, y);
+            return true;
         }
-        else
-            return false;
-        
-        
-        
-     
+        return false;
     }
 
     public boolean getActive() {
@@ -365,7 +371,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
         if (!isMoving) {
             isMoving = true;
-            moveStartNode = getMap().getAdjacentNode(getNode(), direction);
+            moveStartNode = getNode();
+            moveEndNode = getNode().getAdjacentNode(this.direction);
             movementStartTime = moveTotalStep;
         }
     }
@@ -390,7 +397,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
         if (!isMoving) {
             isMoving = true;
-            moveStartNode = getMap().getAdjacentNode(getNode(), direction);
+            moveStartNode = getNode();
+            moveEndNode = getNode().getAdjacentNode(this.direction);
             movementStartTime = moveTotalStep;
         }
     }
@@ -400,10 +408,25 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     @Override
     public void update() {
+        moveTotalStep += movementSpeed * Gdx.graphics.getDeltaTime();
+
+        // Movement logic.
         if (!this.isMoving) {
             this.moveAdjacent();
+        } else {
+            // Move object in direction.
+            Vector2 curPos = moveStartNode.getExactPosition();
+            Vector2 nextPos = moveEndNode.getExactPosition();
+            this.exactPosition = curPos.interpolate(nextPos, moveTotalStep - movementStartTime, Interpolation.linear);
+
+            // Check target reached.
+            if (moveTotalStep - movementStartTime >= 1) {
+                isMoving = false;
+                movementStartTime = moveTotalStep;
+            }
         }
 
+        // Collision logic.
         Node targetNode = this.getMap().getAdjacentNode(getNode(), this.direction);
 
         // Target node is beyond bounds, do not check for collision beyond this point
@@ -437,8 +460,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     @Override
     public void draw(SpriteBatch batch) {
-        moveTotalStep += movementSpeed * Gdx.graphics.getDeltaTime();
-
         // Capture node and texture.
         Node node = getNode();
         if (node == null || this.texture == null) {
@@ -456,19 +477,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
         }
 
         // TODO: Animate from sprite region (spritesheet animation).
-
-        // Move object in direction.
-        if (isMoving) {
-            Vector2 curPos = getNode().getExactPosition();
-            Vector2 nextPos = moveStartNode.getExactPosition();
-            this.exactPosition = curPos.interpolate(nextPos, moveTotalStep - movementStartTime, Interpolation.linear);
-
-            // Check target reached.
-            if (moveTotalStep - movementStartTime >= 1) {
-                isMoving = false;
-                movementStartTime = moveTotalStep;
-            }
-        }
 
         // Draw centered in node.
         float xOffset = (32 - texture.getWidth()) / 2f;
@@ -489,5 +497,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * @deprecated unused, prepared for removed on cleanup, if still unused
      */
     public void move(Node targetNode) {
-        throw new UnsupportedOperationException(); }
+        throw new UnsupportedOperationException();
+    }
 }

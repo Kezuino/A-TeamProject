@@ -247,7 +247,7 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
      */
     public Node getAdjacentNode(Direction direction) {
         if (direction == null) throw new NullPointerException("Parameter direction must not be null.");
-        return getMap().getNode(getX() + direction.getX(), getY() + direction.getY());
+        return this.getMap().getAdjacentNode(this, direction);
     }
 
     /**

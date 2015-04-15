@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.singleplayer.IPositionable;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +40,7 @@ public class DebugRenderManager {
      * for this {@link DebugLayers layer}.
      *
      * @param layer {@link DebugLayers Layer} to search
-     * {@link IDebugRenderer DebugRenderers} by.
+     *              {@link IDebugRenderer DebugRenderers} by.
      */
     public static void active(DebugLayers layer) {
         if (layer == null) {
@@ -54,11 +55,20 @@ public class DebugRenderManager {
     }
 
     /**
+     * Activates all {@link IDebugRenderer DebugRenderers}.
+     */
+    public static void active() {
+        for (IDebugRenderer renderer : renderers) {
+            renderer.active();
+        }
+    }
+
+    /**
      * Renders alls {@link IDebugRenderer DebugRenderers} that are listening for
      * this layer.
      *
-     * @param layer {@link DebugLayers Layer} to search
-     * {@link IDebugRenderer DebugRenderers} by.
+     * @param layer  {@link DebugLayers Layer} to search
+     *               {@link IDebugRenderer DebugRenderers} by.
      * @param object {@link IPositionable} to be drawn on.
      */
     public static void render(DebugLayers layer, IPositionable object) {
@@ -69,7 +79,16 @@ public class DebugRenderManager {
             if (!renderer.hasLayerFlag(layer)) {
                 continue;
             }
-            renderer.render(object);
+
+            if (object != null)  {
+                Class persistentClass = (Class) ((ParameterizedType) renderer.getClass().getGenericSuperclass()).getActualTypeArguments()[0];
+
+                if (persistentClass.isAssignableFrom(object.getClass())) {
+                    renderer.render(object);
+                }
+            } else {
+                renderer.render(null);
+            }
         }
     }
 
@@ -78,7 +97,7 @@ public class DebugRenderManager {
      * this layer.
      *
      * @param layer {@link DebugLayers Layer} to search
-     * {@link IDebugRenderer DebugRenderers} by.
+     *              {@link IDebugRenderer DebugRenderers} by.
      */
     public static void render(DebugLayers layer) {
         render(layer, null);
@@ -88,19 +107,16 @@ public class DebugRenderManager {
      * Adds a {@link IDebugRenderer} to the list of renderers.
      *
      * @param renderer {@link IDebugRenderer} to add to the list of renderers.
-     * @param <T> Any type of {@link IDebugRenderer}.
+     * @param <T>      Any type of {@link IDebugRenderer}.
      * @return {@link IDebugRenderer} that was given for method chaining.
      */
     public static <T extends IDebugRenderer> T addRenderer(T renderer) {
         renderers.add(renderer);
         if (renderer instanceof DebugRenderer) {
             DebugRenderer debugRenderer = (DebugRenderer) renderer;
-            debugRenderer.batch = getSpriteBatch(renderer.getLayer());
+            debugRenderer.batch = getSpriteBatch(debugRenderer.getLayer());
             debugRenderer.camera = camera;
-
-            DebugRenderer hud = (DebugRenderer) renderer;
-            hud.batch = getSpriteBatch(renderer.getLayer());
-            hud.camera = camera;
+            debugRenderer.batch.setProjectionMatrix(camera.combined);
         }
         return renderer;
     }

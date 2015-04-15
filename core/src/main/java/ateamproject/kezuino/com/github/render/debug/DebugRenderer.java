@@ -1,8 +1,14 @@
 package ateamproject.kezuino.com.github.render.debug;
 
 import ateamproject.kezuino.com.github.singleplayer.IPositionable;
+import ateamproject.kezuino.com.github.singleplayer.Node;
+import ateamproject.kezuino.com.github.singleplayer.Pactale;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Matrix4;
+import com.badlogic.gdx.math.Quaternion;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 
 /**
  * Created by Anton on 4/4/2015.
@@ -41,5 +47,6 @@ public abstract class DebugRenderer<T extends IPositionable> implements IDebugRe
     @Override
     public void render(T layerObject) {
         // Set the projection view to the bounds of the layer object.
+
     }
 }
