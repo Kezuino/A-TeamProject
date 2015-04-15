@@ -11,6 +11,7 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
+import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
@@ -234,9 +235,7 @@ public class Map {
      */
     public Node getNode(Vector2 position) {
         Vector2 fixedPos = position.cpy();
-        fixedPos.x /= 32;
-        fixedPos.y /= 32;
-        return getNode((int) fixedPos.x, (int) fixedPos.y);
+        return getNode(MathUtils.floor(fixedPos.x / 32f), MathUtils.floor( fixedPos.y / 32f));
     }
 
     /**
