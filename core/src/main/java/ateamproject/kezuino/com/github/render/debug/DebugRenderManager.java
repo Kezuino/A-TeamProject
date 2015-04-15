@@ -153,4 +153,11 @@ public class DebugRenderManager {
         }
         return layerSpriteBatches.get(layer);
     }
+
+    /**
+     * Toggles the visibility of the {@link IDebugRenderer DebugRenderers}.
+     */
+    public static void toggle() {
+        setVisible(isHidden());
+    }
 }

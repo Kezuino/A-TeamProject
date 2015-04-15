@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameUIRenderer;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
@@ -68,6 +69,9 @@ public class GameScreen extends BaseScreen {
                     case Input.Keys.SPACE:
                         player.shootProjectile();
                         break;
+                    case Input.Keys.F1:
+                        DebugRenderManager.toggle();
+                        break;
                     case Input.Keys.ESCAPE:
                         if (session.getState().equals(GameState.Paused)){
                             resume();
@@ -93,7 +97,7 @@ public class GameScreen extends BaseScreen {
         //Initialize pause
         lblPause = new Label("Game gepauzeerd", skin);
         lblPause.setColor(Color.RED);
-        lblPause.setPosition(100,100 + 300);
+        lblPause.setPosition(100, 100 + 300);
         lblPause.setVisible(false);
         stage.addActor(lblPause);
 
