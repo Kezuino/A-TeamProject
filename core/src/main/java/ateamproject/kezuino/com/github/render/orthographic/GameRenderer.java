@@ -103,10 +103,12 @@ public class GameRenderer implements IRenderer {
 
         this.map.getSession().getScore().generateNewScore(this.map.getAllGameObjects()); // Will calculate/decrease score once in a period.
         
+        //Check if here are any pactales on the map
         if(!this.map.getAllGameObjects().stream().anyMatch(go -> go instanceof Pactale)) {
             this.session.gameOver();
         }
         
+        //Check if there are any items on the map
         if(!this.map.getNodes().stream().anyMatch(n -> n.hasItem())) {
             this.session.complete();
         }

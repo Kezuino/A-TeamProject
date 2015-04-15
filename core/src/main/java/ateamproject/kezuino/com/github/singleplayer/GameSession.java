@@ -22,11 +22,15 @@ public class GameSession {
     }
     
     public void pause() {
-        this.state = GameState.Paused;
+        if(!this.hasEnded()) {
+            this.state = GameState.Paused;
+        }
     }
     
     public void resume() {
-        this.state = GameState.Running;
+        if(!this.hasEnded()) {
+            this.state = GameState.Running;
+        }
     }
     
     public void complete() {

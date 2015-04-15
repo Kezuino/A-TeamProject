@@ -162,6 +162,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * Gets the {@link Texture} of this {@link GameObject} for drawing.
      */
+    @Override
     public Texture getTexture() {
         return texture;
     }
@@ -169,6 +170,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * Sets the {@link Texture} of this {@link GameObject} for drawing.
      */
+    @Override
     public void setTexture(Texture texture) {
         this.texture = texture;
     }
