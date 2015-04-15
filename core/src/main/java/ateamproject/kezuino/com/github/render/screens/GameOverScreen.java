@@ -25,7 +25,7 @@ public class GameOverScreen extends BaseScreen {
 
         TextButton btnBack = new TextButton("Stoppen", skin);
         TextButton btnRetry = new TextButton("Opnieuw proberen", skin);
-        Label lblEndGameText = new Label("Game Over\nYour score was:", skin);
+        Label lblEndGameText = new Label("Game Over\nJe score was:", skin);
         Label lblScore = new Label(Integer.toString(score.valueOf()), skin);
         btnBack.addListener(new ClickListener() {
             @Override

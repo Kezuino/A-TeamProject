@@ -735,13 +735,10 @@
  <tileset firstgid="203" name="objects" tilewidth="32" tileheight="32">
   <tile id="0">
    <properties>
+    <property name="direction" value="Down"/>
     <property name="isEnemy" value="true"/>
    </properties>
    <image width="32" height="32" source="objects/9017.png"/>
-   <animation>
-    <frame tileid="0" duration="250"/>
-    <frame tileid="1" duration="250"/>
-   </animation>
   </tile>
   <tile id="1">
    <image width="32" height="32" source="objects/9018.png"/>
@@ -763,6 +760,36 @@
     <property name="item" value="SmallObject"/>
    </properties>
    <image width="32" height="32" source="objects/28631.png"/>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="direction" value="Right"/>
+    <property name="isEnemy" value="true"/>
+   </properties>
+   <image width="32" height="32" source="objects/9019.png"/>
+  </tile>
+  <tile id="7">
+   <image width="32" height="32" source="objects/9020.png"/>
+  </tile>
+  <tile id="8">
+   <properties>
+    <property name="direction" value="Up"/>
+    <property name="isEnemy" value="true"/>
+   </properties>
+   <image width="32" height="32" source="objects/9021.png"/>
+  </tile>
+  <tile id="9">
+   <image width="32" height="32" source="objects/9022.png"/>
+  </tile>
+  <tile id="10">
+   <properties>
+    <property name="direction" value="Left"/>
+    <property name="isEnemy" value="true"/>
+   </properties>
+   <image width="32" height="32" source="objects/9023.png"/>
+  </tile>
+  <tile id="11">
+   <image width="32" height="32" source="objects/9024.png"/>
   </tile>
  </tileset>
  <layer name="tiles" width="20" height="20">

@@ -167,8 +167,8 @@ public class Enemy extends GameObject {
         }
 
         // Set first Pactale as target.
-        this.objectToFollow = this.getNode()
-                                  .getMap()
+        
+        this.objectToFollow = this.getMap()
                                   .getAllGameObjects()
                                   .stream()
                                   .filter(go -> go instanceof Pactale)
