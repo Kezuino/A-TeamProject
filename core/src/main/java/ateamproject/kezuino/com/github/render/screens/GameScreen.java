@@ -16,6 +16,7 @@ import com.badlogic.gdx.*;
 import ateamproject.kezuino.com.github.singleplayer.Direction;
 import ateamproject.kezuino.com.github.singleplayer.GameState;
 import ateamproject.kezuino.com.github.singleplayer.Score;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -32,19 +33,20 @@ public class GameScreen extends BaseScreen {
     private Pactale player;
     private GameRenderer gameRenderer;
     private Label lblPause;
-    
+
     public GameScreen(Game game) {
         this(game, null);
     }
 
     public GameScreen(Game game, Score score) {
         super(game);
-        
-        clearOnRenderColor = Color.WHITE.cpy();       
+
+        clearOnRenderColor = Color.WHITE.cpy();
         Assets.create();
-        
+        backgroundMusic = Assets.getMusicStream("action.mp3");
+
         start(score);
-        
+
         // Gameplay controls handling:
         inputs.addProcessor(new InputAdapter() {
             @Override
@@ -73,9 +75,9 @@ public class GameScreen extends BaseScreen {
                         DebugRenderManager.toggle();
                         break;
                     case Input.Keys.ESCAPE:
-                        if (session.getState().equals(GameState.Paused)){
+                        if (session.getState().equals(GameState.Paused)) {
                             resume();
-                        } else if(session.getState().equals(GameState.Running)) {
+                        } else if (session.getState().equals(GameState.Running)) {
                             pause();
                         }
                         break;
@@ -86,14 +88,14 @@ public class GameScreen extends BaseScreen {
             }
         });
     }
-    
+
     public void start(Score score) {
         session = new GameSession();
         session.setScore(score);
         session.setMap(Map.load(session, "2"));
 
         player = session.getPlayer(0);
-        
+
         //Initialize pause
         lblPause = new Label("Game gepauzeerd", skin);
         lblPause.setColor(Color.RED);
@@ -103,7 +105,7 @@ public class GameScreen extends BaseScreen {
 
         // Renderers.
         gameRenderer = addRenderer(new GameRenderer(session));
-        addRenderer(new GameUIRenderer(session.getMap()));     
+        addRenderer(new GameUIRenderer(session.getMap()));
     }
 
     @Override
@@ -111,12 +113,12 @@ public class GameScreen extends BaseScreen {
         // Render Game and UI.
         super.render(delta);
 
-        switch(this.session.getState()) {
+        switch (this.session.getState()) {
             case GameOver:
                 clearRenderers();
                 game.setScreen(new GameOverScreen(game, this.session.getScore()));
                 break;
-                
+
             case Completed:
                 Actor btnContinue = new TextButton("Doorgaan", skin);
                 Actor lblEndGameText = new Label("Your score was:", skin);
@@ -145,7 +147,7 @@ public class GameScreen extends BaseScreen {
                 break;
         }
     }
-    
+
     @Override
     public void pause() {
         // TODO: If singleplayer: pause game.
