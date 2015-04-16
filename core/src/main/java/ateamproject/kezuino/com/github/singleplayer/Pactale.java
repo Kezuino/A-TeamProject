@@ -95,6 +95,7 @@ public class Pactale extends GameObject {
                 this.hurt();
                 this.setNodePosition(this.getStartingPosition().x / 32, this.getStartingPosition().y / 32);
                 this.getMap().getSession().getScore().decrease(100);
+                Assets.playSound("enemy_eat.mp3");
             }
             return true;
         }

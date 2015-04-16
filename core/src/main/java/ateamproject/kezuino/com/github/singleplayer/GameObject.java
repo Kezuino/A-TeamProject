@@ -405,10 +405,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
             this.direction = direction;
             collisionWithWall(getNode());
             this.animation.resetFrame();
-            map.getAllGameObjects().stream().filter((gObject) -> (gObject instanceof Projectile && gObject == this)).forEach((_item) -> {//check if this = portal
-                Assets.playSound("portal_hit.mp3");
-            });
-
             return;
         }
 
@@ -472,9 +468,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
 
             if (collisionWithGameObject(obj)) {
                 System.out.println("Collision handled");
-                map.getAllGameObjects().stream().filter((gObject) -> (gObject instanceof Pactale && gObject == this && obj instanceof Enemy)).forEach((_item) -> {//check if this = pactale and collision with enemy
-                    Assets.playSound("enemy_eat.mp3");
-                });
                 break;
             }
         }
