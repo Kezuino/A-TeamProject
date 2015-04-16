@@ -735,19 +735,27 @@
  <tileset firstgid="203" name="objects" tilewidth="32" tileheight="32">
   <tile id="0">
    <properties>
+    <property name="animateTo" value="1"/>
     <property name="direction" value="Down"/>
     <property name="isEnemy" value="true"/>
+    <property name="textureGroup" value="0"/>
    </properties>
    <image width="32" height="32" source="objects/9017.png"/>
   </tile>
   <tile id="1">
+   <properties>
+    <property name="animateTo" value="0"/>
+   </properties>
    <image width="32" height="32" source="objects/9018.png"/>
   </tile>
   <tile id="2">
    <properties>
+    <property name="animateTo" value="12"/>
+    <property name="direction" value="Down"/>
     <property name="isPactale" value="true"/>
+    <property name="textureGroup" value="1"/>
    </properties>
-   <image width="32" height="32" source="objects/2648.png"/>
+   <image width="32" height="32" source="objects/1464.png"/>
   </tile>
   <tile id="3">
    <image width="32" height="32" source="objects/1047.png"/>
@@ -763,33 +771,117 @@
   </tile>
   <tile id="6">
    <properties>
+    <property name="animateTo" value="7"/>
     <property name="direction" value="Right"/>
-    <property name="isEnemy" value="true"/>
+    <property name="textureGroup" value="0"/>
    </properties>
    <image width="32" height="32" source="objects/9019.png"/>
   </tile>
   <tile id="7">
+   <properties>
+    <property name="animateTo" value="6"/>
+   </properties>
    <image width="32" height="32" source="objects/9020.png"/>
   </tile>
   <tile id="8">
    <properties>
+    <property name="animateTo" value="9"/>
     <property name="direction" value="Up"/>
-    <property name="isEnemy" value="true"/>
+    <property name="textureGroup" value="0"/>
    </properties>
    <image width="32" height="32" source="objects/9021.png"/>
   </tile>
   <tile id="9">
+   <properties>
+    <property name="animateTo" value="8"/>
+   </properties>
    <image width="32" height="32" source="objects/9022.png"/>
   </tile>
   <tile id="10">
    <properties>
+    <property name="animateTo" value="11"/>
     <property name="direction" value="Left"/>
-    <property name="isEnemy" value="true"/>
+    <property name="textureGroup" value="0"/>
    </properties>
    <image width="32" height="32" source="objects/9023.png"/>
   </tile>
   <tile id="11">
+   <properties>
+    <property name="animateTo" value="10"/>
+   </properties>
    <image width="32" height="32" source="objects/9024.png"/>
+  </tile>
+  <tile id="12">
+   <properties>
+    <property name="animateTo" value="13"/>
+   </properties>
+   <image width="32" height="32" source="objects/1465.png"/>
+  </tile>
+  <tile id="13">
+   <properties>
+    <property name="animateTo" value="2"/>
+   </properties>
+   <image width="32" height="32" source="objects/1466.png"/>
+  </tile>
+  <tile id="14">
+   <properties>
+    <property name="animateTo" value="15"/>
+    <property name="direction" value="Up"/>
+    <property name="textureGroup" value="1"/>
+   </properties>
+   <image width="32" height="32" source="objects/1467.png"/>
+  </tile>
+  <tile id="15">
+   <properties>
+    <property name="animateTo" value="16"/>
+   </properties>
+   <image width="32" height="32" source="objects/1468.png"/>
+  </tile>
+  <tile id="16">
+   <properties>
+    <property name="animateTo" value="14"/>
+   </properties>
+   <image width="32" height="32" source="objects/1469.png"/>
+  </tile>
+  <tile id="17">
+   <properties>
+    <property name="animateTo" value="18"/>
+    <property name="direction" value="Right"/>
+    <property name="textureGroup" value="1"/>
+   </properties>
+   <image width="32" height="32" source="objects/1470.png"/>
+  </tile>
+  <tile id="18">
+   <properties>
+    <property name="animateTo" value="19"/>
+   </properties>
+   <image width="32" height="32" source="objects/1471.png"/>
+  </tile>
+  <tile id="19">
+   <properties>
+    <property name="animateTo" value="17"/>
+   </properties>
+   <image width="32" height="32" source="objects/1472.png"/>
+  </tile>
+  <tile id="20">
+   <properties>
+    <property name="animateTo" value="21"/>
+    <property name="direction" value="Left"/>
+    <property name="textureGroup" value="1"/>
+   </properties>
+   <image width="32" height="32" source="objects/1473.png"/>
+  </tile>
+  <tile id="21">
+   <properties>
+    <property name="animateTo" value="22"/>
+   </properties>
+   <image width="32" height="32" source="objects/1474.png"/>
+  </tile>
+  <tile id="22">
+   <properties>
+    <property name="animateTo" value="20"/>
+   </properties>
+   <image width="32" height="32" source="objects/1475.png"/>
   </tile>
  </tileset>
  <layer name="tiles" width="20" height="20">

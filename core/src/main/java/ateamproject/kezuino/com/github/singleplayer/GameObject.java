@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import java.util.HashMap;
 
 public abstract class GameObject implements IRenderable, IPositionable {
 
@@ -40,6 +41,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link Texture} of this {@link GameObject} for drawing.
      */
     protected Texture texture;
+    
+    protected Animation animation;
     /**
      * {@link com.badlogic.gdx.graphics.Color} this {@link GameObject}
      * previously originated from.
@@ -84,6 +87,8 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     private float moveTotalStep;
 
+    
+    private float animateTime;
     /**
      * Initializes this {@link GameObject}.
      * <p>
@@ -119,6 +124,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         this.exactPosition = exactPosition.cpy();
         this.setColor(color);
         this.isActive = true;
+        this.animation = new Animation();
     }
 
     /**
@@ -182,6 +188,10 @@ public abstract class GameObject implements IRenderable, IPositionable {
     @Override
     public Texture getTexture() {
         return texture;
+    }
+    
+    public void setAnimation(Animation animation) {
+        this.animation = animation;
     }
 
     /**
@@ -438,6 +448,11 @@ public abstract class GameObject implements IRenderable, IPositionable {
                 isMoving = false;
                 movementStartTime = moveTotalStep;
             }
+            
+            if(moveTotalStep - animateTime >= 0.3) {
+                animateTime = moveTotalStep;
+                this.animation.nextFrame();
+            }
         }
 
         // Collision logic.
@@ -493,6 +508,11 @@ public abstract class GameObject implements IRenderable, IPositionable {
         // Draw centered in node.
         float xOffset = (32 - texture.getWidth()) / 2f;
         float yOffset = (32 - texture.getHeight()) / 2f;
+        
+        if(this.animation.frameSize() > 0) {
+            this.setTexture(this.animation.getFrame(this.direction));
+        }
+
         batch.draw(texture, this.getExactPosition().x + xOffset, this.getExactPosition().y + yOffset, texture.getWidth() / 2, texture
                 .getHeight() / 2, texture
                 .getWidth(), texture.getHeight(), 1, 1, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);

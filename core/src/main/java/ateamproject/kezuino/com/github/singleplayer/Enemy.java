@@ -183,16 +183,10 @@ public class Enemy extends GameObject {
             if (this.objectToFollow != null) {
                 if(graphPath == null || (System.nanoTime() - timeToChangePathStart) / 1000000000.0f >= timeToChangePath) {
                     graphPath = this.getMap().getPathfinder().searchNodePath(this.getNode(), this.objectToFollow.getNode());
-                    
-                    System.out.println("Path changed! " + this.timeToChangePath + " / " + this.timeToChangePathStart);
-                    
+
                     Random rand = new Random();
                     this.timeToChangePath = rand.nextFloat() * (.5f - 2f) + .5f;
                     this.timeToChangePathStart = System.nanoTime();
-                    
-                    System.out.println(this.timeToChangePath + " / " + this.timeToChangePathStart + "\n");
-                } else {
-                    System.out.println("Waiting");
                 }
             }
 

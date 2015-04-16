@@ -4,10 +4,10 @@ import ateamproject.kezuino.com.github.pathfinding.AStar;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
 import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTile;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -16,8 +16,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class Map {
 
@@ -111,12 +111,36 @@ public class Map {
                 TextureMapObject obj = (TextureMapObject) loopObj;
 
                 TiledMapTileSet objTileLayer = map.baseMap.getTileSets().getTileSet(layer.getName());
+                MapProperties tileSetProps = objTileLayer.getProperties();
 
                 MapProperties objProps = loopObj.getProperties();
                 MapProperties objTileProps = objTileLayer.getTile(objProps.get("gid", int.class)).getProperties();
 
                 Vector2 curPos = new Vector2(objProps.get("x", float.class), objProps.get("y", float.class));
                 Node posNode = map.getNode(curPos);
+
+                Animation animation = new Animation();
+                if(objTileProps.containsKey("textureGroup")) {
+                    map.baseMap.getTileSets().getTileSet(layer.getName()).forEach((TiledMapTile tile) -> {
+                        MapProperties tileProps = tile.getProperties();
+
+                        if(tileProps.containsKey("textureGroup") && Objects.equals(tileProps.get("textureGroup", int.class), objTileProps.get("textureGroup", int.class))) {
+                            if(tileProps.containsKey("animateTo")) {
+                                Direction tileDirection = Direction.valueOf(tileProps.get("direction", String.class));
+                                int nextAnimation = Integer.parseInt(tileProps.get("animateTo", String.class)) + tileSetProps.get("firstgid", int.class);
+
+                                do {
+                                    TiledMapTile aniTile = map.baseMap.getTileSets().getTileSet(layer.getName()).getTile(nextAnimation);
+                                    MapProperties aniTileProperties = aniTile.getProperties();
+
+                                    animation.addFrame(tileDirection, aniTile.getTextureRegion().getTexture());
+                                    nextAnimation = Integer.parseInt(aniTileProperties.get("animateTo", String.class)) + tileSetProps.get("firstgid", int.class);
+                                } while (nextAnimation != tile.getId());
+                            }
+                            animation.addFrame(Direction.valueOf(tileProps.get("direction", String.class)), tile.getTextureRegion().getTexture());
+                        }
+                    });
+                }
 
                 if (objTileProps.containsKey("item")) {
                     // Create item.
@@ -132,11 +156,14 @@ public class Map {
                 } else if (objTileProps.containsKey("isEnemy")) {
                     // Create enemy.
                     Enemy enemy = new Enemy(null, curPos, 2.5f, Direction.Down);
+
+                    if(animation.size() > 0) {
+                        enemy.setAnimation(animation);
+                    }
                     enemy.setTexture(obj.getTextureRegion().getTexture());
                     enemy.setMap(map);
                     map.addGameObject(enemy);
-                } else if (objTileProps.containsKey("isPactale")) {
-
+                } else if (objTileProps.containsKey("isPactale")) {   
                     // Get playerIndex from object properties.
                     int playerIndex = -1;
                     if (objProps.containsKey("index")) {
@@ -145,6 +172,9 @@ public class Map {
 
                     // Create pactale.
                     Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
+                    if(animation.size() > 0) {
+                        pactale.setAnimation(animation);
+                    }
                     pactale.setTexture(obj.getTextureRegion().getTexture());
                     map.addGameObject(pactale);
                 }
