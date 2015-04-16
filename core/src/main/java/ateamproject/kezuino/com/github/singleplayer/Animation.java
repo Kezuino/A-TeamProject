@@ -18,8 +18,13 @@ public class Animation {
     private final HashMap<Direction, List<Texture>> textures;
     private final List<Texture> upFrames, downFrames, leftFrames, rightFrames;  
     private int currentFrame;
+    private boolean hasInitialFrame;
     
     public Animation() {
+        this(false);
+    }
+    
+    public Animation(boolean hasInitialFrame) {
         this.upFrames = new ArrayList<>();
         this.downFrames = new ArrayList<>();
         this.leftFrames = new ArrayList<>();
@@ -32,6 +37,7 @@ public class Animation {
         this.textures.put(Direction.Right, rightFrames);
         
         this.currentFrame = 0;
+        this.hasInitialFrame = hasInitialFrame;
     }
     
     public void addFrame(Direction direction, Texture texture) {
@@ -56,7 +62,13 @@ public class Animation {
     }
     
     public void nextFrame() {
-        this.currentFrame = this.currentFrame + 1 >= this.frameSize() ? 0 : this.currentFrame + 1;
+        this.currentFrame = this.currentFrame + 1 >= this.frameSize() ? this.hasInitialFrame ? 1 : 0 : this.currentFrame + 1;
+    }
+    
+    public void resetFrame() {
+        if(this.hasInitialFrame) {
+            this.currentFrame = 0;
+        }
     }
     
     public int size() {

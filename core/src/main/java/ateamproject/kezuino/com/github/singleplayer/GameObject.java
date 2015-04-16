@@ -404,6 +404,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         } else if (targetNode == null || targetNode.isWall()) {
             this.direction = direction;
             collisionWithWall(getNode());
+            this.animation.resetFrame();
             map.getAllGameObjects().stream().filter((gObject) -> (gObject instanceof Projectile && gObject == this)).forEach((_item) -> {//check if this = portal
                 Assets.playSound("portal_hit.mp3");
             });
@@ -449,7 +450,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
                 movementStartTime = moveTotalStep;
             }
             
-            if(moveTotalStep - animateTime >= 0.3) {
+            if(moveTotalStep - animateTime >= 0.35) {
                 animateTime = moveTotalStep;
                 this.animation.nextFrame();
             }

@@ -119,7 +119,8 @@ public class Map {
                 Vector2 curPos = new Vector2(objProps.get("x", float.class), objProps.get("y", float.class));
                 Node posNode = map.getNode(curPos);
 
-                Animation animation = new Animation();
+                Animation animation = new Animation(objTileProps.get("hasInitialFrame", String.class) == null ? false : Boolean.parseBoolean(objTileProps.get("hasInitialFrame", String.class)));
+                
                 if(objTileProps.containsKey("textureGroup")) {
                     map.baseMap.getTileSets().getTileSet(layer.getName()).forEach((TiledMapTile tile) -> {
                         MapProperties tileProps = tile.getProperties();
@@ -129,6 +130,8 @@ public class Map {
                                 Direction tileDirection = Direction.valueOf(tileProps.get("direction", String.class));
                                 int nextAnimation = Integer.parseInt(tileProps.get("animateTo", String.class)) + tileSetProps.get("firstgid", int.class);
 
+                                animation.addFrame(tileDirection, tile.getTextureRegion().getTexture());
+                                
                                 do {
                                     TiledMapTile aniTile = map.baseMap.getTileSets().getTileSet(layer.getName()).getTile(nextAnimation);
                                     MapProperties aniTileProperties = aniTile.getProperties();
@@ -136,8 +139,9 @@ public class Map {
                                     animation.addFrame(tileDirection, aniTile.getTextureRegion().getTexture());
                                     nextAnimation = Integer.parseInt(aniTileProperties.get("animateTo", String.class)) + tileSetProps.get("firstgid", int.class);
                                 } while (nextAnimation != tile.getId());
+                            } else {
+                                animation.addFrame(Direction.valueOf(tileProps.get("direction", String.class)), tile.getTextureRegion().getTexture());
                             }
-                            animation.addFrame(Direction.valueOf(tileProps.get("direction", String.class)), tile.getTextureRegion().getTexture());
                         }
                     });
                 }
@@ -172,7 +176,7 @@ public class Map {
 
                     // Create pactale.
                     Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
-                    if(animation.size() > 0) {
+                    if(animation != null) {
                         pactale.setAnimation(animation);
                     }
                     pactale.setTexture(obj.getTextureRegion().getTexture());

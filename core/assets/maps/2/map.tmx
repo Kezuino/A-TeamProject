@@ -737,6 +737,7 @@
    <properties>
     <property name="animateTo" value="1"/>
     <property name="direction" value="Down"/>
+    <property name="hasInitialFrame" value="false"/>
     <property name="isEnemy" value="true"/>
     <property name="textureGroup" value="0"/>
    </properties>
@@ -752,6 +753,7 @@
    <properties>
     <property name="animateTo" value="12"/>
     <property name="direction" value="Down"/>
+    <property name="hasInitialFrame" value="true"/>
     <property name="isPactale" value="true"/>
     <property name="textureGroup" value="1"/>
    </properties>
