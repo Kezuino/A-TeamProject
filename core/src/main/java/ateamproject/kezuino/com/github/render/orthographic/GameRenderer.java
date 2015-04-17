@@ -22,12 +22,10 @@ public class GameRenderer implements IRenderer {
     private final Camera camera;
     private final GameSession session;
     private final SpriteBatch batch;
-    private final boolean isFullscreen;
 
     public GameRenderer(GameSession session) {
         this.session = session;
         this.map = this.session.getMap();
-        this.isFullscreen = Gdx.graphics.isFullscreen();
 
         // Camera.
         camera = new Camera(map.getWidth() * 32, map.getHeight() * 32 + 60, map, 32);
@@ -129,7 +127,7 @@ public class GameRenderer implements IRenderer {
     }
 
     public void toggleFullscreen() {
-        if (isFullscreen) {
+        if (Gdx.graphics.isFullscreen()) {
             Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
         } else {
             Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
