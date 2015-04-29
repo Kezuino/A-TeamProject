@@ -18,6 +18,7 @@ import ateamproject.kezuino.com.github.singleplayer.GameState;
 import ateamproject.kezuino.com.github.singleplayer.Score;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -42,7 +43,7 @@ public class GameScreen extends BaseScreen {
     public GameScreen(Game game, Score score) {
         super(game);
 
-        clearOnRenderColor = Color.WHITE.cpy();
+        clearOnRenderColor = Color.BLACK;
         Assets.create();
         backgroundMusic = Assets.getMusicStream("action.mp3");
 
