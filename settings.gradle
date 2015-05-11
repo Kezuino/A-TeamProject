@@ -1,1 +1,2 @@
-include 'desktop', 'ios', 'core', 'html'
+include 'desktop', 'ios', 'core', 'html'include 'server'
+
