@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ateamproject.kezuino.com.github.protocol;
+package ateamproject.kezuino.com.github.rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
@@ -12,7 +12,6 @@ import java.rmi.RemoteException;
  *
  * @author Kez and Jules
  */
-public interface IServer extends Remote {
-    public boolean login(String username, String password) throws RemoteException;
-    public void logout() throws RemoteException;
+public interface IProtocol extends Remote {
+    public abstract void creatureMove(int creatureID) throws RemoteException;
 }

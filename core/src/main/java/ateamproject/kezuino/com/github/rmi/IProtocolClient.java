@@ -3,14 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ateamproject.kezuino.com.github.protocol;
-
-import java.rmi.Remote;
+package ateamproject.kezuino.com.github.rmi;
 
 /**
  *
  * @author Kez and Jules
  */
-public interface IClient extends Remote {
-    
+public interface IProtocolClient extends IProtocol {
+
 }
