@@ -380,4 +380,20 @@ public class Map {
     public GameSession getSession() {
         return this.gameSession;
     }
+
+    /**
+     * Returns all the {@link Item items} on the {@link Map}.
+     *
+     * @return All the {@link Item items} on the {@link Map}.
+     */
+    public List<Item> getAllItems() {
+        List<Item> result = new ArrayList<>();
+        for (Node node : nodes) {
+            Item item = node.getItem();
+            if (item != null) {
+                result.add(item);
+            }
+        }
+        return result;
+    }
 }

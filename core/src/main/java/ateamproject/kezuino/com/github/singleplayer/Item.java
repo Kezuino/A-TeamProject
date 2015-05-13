@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 import ateamproject.kezuino.com.github.render.IRenderable;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 public class Item implements IRenderable, IPositionable {
@@ -145,6 +146,16 @@ public class Item implements IRenderable, IPositionable {
     @Override
     public Node getNode() {
         return this.getMap().getNode((int) this.exactPosition.x / 32, (int) this.exactPosition.y / 32);
+    }
+
+    /**
+     * Gets the {@link Rectangle bounds} of this {@link Item} inside the {@link Map} using the {@link Vector2 position} and width, height of the texture.
+     *
+     * @return {@link Rectangle bounds} of this {@link Item} inside the {@link Map} using the {@link Vector2 position} and width, height of the texture.
+     */
+    public Rectangle getBounds() {
+        Vector2 pos = getExactPosition();
+        return new Rectangle(pos.x, pos.y, texture.getWidth(), texture.getHeight());
     }
 
     /**
