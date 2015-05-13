@@ -1,39 +1,55 @@
 package ateamproject.kezuino.com.github.multiplayer;
 
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
-import java.rmi.server.UnicastRemoteObject;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public class Server {
-    public PrintWriter out;
+import ateamproject.kezuino.com.github.protocol.*;
+import java.rmi.server.UnicastRemoteObject;
 
-    protected Server(PrintWriter out)  {
-        this.out = out;
+public class Server extends UnicastRemoteObject implements IServer {
+    private static Server currentInstance;
+
+    protected Server() throws RemoteException {
+
+    }
+    
+    public static Server instance() throws RemoteException {
+        if(currentInstance == null) {
+            currentInstance = new Server();
+        }
+        
+        return currentInstance;
     }
 
-    public static Server start(PrintStream out) {
-        Server server = new Server(new PrintWriter(out, true));
+    public void start() {
 
         // TODO: Startup RMI.
-        server.out.println("Starting server..");
+        System.out.println("Starting server..");
         
         try {
             //stockMarket = new MockEffectsStockMarket();
             Registry registry = LocateRegistry.createRegistry(1099);
-            //registry.rebind("stockMarket", this.stockMarket);
+            registry.rebind("server", this);
         }
         catch(RemoteException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, ex.getMessage());
         }
-        
-        
-        server.out.println("Server started");
+      
+        System.out.println("Server started");
+    }
 
-        return server;
+    @Override
+    public boolean login(String username, String password) {
+        System.out.println("Data plxors");
+        
+        return true;
+    }
+
+    @Override
+    public void logout() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

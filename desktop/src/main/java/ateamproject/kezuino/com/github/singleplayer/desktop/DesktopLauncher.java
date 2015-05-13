@@ -4,6 +4,9 @@ import ateamproject.kezuino.com.github.PactaleGame;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DesktopLauncher {
 
@@ -14,8 +17,15 @@ public class DesktopLauncher {
         cfg.useGL30 = false;
 
         //cfg.samples = 8;
-
+            
         //frameRateTest(cfg);
+        
+        try {
+            Client client = Client.instance();
+            client.start();
+        } catch (RemoteException ex) {
+            Logger.getLogger(DesktopLauncher.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         new LwjglApplication(new PactaleGame(), cfg);
     }
