@@ -467,7 +467,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
             }
 
             if (collisionWithGameObject(obj)) {
-                System.out.println("Collision handled");
                 break;
             }
         }

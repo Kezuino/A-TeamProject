@@ -137,8 +137,8 @@ public class Map {
                                     MapProperties aniTileProperties = aniTile.getProperties();
 
                                     animation.addFrame(tileDirection, aniTile.getTextureRegion().getTexture());
-                                    nextAnimation = Integer.parseInt(aniTileProperties.get("animateTo", String.class)) + tileSetProps.get("firstgid", int.class);
-                                } while (nextAnimation != tile.getId());
+                                    nextAnimation = aniTileProperties.get("animateTo", String.class) == null ? -1 : Integer.parseInt(aniTileProperties.get("animateTo", String.class)) + tileSetProps.get("firstgid", int.class);
+                                } while (nextAnimation != -1 && nextAnimation != tile.getId());
                             } else {
                                 animation.addFrame(Direction.valueOf(tileProps.get("direction", String.class)), tile.getTextureRegion().getTexture());
                             }
