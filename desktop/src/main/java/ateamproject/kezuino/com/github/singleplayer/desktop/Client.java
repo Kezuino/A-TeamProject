@@ -7,10 +7,10 @@ package ateamproject.kezuino.com.github.singleplayer.desktop;
 
 import ateamproject.kezuino.com.github.rmi.IProtocolClient;
 import ateamproject.kezuino.com.github.rmi.IProtocolServer;
+import java.net.MalformedURLException;
+import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.registry.LocateRegistry;
-import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 
 /**
@@ -20,7 +20,7 @@ import java.rmi.server.UnicastRemoteObject;
 public class Client extends UnicastRemoteObject implements IProtocolClient {
     private static transient Client currentInstance;
     private transient IProtocolServer server;
-    private transient Registry reg;
+    //private transient Registry reg;
 
     protected Client() throws RemoteException {
 
@@ -38,15 +38,17 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
         System.out.println("Client starting...");
         
         try {
-            this.reg = LocateRegistry.getRegistry("darkhellentertainment.com", Registry.REGISTRY_PORT);
-            this.server = (IProtocolServer) this.reg.lookup("rmi://darkhellentertainment.com:1099/server");
+            //this.reg = LocateRegistry.getRegistry("darkhellentertainment.com", Registry.REGISTRY_PORT);
+            this.server = (IProtocolServer) Naming.lookup("//darkhellentertainment.com/server");
             boolean loggedOn = this.server.login("test", "test");
             
             if(loggedOn) {
                 System.out.println("Player is logged on");
             }
-        } catch (RemoteException | NotBoundException ex) {
+        } catch (RemoteException | NotBoundException | MalformedURLException ex) {
+            
             System.out.println(ex.getMessage());
+            System.out.println(ex.toString());
         }
         
         System.out.println("Client started");

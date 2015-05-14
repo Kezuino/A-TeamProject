@@ -14,7 +14,7 @@ public class Server extends UnicastRemoteObject implements IProtocolServer {
     private transient static Server currentInstance;
 
     protected Server() throws RemoteException {
-        super(1100);
+        super(Registry.REGISTRY_PORT);
     }
     
     public static Server instance() throws RemoteException {
@@ -32,12 +32,10 @@ public class Server extends UnicastRemoteObject implements IProtocolServer {
         
         try {
             System.out.println(Registry.REGISTRY_PORT);
-            System.setProperty("java.rmi.server.hostname", "darkhellentertainment.com");
-            //IProtocolServer stub = (IProtocolServer)UnicastRemoteObject.exportObject(this, 1100);
             Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
-            registry.rebind("rmi://192.168.1.101:1099/server", this);
+            registry.bind("server", this);
         }
-        catch(RemoteException ex) {
+        catch(RemoteException | AlreadyBoundException ex) {
             Logger.getLogger(Server.class.getName()).log(Level.SEVERE, ex.getMessage());
         }
       
