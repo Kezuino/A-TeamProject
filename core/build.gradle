@@ -8,3 +8,10 @@ sourceSets.main.java.srcDirs = [ "src/main/java/" ]
 eclipse.project {
     name = appName + "-core"
 }
+
+repositories {
+   mavenCentral()
+}
+dependencies {
+   compile 'mysql:mysql-connector-java:5.1.35'
+}
