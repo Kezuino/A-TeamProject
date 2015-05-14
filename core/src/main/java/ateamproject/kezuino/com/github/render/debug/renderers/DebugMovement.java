@@ -4,10 +4,12 @@ import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderer;
 import ateamproject.kezuino.com.github.singleplayer.GameObject;
 import ateamproject.kezuino.com.github.singleplayer.Node;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.GL30;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 /**
@@ -15,11 +17,14 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
  */
 public class DebugMovement extends DebugRenderer<GameObject> {
     private ShapeRenderer renderer;
+    private BitmapFont font;
 
     public DebugMovement() {
         super(DebugLayers.GameObject);
         renderer = new ShapeRenderer();
         renderer.setAutoShapeType(true);
+        font = new BitmapFont();
+        font.setColor(Color.WHITE);
     }
 
     @Override
@@ -48,5 +53,10 @@ public class DebugMovement extends DebugRenderer<GameObject> {
         renderer.end();
 
         Gdx.gl.glDisable(GL20.GL_BLEND);
+
+        // Draw text.
+        batch.begin();
+        font.draw(batch, "Direction:", 0, camera.viewportHeight - 50);
+        batch.end();
     }
 }
