@@ -15,7 +15,12 @@ public class AStar {
      * {@link Heuristic} used when no {@link Heuristic} was specified in a method.
      */
     public static final Heuristic<Node> DEFAULT_HEURISTIC = (node, endNode) -> 0;
+
+    /**
+     * Default A* algorithm to use.
+     */
     protected IndexedAStarPathFinder<Node> basePathFinder;
+
 
     public AStar(Map map) {
         basePathFinder = new IndexedAStarPathFinder<>(new IndexedGraph<Node>() {

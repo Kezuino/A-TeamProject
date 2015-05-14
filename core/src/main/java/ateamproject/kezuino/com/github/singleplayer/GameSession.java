@@ -8,8 +8,12 @@ public class GameSession {
     private Map map;
     private Score score;
     private GameState state;
-    private Boolean showingPlayerMenu;
-    private Boolean showingPauseMenu;
+    private boolean showingPlayerMenu;
+    private boolean showingPauseMenu;
+    /**
+     * Whether this game is synchronizing with a server.
+     */
+    private boolean isMultiplayer;
 
     /**
      * Creates a new @see GameSession with the default skin.
@@ -22,6 +26,10 @@ public class GameSession {
         this.state = GameState.Running;
     }
 
+    /**
+     * Gets the {@link GameState} in which this {@link GameSession} is currently in.
+     * @return {@link GameState} in which this {@link GameSession} is currently in.
+     */
     public GameState getState() {
         return this.state;
     }

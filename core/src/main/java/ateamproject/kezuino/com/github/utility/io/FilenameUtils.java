@@ -1,4 +1,4 @@
-package ateamproject.kezuino.com.github.utility;
+package ateamproject.kezuino.com.github.utility.io;
 
 public class FilenameUtils {
     /**

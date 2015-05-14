@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Timer;
 
 public abstract class GameObject implements IRenderable, IPositionable {
 
@@ -343,6 +344,14 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     public boolean setNodePosition(float x, float y) {
         return setExactPosition(x * 32, y * 32);
+    }
+
+    public boolean setNodePosition(Node node) {
+        return setNodePosition(node.getExactPosition());
+    }
+
+    public boolean setNodePosition(Vector2 position) {
+        return setExactPosition(position.x, position.y);
     }
 
     public boolean setExactPosition(float x, float y) {

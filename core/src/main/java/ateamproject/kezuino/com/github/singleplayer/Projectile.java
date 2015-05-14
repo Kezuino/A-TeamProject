@@ -45,11 +45,7 @@ public class Projectile extends GameObject {
         GameObject obj = object;
         if (this.getOwner().getPortal() != null && this.getActive()) {
             obj.isMoving = false;
-            obj.setNodePosition(this.getOwner().getPortal().getNode().getX(), this.getOwner()
-                                                                                  .getPortal()
-                                                                                  .getNode()
-                                                                                  .getY());
-
+            obj.setNodePosition(this.getOwner().getPortal().getNode());
             this.setInactive();
             return true;
         }

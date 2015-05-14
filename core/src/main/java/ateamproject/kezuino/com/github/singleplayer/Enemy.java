@@ -45,7 +45,7 @@ public class Enemy extends GameObject {
      * The path created by pathfinding
      */
     private GraphPath<Node> graphPath;
-    
+
     private float timeToChangePath;
     private float timeToChangePathStart;
 
@@ -149,7 +149,7 @@ public class Enemy extends GameObject {
         if (object instanceof Pactale) {
             if (this.isEdible()) {
                 this.isMoving = false;
-                this.setNodePosition(this.getStartingPosition().x, this.getStartingPosition().y);
+                this.setNodePosition(this.getStartingPosition());
                 this.getMap().getSession().getScore().increase(300);
             }
             return true;
@@ -169,7 +169,7 @@ public class Enemy extends GameObject {
         }
 
         // Set first Pactale as target.
-        
+
         this.objectToFollow = this.getMap()
                                   .getAllGameObjects()
                                   .stream()
@@ -181,8 +181,10 @@ public class Enemy extends GameObject {
         if (!this.isMoving) {
             //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
             if (this.objectToFollow != null) {
-                if(graphPath == null || (System.nanoTime() - timeToChangePathStart) / 1000000000.0f >= timeToChangePath) {
-                    graphPath = this.getMap().getPathfinder().searchNodePath(this.getNode(), this.objectToFollow.getNode());
+                if (graphPath == null || (System.nanoTime() - timeToChangePathStart) / 1000000000.0f >= timeToChangePath) {
+                    graphPath = this.getMap()
+                                    .getPathfinder()
+                                    .searchNodePath(this.getNode(), this.objectToFollow.getNode());
 
                     Random rand = new Random();
                     this.timeToChangePath = rand.nextFloat() * (.5f - 2f) + .5f;

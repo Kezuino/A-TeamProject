@@ -12,6 +12,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import com.badlogic.gdx.utils.Timer;
 
 import java.util.stream.Collectors;
 
@@ -48,6 +49,7 @@ public class GameRenderer implements IRenderer {
 
     @Override
     public void active() {
+
     }
 
     @Override
@@ -81,9 +83,9 @@ public class GameRenderer implements IRenderer {
 
         // Cleanup gameobjects ready for deletion.
         for (GameObject obj : this.map.getAllGameObjects()
-                .stream()
-                .filter(o -> !o.getActive())
-                .collect(Collectors.toList())) {
+                                      .stream()
+                                      .filter(o -> !o.getActive())
+                                      .collect(Collectors.toList())) {
             this.map.removeGameObject(obj);
         }
 
@@ -126,30 +128,10 @@ public class GameRenderer implements IRenderer {
         DebugRenderManager.render(DebugLayers.UI);
     }
 
+    /**
+     * Toggles the game to run in fullscreen or back to windowed.
+     */
     public void toggleFullscreen() {
-        if (Gdx.graphics.isFullscreen()) {
-            Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), false);
-        } else {
-            Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), true);
-        }
+        Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), !Gdx.graphics.isFullscreen());
     }
-
-    /**
-     * Change the status of pause. It will be set true meaning the game will
-     * stop updating
-     */
-    /*public void pause() {
-     this.state = GameState.Paused;
-     }*/
-    /**
-     * Change the status of pause to false. This will make the game start
-     * updating again
-     */
-    /*public void unpause(){
-     this.state = GameState.Running;
-     }
-
-     public GameState getState() {
-     return this.state;
-     }*/
 }

@@ -1,6 +1,6 @@
 package ateamproject.kezuino.com.github.utility.assets;
 
-import ateamproject.kezuino.com.github.utility.FilenameUtils;
+import ateamproject.kezuino.com.github.utility.io.FilenameUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
