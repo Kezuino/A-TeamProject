@@ -35,6 +35,7 @@ public class GameScreen extends BaseScreen {
     private GameRenderer gameRenderer;
     private Label lblPause;
     private Label lblPlayers;
+    private InputAdapter gameInputAdapter;
 
     public GameScreen(Game game) {
         this(game, null);
@@ -50,24 +51,20 @@ public class GameScreen extends BaseScreen {
         start(score);
 
         // Gameplay controls handling:
-        inputs.addProcessor(new InputAdapter() {
+        gameInputAdapter = new InputAdapter() {
             @Override
             public boolean keyDown(int keycode) {
                 switch (keycode) {
                     case Input.Keys.W:
-                        //player.moveAdjacent(Direction.Up, true);
                         player.setDirection(Direction.Up);
                         break;
                     case Input.Keys.S:
-                        //player.moveAdjacent(Direction.Down, true);
                         player.setDirection(Direction.Down);
                         break;
                     case Input.Keys.A:
-                        //player.moveAdjacent(Direction.Left, true);
                         player.setDirection(Direction.Left);
                         break;
                     case Input.Keys.D:
-                        //player.moveAdjacent(Direction.Right, true);
                         player.setDirection(Direction.Right);
                         break;
                     case Input.Keys.SPACE:
@@ -104,7 +101,8 @@ public class GameScreen extends BaseScreen {
                 }
                 return true;
             }
-        });
+        };
+        inputs.addProcessor(gameInputAdapter);
     }
 
     public void start(Score score) {
@@ -114,15 +112,15 @@ public class GameScreen extends BaseScreen {
 
         player = session.getPlayer(0);
 
-        //Initialize pause
+        // Initialize pause.
         lblPause = new Label("Game gepauzeerd", skin);
         lblPause.setColor(Color.RED);
         lblPause.setPosition(100, 100 + 300);
         lblPause.setVisible(false);
         stage.addActor(lblPause);
 
-        //Initialize lblPlayers
-        lblPlayers = new Label("sepelersoverzicht", skin);
+        // Initialize lblPlayers.
+        lblPlayers = new Label("spelersoverzicht", skin);
         lblPlayers.setColor(Color.RED);
         lblPlayers.setPosition(100, 100 + 300);
         lblPlayers.setVisible(false);
@@ -140,7 +138,6 @@ public class GameScreen extends BaseScreen {
 
         switch (this.session.getState()) {
             case GameOver:
-                clearRenderers();
                 game.setScreen(new GameOverScreen(game, this.session.getScore()));
                 break;
 
@@ -151,8 +148,6 @@ public class GameScreen extends BaseScreen {
                 btnContinue.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        clearRenderers();
-
                         btnContinue.remove();
                         lblEndGameText.remove();
                         lblScore.remove();
@@ -196,6 +191,18 @@ public class GameScreen extends BaseScreen {
         lblPlayers.setVisible(false);
         this.session.showPlayerMenu();
         // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
+    }
+
+    @Override
+    public void resume() {
+        // TODO: If multiplayer (not host): Set the state of the client to unpause. If all clients are unpaused the game can resume as a whole. The host can always force a resume.
+        this.session.resume();
+    }
+
+    @Override
+    public void pause() {
+        // TODO: If multiplayer: Request pausing to server when it's enabled for this game.
+        this.session.pause();
     }
 
     @Override

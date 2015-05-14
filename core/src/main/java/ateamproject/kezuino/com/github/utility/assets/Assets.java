@@ -55,7 +55,7 @@ public class Assets {
         manager.load("textures/projectile.png", Texture.class);
         manager.load("textures/portal.png", Texture.class);
 
-        // Sounds.
+        // Sounds (Only short clips that are mainly used for interaction/action effects).
         manager.load(AUDIO_SOUND_DIR + "defeat.wav", Sound.class);
         manager.load(AUDIO_SOUND_DIR + "portal_shot.mp3", Sound.class);
         manager.load(AUDIO_SOUND_DIR + "portal_hit.mp3", Sound.class);
@@ -171,7 +171,7 @@ public class Assets {
     }
 
     /**
-     * Releases the resources hold by assets.
+     * Releases the resources hold by assets. Cannot be reloaded.
      */
     public static void dispose() {
         manager.dispose();

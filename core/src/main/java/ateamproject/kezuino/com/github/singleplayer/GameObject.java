@@ -1,15 +1,14 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.render.IRenderable;
-import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import java.util.HashMap;
 
 public abstract class GameObject implements IRenderable, IPositionable {
 
@@ -41,7 +40,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link Texture} of this {@link GameObject} for drawing.
      */
     protected Texture texture;
-    
+
     protected Animation animation;
     /**
      * {@link com.badlogic.gdx.graphics.Color} this {@link GameObject}
@@ -87,23 +86,23 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     private float moveTotalStep;
 
-    
+
     private float animateTime;
+
     /**
      * Initializes this {@link GameObject}.
      * <p>
      * {@link ateamproject.kezuino.com.github.singleplayer.GameObject}.
      *
      * @param movementSpeed Speed in seconds that this
-     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes to
-     * move to another adjacent
-     * {@link ateamproject.kezuino.com.github.singleplayer.Node}.
-     * @param direction
-     * {@link ateamproject.kezuino.com.github.singleplayer.Direction} that this
-     * {@link ateamproject.kezuino.com.github.singleplayer.GameObject} is
-     * currently facing.
-     * @param color {@link com.badlogic.gdx.graphics.Color} that this
-     * {@link GameObject} will be
+     *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes to
+     *                      move to another adjacent
+     *                      {@link ateamproject.kezuino.com.github.singleplayer.Node}.
+     * @param direction     {@link ateamproject.kezuino.com.github.singleplayer.Direction} that this
+     *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject} is
+     *                      currently facing.
+     * @param color         {@link com.badlogic.gdx.graphics.Color} that this
+     *                      {@link GameObject} will be
      */
     public GameObject(Vector2 exactPosition, float movementSpeed, Direction direction, Color color) {
         if (direction == null) {
@@ -132,9 +131,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * color.
      *
      * @param movementSpeed Speed in seconds that this {@link GameObject} takes
-     * to move to another adjacent {@link Node}.
-     * @param direction {@link Direction} that this {@link GameObject} is
-     * currently facing.
+     *                      to move to another adjacent {@link Node}.
+     * @param direction     {@link Direction} that this {@link GameObject} is
+     *                      currently facing.
      */
     public GameObject(Vector2 exactPosition, float movementSpeed, Direction direction) {
         this(exactPosition, movementSpeed, direction, Color.WHITE);
@@ -172,7 +171,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * Sets the absolute X and Y exactPosition of this {@link GameObject}.
      *
      * @param exactPosition Absolute X and Y exactPosition of this
-     * {@link GameObject}.
+     *                      {@link GameObject}.
      */
     public void setExactPosition(Vector2 exactPosition) {
         this.exactPosition = exactPosition;
@@ -183,15 +182,21 @@ public abstract class GameObject implements IRenderable, IPositionable {
     }
 
     /**
+     * Gets the {@link Rectangle bounds} of this {@link GameObject} inside the {@link Map} using the {@link Vector2 position} and width, height of the texture.
+     *
+     * @return {@link Rectangle bounds} of this {@link GameObject} inside the {@link Map} using the {@link Vector2 position} and width, height of the texture.
+     */
+    public Rectangle getBounds() {
+        Vector2 pos = getExactPosition();
+        return new Rectangle(pos.x, pos.y, texture.getWidth(), texture.getHeight());
+    }
+
+    /**
      * Gets the {@link Texture} of this {@link GameObject} for drawing.
      */
     @Override
     public Texture getTexture() {
         return texture;
-    }
-    
-    public void setAnimation(Animation animation) {
-        this.animation = animation;
     }
 
     /**
@@ -200,6 +205,10 @@ public abstract class GameObject implements IRenderable, IPositionable {
     @Override
     public void setTexture(Texture texture) {
         this.texture = texture;
+    }
+
+    public void setAnimation(Animation animation) {
+        this.animation = animation;
     }
 
     /**
@@ -237,7 +246,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * move to another adjacent {@link Node}.
      *
      * @param movementSpeed Speed in seconds that it takes for this
-     * {@link GameObject} to move to another adjacent {@link Node}.
+     *                      {@link GameObject} to move to another adjacent {@link Node}.
      */
     public void setMovementSpeed(float movementSpeed) {
         this.movementSpeed = movementSpeed;
@@ -296,7 +305,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * facing towards.
      *
      * @param direction {@link Direction} that this {@link GameObject} is
-     * currently facing towards.
+     *                  currently facing towards.
      */
     public void setDirection(Direction direction) {
         if (direction == null) {
@@ -360,7 +369,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * true if collision has been handled and shouldn't continue.
      *
      * @param object {@link GameObject} that this {@link GameObject} is
-     * colliding with.
+     *               colliding with.
      * @return True if collision has been handled and {@link GameObject}.
      */
     protected boolean collisionWithGameObject(GameObject object) {
@@ -387,7 +396,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * the given {@code direction}.
      *
      * @param direction {@link Direction} to move in (to an adjacent
-     * {@link Node}).
+     *                  {@link Node}).
      */
     public void moveAdjacent(Direction direction) {
         if (map == null) {
@@ -445,34 +454,28 @@ public abstract class GameObject implements IRenderable, IPositionable {
                 isMoving = false;
                 movementStartTime = moveTotalStep;
             }
-            
-            if(moveTotalStep - animateTime >= 0.35) {
+
+            if (moveTotalStep - animateTime >= 0.35) {
                 animateTime = moveTotalStep;
                 this.animation.nextFrame();
             }
         }
 
-        // Collision logic.
-        Node targetNode = moveEndNode;
-
-        // Target node is beyond bounds, do not check for collision beyond this point
-        if (targetNode == null) {
-            return;
-        }
-
+        // Check for other GameObject collision
         for (GameObject obj : this.map.getGameObjectsOnNode(this.getNode())) {
-            // Do not collide with itself.
-            if (obj.equals(this)) {
-                continue;
-            }
+            if (obj.equals(this)) continue;
 
-            if (collisionWithGameObject(obj)) {
+            if (this.getBounds().overlaps(obj.getBounds())) {
+                collisionWithGameObject(obj);
                 break;
             }
         }
 
-        if (getNode().hasItem()) {
-            collisionWithItem(getNode().getItem());
+        // Check for item collision.
+        for (Item item : this.map.getAllItems()) {
+            if (this.getBounds().overlaps(item.getBounds())) {
+                collisionWithItem(item);
+            }
         }
     }
 
@@ -497,12 +500,11 @@ public abstract class GameObject implements IRenderable, IPositionable {
             rotation = this.getDirection().getRotation();
         }
 
-        // TODO: Animate from sprite region (spritesheet animation).
         // Draw centered in node.
         float xOffset = (32 - texture.getWidth()) / 2f;
         float yOffset = (32 - texture.getHeight()) / 2f;
-        
-        if(this.animation.frameSize() > 0) {
+
+        if (this.animation.frameSize() > 0) {
             this.setTexture(this.animation.getFrame(this.direction));
         }
 
