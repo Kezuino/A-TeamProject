@@ -1,6 +1,8 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.render.IRenderable;
+import ateamproject.kezuino.com.github.utility.game.Animation;
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,7 +11,6 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Timer;
 
 public abstract class GameObject implements IRenderable, IPositionable {
 
@@ -99,7 +100,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject} takes to
      *                      move to another adjacent
      *                      {@link ateamproject.kezuino.com.github.singleplayer.Node}.
-     * @param direction     {@link ateamproject.kezuino.com.github.singleplayer.Direction} that this
+     * @param direction     {@link Direction} that this
      *                      {@link ateamproject.kezuino.com.github.singleplayer.GameObject} is
      *                      currently facing.
      * @param color         {@link com.badlogic.gdx.graphics.Color} that this

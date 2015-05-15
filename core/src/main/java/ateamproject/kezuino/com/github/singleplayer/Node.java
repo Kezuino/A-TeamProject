@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.ai.pfa.Connection;
 import com.badlogic.gdx.ai.pfa.DefaultConnection;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedNode;

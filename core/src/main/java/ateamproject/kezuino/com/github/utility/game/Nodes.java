@@ -1,5 +1,6 @@
-package ateamproject.kezuino.com.github.singleplayer;
+package ateamproject.kezuino.com.github.utility.game;
 
+import ateamproject.kezuino.com.github.singleplayer.Node;
 import com.badlogic.gdx.utils.Array;
 
 import java.util.Iterator;

@@ -2,6 +2,7 @@ package ateamproject.kezuino.com.github.multiplayer;
 
 import ateamproject.kezuino.com.github.network.rmi.IProtocolServer;
 
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;

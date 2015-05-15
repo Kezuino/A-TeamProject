@@ -5,14 +5,13 @@
  */
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;

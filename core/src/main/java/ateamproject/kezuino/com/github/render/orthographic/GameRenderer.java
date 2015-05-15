@@ -6,13 +6,13 @@ import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugMovement;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
+import ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage;
+import ateamproject.kezuino.com.github.utility.graphics.DrawHelper;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.badlogic.gdx.utils.Timer;
 
 import java.util.stream.Collectors;
 
@@ -43,8 +43,6 @@ public class GameRenderer implements IRenderer {
         //DebugRenderManager.addRenderer(new DebugStatistics());
         //DebugRenderManager.addRenderer(new DebugPathfinding());
         DebugRenderManager.addRenderer(new DebugMovement());
-        //DebugRenderManager.active();
-        //DebugRenderManager.show();
     }
 
     @Override
@@ -100,15 +98,15 @@ public class GameRenderer implements IRenderer {
             batch.end();
         }
 
+        // Render BalloonMessages.
+        batch.begin();
+        BalloonMessage.renderAll(batch);
+        batch.end();
+
+        // Draw dark layer over game viewport.
         if (!this.session.getState().equals(GameState.Running)) {
-            Pixmap pxTest = new Pixmap(map.getWidth() * 32, map.getHeight() * 32, Pixmap.Format.Alpha);
-            pxTest.setColor(0, 0, 0, 0.5f);
-            pxTest.fillRectangle(0, 0, map.getWidth() * 32, map.getHeight() * 32);
-
-            Texture tex = new Texture(pxTest);
-
             batch.begin();
-            batch.draw(tex, 0, 0, tex.getWidth(), tex.getHeight());
+            DrawHelper.drawRect(batch, 0, 0, map.getWidth() * 32, map.getHeight() * 32, new Color(0, 0, 0, 0.5f));
             batch.end();
         }
 
@@ -122,9 +120,10 @@ public class GameRenderer implements IRenderer {
         }
 
         // Check if there are any items on the map.
-        if (!this.map.getNodes().stream().anyMatch(n -> n.hasItem())) {
+        if (!this.map.getNodes().stream().anyMatch(Node::hasItem)) {
             this.session.complete();
         }
+
         DebugRenderManager.render(DebugLayers.UI);
     }
 

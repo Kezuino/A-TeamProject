@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.graphics.Color;

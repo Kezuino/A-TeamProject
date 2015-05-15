@@ -8,17 +8,15 @@ package ateamproject.kezuino.com.github.render.screens;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameUIRenderer;
-import ateamproject.kezuino.com.github.singleplayer.GameSession;
-import ateamproject.kezuino.com.github.singleplayer.Map;
-import ateamproject.kezuino.com.github.singleplayer.Pactale;
+import ateamproject.kezuino.com.github.singleplayer.*;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
-import com.badlogic.gdx.*;
-import ateamproject.kezuino.com.github.singleplayer.Direction;
-import ateamproject.kezuino.com.github.singleplayer.GameState;
-import ateamproject.kezuino.com.github.singleplayer.Score;
-import com.badlogic.gdx.audio.Music;
+import ateamproject.kezuino.com.github.utility.game.Direction;
+import ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage;
+import ateamproject.kezuino.com.github.utility.game.balloons.messages.BalloonHelpMe;
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Input;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.net.ServerSocketHints;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -71,6 +69,9 @@ public class GameScreen extends BaseScreen {
                         if (session.getState() != GameState.Paused) {
                             player.shootProjectile();
                         }
+                        break;
+                    case Input.Keys.H:
+                        BalloonMessage.getBalloonMessage(BalloonHelpMe.class).setPositionCenter(player.getExactPosition()).addBalloonMessage();
                         break;
                     case Input.Keys.F1:
                         DebugRenderManager.toggle();

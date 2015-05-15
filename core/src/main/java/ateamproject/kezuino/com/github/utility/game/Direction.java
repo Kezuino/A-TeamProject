@@ -1,4 +1,4 @@
-package ateamproject.kezuino.com.github.singleplayer;
+package ateamproject.kezuino.com.github.utility.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.math.MathUtils;

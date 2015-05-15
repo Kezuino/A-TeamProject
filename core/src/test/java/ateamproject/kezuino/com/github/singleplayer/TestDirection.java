@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import org.junit.Before;
 import org.junit.Test;
 
