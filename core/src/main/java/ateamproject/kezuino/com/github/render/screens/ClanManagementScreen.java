@@ -144,8 +144,7 @@ public class ClanManagementScreen extends BaseScreen {
 
         backgroundMusic = Assets.getMusicStream("menu.mp3");
 
-        makeConnection();
-        if (connect != null) {
+        if (makeConnection()) {
             fillTable("jip.vandevijfeijke@gmail.com");//will fill table with all asociated clans
         }
         else{//general connection error has happened
@@ -181,7 +180,7 @@ public class ClanManagementScreen extends BaseScreen {
             while (resultSet.next()) {
                 int id = resultSet.getInt("ClanId");
 
-                preparedStatement = connect.prepareStatement("SELECT Name FROM caln WHERE Id = ?");
+                preparedStatement = connect.prepareStatement("SELECT Name FROM clan WHERE Id = ?");
                 preparedStatement.setInt(1, id);
                 resultSet = preparedStatement.executeQuery();
 
@@ -277,19 +276,21 @@ public class ClanManagementScreen extends BaseScreen {
         }
     }
 
-    private void makeConnection() {
+    private boolean makeConnection() {
         try {
             // This will load the MySQL driver, each DB has its own driver
             Class.forName("com.mysql.jdbc.Driver");
 
             // Setup the connection with the DB
-            connect = DriverManager
-                    .getConnection("jdbc:mysql:phpmyadmin.darkhellentertainment.com"
-                            + "user=pactales&password=p@2015");
+            connect = DriverManager.getConnection("jdbc:mysql://phpmyadmin.darkhellentertainment.com/pactales","pactales","p@2015");
+            
+            return true;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
         } catch (SQLException ex) {
             Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        return false;
     }
 }
