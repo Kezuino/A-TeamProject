@@ -10,11 +10,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public abstract class BalloonMessage<T extends BalloonMessage> {
-    /**
-     * Timer for {@link BalloonMessage} fading and other effects.
-     */
-    protected Timer timer;
-
     protected static HashSet<BalloonMessage> balloonMessages;
     protected static HashMap<Class, BalloonMessage> cachedBalloonMessages;
 
@@ -23,6 +18,10 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
         cachedBalloonMessages = new HashMap<>();
     }
 
+    /**
+     * Timer for {@link BalloonMessage} fading and other effects.
+     */
+    protected Timer timer;
     /**
      * Destination size (width, height) to draw the {@link BalloonMessage} on.
      */
@@ -50,6 +49,8 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
     }
 
     public BalloonMessage(float totalTimeShown, Vector2 position, Vector2 size) {
+        if (totalTimeShown <= 0)
+            throw new IllegalArgumentException("Parameter totalTimeShown must be higher than zero.");
         timer = new Timer();
 
         this.totalTimeShown = totalTimeShown;
@@ -83,7 +84,7 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
             public void run() {
                 balloonMessages.remove(balloon);
             }
-        }, 1);
+        }, balloon.totalTimeShown);
         return balloon;
     }
 
