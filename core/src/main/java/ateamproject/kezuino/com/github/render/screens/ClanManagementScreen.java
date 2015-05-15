@@ -13,17 +13,6 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-<<<<<<< HEAD
-=======
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
->>>>>>> major improvements over clancode
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 /**
  * @author David
@@ -32,18 +21,14 @@ public class ClanManagementScreen extends BaseScreen {
 
     private TextField tfClannaam;
     private final Table scrollTable;
-<<<<<<< HEAD
-    private Connection connect = null;
-=======
     private String emailaddress = "jip.vandevijfeijke@gmail.com";
     private ClanFunctions clanF;//should be on server using RMI!!!
->>>>>>> major improvements over clancode
 
     public ClanManagementScreen(Game game) {
         super(game);
 
-<<<<<<< HEAD
-=======
+        String emailaddress = "jip.vandevijfeijke@gmail.com";
+
         scrollTable = new Table();
 
         clanF = new ClanFunctions();
@@ -68,7 +53,6 @@ public class ClanManagementScreen extends BaseScreen {
     private void refreshScreen() {
         scrollTable.clear();
 
->>>>>>> major improvements over clancode
         TextButton btnChangeName = new TextButton("Naam wijzigen", skin);
         TextField tfName = new TextField(clanF.getUsername(emailaddress), skin);
         Label lbUsername = new Label("Gebruikersnaam", skin);
@@ -111,14 +95,14 @@ public class ClanManagementScreen extends BaseScreen {
         btnClanToevoegen.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-<<<<<<< HEAD
-                createClan(tfClannaam.getText());
-=======
-                if (!tfClannaam.getText().equals("")) {
-                    if (!clanF.createClan(tfClannaam.getText(), emailaddress)) {
-                        Dialog d = new Dialog("error", skin);
-                        d.add("Maximum van 8 clans overschreden of de clan bestaat al");
-                        TextButton bExit = new TextButton("Oke", skin);
+                if (!createClan(tfClannaam.getText(), emailaddress)) {
+                    Dialog d = new Dialog("error", skin);
+                    d.add("Maximum van 8 clans overschreden of de clan bestaat al");
+                    d.show(stage);
+                } else {
+                    generateTableRow(tfClannaam.getText());
+                    tfClannaam.setText("");
+                }
                         bExit.addListener(new ClickListener() {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
@@ -143,7 +127,6 @@ public class ClanManagementScreen extends BaseScreen {
                         tfClannaam.setText("");
                     }
                 }
->>>>>>> major improvements over clancode
             }
         });
 
@@ -227,67 +210,9 @@ public class ClanManagementScreen extends BaseScreen {
         this.stage.addActor(table);
 
         backgroundMusic = Assets.getMusicStream("menu.mp3");
-
-<<<<<<< HEAD
-        if (makeConnection()) {
-            fillTable("jip.vandevijfeijke@gmail.com");//will fill table with all asociated clans
-        }
-        else{//general connection error has happened
-            game.setScreen(new MainScreen(game));
-        }
-    }
-
-    private void fillTable(String emailaddress) {
-        ArrayList<String> clans = new ArrayList();
-
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-
-        try {
-            preparedStatement = connect.prepareStatement("SELECT Id FROM clan WHERE Email = ?");
-            preparedStatement.setString(1, emailaddress);
-            resultSet = preparedStatement.executeQuery();
-        } catch (SQLException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            int id = resultSet.getInt("Id");
-
-            preparedStatement = connect.prepareStatement("SELECT ClanId FROM clan_account WHERE AccountId = ?");
-            preparedStatement.setInt(1, id);
-            resultSet = preparedStatement.executeQuery();
-        } catch (SQLException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        try {
-            while (resultSet.next()) {
-                int id = resultSet.getInt("ClanId");
-
-                preparedStatement = connect.prepareStatement("SELECT Name FROM clan WHERE Id = ?");
-                preparedStatement.setInt(1, id);
-                resultSet = preparedStatement.executeQuery();
-
-                generateTableRow(resultSet.getString("Name"));
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        for (String clan : clans) {
-            generateTableRow(clan);//use clan name to generate table rows
-        }
-    }
-
-    private void createClan(String clanName) {
-        if (!clanExists(clanName)) {
-            tfClannaam.setText("");
-            generateTableRow(clanName);
-=======
-        for (String clan : clanF.fillTable(emailaddress)) {
+        
+        for (String clan : fillTable(emailaddress)) {
             generateTableRow(clan);
->>>>>>> major improvements over clancode
         }
     }
 
@@ -394,57 +319,5 @@ public class ClanManagementScreen extends BaseScreen {
         scrollTable.columnDefaults(
                 3);
         scrollTable.row();
-    }
-
-    private boolean clanExists(String clanName) {
-        return false;
-    }
-
-    private invitationType getInvitation(String clanName) {
-        return invitationType.accepteren;
-    }
-
-    private managementType getManagement(String clanName) {
-        return managementType.afwijzen;
-    }
-
-    private String getPersons(String clanName) {
-        return "personen 3/8";
-    }
-
-    private void handleInvitation(invitationType invite, String clanName) {
-        if (invite.equals(invitationType.accepteren)) {
-
-        } else if (invite.equals(invitationType.uitnodigen)) {
-
-        }
-    }
-
-    private void handleManagement(managementType manage, String clanName) {
-        if (manage.equals(managementType.afwijzen)) {
-
-        } else if (manage.equals(managementType.verlaten)) {
-
-        } else if (manage.equals(managementType.verwijderen)) {
-
-        }
-    }
-
-    private boolean makeConnection() {
-        try {
-            // This will load the MySQL driver, each DB has its own driver
-            Class.forName("com.mysql.jdbc.Driver");
-
-            // Setup the connection with the DB
-            connect = DriverManager.getConnection("jdbc:mysql://phpmyadmin.darkhellentertainment.com/pactales","pactales","p@2015");
-            
-            return true;
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (SQLException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        return false;
     }
 }
