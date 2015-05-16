@@ -13,6 +13,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 
 /**
  * @author David
@@ -27,7 +28,29 @@ public class ClanManagementScreen extends BaseScreen {
     public ClanManagementScreen(Game game) {
         super(game);
 
-        String emailaddress = "jip.vandevijfeijke@gmail.com";
+        scrollTable = new Table();
+
+        clanF = new ClanFunctions();
+        if (!clanF.getHasConnection()) {
+            Dialog d = new Dialog("error", skin);
+            d.add("Er kan geen verbinding met de database worden gemaakt!");
+            TextButton bExit = new TextButton("Oke", skin);
+            bExit.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    d.hide();
+                }
+            });
+            d.add(bExit);
+            d.show(stage);
+            game.setScreen(new MainScreen(game));
+        } else {
+            refreshScreen();//loads up whole screen
+        }
+    }
+
+    private void refreshScreen() {
+        scrollTable.clear();
 
         scrollTable = new Table();
 
@@ -95,14 +118,11 @@ public class ClanManagementScreen extends BaseScreen {
         btnClanToevoegen.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (!createClan(tfClannaam.getText(), emailaddress)) {
-                    Dialog d = new Dialog("error", skin);
-                    d.add("Maximum van 8 clans overschreden of de clan bestaat al");
-                    d.show(stage);
-                } else {
-                    generateTableRow(tfClannaam.getText());
-                    tfClannaam.setText("");
-                }
+                if (!tfClannaam.getText().equals("")) {
+                    if (!clanF.createClan(tfClannaam.getText(), emailaddress)) {
+                        Dialog d = new Dialog("error", skin);
+                        d.add("Maximum van 8 clans overschreden of de clan bestaat al");
+                        TextButton bExit = new TextButton("Oke", skin);
                         bExit.addListener(new ClickListener() {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
@@ -126,6 +146,30 @@ public class ClanManagementScreen extends BaseScreen {
                         generateTableRow(tfClannaam.getText());
                         tfClannaam.setText("");
                     }
+                        bExit.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                d.hide();
+                            }
+                        });
+                        d.add(bExit);
+                        d.show(stage);
+                    } else {
+                        Dialog d = new Dialog("succes", skin);
+                        d.add("Clan succesvol toegevoegd");
+                        TextButton bExit = new TextButton("Oke", skin);
+                        bExit.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                d.hide();
+                            }
+                        });
+                        d.add(bExit);
+                        d.show(stage);
+                        generateTableRow(tfClannaam.getText());
+                        tfClannaam.setText("");
+                    }
+                }
                 }
             }
         });
@@ -210,8 +254,8 @@ public class ClanManagementScreen extends BaseScreen {
         this.stage.addActor(table);
 
         backgroundMusic = Assets.getMusicStream("menu.mp3");
-        
-        for (String clan : fillTable(emailaddress)) {
+
+        for (String clan : clanF.fillTable(emailaddress)) {
             generateTableRow(clan);
         }
     }
@@ -232,6 +276,18 @@ public class ClanManagementScreen extends BaseScreen {
                 if (clanF.handleInvitation(iType, lb1.getText(), emailaddress, "test")) {
                     Dialog d = new Dialog("succes", skin);
                     d.add("Actie succesvol uitgevoerd");
+                    TextButton bExit = new TextButton("Oke", skin);
+                    bExit.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            d.hide();
+                        }
+                    });
+                    d.add(bExit);
+                    d.show(stage);
+                } else {
+                    Dialog d = new Dialog("error", skin);
+                    d.add("De persoon bestaat niet");
                     TextButton bExit = new TextButton("Oke", skin);
                     bExit.addListener(new ClickListener() {
                         @Override
@@ -276,6 +332,18 @@ public class ClanManagementScreen extends BaseScreen {
                             refreshScreen();//make sure that the changes will be reflected
                             Dialog d = new Dialog("succes", skin);
                             d.add("Actie succesvol uitgevoerd");
+                            TextButton bExit = new TextButton("Oke", skin);
+                            bExit.addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    d.hide();
+                                }
+                            });
+                            d.add(bExit);
+                            d.show(stage);
+                        } else {
+                            Dialog d = new Dialog("error", skin);
+                            d.add("Actie is helaas mislukt");
                             TextButton bExit = new TextButton("Oke", skin);
                             bExit.addListener(new ClickListener() {
                                 @Override
