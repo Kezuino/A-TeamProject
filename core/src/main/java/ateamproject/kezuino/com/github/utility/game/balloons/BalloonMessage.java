@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.utility.game.balloons;
 
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -39,9 +40,15 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
      */
     private Texture texture;
 
+    /**
+     * {@link Direction} that will be used to rotate the {@link Texture} of this {@link BalloonMessage}. Default is {@code Direction.Down}.
+     */
+    private Direction direction;
+
     public BalloonMessage() {
         timer = new Timer();
 
+        this.direction = Direction.Down;
         this.totalTimeShown = 1f;
         this.position = Vector2.Zero;
         createTexture();
@@ -53,6 +60,7 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
             throw new IllegalArgumentException("Parameter totalTimeShown must be higher than zero.");
         timer = new Timer();
 
+        this.direction = Direction.Down;
         this.totalTimeShown = totalTimeShown;
         this.position = position;
         this.size = size;
@@ -169,6 +177,7 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
 
     /**
      * Creates the graphic for the first time when it's required for {@link #render(SpriteBatch) rendering}.
+     * The graphic should be drawn facing downward by default.
      */
     public abstract Pixmap createGraphic();
 
@@ -181,7 +190,7 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
         if (batch == null) throw new IllegalArgumentException("Parameter batch must not be null.");
         if (texture == null) texture = new Texture(createGraphic());
 
-        batch.draw(texture, position.x, position.y, texture.getWidth(), texture.getHeight());
+        batch.draw(texture, position.x, position.y, texture.getWidth() / 2.0f, texture.getHeight() / 2.0f, texture.getWidth(), texture.getHeight(), 1f, 1f, this.direction.getRotation(), 0, 0, texture.getWidth(), texture.getHeight(), false, false);
     }
 
     /**
