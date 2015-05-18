@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.multiplayer;
 import ateamproject.kezuino.com.github.network.rmi.IProtocolServer;
 
 import java.rmi.AlreadyBoundException;
+import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -41,6 +42,19 @@ public class Server extends UnicastRemoteObject implements IProtocolServer {
         }
       
         System.out.println("Server started");
+    }
+    
+    public void stop() {
+        try {
+            System.out.println("Server stopped");
+            UnicastRemoteObject.unexportObject(this, true);
+        } catch (NoSuchObjectException ex) {
+            System.out.println(ex.getMessage());
+            
+            
+            
+            Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     @Override
