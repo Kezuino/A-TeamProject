@@ -13,5 +13,5 @@ import java.rmi.RemoteException;
  * @author Kez and Jules
  */
 public interface IProtocol extends Remote {
-    public abstract void creatureMove(int creatureID) throws RemoteException;
+    void creatureMove(int creatureID) throws RemoteException;
 }

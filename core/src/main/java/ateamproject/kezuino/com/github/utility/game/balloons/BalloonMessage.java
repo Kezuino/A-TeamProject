@@ -94,7 +94,7 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
      * @return {@link BalloonMessage} for chaining.
      */
     public static <T extends BalloonMessage> T getBalloonMessage(Class<T> clazz) {
-        T instance = null;
+        T instance;
         if (cachedBalloonMessages.get(clazz) == null) {
             try {
                 instance = clazz.newInstance();
