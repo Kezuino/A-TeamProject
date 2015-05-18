@@ -17,8 +17,8 @@ public class ServerLauncher {
             System.out.println("Waiting for input..");
 
             while(true){
-                int line = scanner.nextInt();
-                if(line == 0)
+                String line = scanner.nextLine();
+                if(line.equals("exit"))
                     break;
             }
             server.stop();

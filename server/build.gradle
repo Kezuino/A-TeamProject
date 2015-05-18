@@ -12,6 +12,13 @@ task run(dependsOn: classes, type: JavaExec) {
     standardInput = System.in
     workingDir = project.assetsDir
     ignoreExitValue = true
+
+    if(System.getProperty("os.name").toLowerCase().contains('win')){
+        executable 'cmd'
+        jvmArgs '/C'
+        jvmArgs 'start'
+        jvmArgs 'java'
+    }
 }
 
 task dist(type: Jar) {
