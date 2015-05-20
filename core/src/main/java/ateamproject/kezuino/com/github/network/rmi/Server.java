@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
+import ateamproject.kezuino.com.github.network.IServer;
 import ateamproject.kezuino.com.github.network.rmi.IProtocolServer;
 
 import java.rmi.AlreadyBoundException;
@@ -12,7 +13,7 @@ import java.util.logging.Logger;
 
 import java.rmi.server.UnicastRemoteObject;
 
-public class Server extends UnicastRemoteObject implements IProtocolServer {
+public class Server extends UnicastRemoteObject implements IServer, IProtocolServer {
     private transient static Server currentInstance;
 
     protected Server() throws RemoteException {

@@ -38,8 +38,10 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
         System.out.println("Client starting...");
         
         try {
-            //this.reg = LocateRegistry.getRegistry("darkhellentertainment.com", Registry.REGISTRY_PORT);
-            this.server = (IProtocolServer) Naming.lookup("//darkhellentertainment.com/server");
+            String rmiHost = System.getProperty("pactales.client.servername");
+            String rmiObject = System.getProperty("pactales.client.serverobject");
+
+            this.server = (IProtocolServer) Naming.lookup(String.format("//%s/%s", rmiHost, rmiObject));
             boolean loggedOn = this.server.login("test", "test");
             
             if(loggedOn) {

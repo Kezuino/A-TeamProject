@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.multiplayer;
 
+import ateamproject.kezuino.com.github.multiplayer.servers.ServerRMI;
 import ateamproject.kezuino.com.github.network.rmi.Server;
 import java.rmi.RemoteException;
 import java.util.Scanner;
