@@ -6,13 +6,17 @@ sourceSets.main.java.srcDirs = [ "src/main/java/" ]
 project.ext.mainClassName = "ateamproject.kezuino.com.github.multiplayer.ServerLauncher"
 project.ext.assetsDir = new File("../core/assets");
 
-task run(dependsOn: classes, type: JavaExec) {
+/**
+ * Execute default actions before running.
+ */
+task runInit(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
     ignoreExitValue = true
 
+    // Launch as a command window instead of in the background.
     if(System.getProperty("os.name").toLowerCase().contains('win')){
         executable 'cmd'
         jvmArgs '/C'
@@ -21,7 +25,12 @@ task run(dependsOn: classes, type: JavaExec) {
     }
 }
 
-task dist(type: Jar) {
+task run(dependsOn: [classes, runInit], type: JavaExec) {
+    // Default run will startup as distribution version.
+    System.setProperty("java.rmi.server.hostname", "darkhellentertainment.com");
+}
+
+task dist(dependsOn: classes, type: Jar) {
     from files(sourceSets.main.output.classesDir)
     from files(sourceSets.main.output.resourcesDir)
     from {configurations.compile.collect {zipTree(it)}}
@@ -32,6 +41,9 @@ task dist(type: Jar) {
     }
 }
 
+/**
+ * Task for fixing a bug with the Gradle plugin in Netbeans.
+ */
 task debug(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
@@ -40,8 +52,6 @@ task debug(dependsOn: classes, type: JavaExec) {
     ignoreExitValue = true
     debug = true
 }
-
-dist.dependsOn classes
 
 eclipse {
     project {

@@ -8,12 +8,11 @@ import java.util.logging.Logger;
 
 public class ServerLauncher {
     public static void main(String[] args) {
-        System.setProperty("java.rmi.server.hostname", "darkhellentertainment.com");
         Scanner scanner = new Scanner(System.in);
-        Server server;
+        ServerRMI server;
         
         try {
-            server = Server.instance();
+            server = ServerRMI.getInstance();
             server.start();
             while(true){
                 String line = scanner.nextLine();
@@ -25,8 +24,5 @@ public class ServerLauncher {
         } catch (RemoteException ex) {
             Logger.getLogger(ServerLauncher.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        
-
     }
 }
