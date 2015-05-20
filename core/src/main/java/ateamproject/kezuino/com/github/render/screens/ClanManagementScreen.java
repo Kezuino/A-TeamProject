@@ -14,19 +14,36 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 
 /**
  * @author David
  */
 public class ClanManagementScreen extends BaseScreen {
 
-    private TextField tfClannaam;
     private final Table scrollTable;
     private String emailaddress = "jip.vandevijfeijke@gmail.com";
     private ClanFunctions clanF;//should be on server using RMI!!!
-
-    public ClanManagementScreen(Game game) {
-        super(game);
+        if (!clanF.getHasConnection()) {
+            Dialog d = new Dialog("error", skin);
+            d.add("Er kan geen verbinding met de database worden gemaakt!");
+            TextButton bExit = new TextButton("Oke", skin);
+            bExit.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    d.hide();
+                }
+            });
+            d.add(bExit);
+            d.show(stage);
+            game.setScreen(new MainScreen(game));
+        } else {
+            refreshScreen();//loads up whole screen
+        }
+    private void refreshScreen() {
+        scrollTable.clear();
+    private String emailaddress = "jip.vandevijfeijke@gmail.com";
+    private ClanFunctions clanF;//should be on server using RMI!!!
 
         scrollTable = new Table();
 
@@ -146,7 +163,7 @@ public class ClanManagementScreen extends BaseScreen {
                         generateTableRow(tfClannaam.getText());
                         tfClannaam.setText("");
                     }
-                        bExit.addListener(new ClickListener() {
+                }
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
                                 d.hide();
@@ -297,18 +314,6 @@ public class ClanManagementScreen extends BaseScreen {
                     });
                     d.add(bExit);
                     d.show(stage);
-                } else {
-                    Dialog d = new Dialog("error", skin);
-                    d.add("De persoon bestaat niet");
-                    TextButton bExit = new TextButton("Oke", skin);
-                    bExit.addListener(new ClickListener() {
-                        @Override
-                        public void clicked(InputEvent event, float x, float y) {
-                            d.hide();
-                        }
-                    });
-                    d.add(bExit);
-                    d.show(stage);
                 }
             }
 
@@ -361,6 +366,10 @@ public class ClanManagementScreen extends BaseScreen {
                                 @Override
                                 public void clicked(InputEvent event, float x, float y) {
                                     d.hide();
+                                }
+                            });
+                            d.add(bExit);
+                            d.show(stage);
                                 }
                             });
                             d.add(bExit);
