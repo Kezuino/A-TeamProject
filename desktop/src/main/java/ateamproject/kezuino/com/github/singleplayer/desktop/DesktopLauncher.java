@@ -21,7 +21,7 @@ public class DesktopLauncher {
         //frameRateTest(cfg);
         
         try {
-            Client client = Client.instance();
+            Client client = Client.getInstance();
             client.start();
         } catch (RemoteException ex) {
             Logger.getLogger(DesktopLauncher.class.getName()).log(Level.SEVERE, null, ex);

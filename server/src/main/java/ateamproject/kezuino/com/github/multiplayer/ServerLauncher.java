@@ -1,6 +1,5 @@
 package ateamproject.kezuino.com.github.multiplayer;
 
-import ateamproject.kezuino.com.github.multiplayer.servers.ServerRMI;
 import ateamproject.kezuino.com.github.network.rmi.Server;
 import java.rmi.RemoteException;
 import java.util.Scanner;
@@ -9,11 +8,13 @@ import java.util.logging.Logger;
 
 public class ServerLauncher {
     public static void main(String[] args) {
+        System.setProperty("java.rmi.server.hostname", "127.0.0.1");
+        
         Scanner scanner = new Scanner(System.in);
-        ServerRMI server;
+        Server server;
         
         try {
-            server = ServerRMI.getInstance();
+            server = Server.getInstance();
             server.start();
             while(true){
                 String line = scanner.nextLine();

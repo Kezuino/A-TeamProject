@@ -5,8 +5,6 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
-import ateamproject.kezuino.com.github.network.rmi.IProtocolClient;
-import ateamproject.kezuino.com.github.network.rmi.IProtocolServer;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -25,35 +23,30 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
     protected Client() throws RemoteException {
 
     }
+
+    public void start() {
+        System.out.println("Client starting...");
+        
+        try {
+            //this.reg = LocateRegistry.getRegistry("darkhellentertainment.com", Registry.REGISTRY_PORT);
+            this.server = (IProtocolServer) Naming.lookup("//127.0.0.1/server");
+        } catch (RemoteException | NotBoundException | MalformedURLException ex) {
+            System.out.println(ex.getMessage());
+        }
+        
+        System.out.println("Client started");
+    }
     
-    public static Client instance() throws RemoteException {
+    public static Client getInstance() throws RemoteException {
         if(currentInstance == null) {
             currentInstance = new Client();
         }
         
         return currentInstance;
     }
-
-    public void start() {
-        System.out.println("Client starting...");
-        
-        try {
-            String rmiHost = System.getProperty("pactales.client.servername");
-            String rmiObject = System.getProperty("pactales.client.serverobject");
-
-            this.server = (IProtocolServer) Naming.lookup(String.format("//%s/%s", rmiHost, rmiObject));
-            boolean loggedOn = this.server.login("test", "test");
-            
-            if(loggedOn) {
-                System.out.println("Player is logged on");
-            }
-        } catch (RemoteException | NotBoundException | MalformedURLException ex) {
-            
-            System.out.println(ex.getMessage());
-            System.out.println(ex.toString());
-        }
-        
-        System.out.println("Client started");
+    
+    public IProtocolServer getConnection() throws RemoteException {
+        return this.server;
     }
 
     @Override
