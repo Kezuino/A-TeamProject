@@ -7,26 +7,36 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.render.screens.ClanFunctions;
 import ateamproject.kezuino.com.github.render.screens.ClanFunctions.invitationType;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 
 /**
- *
  * @author Kez and Jules
  */
 public interface IProtocolServer extends IProtocol {
     boolean login(String username, String password) throws RemoteException;
+
     void logout() throws RemoteException;
-    
+
     ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
+
     boolean clanCreateClan(String clanName, String emailaddress) throws RemoteException;
-   invitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException;
-   ClanFunctions.managementType getManagement(String clanName, String emailaddress) throws RemoteException;
-   String getPersons(String clanName) throws RemoteException;
-   boolean handleInvitation(invitationType invite, String clanName, String emailAddress, String nameOfInvitee)   throws RemoteException;
-   boolean handleManagement(ClanFunctions.managementType manage, String clanName, String emailaddress) throws RemoteException;
-     String getUsername(String emailaddress) throws RemoteException;
-    String getEmail(String username)  throws RemoteException;
-    boolean setUsername(String name, String emailaddress)   throws RemoteException;
-    
+
+    invitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException;
+
+    ClanFunctions.ManagementType getManagement(String clanName, String emailaddress) throws RemoteException;
+
+    String getPersons(String clanName) throws RemoteException;
+
+    boolean handleInvitation(invitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException;
+
+    boolean handleManagement(ClanFunctions.ManagementType manage, String clanName, String emailaddress) throws RemoteException;
+
+    String getUsername(String emailaddress) throws RemoteException;
+
+    String getEmail(String username) throws RemoteException;
+
+    boolean setUsername(String name, String emailaddress) throws RemoteException;
+
 }

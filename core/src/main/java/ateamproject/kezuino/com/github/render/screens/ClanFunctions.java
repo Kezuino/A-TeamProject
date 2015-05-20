@@ -5,7 +5,6 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -31,7 +30,7 @@ public class ClanFunctions {
     /**
      *A state in which a person opposed to a clan can be.
      */
-    public enum managementType {
+    public enum ManagementType {
         verwijderen,verlaten,afwijzen;
     }
 
@@ -286,13 +285,13 @@ public class ClanFunctions {
      * @param emailaddress
      * @return
      */
-    public managementType getManagement(String clanName, String emailaddress) {
+    public ManagementType getManagement(String clanName, String emailaddress) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
             if (getManagerIdFromClanName(clanName) == getAccountIdFromEmail(emailaddress)) {
-                return managementType.verwijderen;//if user is owner of clan he can remove it
+                return ManagementType.verwijderen;//if user is owner of clan he can remove it
             }
 
             preparedStatement = connect.prepareStatement("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?");
@@ -303,9 +302,9 @@ public class ClanFunctions {
             int accepted = resultSet.getInt("Accepted");
 
             if (accepted == 0) {
-                return managementType.afwijzen;//user has not accepted thus is can decline it
+                return ManagementType.afwijzen;//user has not accepted thus is can decline it
             } else {
-                return managementType.verlaten;//user is owner thus it can leave
+                return ManagementType.verlaten;//user is owner thus it can leave
             }
         } catch (SQLException ex) {
             Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
@@ -410,8 +409,8 @@ public class ClanFunctions {
      * @param emailaddress
      * @return
      */
-    public boolean handleManagement(managementType manage, String clanName, String emailaddress) {
-        if (manage.equals(managementType.afwijzen) || manage.equals(managementType.verlaten)) {
+    public boolean handleManagement(ManagementType manage, String clanName, String emailaddress) {
+        if (manage.equals(ManagementType.afwijzen) || manage.equals(ManagementType.verlaten)) {
             PreparedStatement preparedStatement = null;
             ResultSet resultSet = null;
 
@@ -427,7 +426,7 @@ public class ClanFunctions {
                 Logger.getLogger(ClanFunctions.class
                         .getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (manage.equals(managementType.verwijderen)) {
+        } else if (manage.equals(ManagementType.verwijderen)) {
             PreparedStatement preparedStatement = null;
             ResultSet resultSet = null;
 
