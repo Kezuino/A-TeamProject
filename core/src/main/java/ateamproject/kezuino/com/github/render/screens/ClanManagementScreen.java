@@ -1,6 +1,6 @@
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.render.screens.ClanFunctions.invitationType;
+import ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType;
 import ateamproject.kezuino.com.github.render.screens.ClanFunctions.ManagementType;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
@@ -221,19 +221,18 @@ public class ClanManagementScreen extends BaseScreen {
         TextField lb1 = new TextField(clanName, skin);
         lb1.setDisabled(true);
 
-        final invitationType iType = clanF.getInvitation(clanName, emailaddress);
+        final InvitationType iType = clanF.getInvitation(clanName, emailaddress);
 
         String bt2Text = iType.toString();
         TextButton bt2 = new TextButton(bt2Text, skin);
-        if (bt2Text.equals("nothing")) {
+        if (bt2Text.equals(InvitationType.NONE.name())) {
             bt2.setVisible(false);
-
         }
 
         bt2.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (iType.equals(ClanFunctions.invitationType.uitnodigen)) {
+                if (iType.equals(InvitationType.INVITE)) {
                     Dialog d = new Dialog("toevoegen", skin);
                     d.add("Gebruikersnaam/emailadres in: ");
                     TextField tf = new TextField("", skin);
@@ -302,7 +301,7 @@ public class ClanManagementScreen extends BaseScreen {
         }
         );
 
-        TextField lb3 = new TextField(clanF.getPersons(clanName), skin);
+        TextField lb3 = new TextField(clanF.getPeople(clanName), skin);
 
         lb3.setDisabled(
                 true);

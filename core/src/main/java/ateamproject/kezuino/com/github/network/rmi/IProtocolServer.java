@@ -6,7 +6,7 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.render.screens.ClanFunctions;
-import ateamproject.kezuino.com.github.render.screens.ClanFunctions.invitationType;
+import ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -23,13 +23,13 @@ public interface IProtocolServer extends IProtocol {
 
     boolean clanCreateClan(String clanName, String emailaddress) throws RemoteException;
 
-    invitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException;
+    InvitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException;
 
     ClanFunctions.ManagementType getManagement(String clanName, String emailaddress) throws RemoteException;
 
     String getPersons(String clanName) throws RemoteException;
 
-    boolean handleInvitation(invitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException;
+    boolean handleInvitation(InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException;
 
     boolean handleManagement(ClanFunctions.ManagementType manage, String clanName, String emailaddress) throws RemoteException;
 

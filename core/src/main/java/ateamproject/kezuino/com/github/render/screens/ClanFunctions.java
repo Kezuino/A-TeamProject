@@ -5,62 +5,16 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
  * @author Jip
  */
 public class ClanFunctions {
-
-    /**
-     * A state in which a person opposed to a clan can be.
-     */
-    public enum invitationType {
-
-        /**
-         *The user can invite people to its clan
-         */
-        uitnodigen,
-
-        /**
-         *The user can accept the invite to this clan
-         */
-        accepteren,
-
-        /**
-         *Nothing will be displayed
-         */
-        nothing;
-    }
-
-    /**
-     * A state in which a person opposed to a clan can be.
-     */
-    public enum ManagementType {
-
-        /**
-         *User can remove this clan
-         */
-        verwijderen,
-
-        /**
-         *User can leave this clan
-         */
-        verlaten,
-
-        /**
-         *User can reject an offer to leave this clan
-         */
-        afwijzen;
-    }
 
     private Connection connect = null;
     private boolean hasConnection = false;
@@ -73,27 +27,27 @@ public class ClanFunctions {
     }
 
     /**
-     * Returns if a connection has been made
+     * Returns true if a connection could be made.
      *
-     * @return True if succeeded false if failed
+     * @return True if succeeded, false otherwise.
      */
     public boolean getHasConnection() {
         return hasConnection;
     }
 
     /**
-     * Gives all clans for a specific emailaddress
+     * Gives all clans for a specific {@code emailaddress}.
      *
      * @param emailaddress the emailaddress for which the clans needs to
-     * searched for
-     * @return the String array which contains all the clan names
+     *                     searched for.
+     * @return the String array which contains all the clan names.
      */
-    public ArrayList<String> fillTable(String emailaddress) {
-        ArrayList<String> clans = new ArrayList();
+    public List<String> fillTable(String emailaddress) {
+        List<String> clans = new ArrayList<>();
 
-        PreparedStatement preparedStatement = null;
+        PreparedStatement preparedStatement;
         ResultSet resultSet = null;
-        ResultSet resultSetWithClans = null;
+        ResultSet resultSetWithClans;
 
         try {
             preparedStatement = connect.prepareStatement("SELECT Id FROM account WHERE Email = ?");
@@ -133,11 +87,11 @@ public class ClanFunctions {
     }
 
     /**
-     * Create a clan with the given parameters
+     * Create a clan with the given {@code clanName} and {@code emailaddress}.
      *
-     * @param clanName name of the clan
-     * @param emailaddress the creater of the clan
-     * @return true if creation did succeed else false
+     * @param clanName     Name of the clan.
+     * @param emailaddress Creater of the clan.
+     * @return True if creation did succeed else false.
      */
     public boolean createClan(String clanName, String emailaddress) {
         if (!clanExists(clanName)) {
@@ -172,13 +126,14 @@ public class ClanFunctions {
     }
 
     /**
-     * Looks if a user has room to make another clan
-     * @param emailaddress the emailaddress of the user to look for space
-     * @return true if there is space, otherwise false
+     * Looks if a user has room to make another clan.
+     *
+     * @param emailaddress Emailaddress of the user to look for space.
+     * @return True if there is space, otherwise false.
      */
     private boolean hasRoomForClan(String emailaddress) {
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+        PreparedStatement preparedStatement;
+        ResultSet resultSet;
 
         try {
             preparedStatement = connect.prepareStatement("SELECT COUNT(*) as amount FROM clan,account WHERE clan.ManagerId = account.Id AND account.Email = ?");
@@ -198,8 +153,9 @@ public class ClanFunctions {
     }
 
     /**
-     * Makes connection to the database
-     * @return true if the connection making did succeed, false otherwise
+     * Makes connection to the database.
+     *
+     * @return true if the connection making did succeed, false otherwise.
      */
     private boolean makeConnection() {
         try {
@@ -218,9 +174,10 @@ public class ClanFunctions {
     }
 
     /**
-     * Looks if a clan exists
-     * @param clanName the name of the clan
-     * @return true if it exists, else false
+     * Looks if a clan exists.
+     *
+     * @param clanName the name of the clan.
+     * @return true if it exists, else false.
      */
     private boolean clanExists(String clanName) {
         PreparedStatement preparedStatement = null;
@@ -244,9 +201,10 @@ public class ClanFunctions {
     }
 
     /**
-     * Gets the account id from a player
-     * @param emailaddress the emailaddress to get the id from
-     * @return the id, -1 if the player does not exists
+     * Gets the account id from a player.
+     *
+     * @param emailaddress the emailaddress to get the id from.
+     * @return the id, -1 if the player does not exists.
      */
     private int getAccountIdFromEmail(String emailaddress) {
         try {
@@ -264,11 +222,12 @@ public class ClanFunctions {
         return -1;
     }
 
-   /**
-    * Gets the manager id from a clan
-    * @param clanName the clan name to search for
-    * @return the id of the manager, -1 if the clan does not exists
-    */
+    /**
+     * Gets the manager id from a clan.
+     *
+     * @param clanName Clan name to search for.
+     * @return Id of the manager, -1 if the clan does not exists.
+     */
     private int getManagerIdFromClanName(String clanName) {
         try {
             PreparedStatement preparedStatement = null;
@@ -285,11 +244,12 @@ public class ClanFunctions {
         return -1;
     }
 
-   /**
-    * Gets the clan id from a clan
-    * @param clanName the clan name to search for
-    * @return the id of the clan, -1 if the clan does not exists
-    */
+    /**
+     * Gets the clan id from a clan.
+     *
+     * @param clanName Clan name to search for.
+     * @return Id of the clan, -1 if the clan does not exists.
+     */
     private int getClanIdFromName(String clanName) {
         try {
             PreparedStatement preparedStatement = null;
@@ -307,19 +267,19 @@ public class ClanFunctions {
     }
 
     /**
-     * Gets the invitationtype for a given clan and a given emailaddress
+     * Gets the {@link ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType} for a given clan and a given {@code emailaddress}.
      *
-     * @param clanName the name of the clan
-     * @param emailaddress the emailaddress of who is in the clan
-     * @return returns the type, if something goes wrong returns null
+     * @param clanName     Name of the clan.
+     * @param emailaddress {@code emailaddress} of who is in the clan.
+     * @return {@link ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType}, or null if failed.
      */
-    public invitationType getInvitation(String clanName, String emailaddress) {
+    public InvitationType getInvitation(String clanName, String emailaddress) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
             if (getManagerIdFromClanName(clanName) == getAccountIdFromEmail(emailaddress)) {
-                return invitationType.uitnodigen;//if user is owner of clan, he can invite
+                return InvitationType.INVITE;//if user is owner of clan, he can invite
             }
 
             preparedStatement = connect.prepareStatement("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?");
@@ -330,9 +290,9 @@ public class ClanFunctions {
             int accepted = resultSet.getInt("Accepted");
 
             if (accepted == 0) {
-                return invitationType.accepteren;//user can accept joining clan and is not owner
+                return InvitationType.ACCEPT;//user can accept joining clan and is not owner
             } else {
-                return invitationType.nothing;//user is not owner and user is joined
+                return InvitationType.NONE;//user is not owner and user is joined
             }
         } catch (SQLException ex) {
             Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
@@ -342,11 +302,11 @@ public class ClanFunctions {
     }
 
     /**
-     * Gets the managementType for a given clan and a given emailaddress
+     * Gets the managementType for a given clan and a given {@copde emailaddress}.
      *
-     * @param clanName the name of the clan
-     * @param emailaddress the emailaddress of who is in the clan
-     * @return returns the type, if something goes wrong returns null
+     * @param clanName     Name of the clan
+     * @param emailaddress Emailaddress of who is in the clan
+     * @return {@link ateamproject.kezuino.com.github.render.screens.ClanFunctions.ManagementType}, or null if failed.
      */
     public ManagementType getManagement(String clanName, String emailaddress) {
         PreparedStatement preparedStatement = null;
@@ -354,7 +314,7 @@ public class ClanFunctions {
 
         try {
             if (getManagerIdFromClanName(clanName) == getAccountIdFromEmail(emailaddress)) {
-                return ManagementType.verwijderen;//if user is owner of clan he can remove it
+                return ManagementType.REMOVE;//if user is owner of clan he can remove it
             }
 
             preparedStatement = connect.prepareStatement("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?");
@@ -365,9 +325,9 @@ public class ClanFunctions {
             int accepted = resultSet.getInt("Accepted");
 
             if (accepted == 0) {
-                return ManagementType.afwijzen;//user has not accepted thus is can decline it
+                return ManagementType.REJECT;//user has not accepted thus is can decline it
             } else {
-                return ManagementType.verlaten;//user is owner thus it can leave
+                return ManagementType.LEAVE;//user is owner thus it can leave
             }
         } catch (SQLException ex) {
             Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
@@ -377,15 +337,15 @@ public class ClanFunctions {
     }
 
     /**
-     * Gets amount of persons in a clan
+     * Gets amount of people in a clan.
      *
-     * @param clanName name of the clan to get the amount from
-     * @return a string in the format 'personen ?/8' where ? is the number of
-     * persons in the clan
+     * @param clanName Name of the clan to get the amount from
+     * @return String in the format 'personen ?/8' where ? is the number of
+     * people in the clan.
      */
-    public String getPersons(String clanName) {
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+    public String getPeople(String clanName) {
+        PreparedStatement preparedStatement;
+        ResultSet resultSet;
 
         try {
             preparedStatement = connect.prepareStatement("SELECT COUNT(*) AS amount FROM clan_account WHERE ClanId = ?");
@@ -403,21 +363,20 @@ public class ClanFunctions {
     }
 
     /**
-     * processes an invitation
+     * Processes an invitation.
      *
-     * @param invite the actual invite to process
-     * @param clanName the name of the clan where the invite belongs to
-     * @param emailAddress email of the person who did send the invite to this
-     * function
-     * @param nameOfEmailInvitee optional name/emailaddress parameter for the
-     * 'uitnodigen' invite. Needs to be null when a invite is not of the type
-     * 'uitnodigen'
-     * @return true if invitation is successfully handled else false
+     * @param invite             Invite to process.
+     * @param clanName           Name of the clan where the invite belongs to.
+     * @param emailAddress       Email of the person who did send the invite to this
+     *                           function.
+     * @param nameOfEmailInvitee Optional name/emailaddress parameter for the
+     *                           'INVITE' invite. Needs to be null when a invite is not of the type
+     *                           'INVITE'.
+     * @return True if invitation is successfully handled else false.
      */
-    public boolean handleInvitation(invitationType invite, String clanName, String emailAddress, String nameOfEmailInvitee) {
-        if (invite.equals(invitationType.accepteren)) {
-            PreparedStatement preparedStatement = null;
-            ResultSet resultSet = null;
+    public boolean handleInvitation(InvitationType invite, String clanName, String emailAddress, String nameOfEmailInvitee) {
+        if (invite.equals(InvitationType.ACCEPT)) {
+            PreparedStatement preparedStatement;
 
             try {
                 preparedStatement = connect.prepareStatement("UPDATE clan_account SET Accepted = 1 WHERE AccountId = ? AND ClanId = ?");
@@ -429,9 +388,8 @@ public class ClanFunctions {
             } catch (SQLException ex) {
                 return false;
             }
-        } else if (invite.equals(invitationType.uitnodigen)) {
-            PreparedStatement preparedStatement = null;
-            ResultSet resultSet = null;
+        } else if (invite.equals(InvitationType.INVITE)) {
+            PreparedStatement preparedStatement;
 
             String email = getEmail(nameOfEmailInvitee);
             String username = getUsername(nameOfEmailInvitee);
@@ -472,17 +430,16 @@ public class ClanFunctions {
     }
 
     /**
-     * processes an management type of a clan
+     * Executes an action based on the given {@link ateamproject.kezuino.com.github.render.screens.ClanFunctions.ManagementType managementType} to run on the {@code clan} and {@code emailaddress}.
      *
-     * @param manage the actual managementType to process
-     * @param clanName the name of the clan where the managementType belongs to
-     * @param emailaddress
-     * @return true if managementType is successfully handled else false
+     * @param managementType {@link ateamproject.kezuino.com.github.render.screens.ClanFunctions.ManagementType} to process.
+     * @param clanName       Name of the clan where the {@link ateamproject.kezuino.com.github.render.screens.ClanFunctions.ManagementType} belongs to
+     * @param emailaddress   Emailaddress of the user.
+     * @return True if {@link ateamproject.kezuino.com.github.render.screens.ClanFunctions.ManagementType} is successfully handled else false.
      */
-    public boolean handleManagement(ManagementType manage, String clanName, String emailaddress) {
-        if (manage.equals(ManagementType.afwijzen) || manage.equals(ManagementType.verlaten)) {
-            PreparedStatement preparedStatement = null;
-            ResultSet resultSet = null;
+    public boolean handleManagement(ManagementType managementType, String clanName, String emailaddress) {
+        if (managementType.equals(ManagementType.REJECT) || managementType.equals(ManagementType.LEAVE)) {
+            PreparedStatement preparedStatement;
 
             try {
                 preparedStatement = connect.prepareStatement("DELETE FROM clan_account WHERE AccountId = ? AND ClanId = ?");
@@ -496,9 +453,8 @@ public class ClanFunctions {
                 Logger.getLogger(ClanFunctions.class
                         .getName()).log(Level.SEVERE, null, ex);
             }
-        } else if (manage.equals(ManagementType.verwijderen)) {
-            PreparedStatement preparedStatement = null;
-            ResultSet resultSet = null;
+        } else if (managementType.equals(ManagementType.REMOVE)) {
+            PreparedStatement preparedStatement;
 
             try {
 
@@ -522,14 +478,14 @@ public class ClanFunctions {
     }
 
     /**
-     * Gets the name from a emailaddress
+     * Gets the name from a emailaddress.
      *
-     * @param emailaddress the emailaddress to search for
-     * @return the name of the user. Null if the user can not be found
+     * @param emailaddress Emailaddress to search for.
+     * @return Name of the user. Null if the user can not be found.
      */
     public String getUsername(String emailaddress) {
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+        PreparedStatement preparedStatement;
+        ResultSet resultSet;
 
         try {
             preparedStatement = connect.prepareStatement("SELECT Name FROM account WHERE Email = ?");
@@ -547,14 +503,14 @@ public class ClanFunctions {
     }
 
     /**
-     * Find emailaddress of user
+     * Finds the emailaddress of the user.
      *
-     * @param username username to get emailaddress from
-     * @return emailaddress of the user or null if the user can not be found
+     * @param username Username to get emailaddress from.
+     * @return Emailaddress of the user or null if the user can not be found.
      */
     public String getEmail(String username) {
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
+        PreparedStatement preparedStatement;
+        ResultSet resultSet;
 
         try {
             preparedStatement = connect.prepareStatement("SELECT Email FROM account WHERE Name = ?");
@@ -571,12 +527,11 @@ public class ClanFunctions {
     }
 
     /**
-     * Set the username of an user
+     * Set the username of an user.
      *
-     * @param name name of the user
-     * @param emailaddress the emailaddress of the user where the name needs to
-     * be changed from
-     * @return true if it succeeded, false if the name was already taken
+     * @param name         New name of the user.
+     * @param emailaddress Emailaddress of the user to find in the database.
+     * @return True if it succeeded, false if the {@code name} was already taken.
      */
     public boolean setUsername(String name, String emailaddress) {
         PreparedStatement preparedStatement = null;
@@ -601,10 +556,11 @@ public class ClanFunctions {
     }
 
     /**
-     * Check if a user is in or invited into a clan
-     * @param nameOfEmailInvitee name of the person to look for
-     * @param clanName the clan in which to search for
-     * @return true if the user is in or invited into the clan, false if not so
+     * Check if a user is in or invited into a clan.
+     *
+     * @param nameOfEmailInvitee Name of the person to look for
+     * @param clanName           Clan in which to search for
+     * @return True if the user is currently in or is invited into the clan, else false.
      */
     private boolean userIsInOrInvitedInClan(String nameOfEmailInvitee, String clanName) {
         PreparedStatement preparedStatement = null;
@@ -651,5 +607,47 @@ public class ClanFunctions {
                 return false;
             }
         }
+    }
+
+    /**
+     * A state in which a person opposed to a clan can be.
+     */
+    public enum InvitationType {
+
+        /**
+         * Nothing will be displayed.
+         */
+        NONE,
+
+        /**
+         * The user can invite people to its clan.
+         */
+        INVITE,
+
+        /**
+         * The user can accept the invite to this clan.
+         */
+        ACCEPT
+    }
+
+    /**
+     * A state in which a person opposed to a clan can be.
+     */
+    public enum ManagementType {
+
+        /**
+         * User can remove this clan.
+         */
+        REMOVE,
+
+        /**
+         * User can leave this clan.
+         */
+        LEAVE,
+
+        /**
+         * User can reject an offer to leave this clan.
+         */
+        REJECT
     }
 }

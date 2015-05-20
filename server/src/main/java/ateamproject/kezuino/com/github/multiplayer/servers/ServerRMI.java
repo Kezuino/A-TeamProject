@@ -2,6 +2,7 @@ package ateamproject.kezuino.com.github.multiplayer.servers;
 
 import ateamproject.kezuino.com.github.multiplayer.IServer;
 import ateamproject.kezuino.com.github.network.rmi.IProtocolServer;
+import ateamproject.kezuino.com.github.render.screens.ClanFunctions;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
@@ -9,6 +10,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -75,6 +77,56 @@ public class ServerRMI extends UnicastRemoteObject implements IServer, IProtocol
     @Override
     public void logout() throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public ArrayList<String> clanFillTable(String emailadres) throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public boolean clanCreateClan(String clanName, String emailaddress) throws RemoteException {
+        return false;
+    }
+
+    @Override
+    public ClanFunctions.InvitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public ClanFunctions.ManagementType getManagement(String clanName, String emailaddress) throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public String getPersons(String clanName) throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public boolean handleInvitation(ClanFunctions.InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException {
+        return false;
+    }
+
+    @Override
+    public boolean handleManagement(ClanFunctions.ManagementType manage, String clanName, String emailaddress) throws RemoteException {
+        return false;
+    }
+
+    @Override
+    public String getUsername(String emailaddress) throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public String getEmail(String username) throws RemoteException {
+        return null;
+    }
+
+    @Override
+    public boolean setUsername(String name, String emailaddress) throws RemoteException {
+        return false;
     }
 
     @Override
