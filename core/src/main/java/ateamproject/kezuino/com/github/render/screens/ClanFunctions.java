@@ -21,27 +21,43 @@ import java.util.logging.Logger;
  */
 public class ClanFunctions {
 
+    /**
+     *A state in which a person opposed to a clan can be.
+     */
     public enum invitationType {
-
-        uitnodigen, accepteren, nothing;
+        uitnodigen,accepteren,nothing;
     }
 
+    /**
+     *A state in which a person opposed to a clan can be.
+     */
     public enum managementType {
-
-        verwijderen, verlaten, afwijzen;
+        verwijderen,verlaten,afwijzen;
     }
 
     private Connection connect = null;
     private boolean hasConnection = false;
 
+    /**
+     *Constructor which will initialize clanfunctions
+     */
     public ClanFunctions() {
         hasConnection = makeConnection();
     }
 
+    /**
+     *Returns if a connection has succesfully been made
+     * @return
+     */
     public boolean getHasConnection() {
         return hasConnection;
     }
 
+    /**
+     *Gives all clans for a specific emailaddress
+     * @param emailaddress
+     * @return
+     */
     public ArrayList<String> fillTable(String emailaddress) {
         ArrayList<String> clans = new ArrayList();
 
@@ -86,6 +102,12 @@ public class ClanFunctions {
         return clans;
     }
 
+    /**
+     *
+     * @param clanName
+     * @param emailaddress
+     * @return
+     */
     public boolean createClan(String clanName, String emailaddress) {
         if (!clanExists(clanName)) {
             if (hasRoomForClan(emailaddress)) {
@@ -224,13 +246,19 @@ public class ClanFunctions {
         return -1;
     }
 
+    /**
+     *
+     * @param clanName
+     * @param emailaddress
+     * @return
+     */
     public invitationType getInvitation(String clanName, String emailaddress) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
             if (getManagerIdFromClanName(clanName) == getAccountIdFromEmail(emailaddress)) {
-                return invitationType.nothing;//if user is owner of clan, nothing needs to happen
+                return invitationType.uitnodigen;//if user is owner of clan, he can invite
             }
 
             preparedStatement = connect.prepareStatement("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?");
@@ -252,6 +280,12 @@ public class ClanFunctions {
         return null;
     }
 
+    /**
+     *
+     * @param clanName
+     * @param emailaddress
+     * @return
+     */
     public managementType getManagement(String clanName, String emailaddress) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -280,12 +314,17 @@ public class ClanFunctions {
         return null;
     }
 
+    /**
+     *
+     * @param clanName
+     * @return
+     */
     public String getPersons(String clanName) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
-            preparedStatement = connect.prepareStatement("SELECT COUNT(*) AS amount FROM clan_account WHERE ClanId = ?");
+            preparedStatement = connect.prepareStatement("SELECT COUNT(*) AS amount FROM clan_account WHERE ClanId = ?  AND Accepted = 1");
             preparedStatement.setInt(1, getClanIdFromName(clanName));
             resultSet = preparedStatement.executeQuery();
             resultSet.next();
@@ -299,7 +338,15 @@ public class ClanFunctions {
         return "personen ?/8";
     }
 
-    public boolean handleInvitation(invitationType invite, String clanName, String emailAddress, String nameOfInvitee) {
+    /**
+     *
+     * @param invite
+     * @param clanName
+     * @param emailAddress
+     * @param nameOfEmailInvitee
+     * @return
+     */
+    public boolean handleInvitation(invitationType invite, String clanName, String emailAddress, String nameOfEmailInvitee) {
         if (invite.equals(invitationType.accepteren)) {
             PreparedStatement preparedStatement = null;
             ResultSet resultSet = null;
@@ -312,32 +359,57 @@ public class ClanFunctions {
 
                 return true;
             } catch (SQLException ex) {
-                Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+                return false;
             }
         } else if (invite.equals(invitationType.uitnodigen)) {
             PreparedStatement preparedStatement = null;
             ResultSet resultSet = null;
 
-            try {
-                String email = getEmail(nameOfInvitee);
-                if (email != null) {
-                    preparedStatement = connect.prepareStatement("INSERT INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)");
-                    preparedStatement.setInt(1, getAccountIdFromEmail(email));
-                    preparedStatement.setInt(2, getClanIdFromName(clanName));
-                    preparedStatement.executeUpdate();
-
-                    return true;
-                } else {
+            String email = getEmail(nameOfEmailInvitee);
+            String username = getUsername(nameOfEmailInvitee);
+            if (email == null) {
+                if (username == null) {
                     return false;
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+
+                if (!userIsInOrInvitedInClan(nameOfEmailInvitee, clanName)) {
+                    try {
+                        preparedStatement = connect.prepareStatement("INSERT INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)");
+                        preparedStatement.setInt(1, getAccountIdFromEmail(getEmail(username)));
+                        preparedStatement.setInt(2, getClanIdFromName(clanName));
+                        preparedStatement.executeUpdate();
+
+                        return true;
+                    } catch (SQLException ex) {
+                        return false;
+                    }
+                }
+            } else {
+                if (!userIsInOrInvitedInClan(nameOfEmailInvitee, clanName)) {
+                    try {
+                        preparedStatement = connect.prepareStatement("INSERT INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)");
+                        preparedStatement.setInt(1, getAccountIdFromEmail(emailAddress));
+                        preparedStatement.setInt(2, getClanIdFromName(clanName));
+                        preparedStatement.executeUpdate();
+
+                        return true;
+                    } catch (SQLException ex) {
+                        return false;
+                    }
+                }
             }
         }
 
         return false;
     }
 
+    /**
+     *
+     * @param manage
+     * @param clanName
+     * @param emailaddress
+     * @return
+     */
     public boolean handleManagement(managementType manage, String clanName, String emailaddress) {
         if (manage.equals(managementType.afwijzen) || manage.equals(managementType.verlaten)) {
             PreparedStatement preparedStatement = null;
@@ -352,7 +424,8 @@ public class ClanFunctions {
                 return true;
 
             } catch (SQLException ex) {
-                Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ClanFunctions.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
         } else if (manage.equals(managementType.verwijderen)) {
             PreparedStatement preparedStatement = null;
@@ -371,13 +444,19 @@ public class ClanFunctions {
                 return true;
 
             } catch (SQLException ex) {
-                Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ClanFunctions.class
+                        .getName()).log(Level.SEVERE, null, ex);
             }
         }
 
         return false;
     }
 
+    /**
+     *
+     * @param emailaddress
+     * @return
+     */
     public String getUsername(String emailaddress) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -390,13 +469,18 @@ public class ClanFunctions {
             String username = resultSet.getString("Name");
 
             return username;
+
         } catch (SQLException ex) {
-            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
 
-        return null;
     }
 
+    /**
+     *
+     * @param username
+     * @return
+     */
     public String getEmail(String username) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -409,13 +493,18 @@ public class ClanFunctions {
             String email = resultSet.getString("Email");
 
             return email;
-        } catch (SQLException ex) {
-            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
-        }
 
-        return null;
+        } catch (SQLException ex) {
+            return null;
+        }
     }
 
+    /**
+     *
+     * @param name
+     * @param emailaddress
+     * @return
+     */
     public boolean setUsername(String name, String emailaddress) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -430,9 +519,57 @@ public class ClanFunctions {
             return true;
 
         } catch (SQLException ex) {
-            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClanFunctions.class
+                    .getName()).log(Level.SEVERE, null, ex);
         }
 
         return false;
+    }
+
+    private boolean userIsInOrInvitedInClan(String nameOfEmailInvitee, String clanName) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        String email = getEmail(nameOfEmailInvitee);
+        String username = getUsername(nameOfEmailInvitee);
+        if (email == null) {
+            if (username == null) {
+                return false;
+            }
+
+            try {
+                preparedStatement = connect.prepareStatement("SELECT COUNT(*) as amount FROM clan_account WHERE AccountId = ? AND ClanId = ?");
+                preparedStatement.setInt(1, getAccountIdFromEmail(getEmail(username)));
+                preparedStatement.setInt(2, getClanIdFromName(clanName));
+                resultSet = preparedStatement.executeQuery();
+                resultSet.next();
+                if (resultSet.getInt("amount") == 1) {
+                    return true;
+                }
+
+                return false;
+
+            } catch (SQLException ex) {
+                return false;
+            }
+
+        } else {
+
+            try {
+                preparedStatement = connect.prepareStatement("SELECT COUNT(*) as amount FROM clan_account WHERE AccountId = ? AND ClanId = ?");
+                preparedStatement.setInt(1, getAccountIdFromEmail(email));
+                preparedStatement.setInt(2, getClanIdFromName(clanName));
+                resultSet = preparedStatement.executeQuery();
+                resultSet.next();
+                if (resultSet.getInt("amount") == 1) {
+                    return true;
+                }
+
+                return false;
+
+            } catch (SQLException ex) {
+                return false;
+            }
+        }
     }
 }
