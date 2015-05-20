@@ -1,11 +1,7 @@
 package ateamproject.kezuino.com.github.multiplayer;
 
-<<<<<<< HEAD
 import ateamproject.kezuino.com.github.multiplayer.servers.ServerRMI;
 
-=======
-import ateamproject.kezuino.com.github.network.rmi.Server;
->>>>>>> Server & Client moved
 import java.rmi.RemoteException;
 import java.util.Scanner;
 import java.util.logging.Level;

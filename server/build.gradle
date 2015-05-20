@@ -27,7 +27,7 @@ task runInit(dependsOn: classes, type: JavaExec) {
 
 task run(dependsOn: [classes, runInit], type: JavaExec) {
     // Default run will startup as distribution version.
-    System.setProperty("java.rmi.server.hostname", "darkhellentertainment.com");
+    systemProperty "java.rmi.server.hostname", "darkhellentertainment.com"
 }
 
 task dist(dependsOn: classes, type: Jar) {

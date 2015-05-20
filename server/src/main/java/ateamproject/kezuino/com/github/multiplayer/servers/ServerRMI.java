@@ -1,6 +1,6 @@
 package ateamproject.kezuino.com.github.multiplayer.servers;
 
-import ateamproject.kezuino.com.github.multiplayer.IServer;
+import ateamproject.kezuino.com.github.network.IServer;
 import ateamproject.kezuino.com.github.network.rmi.IProtocolServer;
 import ateamproject.kezuino.com.github.render.screens.ClanFunctions;
 
