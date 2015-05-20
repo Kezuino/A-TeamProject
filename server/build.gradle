@@ -30,11 +30,6 @@ task run(dependsOn: [classes, runInit], type: JavaExec) {
     System.setProperty("java.rmi.server.hostname", "darkhellentertainment.com");
 }
 
-task runServerLocal(dependsOn: [classes, runInit], type: JavaExec) {
-    // Use localhost as test server.
-    System.setProperty("java.rmi.server.hostname", "localhost");
-}
-
 task dist(dependsOn: classes, type: Jar) {
     from files(sourceSets.main.output.classesDir)
     from files(sourceSets.main.output.resourcesDir)
