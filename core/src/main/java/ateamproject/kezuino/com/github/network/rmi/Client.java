@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ateamproject.kezuino.com.github.singleplayer.desktop;
+package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.rmi.IProtocolClient;
 import ateamproject.kezuino.com.github.network.rmi.IProtocolServer;

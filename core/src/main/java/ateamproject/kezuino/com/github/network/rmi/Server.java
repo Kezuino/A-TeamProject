@@ -1,4 +1,4 @@
-package ateamproject.kezuino.com.github.multiplayer;
+package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.rmi.IProtocolServer;
 
