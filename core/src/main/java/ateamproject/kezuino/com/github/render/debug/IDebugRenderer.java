@@ -1,8 +1,7 @@
 package ateamproject.kezuino.com.github.render.debug;
 
 import ateamproject.kezuino.com.github.render.IRenderable;
-import ateamproject.kezuino.com.github.render.IRenderer;
-import ateamproject.kezuino.com.github.singleplayer.IPositionable;
+import ateamproject.kezuino.com.github.utility.game.IPositionable;
 
 /**
  * Created by Anton on 4/4/2015.

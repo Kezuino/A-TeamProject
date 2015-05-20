@@ -79,10 +79,11 @@ public class Assets {
         FileHandle file = Gdx.files.internal(asset);
         if (!file.exists()) throw new NullPointerException(String.format("Asset '%s' could not be found.", asset));
         if (manager == null) return null;
-        if (manager.isLoaded(asset, type)) {
-            return manager.get(asset, type);
+        if (!manager.isLoaded(asset, type)) {
+            manager.load(asset, type);
+            manager.finishLoading();
         }
-        return null;
+        return manager.get(asset, type);
     }
 
     /**
@@ -185,5 +186,15 @@ public class Assets {
      */
     public static BitmapFont getFont(String asset) {
         return get(FONTS_DIR + asset, BitmapFont.class);
+    }
+
+    /**
+     * Loads the {@link Texture} for the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
+     *
+     * @param name Name of the {@link Texture} to load in the assets.
+     * @return {@link Texture} that was loaded by the name of the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
+     */
+    public static Texture getBalloon(String name) {
+        return get("textures/balloons/" + name + ".png", Texture.class);
     }
 }

@@ -3,8 +3,10 @@ package ateamproject.kezuino.com.github.singleplayer;
 import ateamproject.kezuino.com.github.render.IRenderable;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Direction;
+import ateamproject.kezuino.com.github.utility.game.IPositionable;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Vector2;
 
 public class Portal implements IRenderable, IPositionable {
 
@@ -37,6 +39,11 @@ public class Portal implements IRenderable, IPositionable {
     @Override
     public Map getMap() {
         return getNode().getMap();
+    }
+
+    @Override
+    public Vector2 getExactPosition() {
+        return getNode().getExactPosition();
     }
 
     public Node getNode() {

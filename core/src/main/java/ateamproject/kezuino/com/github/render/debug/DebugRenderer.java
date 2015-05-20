@@ -1,14 +1,8 @@
 package ateamproject.kezuino.com.github.render.debug;
 
-import ateamproject.kezuino.com.github.singleplayer.IPositionable;
-import ateamproject.kezuino.com.github.singleplayer.Node;
-import ateamproject.kezuino.com.github.singleplayer.Pactale;
+import ateamproject.kezuino.com.github.utility.game.IPositionable;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.math.Matrix4;
-import com.badlogic.gdx.math.Quaternion;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 /**
  * Created by Anton on 4/4/2015.
