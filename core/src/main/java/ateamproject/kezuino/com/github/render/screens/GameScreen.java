@@ -71,7 +71,7 @@ public class GameScreen extends BaseScreen {
                         }
                         break;
                     case Input.Keys.H:
-                        BalloonMessage.getBalloonMessage(BalloonHelpMe.class).setPositionCenter(player.getExactPosition()).addBalloonMessage();
+                        BalloonMessage.getBalloonMessage(BalloonHelpMe.class).setFollowObject(player).addBalloonMessage();
                         break;
                     case Input.Keys.F1:
                         DebugRenderManager.toggle();

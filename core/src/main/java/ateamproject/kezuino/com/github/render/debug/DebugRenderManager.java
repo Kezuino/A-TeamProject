@@ -1,6 +1,6 @@
 package ateamproject.kezuino.com.github.render.debug;
 
-import ateamproject.kezuino.com.github.singleplayer.IPositionable;
+import ateamproject.kezuino.com.github.utility.game.IPositionable;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 

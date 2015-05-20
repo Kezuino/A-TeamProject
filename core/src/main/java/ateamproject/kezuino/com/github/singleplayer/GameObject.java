@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 import ateamproject.kezuino.com.github.render.IRenderable;
 import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
+import ateamproject.kezuino.com.github.utility.game.IPositionable;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -325,7 +326,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
         }
     }
 
-    @Override
     public Node getNode() {
         if (map == null) {
             return null;

@@ -3,7 +3,7 @@ package ateamproject.kezuino.com.github.render.debug.renderers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderer;
 import ateamproject.kezuino.com.github.render.debug.IDebugRenderer;
 import ateamproject.kezuino.com.github.render.debug.DebugLayers;
-import ateamproject.kezuino.com.github.singleplayer.IPositionable;
+import ateamproject.kezuino.com.github.utility.game.IPositionable;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;

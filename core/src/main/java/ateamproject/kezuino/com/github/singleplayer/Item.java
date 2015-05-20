@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.render.IRenderable;
+import ateamproject.kezuino.com.github.utility.game.IPositionable;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
@@ -142,8 +143,6 @@ public class Item implements IRenderable, IPositionable {
         this.getMap().getSession().getScore().increase(this.type.getScore());
     }
 
-
-    @Override
     public Node getNode() {
         return this.getMap().getNode((int) this.exactPosition.x / 32, (int) this.exactPosition.y / 32);
     }

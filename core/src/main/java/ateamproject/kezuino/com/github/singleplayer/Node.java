@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.utility.game.Direction;
+import ateamproject.kezuino.com.github.utility.game.IPositionable;
 import com.badlogic.gdx.ai.pfa.Connection;
 import com.badlogic.gdx.ai.pfa.DefaultConnection;
 import com.badlogic.gdx.ai.pfa.indexed.IndexedNode;
@@ -112,7 +113,6 @@ public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, I
         return this.map;
     }
 
-    @Override
     public Node getNode() {
         return this;
     }

@@ -1,7 +1,8 @@
 package ateamproject.kezuino.com.github.utility.game.balloons;
 
+import ateamproject.kezuino.com.github.utility.game.IPositionable;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Direction;
-import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
@@ -20,21 +21,35 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
     }
 
     /**
+     * Object to follow. If null, uses the position of this {@link BalloonMessage}.
+     */
+    protected IPositionable followObject;
+
+    /**
+     * {@link Texture} filename to load.
+     */
+    protected String name;
+
+    /**
      * Timer for {@link BalloonMessage} fading and other effects.
      */
     protected Timer timer;
+
     /**
      * Destination size (width, height) to draw the {@link BalloonMessage} on.
      */
     protected Vector2 size;
+
     /**
      * Total time in milliseconds that this {@link BalloonMessage} will be visible.
      */
     protected float totalTimeShown;
+
     /**
      * Exact position to draw the {@link BalloonMessage messages} on.
      */
     protected Vector2 position;
+
     /**
      * Texture that will be rendered.
      */
@@ -51,8 +66,6 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
         this.direction = Direction.Down;
         this.totalTimeShown = 1f;
         this.position = Vector2.Zero;
-        createTexture();
-        this.size = new Vector2(texture.getWidth(), texture.getHeight());
     }
 
     public BalloonMessage(float totalTimeShown, Vector2 position, Vector2 size) {
@@ -150,36 +163,9 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
      * @return {@link BalloonMessage} for chaining.
      */
     public BalloonMessage<T> setPositionCenter(Vector2 position) {
-        return setPositionCenter(position, false);
-    }
-
-    /**
-     * Sets the position centered to draw the {@link BalloonMessage} on based on the {@link #size}.
-     *
-     * @param position    Position to draw {@link BalloonMessage} on.
-     * @param negativeAdd If true, the centering offset will be substracted from the given position.
-     * @return {@link BalloonMessage} for chaining.
-     */
-    public BalloonMessage<T> setPositionCenter(Vector2 position, boolean negativeAdd) {
-        createTexture();
-        // TODO: Fix centering..
-        this.position = position.cpy().add(32 / 2f * (negativeAdd ? -1 : 1), (size.y / 2f * (negativeAdd ? -1 : 1)));
+        this.position = position.cpy().add(0, texture.getHeight());
         return this;
     }
-
-    /**
-     * Creates the {@link Texture} based on the {@link #createGraphic()} implementation if it doesn't exist.
-     */
-    protected void createTexture() {
-        if (texture != null) return;
-        texture = new Texture(createGraphic());
-    }
-
-    /**
-     * Creates the graphic for the first time when it's required for {@link #render(SpriteBatch) rendering}.
-     * The graphic should be drawn facing downward by default.
-     */
-    public abstract Pixmap createGraphic();
 
     /**
      * Renders the {@link BalloonMessage} on the {@link #position}.
@@ -188,9 +174,30 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
      */
     public void render(SpriteBatch batch) {
         if (batch == null) throw new IllegalArgumentException("Parameter batch must not be null.");
-        if (texture == null) texture = new Texture(createGraphic());
+        loadBalloon();
 
-        batch.draw(texture, position.x, position.y, texture.getWidth() / 2.0f, texture.getHeight() / 2.0f, texture.getWidth(), texture.getHeight(), 1f, 1f, this.direction.getRotation(), 0, 0, texture.getWidth(), texture.getHeight(), false, false);
+        Vector2 drawPos;
+        if (followObject != null) {
+            drawPos = followObject.getExactPosition().cpy().add(0, texture.getHeight());
+        } else {
+            drawPos = getPosition();
+        }
+
+        batch.draw(texture, drawPos.x, drawPos.y, texture.getWidth() / 2.0f, texture.getHeight() / 2.0f, texture.getWidth(), texture.getHeight(), 1f, 1f, this.direction.getRotation(), 0, 0, texture.getWidth(), texture.getHeight(), false, false);
+    }
+
+
+    public BalloonMessage<T> setFollowObject(IPositionable object) {
+        this.followObject = object;
+        return this;
+    }
+
+    protected Texture loadBalloon() {
+        if (texture == null) {
+            texture = Assets.getBalloon(this.name);
+            this.size = new Vector2(texture.getWidth(), texture.getHeight());
+        }
+        return texture;
     }
 
     /**
