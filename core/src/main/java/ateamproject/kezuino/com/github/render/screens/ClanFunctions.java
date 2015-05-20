@@ -21,41 +21,72 @@ import java.util.logging.Logger;
 public class ClanFunctions {
 
     /**
-     *A state in which a person opposed to a clan can be.
+     * A state in which a person opposed to a clan can be.
      */
     public enum invitationType {
-        uitnodigen,accepteren,nothing;
+
+        /**
+         *The user can invite people to its clan
+         */
+        uitnodigen,
+
+        /**
+         *The user can accept the invite to this clan
+         */
+        accepteren,
+
+        /**
+         *Nothing will be displayed
+         */
+        nothing;
     }
 
     /**
-     *A state in which a person opposed to a clan can be.
+     * A state in which a person opposed to a clan can be.
      */
     public enum ManagementType {
-        verwijderen,verlaten,afwijzen;
+
+        /**
+         *User can remove this clan
+         */
+        verwijderen,
+
+        /**
+         *User can leave this clan
+         */
+        verlaten,
+
+        /**
+         *User can reject an offer to leave this clan
+         */
+        afwijzen;
     }
 
     private Connection connect = null;
     private boolean hasConnection = false;
 
     /**
-     *Constructor which will initialize clanfunctions
+     * Constructor which will initialize clanfunctions
      */
     public ClanFunctions() {
         hasConnection = makeConnection();
     }
 
     /**
-     *Returns if a connection has succesfully been made
-     * @return
+     * Returns if a connection has been made
+     *
+     * @return True if succeeded false if failed
      */
     public boolean getHasConnection() {
         return hasConnection;
     }
 
     /**
-     *Gives all clans for a specific emailaddress
-     * @param emailaddress
-     * @return
+     * Gives all clans for a specific emailaddress
+     *
+     * @param emailaddress the emailaddress for which the clans needs to
+     * searched for
+     * @return the String array which contains all the clan names
      */
     public ArrayList<String> fillTable(String emailaddress) {
         ArrayList<String> clans = new ArrayList();
@@ -102,10 +133,11 @@ public class ClanFunctions {
     }
 
     /**
+     * Create a clan with the given parameters
      *
-     * @param clanName
-     * @param emailaddress
-     * @return
+     * @param clanName name of the clan
+     * @param emailaddress the creater of the clan
+     * @return true if creation did succeed else false
      */
     public boolean createClan(String clanName, String emailaddress) {
         if (!clanExists(clanName)) {
@@ -139,6 +171,11 @@ public class ClanFunctions {
         return false;
     }
 
+    /**
+     * Looks if a user has room to make another clan
+     * @param emailaddress the emailaddress of the user to look for space
+     * @return true if there is space, otherwise false
+     */
     private boolean hasRoomForClan(String emailaddress) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -160,6 +197,10 @@ public class ClanFunctions {
         return false;
     }
 
+    /**
+     * Makes connection to the database
+     * @return true if the connection making did succeed, false otherwise
+     */
     private boolean makeConnection() {
         try {
             // This will load the MySQL driver, each DB has its own driver
@@ -176,6 +217,11 @@ public class ClanFunctions {
         return false;
     }
 
+    /**
+     * Looks if a clan exists
+     * @param clanName the name of the clan
+     * @return true if it exists, else false
+     */
     private boolean clanExists(String clanName) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
@@ -197,6 +243,11 @@ public class ClanFunctions {
         return true;
     }
 
+    /**
+     * Gets the account id from a player
+     * @param emailaddress the emailaddress to get the id from
+     * @return the id, -1 if the player does not exists
+     */
     private int getAccountIdFromEmail(String emailaddress) {
         try {
             PreparedStatement preparedStatement = null;
@@ -213,6 +264,11 @@ public class ClanFunctions {
         return -1;
     }
 
+   /**
+    * Gets the manager id from a clan
+    * @param clanName the clan name to search for
+    * @return the id of the manager, -1 if the clan does not exists
+    */
     private int getManagerIdFromClanName(String clanName) {
         try {
             PreparedStatement preparedStatement = null;
@@ -229,6 +285,11 @@ public class ClanFunctions {
         return -1;
     }
 
+   /**
+    * Gets the clan id from a clan
+    * @param clanName the clan name to search for
+    * @return the id of the clan, -1 if the clan does not exists
+    */
     private int getClanIdFromName(String clanName) {
         try {
             PreparedStatement preparedStatement = null;
@@ -246,10 +307,11 @@ public class ClanFunctions {
     }
 
     /**
+     * Gets the invitationtype for a given clan and a given emailaddress
      *
-     * @param clanName
-     * @param emailaddress
-     * @return
+     * @param clanName the name of the clan
+     * @param emailaddress the emailaddress of who is in the clan
+     * @return returns the type, if something goes wrong returns null
      */
     public invitationType getInvitation(String clanName, String emailaddress) {
         PreparedStatement preparedStatement = null;
@@ -280,10 +342,11 @@ public class ClanFunctions {
     }
 
     /**
+     * Gets the managementType for a given clan and a given emailaddress
      *
-     * @param clanName
-     * @param emailaddress
-     * @return
+     * @param clanName the name of the clan
+     * @param emailaddress the emailaddress of who is in the clan
+     * @return returns the type, if something goes wrong returns null
      */
     public ManagementType getManagement(String clanName, String emailaddress) {
         PreparedStatement preparedStatement = null;
@@ -314,16 +377,18 @@ public class ClanFunctions {
     }
 
     /**
+     * Gets amount of persons in a clan
      *
-     * @param clanName
-     * @return
+     * @param clanName name of the clan to get the amount from
+     * @return a string in the format 'personen ?/8' where ? is the number of
+     * persons in the clan
      */
     public String getPersons(String clanName) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
 
         try {
-            preparedStatement = connect.prepareStatement("SELECT COUNT(*) AS amount FROM clan_account WHERE ClanId = ?  AND Accepted = 1");
+            preparedStatement = connect.prepareStatement("SELECT COUNT(*) AS amount FROM clan_account WHERE ClanId = ?");
             preparedStatement.setInt(1, getClanIdFromName(clanName));
             resultSet = preparedStatement.executeQuery();
             resultSet.next();
@@ -338,12 +403,16 @@ public class ClanFunctions {
     }
 
     /**
+     * processes an invitation
      *
-     * @param invite
-     * @param clanName
-     * @param emailAddress
-     * @param nameOfEmailInvitee
-     * @return
+     * @param invite the actual invite to process
+     * @param clanName the name of the clan where the invite belongs to
+     * @param emailAddress email of the person who did send the invite to this
+     * function
+     * @param nameOfEmailInvitee optional name/emailaddress parameter for the
+     * 'uitnodigen' invite. Needs to be null when a invite is not of the type
+     * 'uitnodigen'
+     * @return true if invitation is successfully handled else false
      */
     public boolean handleInvitation(invitationType invite, String clanName, String emailAddress, String nameOfEmailInvitee) {
         if (invite.equals(invitationType.accepteren)) {
@@ -373,7 +442,7 @@ public class ClanFunctions {
 
                 if (!userIsInOrInvitedInClan(nameOfEmailInvitee, clanName)) {
                     try {
-                        preparedStatement = connect.prepareStatement("INSERT INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)");
+                        preparedStatement = connect.prepareStatement("UPDATE INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)");
                         preparedStatement.setInt(1, getAccountIdFromEmail(getEmail(username)));
                         preparedStatement.setInt(2, getClanIdFromName(clanName));
                         preparedStatement.executeUpdate();
@@ -386,7 +455,7 @@ public class ClanFunctions {
             } else {
                 if (!userIsInOrInvitedInClan(nameOfEmailInvitee, clanName)) {
                     try {
-                        preparedStatement = connect.prepareStatement("INSERT INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)");
+                        preparedStatement = connect.prepareStatement("UPDATE INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)");
                         preparedStatement.setInt(1, getAccountIdFromEmail(emailAddress));
                         preparedStatement.setInt(2, getClanIdFromName(clanName));
                         preparedStatement.executeUpdate();
@@ -403,11 +472,12 @@ public class ClanFunctions {
     }
 
     /**
+     * processes an management type of a clan
      *
-     * @param manage
-     * @param clanName
+     * @param manage the actual managementType to process
+     * @param clanName the name of the clan where the managementType belongs to
      * @param emailaddress
-     * @return
+     * @return true if managementType is successfully handled else false
      */
     public boolean handleManagement(ManagementType manage, String clanName, String emailaddress) {
         if (manage.equals(ManagementType.afwijzen) || manage.equals(ManagementType.verlaten)) {
@@ -452,9 +522,10 @@ public class ClanFunctions {
     }
 
     /**
+     * Gets the name from a emailaddress
      *
-     * @param emailaddress
-     * @return
+     * @param emailaddress the emailaddress to search for
+     * @return the name of the user. Null if the user can not be found
      */
     public String getUsername(String emailaddress) {
         PreparedStatement preparedStatement = null;
@@ -476,9 +547,10 @@ public class ClanFunctions {
     }
 
     /**
+     * Find emailaddress of user
      *
-     * @param username
-     * @return
+     * @param username username to get emailaddress from
+     * @return emailaddress of the user or null if the user can not be found
      */
     public String getEmail(String username) {
         PreparedStatement preparedStatement = null;
@@ -499,32 +571,41 @@ public class ClanFunctions {
     }
 
     /**
+     * Set the username of an user
      *
-     * @param name
-     * @param emailaddress
-     * @return
+     * @param name name of the user
+     * @param emailaddress the emailaddress of the user where the name needs to
+     * be changed from
+     * @return true if it succeeded, false if the name was already taken
      */
     public boolean setUsername(String name, String emailaddress) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
+        if (getEmail(name) == null) {//if it cant get the email, the name is not taken
+            try {
 
-        try {
+                preparedStatement = connect.prepareStatement("UPDATE account SET Name = ? WHERE Email = ?");
+                preparedStatement.setString(1, name);
+                preparedStatement.setString(2, emailaddress);
+                preparedStatement.executeUpdate();
 
-            preparedStatement = connect.prepareStatement("UPDATE account SET Name = ? WHERE Email = ?");
-            preparedStatement.setString(1, name);
-            preparedStatement.setString(2, emailaddress);
-            preparedStatement.executeUpdate();
+                return true;
 
-            return true;
-
-        } catch (SQLException ex) {
-            Logger.getLogger(ClanFunctions.class
-                    .getName()).log(Level.SEVERE, null, ex);
+            } catch (SQLException ex) {
+                Logger.getLogger(ClanFunctions.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
         }
 
         return false;
     }
 
+    /**
+     * Check if a user is in or invited into a clan
+     * @param nameOfEmailInvitee name of the person to look for
+     * @param clanName the clan in which to search for
+     * @return true if the user is in or invited into the clan, false if not so
+     */
     private boolean userIsInOrInvitedInClan(String nameOfEmailInvitee, String clanName) {
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;

@@ -231,76 +231,75 @@ public class ClanManagementScreen extends BaseScreen {
         }
 
         bt2.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                if (iType.equals(ClanFunctions.invitationType.uitnodigen)) {
-                                    Dialog d = new Dialog("toevoegen", skin);
-                                    d.add("Gebruikersnaam/emailadres in: ");
-                                    TextField tf = new TextField("", skin);
-                                    d.add(tf);
-                                    TextButton bAdd = new TextButton("Toevoegen", skin);
-                                    bAdd.addListener(new ClickListener() {
-                                        @Override
-                                        public void clicked(InputEvent event, float x, float y) {
-                                            if (clanF.handleInvitation(iType, lb1.getText(), emailaddress, tf.getText())) {
-                                                Dialog d1 = new Dialog("succes", skin);
-                                                d1.add("Actie succesvol uitgevoerd");
-                                                TextButton bExit = new TextButton("Oke", skin);
-                                                bExit.addListener(new ClickListener() {
-                                                    @Override
-                                                    public void clicked(InputEvent event, float x, float y) {
-                                                        d1.hide();
-                                                    }
-                                                });
-                                                d1.add(bExit);
-                                                d.hide();
-                                                d1.show(stage);
-                                            } else {
-                                                Dialog d2 = new Dialog("error", skin);
-                                                d2.add("De gebruiker bestaat niet of is al toegevoegd");
-                                                TextButton bExit = new TextButton("Oke", skin);
-                                                bExit.addListener(new ClickListener() {
-                                                    @Override
-                                                    public void clicked(InputEvent event, float x, float y) {
-                                                        d2.hide();
-                                                    }
-                                                });
-                                                d2.add(bExit);
-                                                d.hide();
-                                                d2.show(stage);
-                                            }
-                                        }
-                                    });
-                                    d.add(bAdd);
-                                    TextButton bExit = new TextButton("Annuleren", skin);
-                                    bExit.addListener(new ClickListener() {
-                                        @Override
-                                        public void clicked(InputEvent event, float x, float y) {
-                                            d.hide();
-                                            refreshScreen();
-                                        }
-                                    });
-                                    d.add(bExit);
-                                    d.show(stage);
-                                } else {
-                                    if (clanF.handleInvitation(iType, lb1.getText(), emailaddress, null)) {
-                                        Dialog d = new Dialog("succes", skin);
-                                        d.add("Actie succesvol uitgevoerd");
-                                        TextButton bExit = new TextButton("Oke", skin);
-                                        bExit.addListener(new ClickListener() {
-                                            @Override
-                                            public void clicked(InputEvent event, float x, float y) {
-                                                d.hide();
-                                                refreshScreen();
-                                            }
-                                        });
-                                        d.add(bExit);
-                                        d.show(stage);
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (iType.equals(ClanFunctions.invitationType.uitnodigen)) {
+                    Dialog d = new Dialog("toevoegen", skin);
+                    d.add("Gebruikersnaam/emailadres in: ");
+                    TextField tf = new TextField("", skin);
+                    d.add(tf);
+                    TextButton bAdd = new TextButton("Toevoegen", skin);
+                    bAdd.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            if (clanF.handleInvitation(iType, lb1.getText(), emailaddress, tf.getText())) {
+                                Dialog d1 = new Dialog("succes", skin);
+                                d1.add("Actie succesvol uitgevoerd");
+                                TextButton bExit = new TextButton("Oke", skin);
+                                bExit.addListener(new ClickListener() {
+                                    @Override
+                                    public void clicked(InputEvent event, float x, float y) {
+                                        d1.hide();
                                     }
-                                }
+                                });
+                                d1.add(bExit);
+                                d.hide();
+                                d1.show(stage);
+                            } else {
+                                Dialog d2 = new Dialog("error", skin);
+                                d2.add("De gebruiker bestaat niet of is al toegevoegd");
+                                TextButton bExit = new TextButton("Oke", skin);
+                                bExit.addListener(new ClickListener() {
+                                    @Override
+                                    public void clicked(InputEvent event, float x, float y) {
+                                        d2.hide();
+                                    }
+                                });
+                                d2.add(bExit);
+                                d.hide();
+                                d2.show(stage);
                             }
                         }
-
+                    });
+                    d.add(bAdd);
+                    TextButton bExit = new TextButton("Annuleren", skin);
+                    bExit.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            d.hide();
+                            refreshScreen();
+                        }
+                    });
+                    d.add(bExit);
+                    d.show(stage);
+                } else {
+                    if (clanF.handleInvitation(iType, lb1.getText(), emailaddress, null)) {
+                        Dialog d = new Dialog("succes", skin);
+                        d.add("Actie succesvol uitgevoerd");
+                        TextButton bExit = new TextButton("Oke", skin);
+                        bExit.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                d.hide();
+                                refreshScreen();
+                            }
+                        });
+                        d.add(bExit);
+                        d.show(stage);
+                    }
+                }
+            }
+        }
         );
 
         TextField lb3 = new TextField(clanF.getPersons(clanName), skin);
@@ -354,7 +353,6 @@ public class ClanManagementScreen extends BaseScreen {
         scrollTable.columnDefaults(
                 0);
         scrollTable.add(bt2);
-
 
         scrollTable.columnDefaults(
                 1);
