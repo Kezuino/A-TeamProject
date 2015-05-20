@@ -11,6 +11,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -38,14 +39,29 @@ public class LobbyListScreen extends BaseScreen {
 
     }
 
-    private void RefreshGui() {
+    TextField lobbyname;
+    
         scrollTable.clear();
 
         TextButton btnCreateGame = new TextButton("Maak spel", skin);
         btnCreateGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyScreen(game,true));
+                
+                Dialog d = new Dialog("Lobby Name", skin);
+                lobbyname = new TextField("", skin);
+                TextButton btnsubmit = new TextButton("Ok", skin);
+                String Name = "";
+                d.add(lobbyname);
+                d.add(btnsubmit);
+                btnsubmit.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        d.hide();
+                        game.setScreen(new LobbyScreen(game,true, lobbyname.getText()));
+                    }
+                });
+                d.show(stage);
             }
         });
         btnCreateGame.setPosition(stage.getWidth() - btnCreateGame.getWidth() - 10, stage.getHeight() - btnCreateGame.getHeight() - 10);
@@ -111,11 +127,6 @@ public class LobbyListScreen extends BaseScreen {
                 
         for (Lobby lobby : hostList) {
             TextField lb1 = new TextField(lobby.getLobbyName(), skin);
-            hostList = LobbyFunctions.getRandomHostList();
-        } else {
-            hostList = LobbyFunctions.getClanHostList();
-
-
             lb1.setDisabled(true);
             TextField lb2 = new TextField(lobby.getLobbyId().toString(), skin);
             lb2.setDisabled(true);

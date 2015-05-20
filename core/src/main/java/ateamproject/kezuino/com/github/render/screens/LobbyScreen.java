@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -17,25 +18,27 @@ import java.util.logging.Logger;
  */
 public class LobbyScreen extends BaseScreen {
 
-    public LobbyScreen(Game game, boolean isHost) {
+    public LobbyScreen(Game game, boolean isHost,String lobbyname) {
         super(game);
         
         if (isHost) {
             // if the user is the host create host
-            createHost();
+            createLobby(lobbyname);
         }
+        
+        Label lobby = new Label(lobbyname, skin);
+        lobby.setSize(200, 30);
+        lobby.setPosition(50,stage.getHeight()-lobby.getHeight());
+        stage.addActor(lobby);
+        
     }
     
-    public void createHost()
+    public void createLobby(String lobbyname)
     {
-        // create GUID for the host/lobby
-        // open lobby wiht the current user as the host
-        // set InGame boolean on server to false so it will be listed in the hostlist screen
-        
         Client client;
         try {
             client = Client.getInstance();
-            boolean curLobby =  client.createLobby("mylobby", "host");
+            boolean curLobby =  client.createLobby(lobbyname, "host");
             System.out.println(curLobby);
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
