@@ -19,7 +19,7 @@ public class Server extends UnicastRemoteObject implements IProtocolServer {
         super(Registry.REGISTRY_PORT);
     }
     
-    public static Server instance() throws RemoteException {
+    public static Server getInstance() throws RemoteException {
         if(currentInstance == null) {
             currentInstance = new Server();
         }
@@ -58,10 +58,8 @@ public class Server extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean login(String username, String password) {
-        System.out.println("Data plxors");
-        
-        return true;
+    public void login(String username) {
+        System.out.println(username + " has logged in");
     }
 
     @Override
