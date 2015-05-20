@@ -10,6 +10,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.ArrayList;
 
 /**
  *
@@ -52,5 +53,15 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
     @Override
     public void creatureMove(int creatureID) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public boolean createLobby(String lobbyName, String host) throws RemoteException
+    {
+        return this.server.createLobby(lobbyName,host);
+    }
+    
+    public ArrayList<Lobby> getLobbies() throws RemoteException
+    {
+        return this.server.GetLobbies();
     }
 }

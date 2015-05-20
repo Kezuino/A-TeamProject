@@ -89,10 +89,8 @@ public class LobbyListScreen extends BaseScreen{
         table.setSize(stage.getWidth(), stage.getHeight() - btnCreateGame.getHeight());
         table.setColor(com.badlogic.gdx.graphics.Color.BLUE);
         
-        
         // get all host from the server and put in the table
         FillHostTable();
-        
         
         float x = stage.getWidth() / 2 - table.getWidth() / 2;
         float y = stage.getHeight() - table.getHeight() - btnCreateGame.getHeight() -20;
@@ -108,35 +106,21 @@ public class LobbyListScreen extends BaseScreen{
         
         Client client;
         try {
-            client = Client.instance();
+            client = Client.getInstance();
             hostList = client.getLobbies();
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyListScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
                 
-                
-        /*
-        
-        if (!clanGame) {
-             hostList = lf.getRandomHostList();
-        }
-        else
-        {
-             hostList = lf.getClanHostList();
-        }
-       */
-        
-        for (int i = 0; i < hostList.size(); i++) {
-           
-            TextField lb1 = new TextField(hostList.get(i).getLobbyName(), skin);
+        for (Lobby lobby : hostList) {
+            TextField lb1 = new TextField(lobby.getLobbyName(), skin);
             lb1.setDisabled(true);
-            TextField lb2 = new TextField(hostList.get(i).getLobbyId().toString(), skin);
+            TextField lb2 = new TextField(lobby.getLobbyId().toString(), skin);
             lb2.setDisabled(true);
-            TextField lb3 = new TextField(Integer.toString(hostList.get(i).getMembers().size()), skin);
+            TextField lb3 = new TextField(Integer.toString(lobby.getMembers().size()), skin);
             lb3.setDisabled(true);
             TextButton btnJoin = new TextButton("Join", skin);
             btnJoin.setDisabled(true);
-        
             scrollTable.add(lb1);
             scrollTable.columnDefaults(0);
             scrollTable.add(lb2);
@@ -145,7 +129,6 @@ public class LobbyListScreen extends BaseScreen{
             scrollTable.columnDefaults(2);
             scrollTable.add(btnJoin);
             scrollTable.columnDefaults(3);
-        
             scrollTable.row();
         }
     }

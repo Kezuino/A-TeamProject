@@ -45,6 +45,19 @@ public class LoginScreen extends BaseScreen {
             }
         });
         
+        // delete this //
+        TextButton btntestlogin = new TextButton("no auth login", skin);
+        btntestlogin.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+             game.setScreen(new MainScreen(game));
+            }
+        });
+        btntestlogin.setSize(300, 40);
+        btntestlogin.setPosition(stage.getWidth() / 2 - btntestlogin.getWidth() / 2, 100);
+        ////////////////// 
+        
+        
         txtUsername.setSize(300, 40);
         txtPassword.setSize(300, 40);
         txtPassword.setPasswordMode(true);
@@ -54,7 +67,8 @@ public class LoginScreen extends BaseScreen {
         txtUsername.setPosition(stage.getWidth() / 2 - txtUsername.getWidth() / 2, 300);
         txtPassword.setPosition(stage.getWidth() / 2 - txtPassword.getWidth() / 2, 250);
 
-        stage.addActor(btnLogin);
+        stage.addActor(btnLogin);        
+        stage.addActor(btntestlogin); // << delete this
         stage.addActor(txtUsername);
         stage.addActor(txtPassword);
 
