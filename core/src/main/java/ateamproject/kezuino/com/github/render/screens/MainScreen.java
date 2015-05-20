@@ -33,7 +33,7 @@ public class MainScreen extends BaseScreen {
         tbClanGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyScreen(game,true));
+                game.setScreen(new LobbyListScreen(game,true));
             }
         });
 
