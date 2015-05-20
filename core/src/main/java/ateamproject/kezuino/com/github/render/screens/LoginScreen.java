@@ -20,6 +20,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 public class LoginScreen extends BaseScreen {
     public LoginScreen(Game game) {
         super(game);
+        
+        
 
         TextButton btnLogin = new TextButton("Login", skin);
         btnLogin.addListener(new ClickListener() {

@@ -1,7 +1,11 @@
 package ateamproject.kezuino.com.github.multiplayer;
 
+<<<<<<< HEAD
 import ateamproject.kezuino.com.github.multiplayer.servers.ServerRMI;
 
+=======
+import ateamproject.kezuino.com.github.network.rmi.Server;
+>>>>>>> Server & Client moved
 import java.rmi.RemoteException;
 import java.util.Scanner;
 import java.util.logging.Level;
@@ -15,13 +19,12 @@ public class ServerLauncher {
         try {
             server = ServerRMI.getInstance();
             server.start();
-            System.out.println("Waiting for input..");
-
             while(true){
                 String line = scanner.nextLine();
                 if(line.equals("exit"))
                     break;
             }
+            
             server.stop();
         } catch (RemoteException ex) {
             Logger.getLogger(ServerLauncher.class.getName()).log(Level.SEVERE, null, ex);
