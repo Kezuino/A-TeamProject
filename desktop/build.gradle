@@ -6,12 +6,22 @@ sourceSets.main.java.srcDirs = [ "src/main/java/" ]
 project.ext.mainClassName = "ateamproject.kezuino.com.github.singleplayer.desktop.DesktopLauncher"
 project.ext.assetsDir = new File("../core/assets");
 
-task run(dependsOn: classes, type: JavaExec) {
+task runInit(dependsOn: classes, type: JavaExec) {
     main = project.mainClassName
     classpath = sourceSets.main.runtimeClasspath
     standardInput = System.in
     workingDir = project.assetsDir
     ignoreExitValue = true
+}
+
+task run(dependsOn: [classes, runInit], type: JavaExec) {
+    System.setProperty("pactales.client.servername", "127.0.0.1")
+    System.setProperty("pactales.client.serverobject", "server")
+}
+
+task runRemote(dependsOn: [classes, runInit], type: JavaExec) {
+    systemProperty "pactales.client.servername", "darkhellentertainment.com"
+    systemProperty "pactales.client.serverobject", "server"
 }
 
 task dist(type: Jar) {
