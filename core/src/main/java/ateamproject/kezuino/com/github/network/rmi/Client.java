@@ -5,8 +5,6 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
-import ateamproject.kezuino.com.github.network.rmi.IProtocolClient;
-import ateamproject.kezuino.com.github.network.rmi.IProtocolServer;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -25,14 +23,6 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
     protected Client() throws RemoteException {
 
     }
-    
-    public static Client instance() throws RemoteException {
-        if(currentInstance == null) {
-            currentInstance = new Client();
-        }
-        
-        return currentInstance;
-    }
 
     public void start() {
         System.out.println("Client starting...");
@@ -42,18 +32,23 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
             String rmiObject = System.getProperty("pactales.client.serverobject");
 
             this.server = (IProtocolServer) Naming.lookup(String.format("//%s/%s", rmiHost, rmiObject));
-            boolean loggedOn = this.server.login("test", "test");
-            
-            if(loggedOn) {
-                System.out.println("Player is logged on");
-            }
         } catch (RemoteException | NotBoundException | MalformedURLException ex) {
-            
             System.out.println(ex.getMessage());
-            System.out.println(ex.toString());
         }
         
         System.out.println("Client started");
+    }
+    
+    public static Client getInstance() throws RemoteException {
+        if(currentInstance == null) {
+            currentInstance = new Client();
+        }
+        
+        return currentInstance;
+    }
+    
+    public IProtocolServer getConnection() throws RemoteException {
+        return this.server;
     }
 
     @Override

@@ -15,7 +15,7 @@ import java.util.ArrayList;
  * @author Kez and Jules
  */
 public interface IProtocolServer extends IProtocol {
-    boolean login(String username, String password) throws RemoteException;
+    void login(String username) throws RemoteException;
 
     void logout() throws RemoteException;
 
