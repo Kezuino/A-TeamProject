@@ -8,9 +8,13 @@ public class BalloonHelpMe extends BalloonMessage {
 
     @Override
     public Pixmap createGraphic() {
-        Pixmap pixmap = new Pixmap(20, 20, Pixmap.Format.RGBA8888);
+        Pixmap pixmap = new Pixmap(20, 28, Pixmap.Format.RGBA8888);
         pixmap.setColor(new Color(0, 0, 0, 0.5f));
         pixmap.fill();
+
+        pixmap.setColor(Color.RED);
+        pixmap.fillRectangle(6, 20, 8, 8);
+
         return pixmap;
     }
 }

@@ -5,367 +5,571 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.render.screens.ClanFunctions.invitationType;
-import ateamproject.kezuino.com.github.render.screens.ClanFunctions.managementType;
-import ateamproject.kezuino.com.github.utility.assets.Assets;
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Pixmap;
-import com.badlogic.gdx.graphics.Pixmap.Format;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
-import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
- * @author David
+ *
+ * @author Jip
  */
-public class ClanManagementScreen extends BaseScreen {
+public class ClanFunctions {
 
-    private TextField tfClannaam;
-    private final Table scrollTable;
-    private String emailaddress = "jip.vandevijfeijke@gmail.com";
-    private ClanFunctions clanF;//should be on server using RMI!!!
+    /**
+     *A state in which a person opposed to a clan can be.
+     */
+    public enum invitationType {
+        uitnodigen,accepteren,nothing;
+    }
 
-    public ClanManagementScreen(Game game) {
-        super(game);
+    /**
+     *A state in which a person opposed to a clan can be.
+     */
+    public enum managementType {
+        verwijderen,verlaten,afwijzen;
+    }
 
-        scrollTable = new Table();
+    private Connection connect = null;
+    private boolean hasConnection = false;
 
-        clanF = new ClanFunctions();
-        if (!clanF.getHasConnection()) {
-            Dialog d = new Dialog("error", skin);
-            d.add("Er kan geen verbinding met de database worden gemaakt!");
-            TextButton bExit = new TextButton("Oke", skin);
-            bExit.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    d.hide();
-                    game.setScreen(new MainScreen(game));
+    /**
+     *Constructor which will initialize clanfunctions
+     */
+    public ClanFunctions() {
+        hasConnection = makeConnection();
+    }
+
+    /**
+     *Returns if a connection has succesfully been made
+     * @return
+     */
+    public boolean getHasConnection() {
+        return hasConnection;
+    }
+
+    /**
+     *Gives all clans for a specific emailaddress
+     * @param emailaddress
+     * @return
+     */
+    public ArrayList<String> fillTable(String emailaddress) {
+        ArrayList<String> clans = new ArrayList();
+
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        ResultSet resultSetWithClans = null;
+
+        try {
+            preparedStatement = connect.prepareStatement("SELECT Id FROM account WHERE Email = ?");
+            preparedStatement.setString(1, emailaddress);
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        try {
+            resultSet.next();
+            int id = resultSet.getInt("Id");
+
+            preparedStatement = connect.prepareStatement("SELECT ClanId FROM clan_account WHERE AccountId = ?");
+            preparedStatement.setInt(1, id);
+            resultSet = preparedStatement.executeQuery();
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        try {
+            while (resultSet.next()) {
+                int id = resultSet.getInt("ClanId");
+
+                preparedStatement = connect.prepareStatement("SELECT Name FROM clan WHERE Id = ?");
+                preparedStatement.setInt(1, id);
+                resultSetWithClans = preparedStatement.executeQuery();
+
+                resultSetWithClans.next();
+                clans.add(resultSetWithClans.getString("Name"));
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return clans;
+    }
+
+    /**
+     *
+     * @param clanName
+     * @param emailaddress
+     * @return
+     */
+    public boolean createClan(String clanName, String emailaddress) {
+        if (!clanExists(clanName)) {
+            if (hasRoomForClan(emailaddress)) {
+                PreparedStatement preparedStatement = null;
+                ResultSet resultSet = null;
+
+                try {
+                    preparedStatement = connect.prepareStatement("SELECT Id FROM account WHERE Email = ?");
+                    preparedStatement.setString(1, emailaddress);
+                    resultSet = preparedStatement.executeQuery();
+                    resultSet.next();
+                    int id = resultSet.getInt("Id");
+
+                    preparedStatement = connect.prepareStatement("INSERT INTO clan(Name,Score,ManagerId) VALUES(?,0,?)");
+                    preparedStatement.setString(1, clanName);
+                    preparedStatement.setInt(2, id);
+                    preparedStatement.executeUpdate();
+
+                    preparedStatement = connect.prepareStatement("INSERT INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,1)");
+                    preparedStatement.setInt(1, getAccountIdFromEmail(emailaddress));
+                    preparedStatement.setInt(2, getClanIdFromName(clanName));
+                    preparedStatement.executeUpdate();
+
+                    return true;
+                } catch (SQLException ex) {
+                    Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            });
-            d.add(bExit);
-            d.show(stage);
+            }
+        }
+        return false;
+    }
+
+    private boolean hasRoomForClan(String emailaddress) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connect.prepareStatement("SELECT COUNT(*) as amount FROM clan,account WHERE clan.ManagerId = account.Id AND account.Email = ?");
+            preparedStatement.setString(1, emailaddress);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int clans = resultSet.getInt("amount");
+
+            if (clans < 8) {
+                return true;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return false;
+    }
+
+    private boolean makeConnection() {
+        try {
+            // This will load the MySQL driver, each DB has its own driver
+            Class.forName("com.mysql.jdbc.Driver");
+
+            // Setup the connection with the DB
+            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
+
+            return true;
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return false;
+    }
+
+    private boolean clanExists(String clanName) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connect.prepareStatement("SELECT COUNT(*) AS amount FROM clan WHERE Name = ?");
+            preparedStatement.setString(1, clanName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int clans = resultSet.getInt("amount");
+
+            if (clans == 0) {
+                return false;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return true;
+    }
+
+    private int getAccountIdFromEmail(String emailaddress) {
+        try {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            preparedStatement = connect.prepareStatement("SELECT Id FROM account WHERE Email = ?");
+            preparedStatement.setString(1, emailaddress);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("Id");
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return -1;
+    }
+
+    private int getManagerIdFromClanName(String clanName) {
+        try {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            preparedStatement = connect.prepareStatement("SELECT ManagerId FROM clan WHERE Name = ?");
+            preparedStatement.setString(1, clanName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("ManagerId");
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return -1;
+    }
+
+    private int getClanIdFromName(String clanName) {
+        try {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            preparedStatement = connect.prepareStatement("SELECT Id FROM clan WHERE Name = ?");
+            preparedStatement.setString(1, clanName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("Id");
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return -1;
+    }
+
+    /**
+     *
+     * @param clanName
+     * @param emailaddress
+     * @return
+     */
+    public invitationType getInvitation(String clanName, String emailaddress) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            if (getManagerIdFromClanName(clanName) == getAccountIdFromEmail(emailaddress)) {
+                return invitationType.uitnodigen;//if user is owner of clan, he can invite
+            }
+
+            preparedStatement = connect.prepareStatement("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?");
+            preparedStatement.setInt(1, getAccountIdFromEmail(emailaddress));
+            preparedStatement.setInt(2, getClanIdFromName(clanName));
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int accepted = resultSet.getInt("Accepted");
+
+            if (accepted == 0) {
+                return invitationType.accepteren;//user can accept joining clan and is not owner
+            } else {
+                return invitationType.nothing;//user is not owner and user is joined
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+
+    /**
+     *
+     * @param clanName
+     * @param emailaddress
+     * @return
+     */
+    public managementType getManagement(String clanName, String emailaddress) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            if (getManagerIdFromClanName(clanName) == getAccountIdFromEmail(emailaddress)) {
+                return managementType.verwijderen;//if user is owner of clan he can remove it
+            }
+
+            preparedStatement = connect.prepareStatement("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?");
+            preparedStatement.setInt(1, getAccountIdFromEmail(emailaddress));
+            preparedStatement.setInt(2, getClanIdFromName(clanName));
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int accepted = resultSet.getInt("Accepted");
+
+            if (accepted == 0) {
+                return managementType.afwijzen;//user has not accepted thus is can decline it
+            } else {
+                return managementType.verlaten;//user is owner thus it can leave
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+
+    /**
+     *
+     * @param clanName
+     * @return
+     */
+    public String getPersons(String clanName) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connect.prepareStatement("SELECT COUNT(*) AS amount FROM clan_account WHERE ClanId = ?  AND Accepted = 1");
+            preparedStatement.setInt(1, getClanIdFromName(clanName));
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int amountOfPlayers = resultSet.getInt("amount");
+
+            return "personen " + amountOfPlayers + "/8";
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return "personen ?/8";
+    }
+
+    /**
+     *
+     * @param invite
+     * @param clanName
+     * @param emailAddress
+     * @param nameOfEmailInvitee
+     * @return
+     */
+    public boolean handleInvitation(invitationType invite, String clanName, String emailAddress, String nameOfEmailInvitee) {
+        if (invite.equals(invitationType.accepteren)) {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+
+            try {
+                preparedStatement = connect.prepareStatement("UPDATE clan_account SET Accepted = 1 WHERE AccountId = ? AND ClanId = ?");
+                preparedStatement.setInt(1, getAccountIdFromEmail(emailAddress));
+                preparedStatement.setInt(2, getClanIdFromName(clanName));
+                preparedStatement.executeUpdate();
+
+                return true;
+            } catch (SQLException ex) {
+                return false;
+            }
+        } else if (invite.equals(invitationType.uitnodigen)) {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+
+            String email = getEmail(nameOfEmailInvitee);
+            String username = getUsername(nameOfEmailInvitee);
+            if (email == null) {
+                if (username == null) {
+                    return false;
+                }
+
+                if (!userIsInOrInvitedInClan(nameOfEmailInvitee, clanName)) {
+                    try {
+                        preparedStatement = connect.prepareStatement("INSERT INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)");
+                        preparedStatement.setInt(1, getAccountIdFromEmail(getEmail(username)));
+                        preparedStatement.setInt(2, getClanIdFromName(clanName));
+                        preparedStatement.executeUpdate();
+
+                        return true;
+                    } catch (SQLException ex) {
+                        return false;
+                    }
+                }
+            } else {
+                if (!userIsInOrInvitedInClan(nameOfEmailInvitee, clanName)) {
+                    try {
+                        preparedStatement = connect.prepareStatement("INSERT INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)");
+                        preparedStatement.setInt(1, getAccountIdFromEmail(emailAddress));
+                        preparedStatement.setInt(2, getClanIdFromName(clanName));
+                        preparedStatement.executeUpdate();
+
+                        return true;
+                    } catch (SQLException ex) {
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     *
+     * @param manage
+     * @param clanName
+     * @param emailaddress
+     * @return
+     */
+    public boolean handleManagement(managementType manage, String clanName, String emailaddress) {
+        if (manage.equals(managementType.afwijzen) || manage.equals(managementType.verlaten)) {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+
+            try {
+                preparedStatement = connect.prepareStatement("DELETE FROM clan_account WHERE AccountId = ? AND ClanId = ?");
+                preparedStatement.setInt(1, getAccountIdFromEmail(emailaddress));
+                preparedStatement.setInt(2, getClanIdFromName(clanName));
+                preparedStatement.executeUpdate();
+
+                return true;
+
+            } catch (SQLException ex) {
+                Logger.getLogger(ClanFunctions.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
+        } else if (manage.equals(managementType.verwijderen)) {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+
+            try {
+
+                preparedStatement = connect.prepareStatement("DELETE FROM clan_account WHERE ClanId = ?");
+                preparedStatement.setInt(1, getClanIdFromName(clanName));
+                preparedStatement.executeUpdate();
+
+                preparedStatement = connect.prepareStatement("DELETE FROM clan WHERE Id = ?");
+                preparedStatement.setInt(1, getClanIdFromName(clanName));
+                preparedStatement.executeUpdate();
+
+                return true;
+
+            } catch (SQLException ex) {
+                Logger.getLogger(ClanFunctions.class
+                        .getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     *
+     * @param emailaddress
+     * @return
+     */
+    public String getUsername(String emailaddress) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connect.prepareStatement("SELECT Name FROM account WHERE Email = ?");
+            preparedStatement.setString(1, emailaddress);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            String username = resultSet.getString("Name");
+
+            return username;
+
+        } catch (SQLException ex) {
+            return null;
+        }
+
+    }
+
+    /**
+     *
+     * @param username
+     * @return
+     */
+    public String getEmail(String username) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connect.prepareStatement("SELECT Email FROM account WHERE Name = ?");
+            preparedStatement.setString(1, username);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            String email = resultSet.getString("Email");
+
+            return email;
+
+        } catch (SQLException ex) {
+            return null;
+        }
+    }
+
+    /**
+     *
+     * @param name
+     * @param emailaddress
+     * @return
+     */
+    public boolean setUsername(String name, String emailaddress) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+
+            preparedStatement = connect.prepareStatement("UPDATE account SET Name = ? WHERE Email = ?");
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, emailaddress);
+            preparedStatement.executeUpdate();
+
+            return true;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class
+                    .getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return false;
+    }
+
+    private boolean userIsInOrInvitedInClan(String nameOfEmailInvitee, String clanName) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        String email = getEmail(nameOfEmailInvitee);
+        String username = getUsername(nameOfEmailInvitee);
+        if (email == null) {
+            if (username == null) {
+                return false;
+            }
+
+            try {
+                preparedStatement = connect.prepareStatement("SELECT COUNT(*) as amount FROM clan_account WHERE AccountId = ? AND ClanId = ?");
+                preparedStatement.setInt(1, getAccountIdFromEmail(getEmail(username)));
+                preparedStatement.setInt(2, getClanIdFromName(clanName));
+                resultSet = preparedStatement.executeQuery();
+                resultSet.next();
+                if (resultSet.getInt("amount") == 1) {
+                    return true;
+                }
+
+                return false;
+
+            } catch (SQLException ex) {
+                return false;
+            }
+
         } else {
-            refreshScreen();//loads up whole screen
-        }
-    }
 
-    private void refreshScreen() {
-        scrollTable.clear();
-
-        TextButton btnChangeName = new TextButton("Naam wijzigen", skin);
-        TextField tfName = new TextField(clanF.getUsername(emailaddress), skin);
-        Label lbUsername = new Label("Gebruikersnaam", skin);
-        btnChangeName.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (!tfName.getText().equals("")) {
-                    if (clanF.setUsername(tfName.getText(), emailaddress)) {
-                        Dialog d = new Dialog("succes", skin);
-                        d.add("Naam succesvol aangepast");
-                        TextButton bExit = new TextButton("Oke", skin);
-                        bExit.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                d.hide();
-                                refreshScreen();
-                            }
-                        });
-                        d.add(bExit);
-                        d.show(stage);
-                    } else {
-                        Dialog d = new Dialog("error", skin);
-                        d.add("De naam kan niet worden aangepast omdat de naam al bestaat");
-                        TextButton bExit = new TextButton("Oke", skin);
-                        bExit.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                d.hide();
-                                refreshScreen();
-                            }
-                        });
-                        d.add(bExit);
-                        d.show(stage);
-                    }
+            try {
+                preparedStatement = connect.prepareStatement("SELECT COUNT(*) as amount FROM clan_account WHERE AccountId = ? AND ClanId = ?");
+                preparedStatement.setInt(1, getAccountIdFromEmail(email));
+                preparedStatement.setInt(2, getClanIdFromName(clanName));
+                resultSet = preparedStatement.executeQuery();
+                resultSet.next();
+                if (resultSet.getInt("amount") == 1) {
+                    return true;
                 }
-            }
-        });
 
-        TextButton btnClanToevoegen = new TextButton("Clan toevoegen", skin);
-        tfClannaam = new TextField("", skin);
-        Label lbClannaam = new Label("Clan naam", skin);
-        btnClanToevoegen.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (!tfClannaam.getText().equals("")) {
-                    if (!clanF.createClan(tfClannaam.getText(), emailaddress)) {
-                        Dialog d = new Dialog("error", skin);
-                        d.add("Maximum van 8 clans overschreden of de clan bestaat al");
-                        TextButton bExit = new TextButton("Oke", skin);
-                        bExit.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                d.hide();
-                                refreshScreen();
-                            }
-                        });
-                        d.add(bExit);
-                        d.show(stage);
-                    } else {
-                        Dialog d = new Dialog("succes", skin);
-                        d.add("Clan succesvol toegevoegd");
-                        TextButton bExit = new TextButton("Oke", skin);
-                        bExit.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                d.hide();
-                                refreshScreen();
-                            }
-                        });
-                        d.add(bExit);
-                        d.show(stage);
-                        tfClannaam.setText("");
-                    }
-                }
-            }
-        });
+                return false;
 
-        TextButton btnTerug = new TextButton("Terug", skin);
-        btnTerug.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainScreen(game));
-            }
-        });
-
-        ScrollPane spClanControl = new ScrollPane(btnTerug, skin);
-
-        btnChangeName.setSize(200, 40);
-        btnChangeName.setPosition(420, stage.getHeight() - 50);
-
-        lbUsername.setSize(200, 40);
-        lbUsername.setPosition(40, stage.getHeight() - 50);
-
-        tfName.setSize(200, 40);
-        tfName.setPosition(220, stage.getHeight() - 50);
-
-        tfClannaam.setSize(200, 40);
-        tfClannaam.setPosition(220, stage.getHeight() - 100);
-
-        btnClanToevoegen.setSize(200, 40);
-        btnClanToevoegen.setPosition(420, stage.getHeight() - 100);
-
-        lbClannaam.setSize(200, 40);
-        lbClannaam.setPosition(40, stage.getHeight() - 100);
-
-        btnTerug.setSize(200, 40);
-        btnTerug.setPosition(stage.getWidth() / 2 - 50, 50);
-
-        spClanControl.setSize(200, 40);
-
-        stage.addActor(spClanControl);
-        stage.addActor(tfClannaam);
-        stage.addActor(btnClanToevoegen);
-        stage.addActor(lbClannaam);
-        stage.addActor(btnTerug);
-        stage.addActor(btnChangeName);
-        stage.addActor(lbUsername);
-        stage.addActor(tfName);
-
-        TextField lb1 = new TextField("clan naam", skin);
-        lb1.setDisabled(true);
-        TextField lb2 = new TextField("uitnodigingen", skin);
-        lb2.setDisabled(true);
-        TextField lb3 = new TextField("personen", skin);
-        lb3.setDisabled(true);
-        TextField lb4 = new TextField("beheer", skin);
-        lb4.setDisabled(true);
-
-        Pixmap pm1 = new Pixmap(1, 1, Format.RGB565);
-        pm1.setColor(Color.GREEN);
-        pm1.fill();
-
-        scrollTable.add(lb1);
-        scrollTable.columnDefaults(0);
-        scrollTable.add(lb2);
-        scrollTable.columnDefaults(1);
-        scrollTable.add(lb3);
-        scrollTable.columnDefaults(2);
-        scrollTable.add(lb4);
-        scrollTable.columnDefaults(3);
-        scrollTable.row();
-        scrollTable.setColor(com.badlogic.gdx.graphics.Color.BLUE);
-        final ScrollPane scroller = new ScrollPane(scrollTable);
-        scroller.sizeBy(200, 400);
-        scroller.setColor(com.badlogic.gdx.graphics.Color.BLUE);
-        final Table table = new Table();
-        table.setFillParent(false);
-        table.add(scroller).fill().expand();
-        table.setSize(stage.getWidth(), 200);
-        table.setColor(com.badlogic.gdx.graphics.Color.BLUE);
-        float xOfLoginButton = stage.getWidth() / 2 - table.getWidth() / 2;
-        float yOfLoginButton = stage.getHeight() / 2 - table.getHeight() / 2;
-
-        table.setPosition(xOfLoginButton, yOfLoginButton);
-        this.stage.addActor(table);
-
-        backgroundMusic = Assets.getMusicStream("menu.mp3");
-
-        for (String clan : clanF.fillTable(emailaddress)) {
-            generateTableRow(clan);
-        }
-    }
-
-    private void generateTableRow(String clanName) {
-        TextField lb1 = new TextField(clanName, skin);
-        lb1.setDisabled(true);
-
-        final invitationType iType = clanF.getInvitation(clanName, emailaddress);
-
-        String bt2Text = iType.toString();
-        TextButton bt2 = new TextButton(bt2Text, skin);
-        if (bt2Text.equals("nothing")) {
-            bt2.setVisible(false);
-        }
-
-        bt2.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (iType.equals(ClanFunctions.invitationType.uitnodigen)) {
-                    Dialog d = new Dialog("toevoegen", skin);
-                    d.add("Gebruikersnaam/emailadres in: ");
-                    TextField tf = new TextField("", skin);
-                    d.add(tf);
-                    TextButton bAdd = new TextButton("Toevoegen", skin);
-                    bAdd.addListener(new ClickListener() {
-                        @Override
-                        public void clicked(InputEvent event, float x, float y) {
-                            if (clanF.handleInvitation(iType, lb1.getText(), emailaddress, tf.getText())) {
-                                Dialog d1 = new Dialog("succes", skin);
-                                d1.add("Actie succesvol uitgevoerd");
-                                TextButton bExit = new TextButton("Oke", skin);
-                                bExit.addListener(new ClickListener() {
-                                    @Override
-                                    public void clicked(InputEvent event, float x, float y) {
-                                        d1.hide();
-                                    }
-                                });
-                                d1.add(bExit);
-                                d.hide();
-                                d1.show(stage);
-                            } else {
-                                Dialog d2 = new Dialog("error", skin);
-                                d2.add("De gebruiker bestaat niet of is al toegevoegd");
-                                TextButton bExit = new TextButton("Oke", skin);
-                                bExit.addListener(new ClickListener() {
-                                    @Override
-                                    public void clicked(InputEvent event, float x, float y) {
-                                        d2.hide();
-                                    }
-                                });
-                                d2.add(bExit);
-                                d.hide();
-                                d2.show(stage);
-                            }
-                        }
-                    });
-                    d.add(bAdd);
-                    TextButton bExit = new TextButton("Annuleren", skin);
-                    bExit.addListener(new ClickListener() {
-                        @Override
-                        public void clicked(InputEvent event, float x, float y) {
-                            d.hide();
-                            refreshScreen();
-                        }
-                    });
-                    d.add(bExit);
-                    d.show(stage);
-                } else {
-                    if (clanF.handleInvitation(iType, lb1.getText(), emailaddress, null)) {
-                        Dialog d = new Dialog("succes", skin);
-                        d.add("Actie succesvol uitgevoerd");
-                        TextButton bExit = new TextButton("Oke", skin);
-                        bExit.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                d.hide();
-                                refreshScreen();
-                            }
-                        });
-                        d.add(bExit);
-                        d.show(stage);
-                    }
-                }
+            } catch (SQLException ex) {
+                return false;
             }
         }
-        );
-
-        TextField lb3 = new TextField(clanF.getPersons(clanName), skin);
-
-        lb3.setDisabled(
-                true);
-
-        TextButton bt4 = new TextButton(clanF.getManagement(clanName, emailaddress).toString(), skin);
-        final managementType iManage = managementType.valueOf(bt4.getText().toString());
-
-        bt4.addListener(
-                new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y
-                    ) {
-                        if (clanF.handleManagement(iManage, lb1.getText(), emailaddress)) {
-                            refreshScreen();//make sure that the changes will be reflected
-                            Dialog d = new Dialog("succes", skin);
-                            d.add("Actie succesvol uitgevoerd");
-                            TextButton bExit = new TextButton("Oke", skin);
-                            bExit.addListener(new ClickListener() {
-                                @Override
-                                public void clicked(InputEvent event, float x, float y) {
-                                    d.hide();
-                                    refreshScreen();
-                                }
-                            });
-                            d.add(bExit);
-                            d.show(stage);
-                        } else {
-                            Dialog d = new Dialog("error", skin);
-                            d.add("Actie is helaas mislukt");
-                            TextButton bExit = new TextButton("Oke", skin);
-                            bExit.addListener(new ClickListener() {
-                                @Override
-                                public void clicked(InputEvent event, float x, float y) {
-                                    d.hide();
-                                    refreshScreen();
-                                }
-                            });
-                            d.add(bExit);
-                            d.show(stage);
-                        }
-                    }
-                }
-        );
-
-        scrollTable.add(lb1);
-
-        scrollTable.columnDefaults(
-                0);
-        scrollTable.add(bt2);
-
-        scrollTable.columnDefaults(
-                1);
-        scrollTable.add(lb3);
-
-        scrollTable.columnDefaults(
-                2);
-        scrollTable.add(bt4);
-
-        scrollTable.columnDefaults(
-                3);
-        scrollTable.row();
     }
 }
