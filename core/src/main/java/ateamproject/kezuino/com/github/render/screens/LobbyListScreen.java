@@ -103,29 +103,23 @@ public class LobbyListScreen extends BaseScreen {
         
         Client client;
         try {
-            client = Client.instance();
+            client = Client.getInstance();
             hostList = client.getLobbies();
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyListScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
                 
-                
-        /*
-        
-        if (!clanGame) {
+        for (Lobby lobby : hostList) {
+            TextField lb1 = new TextField(lobby.getLobbyName(), skin);
             hostList = LobbyFunctions.getRandomHostList();
         } else {
             hostList = LobbyFunctions.getClanHostList();
-        }
-       */
 
-        for (int i = 0; i < hostList.size(); i++) {
 
-            TextField lb1 = new TextField(hostList.get(i).getLobbyName(), skin);
             lb1.setDisabled(true);
-            TextField lb2 = new TextField(hostList.get(i).getLobbyId().toString(), skin);
+            TextField lb2 = new TextField(lobby.getLobbyId().toString(), skin);
             lb2.setDisabled(true);
-            TextField lb3 = new TextField(Integer.toString(hostList.get(i).getMembers().size()), skin);
+            TextField lb3 = new TextField(Integer.toString(lobby.getMembers().size()), skin);
             lb3.setDisabled(true);
             TextButton btnJoin = new TextButton("Join", skin);
             btnJoin.setDisabled(true);
