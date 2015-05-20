@@ -11,6 +11,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -42,6 +43,8 @@ public class LobbyListScreen extends BaseScreen{
         
     }
     
+    TextField lobbyname;
+    
     private void RefreshGui()
     {
         scrollTable.clear();
@@ -50,7 +53,21 @@ public class LobbyListScreen extends BaseScreen{
         btnCreateGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyScreen(game,true));
+                
+                Dialog d = new Dialog("Lobby Name", skin);
+                lobbyname = new TextField("", skin);
+                TextButton btnsubmit = new TextButton("Ok", skin);
+                String Name = "";
+                d.add(lobbyname);
+                d.add(btnsubmit);
+                btnsubmit.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+                        d.hide();
+                        game.setScreen(new LobbyScreen(game,true, lobbyname.getText()));
+                    }
+                });
+                d.show(stage);
             }
         });
         btnCreateGame.setPosition( stage.getWidth() - btnCreateGame.getWidth() -10,stage.getHeight() - btnCreateGame.getHeight() -10);
