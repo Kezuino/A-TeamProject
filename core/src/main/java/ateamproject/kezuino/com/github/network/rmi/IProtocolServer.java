@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.UUID;
 
 /**
  *
@@ -16,6 +17,8 @@ public interface IProtocolServer extends IProtocol {
     void login(String username) throws RemoteException;
     void logout() throws RemoteException;
     
-    boolean createLobby(String LobbyName,String host) throws RemoteException;
+    UUID createLobby(String LobbyName,String host) throws RemoteException;
     ArrayList<Lobby> GetLobbies() throws RemoteException;
+    Lobby getLobbyById(UUID lobbyId) throws RemoteException;
+            
 }

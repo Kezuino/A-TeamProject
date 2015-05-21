@@ -13,6 +13,7 @@ import java.util.logging.Logger;
 
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Server extends UnicastRemoteObject implements IServer, IProtocolServer {
     private transient static Server currentInstance;
@@ -79,18 +80,31 @@ public class Server extends UnicastRemoteObject implements IServer, IProtocolSer
     }
     
     @Override
-    public boolean createLobby(String LobbyName,String host) throws RemoteException {
+    public UUID createLobby(String LobbyName,String host) throws RemoteException {
          // add lobby to games array
         Lobby newLobby = new Lobby(LobbyName, host);
         lobbysList.add(newLobby);
         
         System.out.println("game lobby size :"+lobbysList.size());
-        return true;
+        
+       return newLobby.getLobbyId();
         
     }
 
     @Override
     public ArrayList<Lobby> GetLobbies() throws RemoteException {
         return lobbysList;
+    }
+
+    @Override
+    public Lobby getLobbyById(UUID lobbyId) throws RemoteException {
+        Lobby RLobby;
+        for (Lobby lobby : lobbysList) {
+            if (lobby.getLobbyId().equals(lobbyId)) {
+                RLobby = lobby;
+                return lobby;
+            }
+        }
+        return null;
     }
 }
