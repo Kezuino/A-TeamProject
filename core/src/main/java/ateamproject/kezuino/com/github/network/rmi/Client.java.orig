@@ -1,0 +1,112 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ateamproject.kezuino.com.github.network.rmi;
+
+import java.net.MalformedURLException;
+import java.rmi.Naming;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
+<<<<<<< HEAD:core/src/main/java/ateamproject/kezuino/com/github/network/rmi/Client.java
+import java.util.List;
+=======
+import java.util.ArrayList;
+>>>>>>> 7343e2ec6dfb379060776a14ad4b6b57fc201aa5:core/src/main/java/ateamproject/kezuino/com/github/network/rmi/Client.java
+import java.util.UUID;
+
+/**
+ * @author Kez and Jules
+ */
+public class Client extends UnicastRemoteObject implements IProtocolClient {
+    private static transient Client currentInstance;
+    private transient IProtocolServer server;
+    //private transient Registry reg;
+
+    protected Client() throws RemoteException {
+        System.setProperty("pactales.client.servername", "localhost");
+        System.setProperty("pactales.client.serverobject", "server");
+    }
+<<<<<<< HEAD:core/src/main/java/ateamproject/kezuino/com/github/network/rmi/Client.java
+
+    public static Client getInstance() throws RemoteException {
+        if (currentInstance == null) {
+            currentInstance = new Client();
+        }
+
+        return currentInstance;
+    }
+=======
+>>>>>>> 7343e2ec6dfb379060776a14ad4b6b57fc201aa5:core/src/main/java/ateamproject/kezuino/com/github/network/rmi/Client.java
+
+    public void start() {
+        System.out.println("Client starting...");
+
+        try {
+<<<<<<< HEAD:core/src/main/java/ateamproject/kezuino/com/github/network/rmi/Client.java
+            String rmiHost = System.getProperty("pactales.client.servername");
+            String rmiObject = System.getProperty("pactales.client.serverobject");
+
+            this.server = (IProtocolServer) Naming.lookup(String.format("//%s/%s", rmiHost, rmiObject));
+=======
+            //this.reg = LocateRegistry.getRegistry("darkhellentertainment.com", Registry.REGISTRY_PORT);
+            this.server = (IProtocolServer) Naming.lookup("//127.0.0.1/server");
+>>>>>>> 7343e2ec6dfb379060776a14ad4b6b57fc201aa5:core/src/main/java/ateamproject/kezuino/com/github/network/rmi/Client.java
+        } catch (RemoteException | NotBoundException | MalformedURLException ex) {
+            System.out.println(ex.getMessage());
+        }
+
+        System.out.println("Client started");
+    }
+    
+    public static Client getInstance() throws RemoteException {
+        if(currentInstance == null) {
+            currentInstance = new Client();
+        }
+        
+        return currentInstance;
+    }
+    
+    public IProtocolServer getConnection() throws RemoteException {
+        return this.server;
+    }
+
+    public IProtocolServer getConnection() throws RemoteException {
+        return this.server;
+    }
+
+    @Override
+    public void creatureMove(int creatureID) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+<<<<<<< HEAD:core/src/main/java/ateamproject/kezuino/com/github/network/rmi/Client.java
+
+    public UUID createLobby(String lobbyName, String host) throws RemoteException {
+        return this.server.createLobby(lobbyName, host);
+    }
+
+    public List<Lobby> getLobbies() throws RemoteException {
+        return this.server.getLobbies();
+    }
+
+    public Lobby getLobbyById(UUID lobbyId) throws RemoteException {
+=======
+    
+    public UUID createLobby(String lobbyName, String host) throws RemoteException
+    {
+        return this.server.createLobby(lobbyName,host);
+    }
+    
+    public ArrayList<Lobby> getLobbies() throws RemoteException
+    {
+        return this.server.GetLobbies();
+    }
+    
+    public Lobby getLobbyById(UUID lobbyId) throws RemoteException
+    {
+>>>>>>> 7343e2ec6dfb379060776a14ad4b6b57fc201aa5:core/src/main/java/ateamproject/kezuino/com/github/network/rmi/Client.java
+        return this.server.getLobbyById(lobbyId);
+    }
+}
