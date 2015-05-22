@@ -117,6 +117,30 @@ public class Server extends UnicastRemoteObject implements IServer, IProtocolSer
         return null;
     }
     
+     @Override
+    public boolean quitLobby(UUID lobbyId) throws RemoteException {
+        
+        for (Lobby lobby : lobbysList) {
+            boolean hai = lobby.getLobbyId().equals(lobbyId);
+            System.out.println(hai);
+            if (hai) {
+                return lobbysList.remove(lobby);
+            }
+        }
+        
+        return false;
+    }
+
+    @Override
+    public boolean leaveLobby(UUID lobbyId, String client) throws RemoteException {
+         for (Lobby lobby : lobbysList) {
+            if (lobby.getLobbyId().equals(lobbyId)) {
+               return lobby.removeMember(client);
+            }
+        }
+         return false;
+    }
+    
 
     @Override
     public ArrayList<String> clanFillTable(String emailadres) throws RemoteException {
@@ -167,6 +191,8 @@ public class Server extends UnicastRemoteObject implements IServer, IProtocolSer
     public boolean setUsername(String name, String emailaddress) throws RemoteException {
         return false;
     }
+
+   
 
     
 }

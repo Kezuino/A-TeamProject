@@ -8,7 +8,14 @@ package ateamproject.kezuino.com.github.render.screens;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.network.rmi.Lobby;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.rmi.RemoteException;
 import java.util.UUID;
@@ -20,16 +27,25 @@ import java.util.logging.Logger;
  */
 public class LobbyScreen extends BaseScreen {
 
+    private Client client;
+
     private Lobby curLobby;
     private String lobbyName;
     private UUID lobbyId;
-    private int memberscount;
+
+    private boolean isHost;
+
+    private Table scrollTable;
 
     // host constructor
     public LobbyScreen(Game game, String lobbyname) {
         super(game);
         this.lobbyName = lobbyname;
-
+        try {
+            client = Client.getInstance();
+        } catch (RemoteException ex) {
+            Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
         createLobby();
 
         refreshGui();
@@ -38,6 +54,11 @@ public class LobbyScreen extends BaseScreen {
     // member constructor
     public LobbyScreen(Game game, UUID lobbyId) {
         super(game);
+        try {
+            client = Client.getInstance();
+        } catch (RemoteException ex) {
+            Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         // get lobby information en fill gui
         this.lobbyId = lobbyId;
@@ -46,8 +67,8 @@ public class LobbyScreen extends BaseScreen {
     }
 
     public void createLobby() {
+        this.isHost = true;
         try {
-            Client client = Client.getInstance();
             curLobby = client.createLobby(this.lobbyName, "host");
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
@@ -56,31 +77,117 @@ public class LobbyScreen extends BaseScreen {
     }
 
     public void loadLobby() {
+        this.isHost = false;
         try {
-            Client client = Client.getInstance();
-            curLobby = client.joinLobby(lobbyId, "client object");
+            curLobby = client.joinLobby(this.lobbyId, "client object");
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void refreshGui() {
-        Label lobby = new Label(curLobby.getLobbyName(), skin);
-        lobby.setSize(200, 30);
-        lobby.setPosition(0, 0);
+        // quit lobby
+        if (isHost) {
+            TextButton btnQuitLobby = new TextButton("Sluit Lobby", skin);
+            btnQuitLobby.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    btnQuitLobby.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            // remove lobby 
+                            try {
+                                boolean hai = client.quitLobby(lobbyId);
+                                if (hai) {
+                                    game.setScreen(new LobbyListScreen(game, true));
+                                }
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
+                            }
 
+                        }
+                    });
+                }
+            });
+            // Create game button
+            btnQuitLobby.setPosition(stage.getWidth() - btnQuitLobby.getWidth() - 10, stage.getHeight() - btnQuitLobby.getHeight() - 10);
+            this.stage.addActor(btnQuitLobby);
+        } else {
+            TextButton btnLeaveLobby = new TextButton("Verlaat Lobby", skin);
+            btnLeaveLobby.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    btnLeaveLobby.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            // leae lobby
+                            try {
+                                if (client.leaveLobby(lobbyId, "client object")) {
+                                    game.setScreen(new LobbyListScreen(game, true));
+                                }
+                            } catch (RemoteException ex) {
+                                Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    });
+                }
+            });
+            // Create game button
+            btnLeaveLobby.setPosition(stage.getWidth() - btnLeaveLobby.getWidth() - 10, stage.getHeight() - btnLeaveLobby.getHeight() - 10);
+            this.stage.addActor(btnLeaveLobby);
+        }
+
+        scrollTable = new Table();
+
+        TextField memberNameHeader = new TextField("Member name", skin);
+        memberNameHeader.setDisabled(true);
+
+        scrollTable.add(memberNameHeader);
+        scrollTable.columnDefaults(0);
+        scrollTable.row();
+
+        // set table position
+        scrollTable.row();
+        scrollTable.setColor(com.badlogic.gdx.graphics.Color.BLUE);
+        final ScrollPane scroller = new ScrollPane(scrollTable);
+        scroller.sizeBy(200, 400);
+        scroller.setColor(com.badlogic.gdx.graphics.Color.BLUE);
+        final Table table = new Table();
+        table.setFillParent(false);
+        table.add(scroller).fill().expand();
+        table.setSize(stage.getWidth(), stage.getHeight());
+        table.setColor(com.badlogic.gdx.graphics.Color.BLUE);
+
+        Label lobby = new Label("Lobby name : " + curLobby.getLobbyName(), skin);
+        lobby.setSize(200, 30);
+        lobby.setPosition(0, stage.getHeight() - lobby.getHeight());
+/*
         Label lobbyid = new Label("UUID : " + curLobby.getLobbyId(), skin);
         lobbyid.setSize(200, 30);
         lobbyid.setPosition(0, 30);
-        
+
         Label members = new Label("members : " + curLobby.getMembers().size() + "/8", skin);
         members.setSize(200, 30);
         members.setPosition(0, 60);
+*/
+        for (String member : curLobby.getMembers()) {
+            TextField lblmember = new TextField(member.toString(), skin);
+            lblmember.setDisabled(true);
+            
+            scrollTable.add(lblmember);
+            scrollTable.row();
+        }
 
         stage.addActor(lobby);
-        stage.addActor(lobbyid);        
-        stage.addActor(members);
+        
+        float x = stage.getWidth() / 2 - table.getWidth() / 2;
+        float y = stage.getHeight() - table.getHeight() - 30;
 
+        table.setPosition(x, y);
+        this.stage.addActor(table);
+        
+        //stage.addActor(lobbyid);
+       // stage.addActor(members);
 
     }
 }

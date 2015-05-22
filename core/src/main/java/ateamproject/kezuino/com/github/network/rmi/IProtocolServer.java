@@ -29,7 +29,13 @@ public interface IProtocolServer extends IProtocol {
     
     Lobby joinLobby(UUID lobbyId,String client) throws RemoteException;
 
-
+    // quit lobby
+    //verwijder lobby uit de server lobbylijst
+    boolean quitLobby(UUID lobbyId) throws RemoteException;
+    
+    // leave lobby
+    // verwijder member uit de lobby lijst
+     boolean leaveLobby(UUID lobbyId, String client) throws RemoteException;
 
     ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
 

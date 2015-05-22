@@ -34,6 +34,11 @@ public class Lobby implements Serializable{
         return members;
     }
     
+    public boolean removeMember(String client)
+    {
+        return members.remove(client);
+    }
+    
     public boolean addMember(String client)
     {
         return members.add(client);

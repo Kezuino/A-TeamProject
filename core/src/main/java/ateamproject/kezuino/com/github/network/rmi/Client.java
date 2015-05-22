@@ -75,4 +75,14 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
     {
         return this.server.joinLobby(lobbyId, client);
     }
+    
+    public boolean quitLobby(UUID lobbyId) throws RemoteException
+    {
+        return this.server.quitLobby(lobbyId);
+    }
+    
+    public boolean leaveLobby(UUID lobbyid, String client) throws RemoteException
+    {
+        return this.server.leaveLobby(lobbyid, client);
+    }
 }
