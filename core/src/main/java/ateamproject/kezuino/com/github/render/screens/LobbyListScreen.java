@@ -11,12 +11,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +26,7 @@ import java.util.logging.Logger;
  */
 public class LobbyListScreen extends BaseScreen {
     private final Table scrollTable;
+    TextField lobbyname;
     private boolean clanGame;
 
     public LobbyListScreen(Game game, boolean clanGame) {
@@ -36,20 +34,18 @@ public class LobbyListScreen extends BaseScreen {
         this.clanGame = clanGame;
 
         scrollTable = new Table();
-        CreateGui();
+        createGui();
 
     }
 
-    TextField lobbyname;
-    
-    private void CreateGui()
+    private void createGui() {
         scrollTable.clear();
 
         TextButton btnCreateGame = new TextButton("Maak spel", skin);
         btnCreateGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                
+
                 Dialog d = new Dialog("Lobby Name", skin);
                 lobbyname = new TextField("", skin);
                 TextButton btnsubmit = new TextButton("Maken", skin);
@@ -66,7 +62,7 @@ public class LobbyListScreen extends BaseScreen {
                 d.show(stage);
             }
         });
-        
+
         // Create game button
         btnCreateGame.setPosition(stage.getWidth() - btnCreateGame.getWidth() - 10, stage.getHeight() - btnCreateGame.getHeight() - 10);
         this.stage.addActor(btnCreateGame);
@@ -106,7 +102,7 @@ public class LobbyListScreen extends BaseScreen {
 
 
         // get all host from the server and put in the table
-        FillHostTable();
+        fillHostTable();
 
 
         float x = stage.getWidth() / 2 - table.getWidth() / 2;
@@ -117,17 +113,16 @@ public class LobbyListScreen extends BaseScreen {
 
     }
 
-    private void FillHostTable() {
-        List<String[]> hostList;
-        ArrayList<String[]> hostList;
-        
+    private void fillHostTable() {
+        List<Lobby> hostList = null;
+
         try {
             Client client = Client.getInstance();
             hostList = client.getLobbies();
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyListScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
-                
+
         for (Lobby lobby : hostList) {
             TextField lb1 = new TextField(lobby.getLobbyName(), skin);
             lb1.setDisabled(true);
@@ -137,14 +132,14 @@ public class LobbyListScreen extends BaseScreen {
             lb3.setDisabled(true);
             TextButton btnJoin = new TextButton("Join", skin);
             btnJoin.addListener(new ClickListener() {
-                    @Override
-                    public void clicked(InputEvent event, float x, float y) {
-                        UUID lobId = lobby.getLobbyId();
-                        game.setScreen(new LobbyScreen(game, lobId));
-                    }
-                });
-            
-            
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    UUID lobId = lobby.getLobbyId();
+                    game.setScreen(new LobbyScreen(game, lobId));
+                }
+            });
+
+
             btnJoin.setDisabled(true);
 
             scrollTable.add(lb1);

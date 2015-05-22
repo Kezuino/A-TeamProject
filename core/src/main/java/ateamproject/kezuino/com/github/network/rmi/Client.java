@@ -10,11 +10,10 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
- *
  * @author Kez and Jules
  */
 public class Client extends UnicastRemoteObject implements IProtocolClient {
@@ -23,12 +22,21 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
     //private transient Registry reg;
 
     protected Client() throws RemoteException {
+        System.setProperty("pactales.client.servername", "localhost");
+        System.setProperty("pactales.client.serverobject", "server");
+    }
 
+    public static Client getInstance() throws RemoteException {
+        if (currentInstance == null) {
+            currentInstance = new Client();
+        }
+
+        return currentInstance;
     }
 
     public void start() {
         System.out.println("Client starting...");
-        
+
         try {
             String rmiHost = System.getProperty("pactales.client.servername");
             String rmiObject = System.getProperty("pactales.client.serverobject");
@@ -37,18 +45,10 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
         } catch (RemoteException | NotBoundException | MalformedURLException ex) {
             System.out.println(ex.getMessage());
         }
-        
+
         System.out.println("Client started");
     }
-    
-    public static Client getInstance() throws RemoteException {
-        if(currentInstance == null) {
-            currentInstance = new Client();
-        }
-        
-        return currentInstance;
-    }
-    
+
     public IProtocolServer getConnection() throws RemoteException {
         return this.server;
     }
@@ -57,19 +57,16 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
     public void creatureMove(int creatureID) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    public UUID createLobby(String lobbyName, String host) throws RemoteException
-    {
-        return this.server.createLobby(lobbyName,host);
+
+    public UUID createLobby(String lobbyName, String host) throws RemoteException {
+        return this.server.createLobby(lobbyName, host);
     }
-    
-    public ArrayList<Lobby> getLobbies() throws RemoteException
-    {
-        return this.server.GetLobbies();
+
+    public List<Lobby> getLobbies() throws RemoteException {
+        return this.server.getLobbies();
     }
-    
-    public Lobby getLobbyById(UUID lobbyId) throws RemoteException
-    {
+
+    public Lobby getLobbyById(UUID lobbyId) throws RemoteException {
         return this.server.getLobbyById(lobbyId);
     }
 }

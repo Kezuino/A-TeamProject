@@ -10,6 +10,7 @@ import ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationTy
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -19,11 +20,13 @@ public interface IProtocolServer extends IProtocol {
     void login(String username) throws RemoteException;
 
     void logout() throws RemoteException;
-    
-    UUID createLobby(String LobbyName,String host) throws RemoteException;
-    ArrayList<Lobby> GetLobbies() throws RemoteException;
+
+    UUID createLobby(String LobbyName, String host) throws RemoteException;
+
+    List<Lobby> getLobbies() throws RemoteException;
+
     Lobby getLobbyById(UUID lobbyId) throws RemoteException;
-            
+
 
     ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
 
