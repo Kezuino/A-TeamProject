@@ -1,6 +1,10 @@
 package ateamproject.kezuino.com.github.network;
 
+import ateamproject.kezuino.com.github.network.rmi.Lobby;
+
+import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
+import java.util.ArrayList;
 
 public interface IServer {
     /**

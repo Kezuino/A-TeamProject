@@ -2,12 +2,14 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.IServer;
 import ateamproject.kezuino.com.github.network.rmi.IProtocolServer;
+import ateamproject.kezuino.com.github.render.screens.ClanFunctions;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -89,8 +91,8 @@ public class Server extends UnicastRemoteObject implements IServer, IProtocolSer
     }
 
     @Override
-    public ArrayList<Lobby> GetLobbies() throws RemoteException {
-        return lobbysList;
+    public List<Lobby> getLobbies() throws RemoteException {
+        return this.lobbysList;
     }
 
     @Override
