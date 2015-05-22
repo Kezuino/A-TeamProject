@@ -79,14 +79,14 @@ public class Server extends UnicastRemoteObject implements IServer, IProtocolSer
     }
     
     @Override
-    public UUID createLobby(String LobbyName,String host) throws RemoteException {
+    public Lobby createLobby(String LobbyName,String host) throws RemoteException {
          // add lobby to games array
         Lobby newLobby = new Lobby(LobbyName, host);
         lobbysList.add(newLobby);
         
-        System.out.println("game lobby size :"+lobbysList.size());
+        System.out.println("Lobby: "+ newLobby.getLobbyName() + " - id "+ newLobby.getLobbyId() + " CREATED !");
         
-       return newLobby.getLobbyId();
+       return newLobby;
         
     }
 
@@ -104,6 +104,19 @@ public class Server extends UnicastRemoteObject implements IServer, IProtocolSer
         }
         return null;
     }
+    
+    @Override
+    public Lobby joinLobby(UUID lobbyId,String client) throws RemoteException {
+        for (Lobby lobby : lobbysList) {
+            if (lobby.getLobbyId().equals(lobbyId)) {
+                if (lobby.addMember(client)) {
+                    return lobby;
+                }
+            }
+        }
+        return null;
+    }
+    
 
     @Override
     public ArrayList<String> clanFillTable(String emailadres) throws RemoteException {
@@ -154,4 +167,6 @@ public class Server extends UnicastRemoteObject implements IServer, IProtocolSer
     public boolean setUsername(String name, String emailaddress) throws RemoteException {
         return false;
     }
+
+    
 }

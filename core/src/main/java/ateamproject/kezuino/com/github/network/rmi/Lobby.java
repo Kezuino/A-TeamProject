@@ -33,7 +33,13 @@ public class Lobby implements Serializable{
     public ArrayList<String> getMembers() {
         return members;
     }
+    
+    public boolean addMember(String client)
+    {
+        return members.add(client);
+    }
 
+    
     public boolean isInGame() {
         return inGame;
     }

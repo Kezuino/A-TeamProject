@@ -21,11 +21,14 @@ public interface IProtocolServer extends IProtocol {
 
     void logout() throws RemoteException;
 
-    UUID createLobby(String LobbyName, String host) throws RemoteException;
+    Lobby createLobby(String LobbyName, String host) throws RemoteException;
 
     List<Lobby> getLobbies() throws RemoteException;
 
-    Lobby getLobbyById(UUID lobbyId) throws RemoteException;
+    Lobby getLobbyById(UUID lobbyId) throws RemoteException;   
+    
+    Lobby joinLobby(UUID lobbyId,String client) throws RemoteException;
+
 
 
     ArrayList<String> clanFillTable(String emailadres) throws RemoteException;

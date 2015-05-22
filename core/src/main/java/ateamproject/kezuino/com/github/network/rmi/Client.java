@@ -59,7 +59,7 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public UUID createLobby(String lobbyName, String host) throws RemoteException {
+    public Lobby createLobby(String lobbyName, String host) throws RemoteException {
         return this.server.createLobby(lobbyName, host);
     }
 
@@ -69,5 +69,10 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
 
     public Lobby getLobbyById(UUID lobbyId) throws RemoteException {
         return this.server.getLobbyById(lobbyId);
+    }
+    
+    public Lobby joinLobby(UUID lobbyId,String client) throws RemoteException
+    {
+        return this.server.joinLobby(lobbyId, client);
     }
 }

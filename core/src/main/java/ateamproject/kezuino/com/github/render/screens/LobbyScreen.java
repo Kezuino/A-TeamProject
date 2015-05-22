@@ -20,9 +20,10 @@ import java.util.logging.Logger;
  */
 public class LobbyScreen extends BaseScreen {
 
-    Lobby curLobby;
+    private Lobby curLobby;
     private String lobbyName;
     private UUID lobbyId;
+    private int memberscount;
 
     // host constructor
     public LobbyScreen(Game game, String lobbyname) {
@@ -47,7 +48,7 @@ public class LobbyScreen extends BaseScreen {
     public void createLobby() {
         try {
             Client client = Client.getInstance();
-            this.lobbyId = client.createLobby(this.lobbyName, "host");
+            curLobby = client.createLobby(this.lobbyName, "host");
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -57,24 +58,29 @@ public class LobbyScreen extends BaseScreen {
     public void loadLobby() {
         try {
             Client client = Client.getInstance();
-            Lobby curLobby = client.getLobbyById(lobbyId);
-            this.lobbyName = curLobby.getLobbyName();
+            curLobby = client.joinLobby(lobbyId, "client object");
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
     public void refreshGui() {
-        Label lobby = new Label(this.lobbyName, skin);
-        lobby.setSize(200, 30);
-        lobby.setPosition(50, stage.getHeight() - lobby.getHeight());
-
-        Label lobbyid = new Label("UUID : " + this.lobbyId.toString(), skin);
+        Label lobby = new Label(curLobby.getLobbyName(), skin);
         lobby.setSize(200, 30);
         lobby.setPosition(0, 0);
 
+        Label lobbyid = new Label("UUID : " + curLobby.getLobbyId(), skin);
+        lobbyid.setSize(200, 30);
+        lobbyid.setPosition(0, 30);
+        
+        Label members = new Label("members : " + curLobby.getMembers().size() + "/8", skin);
+        members.setSize(200, 30);
+        members.setPosition(0, 60);
+
         stage.addActor(lobby);
-        stage.addActor(lobbyid);
+        stage.addActor(lobbyid);        
+        stage.addActor(members);
+
 
     }
 }
