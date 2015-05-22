@@ -26,13 +26,6 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
         System.setProperty("pactales.client.serverobject", "server");
     }
 
-    public static Client getInstance() throws RemoteException {
-        if (currentInstance == null) {
-            currentInstance = new Client();
-        }
-
-        return currentInstance;
-    }
 
     public void start() {
         System.out.println("Client starting...");
@@ -48,7 +41,15 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
 
         System.out.println("Client started");
     }
-
+    
+    public static Client getInstance() throws RemoteException {
+        if(currentInstance == null) {
+            currentInstance = new Client();
+        }
+        
+        return currentInstance;
+    }
+    
     public IProtocolServer getConnection() throws RemoteException {
         return this.server;
     }
