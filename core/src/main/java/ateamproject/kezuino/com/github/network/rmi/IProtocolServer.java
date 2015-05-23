@@ -5,6 +5,8 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
+import ateamproject.kezuino.com.github.network.Game;
+import ateamproject.kezuino.com.github.network.IClient;
 import ateamproject.kezuino.com.github.render.screens.ClanFunctions;
 import ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType;
 
@@ -17,25 +19,33 @@ import java.util.UUID;
  * @author Kez and Jules
  */
 public interface IProtocolServer extends IProtocol {
-    void login(String username) throws RemoteException;
+    UUID login(String email, String password) throws RemoteException;
 
-    void logout() throws RemoteException;
+    Game createLobby(String LobbyName, UUID host) throws RemoteException;
 
-    Lobby createLobby(String LobbyName, String host) throws RemoteException;
+    List<Game> getLobbies() throws RemoteException;
 
-    List<Lobby> getLobbies() throws RemoteException;
+    Game getLobbyById(UUID lobbyId) throws RemoteException;
 
-    Lobby getLobbyById(UUID lobbyId) throws RemoteException;   
-    
-    Lobby joinLobby(UUID lobbyId,String client) throws RemoteException;
+    Game joinLobby(UUID lobbyId, UUID client) throws RemoteException;
 
-    // quit lobby
-    //verwijder lobby uit de server lobbylijst
+    /**
+     * Requests all connected {@link IClient clients} to stop and closes the lobby.
+     *
+     * @param lobbyId
+     * @return
+     * @throws RemoteException
+     */
     boolean quitLobby(UUID lobbyId) throws RemoteException;
-    
-    // leave lobby
-    // verwijder member uit de lobby lijst
-     boolean leaveLobby(UUID lobbyId, String client) throws RemoteException;
+
+    /**
+     * Kicks the {@link IClient} from any lobby it is currently in.
+     *
+     * @param client
+     * @return
+     * @throws RemoteException
+     */
+    boolean kickFromLobby(UUID client) throws RemoteException;
 
     ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
 
@@ -45,7 +55,7 @@ public interface IProtocolServer extends IProtocol {
 
     ClanFunctions.ManagementType getManagement(String clanName, String emailaddress) throws RemoteException;
 
-    String getPersons(String clanName) throws RemoteException;
+    String getPeople(String clanName) throws RemoteException;
 
     boolean handleInvitation(InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException;
 

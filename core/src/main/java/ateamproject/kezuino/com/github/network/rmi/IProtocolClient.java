@@ -5,10 +5,17 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
+import java.rmi.RemoteException;
+
 /**
- *
  * @author Kez and Jules
  */
 public interface IProtocolClient extends IProtocol {
-
+    /**
+     * Drops this {@link IProtocolClient} so that it no longer listens to the {@link IProtocolServer} and gracefully stops with whatever multiplayer task it was doing.
+     *
+     * @param read Reason why the {@link IProtocolClient} was dropped.
+     * @return True if {@link IProtocolClient} was dropped. False otherwise.
+     */
+    boolean drop(String read) throws RemoteException;
 }

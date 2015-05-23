@@ -7,9 +7,6 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -33,7 +30,7 @@ public class MainScreen extends BaseScreen {
         tbClanGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyListScreen(game,true));
+                game.setScreen(new LobbyListScreen(game, true));
             }
         });
 
@@ -65,10 +62,10 @@ public class MainScreen extends BaseScreen {
         tbLogout.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Gdx.app.exit();
+                game.setScreen(new LoginScreen(game));
             }
         });
-        
+
         TextButton tbClanManagement = new TextButton("Clan management", skin);
         tbClanManagement.addListener(new ClickListener() {
             @Override

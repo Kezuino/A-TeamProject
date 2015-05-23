@@ -9,23 +9,41 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
  * @author Kez and Jules
  */
-public class Client extends UnicastRemoteObject implements IProtocolClient {
-    private static transient Client currentInstance;
-    private transient IProtocolServer server;
-    //private transient Registry reg;
+public class Client extends ateamproject.kezuino.com.github.network.Client {
+    private static Client instance;
+    protected ClientBase rmi;
 
     protected Client() throws RemoteException {
+        super();
+
         System.setProperty("pactales.client.servername", "localhost");
         System.setProperty("pactales.client.serverobject", "server");
+        rmi = new ClientBase(this);
     }
 
+    /**
+     * Only use on client-side!
+     *
+     * @return {@link Client} instance. Creates a new {@link Client} if it doesn't exist.
+     * @throws RemoteException
+     */
+    public static Client getInstance() throws RemoteException {
+        if (instance == null) {
+            instance = new Client();
+        }
+
+        return instance;
+    }
+
+    public ClientBase getRmi() {
+        return rmi;
+    }
 
     public void start() {
         System.out.println("Client starting...");
@@ -34,55 +52,11 @@ public class Client extends UnicastRemoteObject implements IProtocolClient {
             String rmiHost = System.getProperty("pactales.client.servername");
             String rmiObject = System.getProperty("pactales.client.serverobject");
 
-            this.server = (IProtocolServer) Naming.lookup(String.format("//%s/%s", rmiHost, rmiObject));
+            this.rmi.setServer((IProtocolServer) Naming.lookup(String.format("//%s/%s", rmiHost, rmiObject)));
         } catch (RemoteException | NotBoundException | MalformedURLException ex) {
             System.out.println(ex.getMessage());
         }
 
         System.out.println("Client started");
-    }
-    
-    public static Client getInstance() throws RemoteException {
-        if(currentInstance == null) {
-            currentInstance = new Client();
-        }
-        
-        return currentInstance;
-    }
-    
-    public IProtocolServer getConnection() throws RemoteException {
-        return this.server;
-    }
-
-    @Override
-    public void creatureMove(int creatureID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    public Lobby createLobby(String lobbyName, String host) throws RemoteException {
-        return this.server.createLobby(lobbyName, host);
-    }
-
-    public List<Lobby> getLobbies() throws RemoteException {
-        return this.server.getLobbies();
-    }
-
-    public Lobby getLobbyById(UUID lobbyId) throws RemoteException {
-        return this.server.getLobbyById(lobbyId);
-    }
-    
-    public Lobby joinLobby(UUID lobbyId,String client) throws RemoteException
-    {
-        return this.server.joinLobby(lobbyId, client);
-    }
-    
-    public boolean quitLobby(UUID lobbyId) throws RemoteException
-    {
-        return this.server.quitLobby(lobbyId);
-    }
-    
-    public boolean leaveLobby(UUID lobbyid, String client) throws RemoteException
-    {
-        return this.server.leaveLobby(lobbyid, client);
     }
 }

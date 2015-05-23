@@ -5,16 +5,16 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.network.rmi.Client;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import ateamproject.kezuino.com.github.network.mail.*;
-import ateamproject.kezuino.com.github.network.rmi.Client;
-import ateamproject.kezuino.com.github.network.rmi.IProtocolServer;
-import ateamproject.kezuino.com.github.utility.assets.Assets;
+import java.rmi.RemoteException;
+import java.util.UUID;
 
 /**
  * @author David
@@ -31,16 +31,15 @@ public class LoginScreen extends BaseScreen {
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                MailAccount mailAccount = new MailAccount();
-                mailAccount.isValid(txtUsername.getText(), txtPassword.getText());
                 try {
-                    mailAccount.test();
-                    System.out.println("Logged in");
-                    IProtocolServer connection = Client.getInstance().getConnection();
-                    connection.login(txtUsername.getMessageText());
-                    game.setScreen(new MainScreen(game));
-                } catch (Exception ex) {
-                    System.out.println(ex.getMessage());
+                    UUID remoteId = Client.getInstance().getRmi().getServer().login(txtUsername.getText(), txtPassword.getText());
+                    if (remoteId != null) {
+                        System.out.println("Login successful!");
+                    } else {
+                        System.out.println("Login failed.");
+                    }
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });

@@ -5,11 +5,10 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.network.IClient;
 import ateamproject.kezuino.com.github.network.rmi.Client;
-import ateamproject.kezuino.com.github.network.rmi.Lobby;
-import com.badlogic.gdx.Game;
+import ateamproject.kezuino.com.github.network.Game;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -28,8 +27,6 @@ import java.util.logging.Logger;
 public class LobbyScreen extends BaseScreen {
 
     private Client client;
-
-    private Lobby curLobby;
     private String lobbyName;
     private UUID lobbyId;
 
@@ -38,7 +35,7 @@ public class LobbyScreen extends BaseScreen {
     private Table scrollTable;
 
     // host constructor
-    public LobbyScreen(Game game, String lobbyname) {
+    public LobbyScreen(com.badlogic.gdx.Game game, String lobbyname) {
         super(game);
         this.lobbyName = lobbyname;
         try {
@@ -52,7 +49,7 @@ public class LobbyScreen extends BaseScreen {
     }
 
     // member constructor
-    public LobbyScreen(Game game, UUID lobbyId) {
+    public LobbyScreen(com.badlogic.gdx.Game game, UUID lobbyId) {
         super(game);
         try {
             client = Client.getInstance();
@@ -69,7 +66,7 @@ public class LobbyScreen extends BaseScreen {
     public void createLobby() {
         this.isHost = true;
         try {
-            curLobby = client.createLobby(this.lobbyName, "host");
+            client.getRmi().createLobby(this.lobbyName, client.getPlayer(0));
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -79,7 +76,7 @@ public class LobbyScreen extends BaseScreen {
     public void loadLobby() {
         this.isHost = false;
         try {
-            curLobby = client.joinLobby(this.lobbyId, "client object");
+            client.getRmi().joinLobby(this.lobbyId, client.getPlayer(0));
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -97,8 +94,8 @@ public class LobbyScreen extends BaseScreen {
                         public void clicked(InputEvent event, float x, float y) {
                             // remove lobby 
                             try {
-                                boolean hai = client.quitLobby(lobbyId);
-                                if (hai) {
+                                boolean result = client.getRmi().quitLobby(lobbyId);
+                                if (result) {
                                     game.setScreen(new LobbyListScreen(game, true));
                                 }
                             } catch (RemoteException ex) {
@@ -122,7 +119,7 @@ public class LobbyScreen extends BaseScreen {
                         public void clicked(InputEvent event, float x, float y) {
                             // leae lobby
                             try {
-                                if (client.leaveLobby(lobbyId, "client object")) {
+                                if (client.getRmi().leaveLobby(client.getPlayer(0))) {
                                     game.setScreen(new LobbyListScreen(game, true));
                                 }
                             } catch (RemoteException ex) {
@@ -158,19 +155,19 @@ public class LobbyScreen extends BaseScreen {
         table.setSize(stage.getWidth(), stage.getHeight());
         table.setColor(com.badlogic.gdx.graphics.Color.BLUE);
 
-        Label lobby = new Label("Lobby name : " + curLobby.getLobbyName(), skin);
+        Label lobby = new Label("Lobby name : " + lobbyName, skin);
         lobby.setSize(200, 30);
         lobby.setPosition(0, stage.getHeight() - lobby.getHeight());
 /*
-        Label lobbyid = new Label("UUID : " + curLobby.getLobbyId(), skin);
+        Label lobbyid = new Label("UUID : " + curLobby.getId(), skin);
         lobbyid.setSize(200, 30);
         lobbyid.setPosition(0, 30);
 
-        Label members = new Label("members : " + curLobby.getMembers().size() + "/8", skin);
-        members.setSize(200, 30);
-        members.setPosition(0, 60);
+        Label clients = new Label("clients : " + curLobby.getClients().size() + "/8", skin);
+        clients.setSize(200, 30);
+        clients.setPosition(0, 60);
 */
-        for (String member : curLobby.getMembers()) {
+        for (UUID member : client.getPlayers().values()) {
             TextField lblmember = new TextField(member.toString(), skin);
             lblmember.setDisabled(true);
             
@@ -187,7 +184,7 @@ public class LobbyScreen extends BaseScreen {
         this.stage.addActor(table);
         
         //stage.addActor(lobbyid);
-       // stage.addActor(members);
+       // stage.addActor(clients);
 
     }
 }

@@ -1,12 +1,10 @@
 package ateamproject.kezuino.com.github.network;
 
-import ateamproject.kezuino.com.github.network.rmi.Lobby;
+import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 
-import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
-import java.util.ArrayList;
 
-public interface IServer {
+public interface IServer extends IPacketSender {
     /**
      * Starts up this {@link IServer} listening on connections to this computer on port {@value Registry#REGISTRY_PORT}.
      */
@@ -16,4 +14,5 @@ public interface IServer {
      * Stops this {@link IServer} from listening to clients and drops any active connections. {@link IServer} can be started up again using {@link #start()}.
      */
     void stop();
+
 }
