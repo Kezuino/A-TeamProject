@@ -20,4 +20,11 @@ public interface IPacketSender {
      * Unegisters all {@link Packet packets} that this domain had registered.
      */
     void unregisterPackets();
+
+    /**
+     * Gets the total seconds that went past since the last {@link Packet}.
+     *
+     * @return Total seconds that went past since the last {@link Packet}.
+     */
+    double getSecondsFromLastPacket();
 }

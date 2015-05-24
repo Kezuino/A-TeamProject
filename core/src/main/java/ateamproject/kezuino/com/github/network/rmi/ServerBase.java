@@ -2,6 +2,8 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
 import ateamproject.kezuino.com.github.render.screens.ClanFunctions;
 
@@ -30,6 +32,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public UUID login(String email, String password) throws RemoteException {
         return Packet.execute(new PacketLogin(email, password)).getResult();
     }
+
+    @Override
+    public void heartbeat(UUID client) throws RemoteException {
+        Packet.execute(new PacketHeartbeat(client));
+    }
+
 
     @Override
     public Game createLobby(String lobbyName, UUID host) throws RemoteException {
@@ -83,13 +91,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean kickFromLobby(UUID client) throws RemoteException {
-//        for (Game game : gameList) {
-//            if (game.getId().equals(lobbyId)) {
-//                return game.kick(client);
-//            }
-//        }
-        return false;
+    public boolean kickClient(UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException {
+        return Packet.execute(new PacketKick(reasonType, message, client)).getResult();
     }
 
     @Override

@@ -1,12 +1,8 @@
 package ateamproject.kezuino.com.github.network;
 
-import ateamproject.kezuino.com.github.network.packet.IPacketSender;
-
-import java.rmi.registry.Registry;
-
-public interface IServer extends IPacketSender {
+public interface IServer {
     /**
-     * Starts up this {@link IServer} listening on connections to this computer on port {@value Registry#REGISTRY_PORT}.
+     * Starts up this {@link IServer} listening on connections to this computer on a port.
      */
     void start();
 

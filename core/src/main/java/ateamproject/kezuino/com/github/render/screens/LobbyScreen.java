@@ -39,7 +39,7 @@ public class LobbyScreen extends BaseScreen {
         super(game);
         this.lobbyName = lobbyname;
         try {
-            client = Client.getInstance();
+            client = Client.getInstance(game);
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -52,7 +52,7 @@ public class LobbyScreen extends BaseScreen {
     public LobbyScreen(com.badlogic.gdx.Game game, UUID lobbyId) {
         super(game);
         try {
-            client = Client.getInstance();
+            client = Client.getInstance(game);
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }

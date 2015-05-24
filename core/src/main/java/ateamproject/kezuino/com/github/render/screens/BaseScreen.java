@@ -19,7 +19,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.ArrayList;
@@ -40,7 +39,6 @@ public abstract class BaseScreen implements Screen {
     protected Stage stage;
     protected Skin skin;
     protected InputMultiplexer inputs;
-
     public BaseScreen(Game game) {
         // Bootstrap screen.
         renderers = new ArrayList<>();
@@ -63,6 +61,14 @@ public abstract class BaseScreen implements Screen {
         camera = stage.getCamera();
         viewport = new FitViewport(stage.getWidth(), stage.getHeight(), camera);
         stage.setViewport(viewport);
+    }
+
+    public Stage getStage() {
+        return stage;
+    }
+
+    public Skin getSkin() {
+        return skin;
     }
 
     @Override

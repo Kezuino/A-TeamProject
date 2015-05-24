@@ -5,23 +5,21 @@
  */
 package ateamproject.kezuino.com.github.network;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.util.HashSet;
 import java.util.UUID;
 
 /**
  * Holds information about a hosted lobby/game. Used by the {@link IServer} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.
  */
-public class Game {
+public class Game<TClient extends IClient> {
 
     protected UUID id;
     protected String name;
-    protected HashSet<IClient> clients;
+    protected HashSet<TClient> clients;
 
     protected boolean inGame;
 
-    public Game(String name, IClient host) {
+    public Game(String name, TClient host) {
         // Generate UUID and give lobby a name
         this.id = UUID.randomUUID();
         this.name = name;
@@ -34,48 +32,46 @@ public class Game {
         clients.add(host);
     }
 
-
+    /**
+     * Gets the {@link UUID id} of this {@link Game}.
+     *
+     * @return {@link UUID id} of this {@link Game}.
+     */
     public UUID getId() {
         return id;
     }
 
+    /**
+     * Gets the name of the game / lobby.
+     *
+     * @return Name of the game / lobby.
+     */
     public String getName() {
         return name;
     }
 
-    public HashSet<IClient> getClients() {
+    /**
+     * Gets all {@link IClient clients} that are currently in this game / lobby.
+     *
+     * @return All {@link IClient clients} that are currently in this game / lobby.
+     */
+    public HashSet<TClient> getClients() {
         return clients;
     }
 
-//    /**
-//     * Tries to drop a {@link IProtocolClient} based on the name.
-//     *
-//     * @param client {@link IProtocolClient}'s name to find and drop out.
-//     * @return True if {@link IProtocolClient} was found and dropped. False otherwise.
-//     */
-//    public boolean kick(IClient client) {
-//        if (client == null) return false;
-//        IClient match = clients.stream()
-//                               .filter(c -> c.getName().equalsIgnoreCase(client.getName()))
-//                               .findAny()
-//                               .orElse(null);
-//        if (match == null) {
-//            return false;
-//        }
-//
-//        match.send(new PacketKick(null, new IClient[] { client }));
-//        return true;
-//    }
-
-    public boolean invite(IClient client) {
-        if (client == null) return false;
-
-        throw new NotImplementedException();
-
-        //return true;
-    }
-
+    /**
+     * Gets if true, {@link IClient clients} are currently playing. False if {@link IClient clients} are in the lobby.
+     *
+     * @return If true, {@link IClient clients} are currently playing. False if {@link IClient clients} are in the lobby.
+     */
     public boolean isInGame() {
         return inGame;
+    }
+
+    /**
+     * Set to true when {@link IClient clients} are currently playing. False if {@link IClient clients} are in the lobby.
+     */
+    public void setInGame(boolean inGame) {
+        this.inGame = inGame;
     }
 }

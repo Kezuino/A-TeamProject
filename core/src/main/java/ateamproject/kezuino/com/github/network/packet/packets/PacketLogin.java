@@ -11,6 +11,9 @@ public class PacketLogin extends Packet<UUID> {
     @PacketField(1)
     protected String password;
 
+    public PacketLogin() {
+    }
+
     public PacketLogin(String username, String password, UUID... senderAndReceivers) {
         super(senderAndReceivers);
         this.username = username;

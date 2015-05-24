@@ -1,20 +1,32 @@
 package ateamproject.kezuino.com.github.network.packet;
 
 import ateamproject.kezuino.com.github.network.IClient;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 
+@SuppressWarnings("unchecked")
 public abstract class Packet<TResult> {
+    /**
+     * All functions that have a return value are stored here.
+     */
     protected static HashMap<Class<?>, IPacketFunction> registeredFunctions;
+    /**
+     * All actions that do not have a return value are stored here.
+     */
     protected static HashMap<Class<?>, IPacketAction> registeredActions;
+
+    /**
+     * Cached fields of all the {@link Packet packets} that have been serialized before.
+     */
+    protected static HashMap<Class<?>, List<Field>> orderedPacketFields;
 
     static {
         registeredFunctions = new HashMap<>();
         registeredActions = new HashMap<>();
+        orderedPacketFields = new HashMap<>();
     }
 
     /**
@@ -37,6 +49,13 @@ public abstract class Packet<TResult> {
     protected TResult result;
 
     /**
+     * Empty constructor for serializing.
+     */
+    public Packet() {
+        receivers = new HashSet<>();
+    }
+
+    /**
      * Initializes the fields of the {@link Packet} and sets it's {@link #sender} and all (optional) {@link #receivers}.
      *
      * @param senderAndReceivers First index is the sender, the others are all the receivers of this {@link Packet}.
@@ -48,7 +67,7 @@ public abstract class Packet<TResult> {
      *                           </p>
      */
     protected Packet(UUID... senderAndReceivers) {
-        receivers = new HashSet<>();
+        this();
         if (senderAndReceivers == null || senderAndReceivers.length == 0) return;
 
         if (senderAndReceivers.length > 0) sender = senderAndReceivers[0];
@@ -104,9 +123,118 @@ public abstract class Packet<TResult> {
         registeredActions.put(clazz, action);
     }
 
+
+    /**
+     * Unregisters all methods that have a binding to a method.
+     */
     public static void unregisterAll() {
         if (registeredFunctions != null) registeredFunctions.clear();
         if (registeredActions != null) registeredActions.clear();
+    }
+
+    /**
+     * Gets all the {@link PacketField fields} in order that they are specified.
+     *
+     * @param clazz Type of {@link Packet} to fetch the {@link PacketField fields} from.
+     * @return All the {@link PacketField fields} in order that they are specified.
+     */
+    private static <TPacket extends Packet> List<Field> getPacketFields(Class<TPacket> clazz) {
+        if (clazz == null) throw new IllegalArgumentException("Parameter packet must not be null.");
+
+        // Return if cached already.
+        List<Field> result = Packet.orderedPacketFields.get(clazz);
+        if (result == null) {
+            result = new ArrayList<>();
+            Packet.orderedPacketFields.put(clazz, result);
+        }
+        if (!result.isEmpty()) return result;
+
+        // Get PacketField annotated fields.
+        Field[] declaredFields = clazz.getDeclaredFields();
+        for (int i = 0; i <declaredFields.length; i++) {
+            if (declaredFields[i].getAnnotation(PacketField.class) != null) {
+                result.add(declaredFields[i]);
+            }
+        }
+
+        // Sort the fields based on order.
+        Collections.sort(result, (f1, f2) -> Byte.compare(f1.getAnnotation(PacketField.class).value(), f2.getAnnotation(PacketField.class).value()));
+
+        return result;
+    }
+
+
+    /**
+     * Deserializes the byte array given by {@code data} and stores it in this {@link Packet}.
+     *
+     * @param data Byte array containg the {@link Packet} information to be deserialized.
+     * @return {@link Packet} filled by the data from the given {@code data} byte array.
+     */
+    public static <T extends Packet> T deserialize(byte[] data) {
+        ByteArrayInputStream bis = new ByteArrayInputStream(data);
+        ObjectInput in = null;
+        Packet result = null;
+
+        try {
+            in = new ObjectInputStream(bis);
+
+            // Build package name.
+            String packageName = Packet.class.getTypeName();
+
+            // Read packet type
+            packageName = packageName.substring(0, packageName.lastIndexOf('.')) + ".packets.Packet" + in.readUTF();
+
+            // Initialize packet.
+            try {
+                result = (T) Class.forName(packageName).getConstructor().newInstance();
+            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
+                e.printStackTrace();
+            }
+
+            if (result == null) {
+                throw new IllegalStateException("Packet could not be found or casted to the right Packet type.");
+            }
+
+            // Read sender.
+            if (in.readByte() == 1) {
+                result.sender = new UUID(in.readLong(), in.readLong());
+            }
+
+            // Read receivers.
+            short receiverCount = in.readShort();
+            for (int i = 0; i < receiverCount; i++) {
+                result.receivers.add(new UUID(in.readLong(), in.readLong()));
+            }
+
+            // Read all fields in order to byte stream.
+            final ObjectInput finalIn = in;
+            final Packet finalResult = result;
+            for (Field f : getPacketFields(result.getClass())) {
+                try {
+                    f.setAccessible(true);
+                    f.set(finalResult, finalIn.readObject());
+                } catch (IOException | IllegalAccessException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (IOException | InstantiationException | IllegalAccessException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                bis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (in != null) {
+                    in.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return (T) result;
     }
 
     public TResult getResult() {
@@ -162,14 +290,63 @@ public abstract class Packet<TResult> {
      * @return Bytes that contain the data of the {@link PacketField fields} in order.
      */
     public byte[] serialize() {
-        throw new NotImplementedException();
-    }
+        // Create byte stream.
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        ObjectOutput out = null;
 
-    /**
-     * Deserializes the byte array given by {@code data} and stores it in this {@link Packet}.
-     */
-    public void deserialize(byte[] data) {
-        throw new NotImplementedException();
+        try {
+            out = new ObjectOutputStream(bos);
+            final ObjectOutput finalOut = out;
+
+            // Write packet type.
+            out.writeUTF(this.getClass().getSimpleName().replace("Packet", ""));
+
+            // Write sender.
+            if (sender != null) {
+                out.writeByte(1);
+                out.writeLong(sender.getMostSignificantBits());
+                out.writeLong(sender.getLeastSignificantBits());
+            } else {
+                out.writeByte(0);
+            }
+
+            // Write receivers.
+            out.writeShort(receivers.size());
+            for (UUID receiver : receivers) {
+                out.writeLong(receiver.getMostSignificantBits());
+                out.writeLong(receiver.getLeastSignificantBits());
+            }
+
+            // Write all fields in order to byte stream.
+            getPacketFields(this.getClass()).forEach(f -> {
+                try {
+                    f.setAccessible(true);
+                    finalOut.writeObject(f.get(this));
+                } catch (IOException | IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            });
+
+            out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            // Close all streams nicely.
+            try {
+                bos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return bos.toByteArray();
     }
 
     /**

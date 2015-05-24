@@ -5,9 +5,9 @@
  */
 package ateamproject.kezuino.com.github.network;
 
+import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
+import com.badlogic.gdx.Game;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -15,11 +15,19 @@ import java.util.UUID;
 /**
  * @author Kez and Jules
  */
-public class Client implements IClient {
+public abstract class Client implements IClient, IPacketSender {
     protected HashMap<Integer, UUID> players;
+    protected Game game;
+    protected long secondsFromLastUpdate;
+    protected Thread updateThread;
+    protected boolean isUpdating;
+    private UUID id;
 
-    protected Client() {
-        players = new HashMap<>(8);
+    public Client(com.badlogic.gdx.Game game) {
+        this.game = game;
+        this.players = new HashMap<>(8);
+        this.secondsFromLastUpdate = System.nanoTime();
+        this.isUpdating = true;
     }
 
     /**
@@ -37,23 +45,44 @@ public class Client implements IClient {
 
     @Override
     public UUID getId() {
-        return null;
+        return id;
+    }
+
+    /**
+     * Sets the {@link UUID} used by this {@link Client} to identify itself with the {@link Server}.
+     *
+     * @param id
+     */
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     @Override
     public void send(Packet packet) {
+        this.secondsFromLastUpdate = System.nanoTime();
         Packet.execute(packet);
     }
 
     @Override
-    public void registerPackets() {
-        // TODO: Implement packets to handle services offered by the client.
-        Packet.registerAction(PacketKick.class, packet -> System.out.println("Sending kick request to server: " + packet.getReason()));
-        Packet.registerFunc(PacketLogin.class, packet -> UUID.randomUUID());
-    }
+    public abstract void registerPackets();
 
     @Override
     public void unregisterPackets() {
         Packet.unregisterAll();
+    }
+
+    /**
+     * Starts the {@link IClient} and begin making a connection with the {@link IServer}.
+     */
+    public abstract void start();
+
+    /**
+     * Stops the {@link IClient} from listening and sending to {@link IServer}.
+     */
+    public abstract void stop();
+
+    @Override
+    public double getSecondsFromLastPacket() {
+        return (System.nanoTime() - secondsFromLastUpdate) / 1000000000.0;
     }
 }

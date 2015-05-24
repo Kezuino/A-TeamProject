@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.IClient;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.render.screens.ClanFunctions;
 import ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType;
 
@@ -20,6 +21,8 @@ import java.util.UUID;
  */
 public interface IProtocolServer extends IProtocol {
     UUID login(String email, String password) throws RemoteException;
+
+    void heartbeat(UUID client) throws RemoteException;
 
     Game createLobby(String LobbyName, UUID host) throws RemoteException;
 
@@ -45,7 +48,7 @@ public interface IProtocolServer extends IProtocol {
      * @return
      * @throws RemoteException
      */
-    boolean kickFromLobby(UUID client) throws RemoteException;
+    boolean kickClient(UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException;
 
     ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
 

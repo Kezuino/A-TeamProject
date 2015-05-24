@@ -1,19 +1,29 @@
 package ateamproject.kezuino.com.github.network;
 
+import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 
 import java.util.*;
 
-public abstract class Server implements IServer {
+public abstract class Server<TClient extends IClient> implements IServer, IPacketSender {
     protected Dictionary<UUID, Game> games;
+    /**
+     * Thread used for constantly synchronizing all the clients and automatically dropping inactive ones.
+     */
+    protected Thread updateThread;
+    protected boolean isUpdating;
+    protected double secondsFromLastUpdate;
+
     /**
      * Gets or sets all {@link IClient clients} currently connected to this {@link Server}.
      */
-    protected Dictionary<UUID, IClient> clients;
+    protected Dictionary<UUID, TClient> clients;
 
     public Server() {
-        games = new Hashtable<>();
-        clients = new Hashtable<>();
+        this.games = new Hashtable<>();
+        this.clients = new Hashtable<>();
+        this.secondsFromLastUpdate = System.nanoTime();
+        this.isUpdating = true;
     }
 
     public List<Game> getGames() {
@@ -25,7 +35,7 @@ public abstract class Server implements IServer {
      *
      * @return All {@link IClient clients} currently connected to this {@link Server}.
      */
-    public List<IClient> getClients() {
+    public List<TClient> getClients() {
         return Collections.list(clients.elements());
     }
 
@@ -58,8 +68,16 @@ public abstract class Server implements IServer {
         return null;
     }
 
+    /**
+     * Unregisters all the {@link Packet packets} for this domain/process.
+     */
     @Override
     public void unregisterPackets() {
         Packet.unregisterAll();
+    }
+
+    @Override
+    public double getSecondsFromLastPacket() {
+        return (System.nanoTime() - secondsFromLastUpdate) / 1000000000.0;
     }
 }

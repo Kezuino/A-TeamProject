@@ -115,7 +115,7 @@ public class LobbyListScreen extends BaseScreen {
         List<Game> hostList = null;
 
         try {
-            Client client = Client.getInstance();
+            Client client = Client.getInstance(game);
             hostList = client.getRmi().getLobbies();
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyListScreen.class.getName()).log(Level.SEVERE, null, ex);

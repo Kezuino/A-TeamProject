@@ -5,6 +5,8 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
@@ -32,12 +34,10 @@ public class LoginScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 try {
-                    UUID remoteId = Client.getInstance().getRmi().getServer().login(txtUsername.getText(), txtPassword.getText());
-                    if (remoteId != null) {
-                        System.out.println("Login successful!");
-                    } else {
-                        System.out.println("Login failed.");
-                    }
+                    PacketLogin packet = new PacketLogin(txtUsername.getText(), txtPassword.getText());
+                    UUID remoteId = Client.getInstance(game).getRmi().getServer().login(txtUsername.getText(), txtPassword.getText());
+                    packet.setResult(remoteId);
+                    Packet.execute(packet);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

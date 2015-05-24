@@ -9,20 +9,40 @@ import java.util.UUID;
 /**
  * Kicks all the receivers from the server.
  */
-public class PacketKick extends Packet {
+public class PacketKick extends Packet<Boolean> {
     /**
      * Gets or sets the reason why the {@link IClient} was kicked.
      */
     @PacketField(0)
     protected String reason;
+    /**
+     * Gets or sets the {@link ateamproject.kezuino.com.github.network.packet.packets.PacketKick.KickReasonType} to indicate where the kick occurred.
+     */
+    @PacketField(1)
+    protected KickReasonType reasonType;
 
-    public PacketKick(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketKick() {
     }
 
-    public PacketKick(String reason, UUID... senderAndReceivers) {
+    public PacketKick(KickReasonType reasonType, UUID... senderAndReceivers) {
         super(senderAndReceivers);
+        if (reasonType == null) throw new IllegalArgumentException("Parameter reasonType must not be null.");
+        this.reasonType = reasonType;
+    }
+
+    public PacketKick(KickReasonType reasonType, String reason, UUID... senderAndReceivers) {
+        this(reasonType, senderAndReceivers);
+        this.reasonType = reasonType;
         this.reason = reason;
+    }
+
+    /**
+     * Gets {@link ateamproject.kezuino.com.github.network.packet.packets.PacketKick.KickReasonType} to indicate where the kick occurred.
+     *
+     * @return {@link ateamproject.kezuino.com.github.network.packet.packets.PacketKick.KickReasonType} to indicate where the kick occurred.
+     */
+    public KickReasonType getReasonType() {
+        return reasonType;
     }
 
     /**
@@ -31,6 +51,33 @@ public class PacketKick extends Packet {
      * @return Reason why the {@link IClient} was kicked.
      */
     public String getReason() {
-        return reason;
+        reason = reason.trim();
+        String message = "";
+
+        // Add reasonType message.
+        switch (reasonType) {
+            case GAME:
+                message += "Kicked from game";
+                break;
+            case LOBBY:
+                message += "Kicked from lobby";
+                break;
+            case QUIT:
+                message += "Kicked from server";
+                break;
+        }
+
+        // Add personal message.
+        if (reason != null && !reason.isEmpty()) {
+            message += ": " + reason;
+        }
+
+        return message + '.';
+    }
+
+    public enum KickReasonType {
+        GAME,
+        LOBBY,
+        QUIT
     }
 }

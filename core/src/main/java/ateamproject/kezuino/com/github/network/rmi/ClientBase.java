@@ -6,8 +6,7 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.Game;
-import ateamproject.kezuino.com.github.network.IClient;
-import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
@@ -59,7 +58,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     public boolean leaveLobby(UUID client) throws RemoteException {
-        return this.server.kickFromLobby(client);
+        return this.server.kickClient(client, PacketKick.KickReasonType.LOBBY, null);
     }
 
     @Override
