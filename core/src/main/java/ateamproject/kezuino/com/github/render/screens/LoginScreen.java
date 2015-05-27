@@ -39,16 +39,15 @@ public class LoginScreen extends BaseScreen {
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Boolean doesUserExists;
-                try {
-                    PacketLoginUserExists packetDoesUserExists = new PacketLoginUserExists(txtUsername.getText());
-                    Client.getInstance(game).send(packetDoesUserExists);
-                    doesUserExists = packetDoesUserExists.getResult();
-                } catch (RemoteException ex) {
-                    Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, ex);
-                }
+//                Boolean doesUserExists;
+//                try {
+//                    PacketLoginUserExists packetDoesUserExists = new PacketLoginUserExists(txtUsername.getText());
+//                    Client.getInstance(game).send(packetDoesUserExists);
+//                    doesUserExists = packetDoesUserExists.getResult();
+//                } catch (RemoteException ex) {
+//                    Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, ex);
+//                }
 
-                UUID remoteId;
                 try {
                     PacketLoginAuthenticate packet = new PacketLoginAuthenticate(txtUsername.getText(), txtPassword.getText());
                     Client.getInstance(game).send(packet);

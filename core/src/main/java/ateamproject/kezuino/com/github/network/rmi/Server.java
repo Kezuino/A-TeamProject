@@ -235,18 +235,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 return false;
             }
         });
-/*
-        Packet.registerAction(PacketCreateLobby.class, (p) -> {
-            Game game = new Game(p.getLobbyname(), p.getSender());
-            games.put(game.getId(), game);
-        });
-        
-         Packet.registerAction(PacketJoinLobby.class, (p) -> {
-            
-         // getRmi().createLobby(p.getLobbyname(), p.getSender());
-         //Game game = new Game(p.getLobbyname(), p.getSender());
-         //games.put(game.getId(), game);
-         });*/
+
 
         Packet.registerAction(PacketHeartbeat.class, packet -> System.out.println("Heartbeat received from: " + packet.getSender()));
     }
