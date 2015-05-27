@@ -28,6 +28,7 @@ public abstract class Client implements IClient, IPacketSender {
         this.players = new HashMap<>(8);
         this.secondsFromLastUpdate = System.nanoTime();
         this.isUpdating = true;
+        this.id = UUID.randomUUID();
     }
 
     /**
@@ -60,6 +61,7 @@ public abstract class Client implements IClient, IPacketSender {
     @Override
     public void send(Packet packet) {
         this.secondsFromLastUpdate = System.nanoTime();
+        Packet.execute(packet);
     }
 
     @Override

@@ -37,12 +37,9 @@ public class LoginScreen extends BaseScreen {
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                UUID remoteId;
                 try {
                     PacketLogin packet = new PacketLogin(txtUsername.getText(), txtPassword.getText());
-                    remoteId = Client.getInstance(game).getRmi().getServer().login(txtUsername.getText(), txtPassword.getText());
-                    packet.setResult(remoteId);
-                    Packet.execute(packet);
+                    Client.getInstance(game).send(packet);
                 } catch (NullPointerException|RemoteException e) {
                     System.out.println("Can't connect to the server");
 

@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class ServerLauncher {
     public static void main(String[] args) {
-        System.setProperty("java.rmi.server.hostname", "darkhellentertainment.com");
+        System.setProperty("java.rmi.server.hostname", "localhost");
         
         Scanner scanner = new Scanner(System.in);
         Server server;

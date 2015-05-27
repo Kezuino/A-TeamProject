@@ -159,5 +159,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         return packet.getResult();
     }
 
+    @Override
+    public boolean getHasConnection() throws RemoteException {
+        return clanFunctions.getHasConnection();
+    }
+
 
 }
