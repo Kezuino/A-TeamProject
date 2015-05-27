@@ -172,9 +172,35 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
         
         Packet.registerFunc(PacketHighScore.class, (packet) -> {
-            // TODO: Check if email and password work while logging into the mail provider.
-            return true;
+           // TODO: Check if email and password work while logging into the mail provider.
+            System.out.print("Login request received for account: " + packet.getClanName());
+
+            //get current score
+            PreparedStatement preparedStatement;
+            ResultSet resultSet = null;
+            ResultSet resultSetWithClans;
+
+            try {
+                preparedStatement = connect.prepareStatement("SELECT `Score` FROM `clan` WHERE Name = ?");
+                preparedStatement.setString(1, packet.getClanName());
+                resultSet = preparedStatement.executeQuery();
+                resultSet.next();
+                int id = resultSet.getInt("Score");
+
+                if (id > packet.getScore()) {
+                    preparedStatement = connect.prepareStatement("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?");
+                    preparedStatement.setInt(1, packet.getScore());
+                    preparedStatement.setString(2, packet.getClanName());
+                    resultSet = preparedStatement.executeQuery();
+                }
+                return true;
+            } catch (SQLException ex) {
+                Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            return false;
         });
+        
         Packet.registerFunc(PacketLoginUserExists.class, (packet) -> {
             System.out.print("Checking if the following user exists: " + packet.getEmail());
             PreparedStatement preparedStatement = null;
