@@ -125,17 +125,15 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     @Override
     public void registerPackets() {
         Packet.registerFunc(PacketLogin.class, packet -> {
-            UUID id = packet.getResult();
-            if (id != null) {
-                this.setId(id);
-                this.game.setScreen(new MainScreen(this.game));
-                System.out.println("Logged in as: " + id);
-            } else {
-                this.setId(null);
-                DialogHelper.show("Error", "Inloggen is mislukt.", ((d, x, y) -> d.hide()));
-                return false;
+            try {
+                UUID remoteId = Client.getInstance(game).getRmi().getServer().login(packet.getUsername(), packet.getPassword());
+                Client.getInstance(game).setId(remoteId);
+                System.out.println(remoteId);
+                return remoteId;
+            } catch (RemoteException e) {
+                e.printStackTrace();
             }
-            return true;
+            return null;
         });
 
         Packet.registerFunc(PacketCreateLobby.class, packet -> {

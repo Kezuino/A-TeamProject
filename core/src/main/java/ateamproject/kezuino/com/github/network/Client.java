@@ -60,6 +60,7 @@ public abstract class Client implements IClient, IPacketSender {
     @Override
     public void send(Packet packet) {
         this.secondsFromLastUpdate = System.nanoTime();
+        Packet.execute(packet);
     }
 
     @Override
