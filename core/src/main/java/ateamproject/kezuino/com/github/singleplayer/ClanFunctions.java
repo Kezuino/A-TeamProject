@@ -524,6 +524,99 @@ public class ClanFunctions {
             }
         }
     }
+    
+                /**
+     * Looks if a clan exists.
+     *
+     * @param clanName the name of the clan.
+     * @return true if it exists, else false.
+     */
+    private boolean clanExists(String clanName) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connect.prepareStatement("SELECT COUNT(*) AS amount FROM clan WHERE Name = ?");
+            preparedStatement.setString(1, clanName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int clans = resultSet.getInt("amount");
+
+            if (clans == 0) {
+                return false;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return true;
+    }
+
+    /**
+     * Gets the account id from a player.
+     *
+     * @param emailaddress the emailaddress to get the id from.
+     * @return the id, -1 if the player does not exists.
+     */
+    private int getAccountIdFromEmail(String emailaddress) {
+        try {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            preparedStatement = connect.prepareStatement("SELECT Id FROM account WHERE Email = ?");
+            preparedStatement.setString(1, emailaddress);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("Id");
+        } catch (SQLException ex) {          
+            return -1;
+        }
+
+        
+    }
+
+    /**
+     * Gets the manager id from a clan.
+     *
+     * @param clanName Clan name to search for.
+     * @return Id of the manager, -1 if the clan does not exists.
+     */
+    private int getManagerIdFromClanName(String clanName) {
+        try {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            preparedStatement = connect.prepareStatement("SELECT ManagerId FROM clan WHERE Name = ?");
+            preparedStatement.setString(1, clanName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("ManagerId");
+        } catch (SQLException ex) {
+            return -1;
+        }
+
+        
+    }
+
+    /**
+     * Gets the clan id from a clan.
+     *
+     * @param clanName Clan name to search for.
+     * @return Id of the clan, -1 if the clan does not exists.
+     */
+    private int getClanIdFromName(String clanName) {
+        try {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            preparedStatement = connect.prepareStatement("SELECT Id FROM clan WHERE Name = ?");
+            preparedStatement.setString(1, clanName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("Id");
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return -1;
+    }
 
 
 }
