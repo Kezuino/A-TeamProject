@@ -196,12 +196,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     preparedStatement.setInt(1, packet.getScore());
                     preparedStatement.setString(2, packet.getClanName());
                     resultSet = preparedStatement.executeQuery();
+                    return true;
                 }
-                return true;
             } catch (SQLException ex) {
                 Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
             }
-
             return false;
         });
         
