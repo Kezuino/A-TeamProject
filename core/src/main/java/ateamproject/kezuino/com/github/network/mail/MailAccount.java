@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
 public class MailAccount {
 
     private String SMTP_HOST_NAME;
-    private int SMTP_HOST_PORT = 465;
+    private final int SMTP_HOST_PORT = 465;
     private String SMTP_AUTH_USER;
     private String SMTP_AUTH_PWD;
 
