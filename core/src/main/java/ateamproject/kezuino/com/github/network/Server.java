@@ -33,28 +33,8 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
         this.clients = new Hashtable<>();
         this.secondsFromLastUpdate = System.nanoTime();
         this.isUpdating = true;
-        
-        if (!makeConnection()) {
-            System.out.println("Can't make databaseconnection!");
-        }
     }
     
-    public boolean makeConnection(){
-          try {
-            // This will load the MySQL driver, each DB has its own driver
-            Class.forName("com.mysql.jdbc.Driver");
-
-            // Setup the connection with the DB
-            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
-
-            return true;
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return false;
-    }
-
     public List<Game> getGames() {
         return Collections.list(games.elements());
     }

@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginCreateNewUser;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
@@ -39,20 +40,10 @@ public class LoginScreen extends BaseScreen {
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Boolean doesUserExists;
-                try {
-                    PacketLoginUserExists packetDoesUserExists = new PacketLoginUserExists(txtUsername.getText());
-                    Client.getInstance(game).send(packetDoesUserExists);
-                    doesUserExists = packetDoesUserExists.getResult();
-                } catch (RemoteException ex) {
-                    Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                UUID remoteId;
                 try {
                     PacketLoginAuthenticate packet = new PacketLoginAuthenticate(txtUsername.getText(), txtPassword.getText());
                     Client.getInstance(game).send(packet);
-                } catch (NullPointerException|RemoteException e) {
+                } catch (NullPointerException | RemoteException e) {
                     System.out.println("Can't connect to the server");
 
                     Dialog d = new Dialog("error", skin);
@@ -66,6 +57,56 @@ public class LoginScreen extends BaseScreen {
                     });
                     d.add(bExit);
                     d.show(stage);
+                }
+
+                try {
+                    if (Client.getInstance(game).getId() != null) {//if login did succeed
+                        PacketLoginUserExists packet = new PacketLoginUserExists(txtUsername.getText(), Client.getInstance(game).getId());
+                        Client.getInstance(game).send(packet);
+                        if (!packet.getResult()) {//if user not exists
+                            Dialog d = new Dialog("error", skin);
+                            d.add("Gebruikersnaam:");
+                            TextField f = new TextField("", skin);
+                            TextButton bExit = new TextButton("Oke", skin);
+                            bExit.addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    if (!f.getText().equals("")) {
+                                        PacketLoginCreateNewUser packet = null;
+                                        try {
+                                            packet = new PacketLoginCreateNewUser(f.getText(),txtUsername.getText(), Client.getInstance(game).getId());
+                                            Client.getInstance(game).send(packet);
+                                            Dialog d1 = null;
+                                            if (!packet.getResult()) {
+                                                d1 = new Dialog("error", skin);
+                                                d1.add("De naam bestaat al");
+                                                TextButton bExit = new TextButton("Oke", skin);
+                                                final Dialog d1Final = d1;
+                                                bExit.addListener(new ClickListener() {
+                                                    @Override
+                                                    public void clicked(InputEvent event, float x, float y) {
+                                                        d1Final.hide();
+                                                    }
+                                                });
+                                                d1.add(bExit);
+                                                d1.show(stage);
+                                            }
+                                            else{
+                                                d1.hide();
+                                                d.hide();
+                                            }
+                                        } catch (RemoteException ex) {
+                                            Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+                                    }
+                                }
+                            });
+                            d.add(bExit);
+                            d.show(stage);
+                        }
+                    }
+                } catch (RemoteException ex) {
+                    Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         });
