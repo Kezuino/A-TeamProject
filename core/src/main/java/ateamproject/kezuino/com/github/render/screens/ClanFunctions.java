@@ -215,11 +215,11 @@ public class ClanFunctions {
             resultSet = preparedStatement.executeQuery();
             resultSet.next();
             return resultSet.getInt("Id");
-        } catch (SQLException ex) {
-            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {          
+            return -1;
         }
 
-        return -1;
+        
     }
 
     /**
@@ -238,10 +238,10 @@ public class ClanFunctions {
             resultSet.next();
             return resultSet.getInt("ManagerId");
         } catch (SQLException ex) {
-            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+            return -1;
         }
 
-        return -1;
+        
     }
 
     /**
@@ -278,7 +278,9 @@ public class ClanFunctions {
         ResultSet resultSet = null;
 
         try {
-            if (getManagerIdFromClanName(clanName) == getAccountIdFromEmail(emailaddress)) {
+            int managerId = getManagerIdFromClanName(clanName);
+            int accountIdFromEmail = getAccountIdFromEmail(emailaddress);
+            if (managerId == accountIdFromEmail && managerId  != -1 && accountIdFromEmail != -1) {
                 return InvitationType.INVITE;//if user is owner of clan, he can invite
             }
 

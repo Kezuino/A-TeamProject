@@ -98,6 +98,17 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         }
     }
 
+    /**
+     * Executes the given {@link Packet} based on the registered function or action.
+     * For RMI, the packet executes a RMI function directly.
+     *
+     * @param packet {@link Packet} to send to the {@link Client}.
+     */
+    @Override
+    public void send(Packet packet) {
+        Packet.execute(packet);
+    }
+
     @Override
     public void registerPackets() {
         Packet.registerFunc(PacketKick.class, (packet) -> {

@@ -38,10 +38,6 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
         return Collections.list(clients.elements());
     }
 
-    public void send(Packet packet) {
-        Packet.execute(packet);
-    }
-
     /**
      * Gets the {@link IClient} based on the private id. Can be null.
      *
