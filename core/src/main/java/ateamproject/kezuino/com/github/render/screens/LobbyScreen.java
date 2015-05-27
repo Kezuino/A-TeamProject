@@ -82,7 +82,7 @@ public class LobbyScreen extends BaseScreen {
         try {
             client.getRmi().joinLobby(this.lobbyId, client.getPlayer(0));
             
-            client.send(new PacketJoinLobby(this.lobbyId, client.getId()));
+            //client.send(new PacketJoinLobby(this.lobbyId, client.getId()));
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }

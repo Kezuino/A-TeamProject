@@ -161,15 +161,16 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         server.send(packet);
         return packet.getResult();
     }
+
+    @Override
+    public boolean getHasConnection() throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public boolean setScore(String clanName, int score) throws RemoteException {
         PacketHighScore packet = new PacketHighScore(clanName, score);
         server.send(packet);
         return packet.getResult();
     }
-
-    @Override
-    public boolean getHasConnection() throws RemoteException {
-        return clanFunctions.getHasConnection();
-    }
-
-
 }
