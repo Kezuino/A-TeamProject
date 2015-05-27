@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.IClient;
 import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 
 import java.rmi.RemoteException;
@@ -28,7 +29,7 @@ public interface IProtocolServer extends IProtocol {
 
     UUID createLobby(String LobbyName, UUID host) throws RemoteException;
 
-    List<Game> getLobbies() throws RemoteException;
+    List<PacketGetLobbies.GetLobbiesData> getLobbies() throws RemoteException;
 
     Game getLobbyById(UUID lobbyId) throws RemoteException;
 

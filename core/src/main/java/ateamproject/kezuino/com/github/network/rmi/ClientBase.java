@@ -37,13 +37,6 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    //public Game createLobby(String lobbyName, UUID host) throws RemoteException {
-    //    return this.server.createLobby(lobbyName, host);
-    //}
-
-    public List<Game> getLobbies() throws RemoteException {
-        return this.server.getLobbies();
-    }
 
     public Game getLobbyById(UUID lobbyId) throws RemoteException {
         return this.server.getLobbyById(lobbyId);

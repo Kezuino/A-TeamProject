@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
@@ -17,6 +18,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
@@ -55,7 +57,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         // add lobby to games array
 
         Game newGame = new Game(lobbyName, server.getClientFromPublic(host).getId());
-        server.getGames().add(newGame);
+        server.addGame(newGame);
 
         System.out.println("Lobby: " + newGame.getName() + " - id " + newGame.getId() + " CREATED !");
 
@@ -63,8 +65,15 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public List<Game> getLobbies() throws RemoteException {
-        return new ArrayList<>(this.server.getGames());
+    public List<PacketGetLobbies.GetLobbiesData> getLobbies() throws RemoteException {
+        List<PacketGetLobbies.GetLobbiesData> result = new ArrayList<>();
+        for (Game game : this.server.getGames()) {
+            result.add(new PacketGetLobbies.GetLobbiesData(game.getName(), 
+                    game.getId(), 
+                    game.getClients().size(), 
+                    "TODO NAME"));
+        }
+        return result;
     }
 
     @Override

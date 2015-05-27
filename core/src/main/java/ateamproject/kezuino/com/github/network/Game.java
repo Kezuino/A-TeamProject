@@ -6,12 +6,13 @@
 package ateamproject.kezuino.com.github.network;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.UUID;
 
 /**
  * Holds information about a hosted lobby/game. Used by the {@link IServer} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.
  */
-public class Game<TClient extends IClient> {
+public class Game {
 
     protected UUID id;
     protected String name;
@@ -73,5 +74,9 @@ public class Game<TClient extends IClient> {
      */
     public void setInGame(boolean inGame) {
         this.inGame = inGame;
+    }
+    
+    public UUID getHostId() {
+        return this.getClients().stream().findFirst().orElse(null);
     }
 }
