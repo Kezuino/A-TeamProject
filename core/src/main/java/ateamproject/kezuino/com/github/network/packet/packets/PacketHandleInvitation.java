@@ -7,7 +7,8 @@ package ateamproject.kezuino.com.github.network.packet.packets;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketField;
-import ateamproject.kezuino.com.github.singleplayer.ClanFunctions.InvitationType;
+import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
+
 import java.util.UUID;
 
 /**

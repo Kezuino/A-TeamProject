@@ -2,6 +2,8 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
+import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
@@ -118,12 +120,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public ClanFunctions.InvitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException {
+    public InvitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException {
         return clanFunctions.getInvitation(clanName, emailaddress);
     }
 
     @Override
-    public ClanFunctions.ManagementType getManagement(String clanName, String emailaddress) throws RemoteException {
+    public ManagementType getManagement(String clanName, String emailaddress) throws RemoteException {
         return clanFunctions.getManagement(clanName, emailaddress);
     }
 
@@ -133,12 +135,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean handleInvitation(ClanFunctions.InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException {
+    public boolean handleInvitation(InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException {
         return clanFunctions.handleInvitation(invite, clanName, emailAddress, nameOfInvitee);
     }
 
     @Override
-    public boolean handleManagement(ClanFunctions.ManagementType manage, String clanName, String emailaddress) throws RemoteException {
+    public boolean handleManagement(ManagementType manage, String clanName, String emailaddress) throws RemoteException {
         return clanFunctions.handleManagement(manage, clanName, emailaddress);
     }
 

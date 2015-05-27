@@ -5,6 +5,8 @@
  */
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
+import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import java.sql.*;
 import java.util.ArrayList;
@@ -181,11 +183,11 @@ public class ClanFunctions {
     
 
     /**
-     * Gets the {@link ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType} for a given clan and a given {@code emailaddress}.
+     * Gets the {@link InvitationType} for a given clan and a given {@code emailaddress}.
      *
      * @param clanName     Name of the clan.
      * @param emailaddress {@code emailaddress} of who is in the clan.
-     * @return {@link ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType}, or null if failed.
+     * @return {@link InvitationType}, or null if failed.
      */
     public InvitationType getInvitation(String clanName, String emailaddress) {
         PreparedStatement preparedStatement = null;
