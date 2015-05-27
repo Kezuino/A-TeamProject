@@ -170,9 +170,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             System.out.println(" .. login credentials not valid.");
             return null;
         });
+        
         Packet.registerFunc(PacketHighScore.class, (packet) -> {
             // TODO: Check if email and password work while logging into the mail provider.
             System.out.print("Login request received for account: " + packet.getClanName());
+            return true;
+        });
 
         Packet.registerFunc(PacketLoginUserExists.class, (packet) -> {
             System.out.print("Checking if the following user exists: " + packet.getEmail());

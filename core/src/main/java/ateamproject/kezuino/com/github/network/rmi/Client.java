@@ -9,7 +9,6 @@ import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
-import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import ateamproject.kezuino.com.github.utility.graphics.DialogHelper;
 import com.badlogic.gdx.Game;
@@ -20,8 +19,6 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Kez and Jules
@@ -137,15 +134,5 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
             return true;
         });
-
-        Packet.registerFunc(PacketCreateLobby.class, packet -> {
-            try {
-                getRmi().createLobby(packet.getLobbyname(), packet.getSender());
-                return true;
-            } catch (RemoteException ex) {
-                return false;
-            }
-        });
-
     }
 }

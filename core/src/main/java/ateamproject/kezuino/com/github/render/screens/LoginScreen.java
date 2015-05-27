@@ -5,7 +5,6 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
 import ateamproject.kezuino.com.github.network.rmi.Client;
@@ -51,7 +50,7 @@ public class LoginScreen extends BaseScreen {
 
                 UUID remoteId;
                 try {
-                    PacketLogin packet = new PacketLogin(txtUsername.getText(), txtPassword.getText());
+                    PacketLoginAuthenticate packet = new PacketLoginAuthenticate(txtUsername.getText(), txtPassword.getText());
                     Client.getInstance(game).send(packet);
                 } catch (NullPointerException|RemoteException e) {
                     System.out.println("Can't connect to the server");
