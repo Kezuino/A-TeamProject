@@ -167,7 +167,7 @@ public class ClanFunctions {
             try {
                 connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
             } catch (Exception ex) {
-                System.out.println("DATABASE NOT AVAILABLE!");
+                return false;
             }
 
             return true;

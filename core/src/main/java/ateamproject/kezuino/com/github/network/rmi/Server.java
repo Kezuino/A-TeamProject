@@ -46,11 +46,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // This will load the MySQL driver, each DB has its own driver
             Class.forName("com.mysql.jdbc.Driver");
 
-            // Setup the connection with the DB
-            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
+            try {
+                // Setup the connection with the DB
+                connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
+            } catch (Exception ex) {
+                return false;
+            }
 
             return true;
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
 
