@@ -3,18 +3,25 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.mail.MailAccount;
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateClan;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketFillTable;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetEmail;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetHasConnection;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetInvitation;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetManagement;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetPeople;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetUsername;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleInvitation;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleManagement;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketSetUsername;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 
@@ -178,8 +185,31 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
         
         Packet.registerFunc(PacketGetInvitation.class, (packet)-> {
-            //return clanFunctions(null, packet.getClanName(), packet.getEmailadres(), null);
-            return null;
+            return clanFunctions.getInvitation(packet.getClanName(), packet.getEmailadres());
+        });
+        
+        Packet.registerFunc(PacketGetManagement.class, (packet)-> {
+            return clanFunctions.getManagement(packet.getClanName(), packet.getEmailadres());
+        });
+        
+        Packet.registerFunc(PacketGetPeople.class, (packet)-> {
+            return clanFunctions.getPeople(packet.getClanName());
+        });
+        
+        Packet.registerFunc(PacketGetUsername.class, (packet)-> {
+            return clanFunctions.getUsername(packet.getEmailadres());
+        });
+        
+        Packet.registerFunc(PacketHandleInvitation.class, (packet)-> {
+            return clanFunctions.handleInvitation(packet.getInvite(),packet.getClanName(),packet.getEmailadres(),packet.getNameOfInvitee());
+        });
+        
+        Packet.registerFunc(PacketHandleManagement.class, (packet)-> {
+            return clanFunctions.handleManagement(packet.getManage(),packet.getClanName(), packet.getEmailadres());
+        });
+        
+        Packet.registerFunc(PacketSetUsername.class, (packet)-> {
+            return clanFunctions.setUsername(packet.getName(), packet.getEmailadres());
         });
 
         Packet.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
