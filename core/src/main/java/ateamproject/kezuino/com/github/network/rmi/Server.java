@@ -5,6 +5,10 @@ import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateClan;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketFillTable;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetEmail;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetHasConnection;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetInvitation;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
@@ -159,6 +163,23 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         Packet.registerFunc(PacketCreateClan.class, (packet)-> {
             System.out.print("Create clan packet received");
             return clanFunctions.createClan(packet.getClanName(), packet.getEmailadres());
+        });
+        
+        Packet.registerFunc(PacketFillTable.class, (packet)-> {
+            return clanFunctions.fillTable(packet.getEmailadres());
+        });
+         
+        Packet.registerFunc(PacketGetEmail.class, (packet)-> {
+            return clanFunctions.getEmail(packet.getUsername());
+        });
+        
+        Packet.registerFunc(PacketGetHasConnection.class, (packet)-> {
+            return clanFunctions.getHasConnection();
+        });
+        
+        Packet.registerFunc(PacketGetInvitation.class, (packet)-> {
+            //return clanFunctions(null, packet.getClanName(), packet.getEmailadres(), null);
+            return null;
         });
 
         Packet.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
