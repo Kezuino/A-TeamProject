@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ateamproject.kezuino.com.github.render.screens;
+package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,8 +43,8 @@ public class ClanFunctions {
      *                     searched for.
      * @return the String array which contains all the clan names.
      */
-    public List<String> fillTable(String emailaddress) {
-        List<String> clans = new ArrayList<>();
+    public ArrayList<String> fillTable(String emailaddress) {
+        ArrayList<String> clans = new ArrayList<>();
 
         PreparedStatement preparedStatement;
         ResultSet resultSet = null;

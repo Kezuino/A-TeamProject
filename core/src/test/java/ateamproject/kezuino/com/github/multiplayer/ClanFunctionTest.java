@@ -5,9 +5,9 @@
  */
 package ateamproject.kezuino.com.github.multiplayer;
 
-import ateamproject.kezuino.com.github.render.screens.ClanFunctions;
-import ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType;
-import ateamproject.kezuino.com.github.render.screens.ClanFunctions.ManagementType;
+import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
+import ateamproject.kezuino.com.github.singleplayer.ClanFunctions.InvitationType;
+import ateamproject.kezuino.com.github.singleplayer.ClanFunctions.ManagementType;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;

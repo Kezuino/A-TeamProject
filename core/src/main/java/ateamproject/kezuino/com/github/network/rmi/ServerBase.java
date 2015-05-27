@@ -5,7 +5,7 @@ import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
-import ateamproject.kezuino.com.github.render.screens.ClanFunctions;
+import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
