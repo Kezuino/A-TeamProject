@@ -20,11 +20,6 @@ public class PacketSetUsername extends Packet<Boolean> {
     @PacketField(1)
     protected String emailadres;
 
-    public PacketSetUsername(String name, String emailadres) {
-        this.name = name;
-        this.emailadres = emailadres;
-    }
-
     public PacketSetUsername(String name, String emailadres, UUID... senderAndReceivers) {
         super(senderAndReceivers);
         this.name = name;

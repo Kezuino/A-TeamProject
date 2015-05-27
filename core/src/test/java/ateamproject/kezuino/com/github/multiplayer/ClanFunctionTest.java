@@ -5,16 +5,15 @@
  */
 package ateamproject.kezuino.com.github.multiplayer;
 
+import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
+import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
-import ateamproject.kezuino.com.github.singleplayer.ClanFunctions.InvitationType;
-import ateamproject.kezuino.com.github.singleplayer.ClanFunctions.ManagementType;
-import java.util.ArrayList;
-import java.util.List;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**

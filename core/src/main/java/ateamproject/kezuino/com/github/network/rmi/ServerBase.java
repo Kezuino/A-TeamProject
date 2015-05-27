@@ -2,6 +2,8 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
+import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
@@ -49,7 +51,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public Game createLobby(String lobbyName, UUID host) throws RemoteException {
+    public UUID createLobby(String lobbyName, UUID host) throws RemoteException {
         // add lobby to games array
 
         Game newGame = new Game(lobbyName, server.getClientFromPublic(host).getId());
@@ -57,7 +59,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
         System.out.println("Lobby: " + newGame.getName() + " - id " + newGame.getId() + " CREATED !");
 
-        return newGame;
+        return newGame.getId();
     }
 
     @Override
@@ -77,6 +79,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public Game joinLobby(UUID lobbyId, UUID client) throws RemoteException {
+        server.findGame(lobbyId).getClients().add(client);
+        
         //        for (Game game : gameList) {
 //            if (game.getId().equals(lobbyId)) {
 //                if (game.invite(client)) {
@@ -116,12 +120,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public ClanFunctions.InvitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException {
+    public InvitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException {
         return clanFunctions.getInvitation(clanName, emailaddress);
     }
 
     @Override
-    public ClanFunctions.ManagementType getManagement(String clanName, String emailaddress) throws RemoteException {
+    public ManagementType getManagement(String clanName, String emailaddress) throws RemoteException {
         return clanFunctions.getManagement(clanName, emailaddress);
     }
 
@@ -131,12 +135,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean handleInvitation(ClanFunctions.InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException {
+    public boolean handleInvitation(InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException {
         return clanFunctions.handleInvitation(invite, clanName, emailAddress, nameOfInvitee);
     }
 
     @Override
-    public boolean handleManagement(ClanFunctions.ManagementType manage, String clanName, String emailaddress) throws RemoteException {
+    public boolean handleManagement(ManagementType manage, String clanName, String emailaddress) throws RemoteException {
         return clanFunctions.handleManagement(manage, clanName, emailaddress);
     }
 

@@ -6,7 +6,9 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
@@ -33,7 +35,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     protected Client() throws RemoteException {
         super(null);
 
-        System.setProperty("pactales.client.servername", "darkhellentertainment.com");
+        System.setProperty("pactales.client.servername", "localhost");
         System.setProperty("pactales.client.serverobject", "server");
         rmi = new ClientBase(this);
     }
@@ -41,7 +43,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     protected Client(Game game) throws RemoteException {
         super(game);
 
-        System.setProperty("pactales.client.servername", "darkhellentertainment.com");
+        System.setProperty("pactales.client.servername", "localhost");
         System.setProperty("pactales.client.serverobject", "server");
         rmi = new ClientBase(this);
     }
@@ -124,7 +126,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     @Override
     public void registerPackets() {
         Packet.registerFunc(PacketLoginAuthenticate.class, packet -> {
-            UUID id = packet.getResult();
+            UUID id = null;
+            try {
+                id = getRmi().getServer().login(packet.getUsername(), packet.getPassword());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
             if (id != null) {
                 this.setId(id);
                 this.game.setScreen(new MainScreen(this.game));
@@ -145,5 +153,29 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 }
             return false;
         });
+        
+        Packet.registerAction(PacketCreateLobby.class, (p) -> {
+            
+            try {
+                getRmi().getServer().createLobby(p.getLobbyname(), p.getSender());
+                
+                // ateamproject.kezuino.com.github.network.Game game = new ateamproject.kezuino.com.github.network.Game(p.getLobbyname(), p.getSender());
+                //games.put(game.getId(), game);
+            } catch (RemoteException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        
+         Packet.registerAction(PacketJoinLobby.class, (p) -> {
+            try {
+                getRmi().getServer().joinLobby(p.getLobbyid(), p.getSender());
+                // getRmi().createLobby(p.getLobbyname(), p.getSender());
+                //Game game = new Game(p.getLobbyname(), p.getSender());
+                //games.put(game.getId(), game);
+            } catch (RemoteException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+         });
+        
     }
 }

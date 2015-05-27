@@ -3,14 +3,28 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.mail.MailAccount;
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateClan;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketFillTable;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetEmail;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetHasConnection;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetInvitation;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetManagement;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetPeople;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetUsername;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleInvitation;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleManagement;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginCreateNewUser;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketSetUsername;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
+import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
@@ -32,6 +46,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
     private static Server instance;
     protected ServerBase rmi;
     private Connection connect = null;
+    private ClanFunctions clanFunctions = new ClanFunctions();
 
     public Server() throws RemoteException {
         super();
@@ -47,11 +62,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // This will load the MySQL driver, each DB has its own driver
             Class.forName("com.mysql.jdbc.Driver");
 
-            // Setup the connection with the DB
-            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
+            try {
+                // Setup the connection with the DB
+                connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
+            } catch (Exception ex) {
+                return false;
+            }
 
             return true;
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -148,6 +167,51 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             return true;
         });
+        
+        Packet.registerFunc(PacketCreateClan.class, (packet)-> {
+            System.out.print("Create clan packet received");
+            return clanFunctions.createClan(packet.getClanName(), packet.getEmailadres());
+        });
+        
+        Packet.registerFunc(PacketFillTable.class, (packet)-> {
+            return clanFunctions.fillTable(packet.getEmailadres());
+        });
+         
+        Packet.registerFunc(PacketGetEmail.class, (packet)-> {
+            return clanFunctions.getEmail(packet.getUsername());
+        });
+        
+        Packet.registerFunc(PacketGetHasConnection.class, (packet)-> {
+            return clanFunctions.getHasConnection();
+        });
+        
+        Packet.registerFunc(PacketGetInvitation.class, (packet)-> {
+            return clanFunctions.getInvitation(packet.getClanName(), packet.getEmailadres());
+        });
+        
+        Packet.registerFunc(PacketGetManagement.class, (packet)-> {
+            return clanFunctions.getManagement(packet.getClanName(), packet.getEmailadres());
+        });
+        
+        Packet.registerFunc(PacketGetPeople.class, (packet)-> {
+            return clanFunctions.getPeople(packet.getClanName());
+        });
+        
+        Packet.registerFunc(PacketGetUsername.class, (packet)-> {
+            return clanFunctions.getUsername(packet.getEmailadres());
+        });
+        
+        Packet.registerFunc(PacketHandleInvitation.class, (packet)-> {
+            return clanFunctions.handleInvitation(packet.getInvite(),packet.getClanName(),packet.getEmailadres(),packet.getNameOfInvitee());
+        });
+        
+        Packet.registerFunc(PacketHandleManagement.class, (packet)-> {
+            return clanFunctions.handleManagement(packet.getManage(),packet.getClanName(), packet.getEmailadres());
+        });
+        
+        Packet.registerFunc(PacketSetUsername.class, (packet)-> {
+            return clanFunctions.setUsername(packet.getName(), packet.getEmailadres());
+        });
 
         Packet.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
             System.out.print("Login request received for account: " + packet.getUsername());
@@ -173,10 +237,34 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         Packet.registerFunc(PacketHighScore.class, (packet) -> {
-            // TODO: Check if email and password work while logging into the mail provider.
-            return true;
-        });
+           // TODO: Check if email and password work while logging into the mail provider.
+            System.out.print("Login request received for account: " + packet.getClanName());
 
+            //get current score
+            PreparedStatement preparedStatement;
+            ResultSet resultSet = null;
+            ResultSet resultSetWithClans;
+
+            try {
+                preparedStatement = connect.prepareStatement("SELECT `Score` FROM `clan` WHERE Name = ?");
+                preparedStatement.setString(1, packet.getClanName());
+                resultSet = preparedStatement.executeQuery();
+                resultSet.next();
+                int id = resultSet.getInt("Score");
+
+                if (id > packet.getScore()) {
+                    preparedStatement = connect.prepareStatement("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?");
+                    preparedStatement.setInt(1, packet.getScore());
+                    preparedStatement.setString(2, packet.getClanName());
+                    resultSet = preparedStatement.executeQuery();
+                    return true;
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return false;
+        });
+        
         Packet.registerFunc(PacketLoginCreateNewUser.class, (packet) -> {
             System.out.print("Creating following user in database: " + packet.getUsername());
             PreparedStatement preparedStatement = null;
@@ -231,18 +319,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
         });
 
-        Packet.registerAction(PacketCreateLobby.class, (p) -> {
-            Game game = new Game(p.getLobbyname(), p.getSender());
-            games.put(game.getId(), game);
-        });
-        /*
-         Packet.registerAction(PacketCreateLobby.class, (p) -> {
-            
-         // getRmi().createLobby(p.getLobbyname(), p.getSender());
-         //Game game = new Game(p.getLobbyname(), p.getSender());
-         //games.put(game.getId(), game);
-         });*/
 
         Packet.registerAction(PacketHeartbeat.class, packet -> System.out.println("Heartbeat received from: " + packet.getSender()));
     }
+    
+
 }

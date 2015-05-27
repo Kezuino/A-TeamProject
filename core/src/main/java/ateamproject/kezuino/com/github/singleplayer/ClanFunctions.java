@@ -5,6 +5,8 @@
  */
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
+import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import java.sql.*;
 import java.util.ArrayList;
@@ -178,105 +180,14 @@ public class ClanFunctions {
         return false;
     }
 
-    /**
-     * Looks if a clan exists.
-     *
-     * @param clanName the name of the clan.
-     * @return true if it exists, else false.
-     */
-    private boolean clanExists(String clanName) {
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-
-        try {
-            preparedStatement = connect.prepareStatement("SELECT COUNT(*) AS amount FROM clan WHERE Name = ?");
-            preparedStatement.setString(1, clanName);
-            resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            int clans = resultSet.getInt("amount");
-
-            if (clans == 0) {
-                return false;
-            }
-        } catch (SQLException ex) {
-            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return true;
-    }
+    
 
     /**
-     * Gets the account id from a player.
-     *
-     * @param emailaddress the emailaddress to get the id from.
-     * @return the id, -1 if the player does not exists.
-     */
-    private int getAccountIdFromEmail(String emailaddress) {
-        try {
-            PreparedStatement preparedStatement = null;
-            ResultSet resultSet = null;
-            preparedStatement = connect.prepareStatement("SELECT Id FROM account WHERE Email = ?");
-            preparedStatement.setString(1, emailaddress);
-            resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt("Id");
-        } catch (SQLException ex) {          
-            return -1;
-        }
-
-        
-    }
-
-    /**
-     * Gets the manager id from a clan.
-     *
-     * @param clanName Clan name to search for.
-     * @return Id of the manager, -1 if the clan does not exists.
-     */
-    private int getManagerIdFromClanName(String clanName) {
-        try {
-            PreparedStatement preparedStatement = null;
-            ResultSet resultSet = null;
-            preparedStatement = connect.prepareStatement("SELECT ManagerId FROM clan WHERE Name = ?");
-            preparedStatement.setString(1, clanName);
-            resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt("ManagerId");
-        } catch (SQLException ex) {
-            return -1;
-        }
-
-        
-    }
-
-    /**
-     * Gets the clan id from a clan.
-     *
-     * @param clanName Clan name to search for.
-     * @return Id of the clan, -1 if the clan does not exists.
-     */
-    private int getClanIdFromName(String clanName) {
-        try {
-            PreparedStatement preparedStatement = null;
-            ResultSet resultSet = null;
-            preparedStatement = connect.prepareStatement("SELECT Id FROM clan WHERE Name = ?");
-            preparedStatement.setString(1, clanName);
-            resultSet = preparedStatement.executeQuery();
-            resultSet.next();
-            return resultSet.getInt("Id");
-        } catch (SQLException ex) {
-            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return -1;
-    }
-
-    /**
-     * Gets the {@link ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType} for a given clan and a given {@code emailaddress}.
+     * Gets the {@link InvitationType} for a given clan and a given {@code emailaddress}.
      *
      * @param clanName     Name of the clan.
      * @param emailaddress {@code emailaddress} of who is in the clan.
-     * @return {@link ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType}, or null if failed.
+     * @return {@link InvitationType}, or null if failed.
      */
     public InvitationType getInvitation(String clanName, String emailaddress) {
         PreparedStatement preparedStatement = null;
@@ -615,46 +526,99 @@ public class ClanFunctions {
             }
         }
     }
-
-    /**
-     * A state in which a person opposed to a clan can be.
+    
+                /**
+     * Looks if a clan exists.
+     *
+     * @param clanName the name of the clan.
+     * @return true if it exists, else false.
      */
-    public enum InvitationType {
+    private boolean clanExists(String clanName) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
 
-        /**
-         * Nothing will be displayed.
-         */
-        NONE,
+        try {
+            preparedStatement = connect.prepareStatement("SELECT COUNT(*) AS amount FROM clan WHERE Name = ?");
+            preparedStatement.setString(1, clanName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int clans = resultSet.getInt("amount");
 
-        /**
-         * The user can invite people to its clan.
-         */
-        INVITE,
+            if (clans == 0) {
+                return false;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
-        /**
-         * The user can accept the invite to this clan.
-         */
-        ACCEPT
+        return true;
     }
 
     /**
-     * A state in which a person opposed to a clan can be.
+     * Gets the account id from a player.
+     *
+     * @param emailaddress the emailaddress to get the id from.
+     * @return the id, -1 if the player does not exists.
      */
-    public enum ManagementType {
+    private int getAccountIdFromEmail(String emailaddress) {
+        try {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            preparedStatement = connect.prepareStatement("SELECT Id FROM account WHERE Email = ?");
+            preparedStatement.setString(1, emailaddress);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("Id");
+        } catch (SQLException ex) {          
+            return -1;
+        }
 
-        /**
-         * User can remove this clan.
-         */
-        REMOVE,
-
-        /**
-         * User can leave this clan.
-         */
-        LEAVE,
-
-        /**
-         * User can reject an offer to leave this clan.
-         */
-        REJECT
+        
     }
+
+    /**
+     * Gets the manager id from a clan.
+     *
+     * @param clanName Clan name to search for.
+     * @return Id of the manager, -1 if the clan does not exists.
+     */
+    private int getManagerIdFromClanName(String clanName) {
+        try {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            preparedStatement = connect.prepareStatement("SELECT ManagerId FROM clan WHERE Name = ?");
+            preparedStatement.setString(1, clanName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("ManagerId");
+        } catch (SQLException ex) {
+            return -1;
+        }
+
+        
+    }
+
+    /**
+     * Gets the clan id from a clan.
+     *
+     * @param clanName Clan name to search for.
+     * @return Id of the clan, -1 if the clan does not exists.
+     */
+    private int getClanIdFromName(String clanName) {
+        try {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            preparedStatement = connect.prepareStatement("SELECT Id FROM clan WHERE Name = ?");
+            preparedStatement.setString(1, clanName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("Id");
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return -1;
+    }
+
+
 }

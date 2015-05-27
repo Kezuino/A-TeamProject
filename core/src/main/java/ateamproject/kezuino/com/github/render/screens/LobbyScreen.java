@@ -62,7 +62,7 @@ public class LobbyScreen extends BaseScreen {
 
         // get lobby information en fill gui
         this.lobbyId = lobbyId;
-        loadLobby();
+        client.send(new PacketJoinLobby(this.lobbyId, client.getId()));
         refreshGui();
     }
 
@@ -76,17 +76,17 @@ public class LobbyScreen extends BaseScreen {
         }
 
     }*/
-
+/*
     public void loadLobby() {
         this.isHost = false;
         try {
             client.getRmi().joinLobby(this.lobbyId, client.getPlayer(0));
             
-            //client.send(new PacketJoinLobby(this.lobbyId, client.getId()));
+                
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
-    }
+    }*/
 
     public void refreshGui() {
         // quit lobby

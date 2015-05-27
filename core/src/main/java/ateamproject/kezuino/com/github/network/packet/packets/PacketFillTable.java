@@ -18,10 +18,6 @@ public class PacketFillTable extends Packet<ArrayList<String>> {
     @PacketField(0)
     protected String emailadres;
 
-    public PacketFillTable(String emailadres) {
-        this.emailadres = emailadres;
-    }
-
     public PacketFillTable(String emailadres, UUID... senderAndReceivers) {
         super(senderAndReceivers);
         this.emailadres = emailadres;

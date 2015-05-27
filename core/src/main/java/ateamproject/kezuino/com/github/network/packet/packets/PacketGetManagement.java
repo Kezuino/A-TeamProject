@@ -7,7 +7,8 @@ package ateamproject.kezuino.com.github.network.packet.packets;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketField;
-import ateamproject.kezuino.com.github.singleplayer.ClanFunctions.ManagementType;
+import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
+
 import java.util.UUID;
 
 /**
@@ -21,11 +22,6 @@ public class PacketGetManagement extends Packet<ManagementType> {
 
     @PacketField(1)
     protected String clanName;
-
-    public PacketGetManagement(String emailadres, String clanName) {
-        this.emailadres = emailadres;
-        this.clanName = clanName;
-    }
 
     public PacketGetManagement(String emailadres, String clanName, UUID... senderAndReceivers) {
         super(senderAndReceivers);

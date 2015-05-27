@@ -18,10 +18,6 @@ public class PacketGetUsername extends Packet<String> {
     @PacketField(0)
     protected String emailadres;
 
-    public PacketGetUsername(String emailadres) {
-        this.emailadres = emailadres;
-    }
-
     public PacketGetUsername(String emailadres, UUID... senderAndReceivers) {
         super(senderAndReceivers);
         this.emailadres = emailadres;
