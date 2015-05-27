@@ -5,8 +5,8 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.network.packet.Packet;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
@@ -18,6 +18,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.rmi.RemoteException;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author David
@@ -37,8 +39,18 @@ public class LoginScreen extends BaseScreen {
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                Boolean doesUserExists;
                 try {
-                    PacketLogin packet = new PacketLogin(txtUsername.getText(), txtPassword.getText());
+                    PacketLoginUserExists packetDoesUserExists = new PacketLoginUserExists(txtUsername.getText());
+                    Client.getInstance(game).send(packetDoesUserExists);
+                    doesUserExists = packetDoesUserExists.getResult();
+                } catch (RemoteException ex) {
+                    Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                UUID remoteId;
+                try {
+                    PacketLoginAuthenticate packet = new PacketLoginAuthenticate(txtUsername.getText(), txtPassword.getText());
                     Client.getInstance(game).send(packet);
                 } catch (NullPointerException|RemoteException e) {
                     System.out.println("Can't connect to the server");

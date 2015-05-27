@@ -173,11 +173,18 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         
         Packet.registerFunc(PacketHighScore.class, (packet) -> {
             // TODO: Check if email and password work while logging into the mail provider.
+<<<<<<< HEAD
+            //get current score
+            PreparedStatement preparedStatement;
+=======
+            System.out.print("Login request received for account: " + packet.getClanName());
             return true;
         });
+
         Packet.registerFunc(PacketLoginUserExists.class, (packet) -> {
             System.out.print("Checking if the following user exists: " + packet.getEmail());
             PreparedStatement preparedStatement = null;
+>>>>>>> origin/master
             ResultSet resultSet = null;
             int count = 0;
         
@@ -186,8 +193,19 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 preparedStatement.setString(1, packet.getEmail());
                 resultSet = preparedStatement.executeQuery();
                 resultSet.next();
-                count = resultSet.getInt("amount");
+<<<<<<< HEAD
+                int id = resultSet.getInt("Score");
+
+                if (id < packet.getScore()) {
+                    preparedStatement = connect.prepareStatement("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?");
+                    preparedStatement.setInt(1, packet.getScore());
+                    preparedStatement.setString(2, packet.getClanName());
+                    preparedStatement.executeUpdate();
                     return true;
+                }
+=======
+                count = resultSet.getInt("amount");
+>>>>>>> origin/master
             } catch (SQLException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -11,9 +11,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public abstract class Server<TClient extends IClient> implements IServer, IPacketSender {
+
     protected Dictionary<UUID, Game> games;
     /**
-     * Thread used for constantly synchronizing all the clients and automatically dropping inactive ones.
+     * Thread used for constantly synchronizing all the clients and
+     * automatically dropping inactive ones.
      */
     protected Thread updateThread;
     protected boolean isUpdating;
@@ -21,7 +23,8 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     private Connection connect = null;
 
     /**
-     * Gets or sets all {@link IClient clients} currently connected to this {@link Server}.
+     * Gets or sets all {@link IClient clients} currently connected to this
+     * {@link Server}.
      */
     protected Dictionary<UUID, TClient> clients;
 
@@ -57,9 +60,11 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     }
 
     /**
-     * Gets all {@link IClient clients} currently connected to this {@link Server}.
+     * Gets all {@link IClient clients} currently connected to this
+     * {@link Server}.
      *
-     * @return All {@link IClient clients} currently connected to this {@link Server}.
+     * @return All {@link IClient clients} currently connected to this
+     * {@link Server}.
      */
     public List<TClient> getClients() {
         return Collections.list(clients.elements());
