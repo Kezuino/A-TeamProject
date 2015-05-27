@@ -164,10 +164,14 @@ public class ClanFunctions {
             Class.forName("com.mysql.jdbc.Driver");
 
             // Setup the connection with the DB
-            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
+            try {
+                connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
+            } catch (Exception ex) {
+                System.out.println("DATABASE NOT AVAILABLE!");
+            }
 
             return true;
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
 
