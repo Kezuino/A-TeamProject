@@ -26,7 +26,7 @@ public interface IProtocolServer extends IProtocol {
 
     void heartbeat(UUID client) throws RemoteException;
 
-    Game createLobby(String LobbyName, UUID host) throws RemoteException;
+    UUID createLobby(String LobbyName, UUID host) throws RemoteException;
 
     List<Game> getLobbies() throws RemoteException;
 
