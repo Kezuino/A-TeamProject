@@ -44,7 +44,8 @@ public class LobbyScreen extends BaseScreen {
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
-        client.send(new PacketCreateLobby());
+        
+        client.send(new PacketCreateLobby(this.lobbyName,client.getId()));
 
         refreshGui();
     }

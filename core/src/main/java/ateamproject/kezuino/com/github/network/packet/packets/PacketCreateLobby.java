@@ -24,6 +24,12 @@ public class PacketCreateLobby extends Packet<Boolean> {
     public PacketCreateLobby(UUID... senderAndReceivers) {
         super(senderAndReceivers);
     }
+    
+    public PacketCreateLobby(String lobbyname,UUID... senderAndReceivers) {
+        this(senderAndReceivers);
+        
+        this.lobbyname = lobbyname;
+    }
 
     public String getLobbyname() {
         return lobbyname;
