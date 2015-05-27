@@ -77,6 +77,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public Game joinLobby(UUID lobbyId, UUID client) throws RemoteException {
+        server.findGame(lobbyId).getClients().add(client);
+        
         //        for (Game game : gameList) {
 //            if (game.getId().equals(lobbyId)) {
 //                if (game.invite(client)) {

@@ -6,7 +6,9 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
@@ -145,5 +147,29 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 }
             return false;
         });
+        
+        Packet.registerAction(PacketCreateLobby.class, (p) -> {
+            
+            try {
+                getRmi().getServer().createLobby(p.getLobbyname(), p.getSender());
+                
+                // ateamproject.kezuino.com.github.network.Game game = new ateamproject.kezuino.com.github.network.Game(p.getLobbyname(), p.getSender());
+                //games.put(game.getId(), game);
+            } catch (RemoteException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+        
+         Packet.registerAction(PacketJoinLobby.class, (p) -> {
+            try {
+                getRmi().getServer().joinLobby(p.getLobbyid(), p.getSender());
+                // getRmi().createLobby(p.getLobbyname(), p.getSender());
+                //Game game = new Game(p.getLobbyname(), p.getSender());
+                //games.put(game.getId(), game);
+            } catch (RemoteException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+         });
+        
     }
 }

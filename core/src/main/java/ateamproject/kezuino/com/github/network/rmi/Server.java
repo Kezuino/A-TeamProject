@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.network.mail.MailAccount;
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
@@ -198,13 +199,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 return false;
             }
         });
-
+/*
         Packet.registerAction(PacketCreateLobby.class, (p) -> {
             Game game = new Game(p.getLobbyname(), p.getSender());
             games.put(game.getId(), game);
         });
-        /*
-         Packet.registerAction(PacketCreateLobby.class, (p) -> {
+        
+         Packet.registerAction(PacketJoinLobby.class, (p) -> {
             
          // getRmi().createLobby(p.getLobbyname(), p.getSender());
          //Game game = new Game(p.getLobbyname(), p.getSender());

@@ -58,6 +58,11 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     public List<Game> getGames() {
         return Collections.list(games.elements());
     }
+    
+    public Game findGame(UUID lobbyId)
+    {
+        return null;
+    }
 
     /**
      * Gets all {@link IClient clients} currently connected to this
