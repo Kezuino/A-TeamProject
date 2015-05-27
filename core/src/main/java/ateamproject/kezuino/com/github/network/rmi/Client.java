@@ -6,9 +6,7 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.render.screens.LoginScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
@@ -145,6 +143,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return false;
             }
         });
-
+        /*
+        Packet.registerFunc(PacketJoinLobby.class, packet -> {
+            /*try {
+                //getRmi().getServer().joinLobby(packet.getLobbyid()), packet.getSender());
+                return true;
+            } catch (RemoteException ex) {
+                return false;
+            }
+        });*/
     }
 }
