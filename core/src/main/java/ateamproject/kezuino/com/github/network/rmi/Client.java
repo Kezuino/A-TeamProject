@@ -6,8 +6,10 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
+import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import ateamproject.kezuino.com.github.utility.graphics.DialogHelper;
 import com.badlogic.gdx.Game;
@@ -18,11 +20,14 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Kez and Jules
  */
 public class Client extends ateamproject.kezuino.com.github.network.Client {
+
     private static Client instance;
     protected ClientBase rmi;
 
@@ -45,7 +50,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     /**
      * Only use on client-side!
      *
-     * @return {@link Client} instance. Creates a new {@link Client} if it doesn't exist.
+     * @return {@link Client} instance. Creates a new {@link Client} if it
+     * doesn't exist.
      * @throws RemoteException
      */
     public static Client getInstance(Game game) throws RemoteException {
@@ -73,7 +79,9 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             this.rmi.setServer((IProtocolServer) Naming.lookup(String.format("//%s/%s", rmiHost, rmiObject)));
 
             // Start updating.
-            if (updateThread != null) updateThread.interrupt();
+            if (updateThread != null) {
+                updateThread.interrupt();
+            }
             updateThread = new Thread(() -> {
                 try {
                     while (!Thread.currentThread().isInterrupted()) {
@@ -129,5 +137,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
             return true;
         });
+
+        Packet.registerFunc(PacketCreateLobby.class, packet -> {
+            
+        });
+
     }
 }

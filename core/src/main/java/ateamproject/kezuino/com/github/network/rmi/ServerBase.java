@@ -45,6 +45,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     @Override
     public Game createLobby(String lobbyName, UUID host) throws RemoteException {
         // add lobby to games array
+        
+        
         Game newGame = new Game(lobbyName, server.getClientFromPublic(host));
         server.getGames().add(newGame);
 

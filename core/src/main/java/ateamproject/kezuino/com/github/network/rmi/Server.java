@@ -1,6 +1,8 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
+import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
@@ -16,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Server extends ateamproject.kezuino.com.github.network.Server<Client> {
+
     private static Server instance;
     protected ServerBase rmi;
 
@@ -47,10 +50,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
             registry.bind("server", rmi);
 
-            if (updateThread != null) updateThread.interrupt();
+            if (updateThread != null) {
+                updateThread.interrupt();
+            }
             updateThread = new Thread(() -> {
                 while (!Thread.currentThread().isInterrupted()) {
-                    while(isUpdating) {
+                    while (isUpdating) {
                         // Check if all clients are still active.
                         for (Client c : getClients()) {
                             System.out.println(c.getSecondsFromLastPacket());
@@ -83,7 +88,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             System.out.println("Server stopped");
 
             // TODO: Notify clients.
-
             unregisterPackets();
 
             UnicastRemoteObject.unexportObject(rmi, true);
@@ -121,6 +125,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             // Tell client what his id is.
             return publicId;
+        });
+
+        Packet.registerAction(PacketCreateLobby.class, (p) -> {
+            Game game = new Game(p.getLobbyname(), p.getSender());
+            games.put(game.getId(), game);
         });
 
         Packet.registerAction(PacketHeartbeat.class, packet -> System.out.println("Heartbeat received from: " + packet.getSender()));
