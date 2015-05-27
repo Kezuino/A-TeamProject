@@ -21,6 +21,8 @@ import java.util.UUID;
  */
 public interface IProtocolServer extends IProtocol {
     UUID login(String email, String password) throws RemoteException;
+    
+    boolean doesUserExists(String email) throws RemoteException;
 
     void heartbeat(UUID client) throws RemoteException;
 

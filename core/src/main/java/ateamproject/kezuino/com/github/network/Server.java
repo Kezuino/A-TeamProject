@@ -2,19 +2,28 @@ package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class Server<TClient extends IClient> implements IServer, IPacketSender {
+
     protected Dictionary<UUID, Game> games;
     /**
-     * Thread used for constantly synchronizing all the clients and automatically dropping inactive ones.
+     * Thread used for constantly synchronizing all the clients and
+     * automatically dropping inactive ones.
      */
     protected Thread updateThread;
     protected boolean isUpdating;
     protected double secondsFromLastUpdate;
 
     /**
-     * Gets or sets all {@link IClient clients} currently connected to this {@link Server}.
+     * Gets or sets all {@link IClient clients} currently connected to this
+     * {@link Server}.
      */
     protected Dictionary<UUID, TClient> clients;
 
@@ -30,9 +39,11 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     }
 
     /**
-     * Gets all {@link IClient clients} currently connected to this {@link Server}.
+     * Gets all {@link IClient clients} currently connected to this
+     * {@link Server}.
      *
-     * @return All {@link IClient clients} currently connected to this {@link Server}.
+     * @return All {@link IClient clients} currently connected to this
+     * {@link Server}.
      */
     public List<TClient> getClients() {
         return Collections.list(clients.elements());
@@ -58,11 +69,11 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
         return this.getClients().stream().filter(c -> c.getId().equals(publicId)).findFirst().orElse(null);
 
         /*for (IClient client : getClients()) {
-            if (client.getId().equals(publicId)) {
-                return client;
-            }
-        }
-        return null;*/
+         if (client.getId().equals(publicId)) {
+         return client;
+         }
+         }
+         return null;*/
     }
 
     /**

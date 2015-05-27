@@ -8,7 +8,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
 import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import ateamproject.kezuino.com.github.utility.graphics.DialogHelper;
@@ -124,7 +124,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     @Override
     public void registerPackets() {
-        Packet.registerFunc(PacketLogin.class, packet -> {
+        Packet.registerFunc(PacketLoginAuthenticate.class, packet -> {
             UUID id = packet.getResult();
             if (id != null) {
                 this.setId(id);
