@@ -28,13 +28,6 @@ public class PacketHandleInvitation extends Packet<Boolean> {
     @PacketField(3)
     protected String nameOfInvitee;
 
-    public PacketHandleInvitation(InvitationType invite, String clanName, String emailadres, String nameOfInvitee) {
-        this.invite = invite;
-        this.clanName = clanName;
-        this.emailadres = emailadres;
-        this.nameOfInvitee = nameOfInvitee;
-    }
-
     public PacketHandleInvitation(InvitationType invite, String clanName, String emailadres, String nameOfInvitee, UUID... senderAndReceivers) {
         super(senderAndReceivers);
         this.invite = invite;
