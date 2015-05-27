@@ -57,14 +57,14 @@ public class MainScreen extends BaseScreen {
                 //game.setScreen(new GameScreen(game));
                  boolean remoteId = false;
 
-                    PacketHighScore packet = new PacketHighScore("MBoiz", 1);
+                    PacketHighScore packet;
                 try {
-                    remoteId = Client.getInstance(game).getRmi().getServer().SetScore("MBoiz", 1);
+                    packet = new PacketHighScore("MBoiz", 30, Client.getInstance(game).getId());
+                    Client.getInstance(game).send(packet);
+                   remoteId=  packet.getResult();
                 } catch (RemoteException ex) {
                     Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                    packet.setResult(remoteId);
-                    Packet.execute(packet);
             }
         });
 

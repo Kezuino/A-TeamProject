@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
 import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
@@ -144,6 +145,15 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             } catch (RemoteException ex) {
                 return false;
             }
+        });
+        
+        Packet.registerFunc(PacketHighScore.class, (packet) -> {
+            try {
+                    return Client.getInstance(game).getRmi().getServer().setScore(packet.getClanName(), packet.getScore());
+                } catch (RemoteException ex) {
+                    Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            return false;
         });
 
     }
