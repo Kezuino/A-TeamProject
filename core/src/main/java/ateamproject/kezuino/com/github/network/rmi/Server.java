@@ -5,6 +5,7 @@ import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
@@ -152,12 +153,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             if (MailAccount.isValid(packet.getUsername(), packet.getPassword())) {//check if user is valid
                 // Register client on server.
-                UUID publicId = UUID.randomUUID();
                 try {
-                    clients.put(publicId, new Client());
+                    Client client = new Client();
+                    clients.put(client.getId(), client);
                     System.out.println(" .. login accepted. " + clients.size() + " clients total.");
                     // Tell client what his id is.
-                    return publicId;
+                    return client.getId();
 
                 } catch (RemoteException e) {
                     System.out.println(" .. login is valid but registering failed!.");
@@ -169,6 +170,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             System.out.println(" .. login credentials not valid.");
             return null;
         });
+        Packet.registerFunc(PacketHighScore.class, (packet) -> {
+            // TODO: Check if email and password work while logging into the mail provider.
+            System.out.print("Login request received for account: " + packet.getClanName());
 
         Packet.registerFunc(PacketLoginUserExists.class, (packet) -> {
             System.out.print("Checking if the following user exists: " + packet.getEmail());
@@ -197,6 +201,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             Game game = new Game(p.getLobbyname(), p.getSender());
             games.put(game.getId(), game);
         });
+        /*
+         Packet.registerAction(PacketCreateLobby.class, (p) -> {
+            
+         // getRmi().createLobby(p.getLobbyname(), p.getSender());
+         //Game game = new Game(p.getLobbyname(), p.getSender());
+         //games.put(game.getId(), game);
+         });*/
 
         Packet.registerAction(PacketHeartbeat.class, packet -> System.out.println("Heartbeat received from: " + packet.getSender()));
     }

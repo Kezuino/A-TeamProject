@@ -65,6 +65,7 @@ public class LobbyScreen extends BaseScreen {
         refreshGui();
     }
 
+    /*
     public void createLobby() {
         this.isHost = true;
         try {
@@ -73,7 +74,7 @@ public class LobbyScreen extends BaseScreen {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-    }
+    }*/
 
     public void loadLobby() {
         this.isHost = false;
@@ -95,6 +96,7 @@ public class LobbyScreen extends BaseScreen {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
                             // remove lobby 
+                            /*
                             try {
                                 boolean result = client.getRmi().quitLobby(lobbyId);
                                 if (result) {
@@ -102,7 +104,7 @@ public class LobbyScreen extends BaseScreen {
                                 }
                             } catch (RemoteException ex) {
                                 Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                            }*/
 
                         }
                     });
@@ -120,13 +122,14 @@ public class LobbyScreen extends BaseScreen {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
                             // leae lobby
+                            /*
                             try {
                                 if (client.getRmi().leaveLobby(client.getPlayer(0))) {
                                     game.setScreen(new LobbyListScreen(game, true));
                                 }
                             } catch (RemoteException ex) {
                                 Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                            }*/
                         }
                     });
                 }

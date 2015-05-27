@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
@@ -160,5 +161,16 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         server.send(packet);
         return packet.getResult();
     }
+    public boolean SetScore(String clanName, int score) throws RemoteException {
+        PacketHighScore packet = new PacketHighScore(clanName, score);
+        server.send(packet);
+        return packet.getResult();
+    }
+
+    @Override
+    public boolean getHasConnection() throws RemoteException {
+        return clanFunctions.getHasConnection();
+    }
+
 
 }

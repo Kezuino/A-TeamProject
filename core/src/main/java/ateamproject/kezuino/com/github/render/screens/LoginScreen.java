@@ -51,11 +51,9 @@ public class LoginScreen extends BaseScreen {
 
                 UUID remoteId;
                 try {
-                    PacketLoginAuthenticate packet = new PacketLoginAuthenticate(txtUsername.getText(), txtPassword.getText());
-                    remoteId = Client.getInstance(game).getRmi().getServer().login(txtUsername.getText(), txtPassword.getText());
-                    packet.setResult(remoteId);
-                    Packet.execute(packet);
-                } catch (NullPointerException | RemoteException e) {
+                    PacketLogin packet = new PacketLogin(txtUsername.getText(), txtPassword.getText());
+                    Client.getInstance(game).send(packet);
+                } catch (NullPointerException|RemoteException e) {
                     System.out.println("Can't connect to the server");
 
                     Dialog d = new Dialog("error", skin);
