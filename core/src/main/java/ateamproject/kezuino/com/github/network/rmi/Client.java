@@ -29,7 +29,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     protected Client() throws RemoteException {
         super(null);
 
-        System.setProperty("pactales.client.servername", "localhost");
+        System.setProperty("pactales.client.servername", "darkhellentertainment.com");
         System.setProperty("pactales.client.serverobject", "server");
         rmi = new ClientBase(this);
     }
@@ -37,7 +37,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     protected Client(Game game) throws RemoteException {
         super(game);
 
-        System.setProperty("pactales.client.servername", "localhost");
+        System.setProperty("pactales.client.servername", "darkhellentertainment.com");
         System.setProperty("pactales.client.serverobject", "server");
         rmi = new ClientBase(this);
     }
