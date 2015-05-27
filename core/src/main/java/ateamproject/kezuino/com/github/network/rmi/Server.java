@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.mail.MailAccount;
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateClan;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
@@ -11,6 +12,7 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
+import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
@@ -47,11 +49,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // This will load the MySQL driver, each DB has its own driver
             Class.forName("com.mysql.jdbc.Driver");
 
-            // Setup the connection with the DB
-            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
+            try {
+                // Setup the connection with the DB
+                connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
+            } catch (Exception ex) {
+                return false;
+            }
 
             return true;
-        } catch (ClassNotFoundException | SQLException ex) {
+        } catch (ClassNotFoundException ex) {
             Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
 
@@ -148,6 +154,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             return true;
         });
+        
+        Packet.registerFunc(PacketCreateClan.class, (packet)-> {
+            System.out.print("Create clan packet received");
+            return null;
+        });
 
         Packet.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
             System.out.print("Login request received for account: " + packet.getUsername());
@@ -173,9 +184,34 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
         
         Packet.registerFunc(PacketHighScore.class, (packet) -> {
-            // TODO: Check if email and password work while logging into the mail provider.
-            return true;
+           // TODO: Check if email and password work while logging into the mail provider.
+            System.out.print("Login request received for account: " + packet.getClanName());
+
+            //get current score
+            PreparedStatement preparedStatement;
+            ResultSet resultSet = null;
+            ResultSet resultSetWithClans;
+
+            try {
+                preparedStatement = connect.prepareStatement("SELECT `Score` FROM `clan` WHERE Name = ?");
+                preparedStatement.setString(1, packet.getClanName());
+                resultSet = preparedStatement.executeQuery();
+                resultSet.next();
+                int id = resultSet.getInt("Score");
+
+                if (id > packet.getScore()) {
+                    preparedStatement = connect.prepareStatement("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?");
+                    preparedStatement.setInt(1, packet.getScore());
+                    preparedStatement.setString(2, packet.getClanName());
+                    resultSet = preparedStatement.executeQuery();
+                    return true;
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return false;
         });
+        
         Packet.registerFunc(PacketLoginUserExists.class, (packet) -> {
             System.out.print("Checking if the following user exists: " + packet.getEmail());
             PreparedStatement preparedStatement = null;
@@ -214,4 +250,101 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         Packet.registerAction(PacketHeartbeat.class, packet -> System.out.println("Heartbeat received from: " + packet.getSender()));
     }
+    
+    
+    //region privClanFunctionMethodes
+            
+            /**
+     * Looks if a clan exists.
+     *
+     * @param clanName the name of the clan.
+     * @return true if it exists, else false.
+     */
+    private boolean clanExists(String clanName) {
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+
+        try {
+            preparedStatement = connect.prepareStatement("SELECT COUNT(*) AS amount FROM clan WHERE Name = ?");
+            preparedStatement.setString(1, clanName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            int clans = resultSet.getInt("amount");
+
+            if (clans == 0) {
+                return false;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return true;
+    }
+
+    /**
+     * Gets the account id from a player.
+     *
+     * @param emailaddress the emailaddress to get the id from.
+     * @return the id, -1 if the player does not exists.
+     */
+    private int getAccountIdFromEmail(String emailaddress) {
+        try {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            preparedStatement = connect.prepareStatement("SELECT Id FROM account WHERE Email = ?");
+            preparedStatement.setString(1, emailaddress);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("Id");
+        } catch (SQLException ex) {          
+            return -1;
+        }
+
+        
+    }
+
+    /**
+     * Gets the manager id from a clan.
+     *
+     * @param clanName Clan name to search for.
+     * @return Id of the manager, -1 if the clan does not exists.
+     */
+    private int getManagerIdFromClanName(String clanName) {
+        try {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            preparedStatement = connect.prepareStatement("SELECT ManagerId FROM clan WHERE Name = ?");
+            preparedStatement.setString(1, clanName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("ManagerId");
+        } catch (SQLException ex) {
+            return -1;
+        }
+
+        
+    }
+
+    /**
+     * Gets the clan id from a clan.
+     *
+     * @param clanName Clan name to search for.
+     * @return Id of the clan, -1 if the clan does not exists.
+     */
+    private int getClanIdFromName(String clanName) {
+        try {
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            preparedStatement = connect.prepareStatement("SELECT Id FROM clan WHERE Name = ?");
+            preparedStatement.setString(1, clanName);
+            resultSet = preparedStatement.executeQuery();
+            resultSet.next();
+            return resultSet.getInt("Id");
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return -1;
+    }
+            //endregion
 }

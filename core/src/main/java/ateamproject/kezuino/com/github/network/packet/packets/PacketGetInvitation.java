@@ -22,11 +22,6 @@ public class PacketGetInvitation extends Packet<InvitationType> {
     @PacketField(1)
     protected String clanName;
 
-    public PacketGetInvitation(String emailadres, String clanName) {
-        this.emailadres = emailadres;
-        this.clanName = clanName;
-    }
-
     public PacketGetInvitation(String emailadres, String clanName, UUID... senderAndReceivers) {
         super(senderAndReceivers);
         this.emailadres = emailadres;

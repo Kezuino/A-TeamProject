@@ -21,11 +21,6 @@ public class PacketCreateClan extends Packet<Boolean> {
     @PacketField(1)
     protected String clanName;
 
-    public PacketCreateClan(String emailadres, String clanName) {
-        this.emailadres = emailadres;
-        this.clanName = clanName;
-    }
-
     public PacketCreateClan(String emailadres, String clanName, UUID... senderAndReceivers) {
         super(senderAndReceivers);
         this.emailadres = emailadres;

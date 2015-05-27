@@ -22,11 +22,6 @@ public class PacketGetManagement extends Packet<ManagementType> {
     @PacketField(1)
     protected String clanName;
 
-    public PacketGetManagement(String emailadres, String clanName) {
-        this.emailadres = emailadres;
-        this.clanName = clanName;
-    }
-
     public PacketGetManagement(String emailadres, String clanName, UUID... senderAndReceivers) {
         super(senderAndReceivers);
         this.emailadres = emailadres;

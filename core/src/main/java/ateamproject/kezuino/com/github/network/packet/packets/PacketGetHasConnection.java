@@ -15,9 +15,6 @@ import java.util.UUID;
  */
 public class PacketGetHasConnection extends Packet<Boolean> {
 
-    public PacketGetHasConnection() {
-    }
-
     public PacketGetHasConnection(UUID... senderAndReceivers) {
         super(senderAndReceivers);
     }
