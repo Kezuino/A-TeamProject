@@ -124,7 +124,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     @Override
     public void registerPackets() {
         Packet.registerFunc(PacketLoginAuthenticate.class, packet -> {
-            UUID id = packet.getResult();
+            UUID id = null;
+            try {
+                id = getRmi().getServer().login(packet.getUsername(), packet.getPassword());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+
             if (id != null) {
                 this.setId(id);
                 this.game.setScreen(new MainScreen(this.game));
