@@ -172,6 +172,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             
             try {
                 List<PacketGetLobbies.GetLobbiesData> list =  getRmi().getServer().getLobbies();
+               // p.setResult(list);
                 return list;
                 
                 // ateamproject.kezuino.com.github.network.Game game = new ateamproject.kezuino.com.github.network.Game(p.getLobbyname(), p.getSender());

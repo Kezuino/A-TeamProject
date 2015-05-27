@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketField;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies.GetLobbiesData;
+import java.io.Serializable;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ public class PacketGetLobbies extends Packet<List<GetLobbiesData>> {
         super(senderAndReceivers);
     }
 
-    public static class GetLobbiesData {
+    public static class GetLobbiesData implements Serializable{
 
         public String name;
         public UUID lobbyId;

@@ -66,28 +66,6 @@ public class LobbyScreen extends BaseScreen {
         refreshGui();
     }
 
-    /*
-    public void createLobby() {
-        this.isHost = true;
-        try {
-            client.getRmi().createLobby(this.lobbyName, client.getPlayer(0));
-        } catch (RemoteException ex) {
-            Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-    }*/
-/*
-    public void loadLobby() {
-        this.isHost = false;
-        try {
-            client.getRmi().joinLobby(this.lobbyId, client.getPlayer(0));
-            
-                
-        } catch (RemoteException ex) {
-            Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }*/
-
     public void refreshGui() {
         // quit lobby
         if (isHost) {
