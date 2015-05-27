@@ -266,7 +266,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
         
         Packet.registerFunc(PacketLoginCreateNewUser.class, (packet) -> {
-            System.out.print("Creating following user in database: " + packet.getUsername());
+            System.out.print("Trying to create following user in database: " + packet.getUsername());
             PreparedStatement preparedStatement = null;
             ResultSet resultSet = null;
             int count = 0;
@@ -279,13 +279,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 count = resultSet.getInt("amount");
 
                 if (count == 1) {
+                    System.out.print("Following user does already exists: " + packet.getUsername());
                     return false;
                 } else {
                     preparedStatement = connect.prepareStatement("INSERT INTO account(Name,Email) VALUES(?,?)");
                     preparedStatement.setString(1, packet.getUsername());
                     preparedStatement.setString(2, packet.getEmail());
-                    resultSet = preparedStatement.executeQuery();
+                    preparedStatement.executeUpdate();
                     
+                    System.out.print("Adding following user to database: " + packet.getUsername());
                     return true;
                 }
             } catch (SQLException ex) {
@@ -307,7 +309,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 resultSet = preparedStatement.executeQuery();
                 resultSet.next();
                 count = resultSet.getInt("amount");
-                return true;
             } catch (SQLException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }

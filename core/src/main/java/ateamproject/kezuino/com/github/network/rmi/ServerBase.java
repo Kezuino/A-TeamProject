@@ -8,6 +8,7 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginCreateNewUser;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 
@@ -80,7 +81,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     @Override
     public Game joinLobby(UUID lobbyId, UUID client) throws RemoteException {
         server.findGame(lobbyId).getClients().add(client);
-        
+
         //        for (Game game : gameList) {
 //            if (game.getId().equals(lobbyId)) {
 //                if (game.invite(client)) {
@@ -174,6 +175,13 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     @Override
     public boolean setScore(String clanName, int score) throws RemoteException {
         PacketHighScore packet = new PacketHighScore(clanName, score);
+        server.send(packet);
+        return packet.getResult();
+    }
+
+    @Override
+    public boolean loginCreateUser(String username, String email) throws RemoteException {
+        PacketLoginCreateNewUser packet = new PacketLoginCreateNewUser(username,email);
         server.send(packet);
         return packet.getResult();
     }

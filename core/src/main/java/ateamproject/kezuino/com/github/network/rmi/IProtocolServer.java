@@ -20,9 +20,12 @@ import java.util.UUID;
  * @author Kez and Jules
  */
 public interface IProtocolServer extends IProtocol {
+
     UUID login(String email, String password) throws RemoteException;
 
     boolean doesUserExists(String email) throws RemoteException;
+
+    boolean loginCreateUser(String username, String email) throws RemoteException;
 
     void heartbeat(UUID client) throws RemoteException;
 
@@ -35,7 +38,8 @@ public interface IProtocolServer extends IProtocol {
     Game joinLobby(UUID lobbyId, UUID client) throws RemoteException;
 
     /**
-     * Requests all connected {@link IClient clients} to stop and closes the lobby.
+     * Requests all connected {@link IClient clients} to stop and closes the
+     * lobby.
      *
      * @param lobbyId
      * @return
@@ -52,9 +56,7 @@ public interface IProtocolServer extends IProtocol {
      */
     boolean kickClient(UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException;
 
-
     //Methodes from ClanFunctions
-
     boolean getHasConnection() throws RemoteException;
 
     ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
