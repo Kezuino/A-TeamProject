@@ -137,11 +137,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // Tell client what his id is.
             return publicId;
         });
-
+/*
         Packet.registerAction(PacketCreateLobby.class, (p) -> {
-            Game game = new Game(p.getLobbyname(), p.getSender());
-            games.put(game.getId(), game);
-        });
+            
+           // getRmi().createLobby(p.getLobbyname(), p.getSender());
+            //Game game = new Game(p.getLobbyname(), p.getSender());
+            //games.put(game.getId(), game);
+        });*/
 
         Packet.registerAction(PacketHeartbeat.class, packet -> System.out.println("Heartbeat received from: " + packet.getSender()));
     }

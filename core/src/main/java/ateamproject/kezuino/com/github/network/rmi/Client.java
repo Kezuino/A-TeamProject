@@ -140,7 +140,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         Packet.registerFunc(PacketCreateLobby.class, packet -> {
             try {
-                getRmi().createLobby(packet.getLobbyname(), packet.getSender());
+                getRmi().getServer().createLobby(packet.getLobbyname(), packet.getSender());
                 return true;
             } catch (RemoteException ex) {
                 return false;
