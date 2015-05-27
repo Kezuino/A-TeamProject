@@ -13,12 +13,13 @@ import java.util.UUID;
  *
  * @author Sven
  */
-public class PacketGetHasConnection extends Packet<Boolean>{
+public class PacketGetHasConnection extends Packet<Boolean> {
 
-
+    public PacketGetHasConnection() {
+    }
 
     public PacketGetHasConnection(UUID... senderAndReceivers) {
         super(senderAndReceivers);
     }
-    
+
 }

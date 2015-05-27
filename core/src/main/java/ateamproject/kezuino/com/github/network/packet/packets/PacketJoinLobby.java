@@ -7,31 +7,32 @@ package ateamproject.kezuino.com.github.network.packet.packets;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketField;
-import java.util.ArrayList;
 import java.util.UUID;
 
 /**
  *
- * @author Sven
+ * @author Fatih
  */
-public class PacketFillTable extends Packet<ArrayList<String>> {
+public class PacketJoinLobby extends Packet<Boolean> {
+    
     @PacketField(0)
-    protected String emailadres;
-
-    public PacketFillTable(String emailadres) {
-        this.emailadres = emailadres;
+    protected UUID lobbyid;
+    
+    public PacketJoinLobby() {
     }
 
-    public PacketFillTable(String emailadres, UUID... senderAndReceivers) {
+    public PacketJoinLobby(UUID... senderAndReceivers) {
         super(senderAndReceivers);
-        this.emailadres = emailadres;
+    }
+    
+    public PacketJoinLobby(UUID lobbyid,UUID... senderAndReceivers) {
+        this(senderAndReceivers);
+        
+        this.lobbyid = lobbyid;
     }
 
-    public String getEmailadres() {
-        return emailadres;
+    public UUID getLobbyid() {
+        return lobbyid;
     }
-    
-    
-    
     
 }

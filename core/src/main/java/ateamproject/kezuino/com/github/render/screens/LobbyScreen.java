@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.network.IClient;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -80,6 +81,8 @@ public class LobbyScreen extends BaseScreen {
         this.isHost = false;
         try {
             client.getRmi().joinLobby(this.lobbyId, client.getPlayer(0));
+            
+            client.send(new PacketJoinLobby(this.lobbyId, client.getId()));
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
