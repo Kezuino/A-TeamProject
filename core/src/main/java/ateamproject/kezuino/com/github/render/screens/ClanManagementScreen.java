@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions.InvitationType;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions.ManagementType;
@@ -16,6 +17,9 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Jip
@@ -26,9 +30,16 @@ public class ClanManagementScreen extends BaseScreen {
     private TextField tfClannaam;
     private String emailaddress = "jip.vandevijfeijke@gmail.com";
     private ClanFunctions clanF;//should be on server using RMI!!!
+    private Client client;
 
     public ClanManagementScreen(Game game) {
         super(game);
+
+        try {
+            client = Client.getInstance(game);
+        } catch (RemoteException ex) {
+            Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         scrollTable = new Table();
 

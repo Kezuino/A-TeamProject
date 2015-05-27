@@ -151,5 +151,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         return clanFunctions.setUsername(name, emailaddress);
     }
 
+    @Override
+    public boolean getHasConnection() throws RemoteException {
+        return clanFunctions.getHasConnection();
+    }
+
 
 }

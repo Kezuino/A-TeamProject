@@ -52,6 +52,9 @@ public interface IProtocolServer extends IProtocol {
 
     
     //Methodes from ClanFunctions
+    
+    boolean getHasConnection() throws RemoteException;
+            
     ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
 
     boolean clanCreateClan(String clanName, String emailaddress) throws RemoteException;
