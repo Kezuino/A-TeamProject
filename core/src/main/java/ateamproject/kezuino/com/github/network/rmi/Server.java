@@ -1,7 +1,9 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.mail.MailAccount;
+import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
@@ -97,6 +99,17 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         }
     }
 
+    /**
+     * Executes the given {@link Packet} based on the registered function or action.
+     * For RMI, the packet executes a RMI function directly.
+     *
+     * @param packet {@link Packet} to send to the {@link Client}.
+     */
+    @Override
+    public void send(Packet packet) {
+        Packet.execute(packet);
+    }
+
     @Override
     public void registerPackets() {
         Packet.registerFunc(PacketKick.class, (packet) -> {
@@ -128,6 +141,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             
             System.out.println(" .. login credentials not valid.");
             return null;
+        });
+
+        Packet.registerAction(PacketCreateLobby.class, (p) -> {
+            Game game = new Game(p.getLobbyname(), p.getSender());
+            games.put(game.getId(), game);
         });
 
         Packet.registerAction(PacketHeartbeat.class, packet -> System.out.println("Heartbeat received from: " + packet.getSender()));

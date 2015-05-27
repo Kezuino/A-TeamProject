@@ -1,7 +1,8 @@
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType;
-import ateamproject.kezuino.com.github.render.screens.ClanFunctions.ManagementType;
+import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
+import ateamproject.kezuino.com.github.singleplayer.ClanFunctions.InvitationType;
+import ateamproject.kezuino.com.github.singleplayer.ClanFunctions.ManagementType;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;

@@ -15,11 +15,11 @@ public class Game<TClient extends IClient> {
 
     protected UUID id;
     protected String name;
-    protected HashSet<TClient> clients;
+    protected HashSet<UUID> clients;
 
     protected boolean inGame;
 
-    public Game(String name, TClient host) {
+    public Game(String name, UUID host) {
         // Generate UUID and give lobby a name
         this.id = UUID.randomUUID();
         this.name = name;
@@ -55,7 +55,7 @@ public class Game<TClient extends IClient> {
      *
      * @return All {@link IClient clients} that are currently in this game / lobby.
      */
-    public HashSet<TClient> getClients() {
+    public HashSet<UUID> getClients() {
         return clients;
     }
 

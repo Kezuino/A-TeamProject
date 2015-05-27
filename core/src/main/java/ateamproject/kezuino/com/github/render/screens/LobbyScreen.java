@@ -8,6 +8,7 @@ package ateamproject.kezuino.com.github.render.screens;
 import ateamproject.kezuino.com.github.network.IClient;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.network.Game;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -43,7 +44,8 @@ public class LobbyScreen extends BaseScreen {
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
-        createLobby();
+        
+        client.send(new PacketCreateLobby(this.lobbyName,client.getId()));
 
         refreshGui();
     }

@@ -8,8 +8,8 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.IClient;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.render.screens.ClanFunctions;
-import ateamproject.kezuino.com.github.render.screens.ClanFunctions.InvitationType;
+import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
+import ateamproject.kezuino.com.github.singleplayer.ClanFunctions.InvitationType;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
