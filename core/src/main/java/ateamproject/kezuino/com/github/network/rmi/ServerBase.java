@@ -30,12 +30,15 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public UUID login(String email, String password) throws RemoteException {
-        return Packet.execute(new PacketLogin(email, password)).getResult();
+        PacketLogin packet = new PacketLogin(email, password);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public void heartbeat(UUID client) throws RemoteException {
-        Packet.execute(new PacketHeartbeat(client));
+        PacketHeartbeat packet = new PacketHeartbeat(client);
+        server.send(packet);
     }
 
 

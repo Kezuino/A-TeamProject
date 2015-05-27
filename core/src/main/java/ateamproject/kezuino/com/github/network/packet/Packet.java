@@ -217,7 +217,13 @@ public abstract class Packet<TResult> {
                     e.printStackTrace();
                 }
             }
-        } catch (IOException | InstantiationException | IllegalAccessException e) {
+
+            // Read return value.
+            boolean hasReturn = finalIn.readBoolean();
+            if (hasReturn) {
+                result.setResult(finalIn.readObject());
+            }
+        } catch (IOException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
             e.printStackTrace();
         } finally {
             try {
@@ -326,6 +332,15 @@ public abstract class Packet<TResult> {
                     e.printStackTrace();
                 }
             });
+
+            // Write return value.
+            Object object = getResult();
+            if (object != null) {
+                finalOut.writeBoolean(true);
+                finalOut.writeObject(object);
+            } else {
+                finalOut.writeBoolean(false);
+            }
 
             out.flush();
         } catch (IOException e) {

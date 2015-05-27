@@ -2,7 +2,13 @@ package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
+import ateamproject.kezuino.com.github.network.rmi.*;
+import ateamproject.kezuino.com.github.network.rmi.Client;
 
+import java.rmi.RemoteException;
 import java.util.*;
 
 public abstract class Server<TClient extends IClient> implements IServer, IPacketSender {
@@ -40,7 +46,7 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     }
 
     public void send(Packet packet) {
-        throw new UnsupportedOperationException("Send isn't allowed for the RMI server. Use Packet.execute instead.");
+        Packet.execute(packet);
     }
 
     /**
