@@ -8,7 +8,6 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
-import ateamproject.kezuino.com.github.render.screens.LoginScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import ateamproject.kezuino.com.github.utility.graphics.DialogHelper;
 import com.badlogic.gdx.Game;
@@ -33,7 +32,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     protected Client() throws RemoteException {
         super(null);
 
-        System.setProperty("pactales.client.servername", "localhost");
+        System.setProperty("pactales.client.servername", "darkhellentertainment.com");
         System.setProperty("pactales.client.serverobject", "server");
         rmi = new ClientBase(this);
     }
@@ -41,7 +40,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     protected Client(Game game) throws RemoteException {
         super(game);
 
-        System.setProperty("pactales.client.servername", "localhost");
+        System.setProperty("pactales.client.servername", "darkhellentertainment.com");
         System.setProperty("pactales.client.serverobject", "server");
         rmi = new ClientBase(this);
     }
@@ -123,21 +122,23 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     @Override
     public void registerPackets() {
-        Packet.registerFunc(PacketLogin.class, packet -> {
-            try {
-                UUID remoteId = Client.getInstance(game).getRmi().getServer().login(packet.getUsername(), packet.getPassword());
-                Client.getInstance(game).setId(remoteId);
-                game.setScreen(new MainScreen(game));
-                return remoteId;
-            } catch (RemoteException e) {
-                e.printStackTrace();
+        Packet.registerFunc(PacketLoginAuthenticate.class, packet -> {
+            UUID id = packet.getResult();
+            if (id != null) {
+                this.setId(id);
+                this.game.setScreen(new MainScreen(this.game));
+                System.out.println("Logged in as: " + id);
+            } else {
+                this.setId(null);
+                DialogHelper.show("Error", "Inloggen is mislukt.", ((d, x, y) -> d.hide()));
+                return false;
             }
-            return null;
+            return true;
         });
 
         Packet.registerFunc(PacketCreateLobby.class, packet -> {
             try {
-                getRmi().getServer().createLobby(packet.getLobbyname(), packet.getSender());
+                getRmi().createLobby(packet.getLobbyname(), packet.getSender());
                 return true;
             } catch (RemoteException ex) {
                 return false;

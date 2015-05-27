@@ -3,8 +3,10 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 
 import java.rmi.RemoteException;
@@ -15,12 +17,15 @@ import java.util.List;
 import java.util.UUID;
 
 public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
+
     protected transient Server server;
     private ClanFunctions clanFunctions;
 
     public ServerBase(Server server) throws RemoteException {
         super(Registry.REGISTRY_PORT);
-        if (server == null) throw new IllegalArgumentException("Parameter server must not be null.");
+        if (server == null) {
+            throw new IllegalArgumentException("Parameter server must not be null.");
+        }
         this.server = server;
         clanFunctions = new ClanFunctions();
     }
@@ -32,7 +37,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public UUID login(String email, String password) throws RemoteException {
-        PacketLogin packet = new PacketLogin(email, password);
+        PacketLoginAuthenticate packet = new PacketLoginAuthenticate(email, password);
         server.send(packet);
         return packet.getResult();
     }
@@ -43,11 +48,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         server.send(packet);
     }
 
-
     @Override
     public Game createLobby(String lobbyName, UUID host) throws RemoteException {
         // add lobby to games array
-        
+
         Game newGame = new Game(lobbyName, server.getClientFromPublic(host).getId());
         server.getGames().add(newGame);
 
@@ -149,6 +153,18 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     @Override
     public boolean setUsername(String name, String emailaddress) throws RemoteException {
         return clanFunctions.setUsername(name, emailaddress);
+    }
+
+    @Override
+    public boolean doesUserExists(String email) throws RemoteException {
+        PacketLoginUserExists packet = new PacketLoginUserExists(email);
+        server.send(packet);
+        return packet.getResult();
+    }
+    public boolean SetScore(String clanName, int score) throws RemoteException {
+        PacketHighScore packet = new PacketHighScore(clanName, score);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
