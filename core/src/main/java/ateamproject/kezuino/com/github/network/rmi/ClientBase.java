@@ -42,10 +42,6 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         return this.server.getLobbyById(lobbyId);
     }
 
-    public Game joinLobby(UUID lobbyId, UUID client) throws RemoteException {
-        return this.server.joinLobby(lobbyId, client);
-    }
-
     public boolean quitLobby(UUID lobbyId) throws RemoteException {
         return this.server.quitLobby(lobbyId);
     }

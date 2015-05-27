@@ -46,7 +46,7 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     
     public Game findGame(UUID lobbyId)
     {
-        return null;
+        return games.get(lobbyId);
     }
 
     /**

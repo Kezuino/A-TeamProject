@@ -19,6 +19,10 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -31,6 +35,7 @@ public class LobbyScreen extends BaseScreen {
     private Client client;
     private String lobbyName;
     private UUID lobbyId;
+    private Dictionary<UUID,String> members;
 
     private boolean isHost;
 
@@ -62,7 +67,12 @@ public class LobbyScreen extends BaseScreen {
 
         // get lobby information en fill gui
         this.lobbyId = lobbyId;
-        client.send(new PacketJoinLobby(this.lobbyId, client.getId()));
+        PacketJoinLobby packet = new PacketJoinLobby(this.lobbyId, client.getId());
+        client.send(packet);
+       PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
+       this.lobbyName = lob.lobbyName;
+       this.members = lob.members;
+       
         refreshGui();
     }
 
@@ -153,12 +163,16 @@ public class LobbyScreen extends BaseScreen {
         clients.setSize(200, 30);
         clients.setPosition(0, 60);
 */
-        for (UUID member : client.getPlayers().values()) {
-            TextField lblmember = new TextField(member.toString(), skin);
+        if (this.members != null) {
+            
+        
+        for (String membername :  Collections.list(this.members.elements())) {
+           TextField lblmember = new TextField(membername.toString(), skin);
             lblmember.setDisabled(true);
             
             scrollTable.add(lblmember);
             scrollTable.row();
+        }
         }
 
         stage.addActor(lobby);

@@ -183,15 +183,18 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             return null;
         });
 
-        Packet.registerAction(PacketJoinLobby.class, (p) -> {
+        Packet.registerFunc(PacketJoinLobby.class, (p) -> {
             try {
-                getRmi().getServer().joinLobby(p.getLobbyid(), p.getSender());
+                PacketJoinLobby.PacketJoinLobbyData result = getRmi().getServer().joinLobby(p.getLobbyid(), p.getSender());
+                return result;
+                 
                 // getRmi().createLobby(p.getLobbyname(), p.getSender());
                 //Game game = new Game(p.getLobbyname(), p.getSender());
                 //games.put(game.getId(), game);
             } catch (RemoteException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
+            return null;
         });
 
         Packet.registerFunc(PacketLoginCreateNewUser.class, (p) -> {

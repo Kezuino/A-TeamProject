@@ -7,6 +7,7 @@ import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginCreateNewUser;
@@ -88,17 +89,16 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public Game joinLobby(UUID lobbyId, UUID client) throws RemoteException {
-        server.findGame(lobbyId).getClients().add(client);
-
-        //        for (Game game : gameList) {
-//            if (game.getId().equals(lobbyId)) {
-//                if (game.invite(client)) {
-//                    return game;
-//                }
-//            }
-//        }
-        return null;
+    public PacketJoinLobby.PacketJoinLobbyData  joinLobby(UUID lobbyId, UUID client) throws RemoteException {
+        PacketJoinLobby.PacketJoinLobbyData returnval = new PacketJoinLobby.PacketJoinLobbyData();
+        Game g = server.findGame(lobbyId);
+        g.getClients().add(client);
+        returnval.lobbyName = g.getName();
+        for ( UUID g1 : g.getClients()) {
+            
+             returnval.members.put(g1, "member name");
+        }
+       return returnval;
     }
 
     @Override
