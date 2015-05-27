@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
+import ateamproject.kezuino.com.github.network.mail.MailAccount;
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
@@ -122,20 +123,24 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // TODO: Check if email and password work while logging into the mail provider.
             System.out.print("Login request received for account: " + packet.getUsername());
 
-            // Register client on server.
-            UUID publicId = UUID.randomUUID();
-            try {
-                clients.put(publicId, new Client());
-                System.out.println(" .. login accepted. " + clients.size() + " clients total.");
+            if (MailAccount.isValid(packet.getUsername(), packet.getPassword())) {//check if user is valid
+                // Register client on server.
+                UUID publicId = UUID.randomUUID();
+                try {
+                    clients.put(publicId, new Client());
+                    System.out.println(" .. login accepted. " + clients.size() + " clients total.");
+                    // Tell client what his id is.
+                    return publicId;
 
-            } catch (RemoteException e) {
-                System.out.println(" .. login denied.");
-                e.printStackTrace();
-                return null;
+                } catch (RemoteException e) {
+                    System.out.println(" .. login is valid but registering failed!.");
+                    e.printStackTrace();
+                    return null;
+                }
             }
-
-            // Tell client what his id is.
-            return publicId;
+            
+            System.out.println(" .. login credentials not valid.");
+            return null;
         });
 /*
         Packet.registerAction(PacketCreateLobby.class, (p) -> {

@@ -13,8 +13,14 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.UUID;
+
 public abstract class GameObject implements IRenderable, IPositionable {
 
+    /**
+     * Unique id of this {@link GameObject} for synchronization on multiple clients.
+     */
+    protected UUID id;
     /**
      * {@link Direction} that this {@link GameObject} is currently facing
      * towards.
@@ -43,7 +49,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link Texture} of this {@link GameObject} for drawing.
      */
     protected Texture texture;
-
     protected Animation animation;
     /**
      * {@link com.badlogic.gdx.graphics.Color} this {@link GameObject}
@@ -88,8 +93,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * Total added deltatime since last {@link Node} movement occured.
      */
     private float moveTotalStep;
-
-
     private float animateTime;
 
     /**
@@ -129,6 +132,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         this.animation = new Animation();
     }
 
+
     /**
      * Initializes this {@link GameObject} with a default {@code Color.WHITE}
      * color.
@@ -140,6 +144,31 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     public GameObject(Vector2 exactPosition, float movementSpeed, Direction direction) {
         this(exactPosition, movementSpeed, direction, Color.WHITE);
+    }
+
+    /**
+     * Gets the unique id of this {@link GameObject} for synchronization on multiple clients.
+     *
+     * @return Unique id of this {@link GameObject} for synchronization on multiple clients.
+     */
+    public UUID getId() {
+        return id;
+    }
+
+    /**
+     * Sets the unique id of this {@link GameObject} for synchronization on multiple clients.
+     *
+     * @param id New unique id to set.
+     */
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    /**
+     * Generates a new {@link UUID} to set for this {@link GameObject}.
+     */
+    public void setId() {
+        this.id = UUID.randomUUID();
     }
 
     public Node getMoveStartNode() {
