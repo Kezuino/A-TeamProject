@@ -5,8 +5,10 @@ import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
+import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
@@ -14,6 +16,11 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,10 +29,31 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     private static Server instance;
     protected ServerBase rmi;
+    private Connection connect = null;
 
     public Server() throws RemoteException {
         super();
         rmi = new ServerBase(this);
+
+        if (!makeConnection()) {
+            System.out.println("Can't make databaseconnection!");
+        }
+    }
+
+    public boolean makeConnection() {
+        try {
+            // This will load the MySQL driver, each DB has its own driver
+            Class.forName("com.mysql.jdbc.Driver");
+
+            // Setup the connection with the DB
+            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
+
+            return true;
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return false;
     }
 
     public static Server getInstance() throws RemoteException {
@@ -100,8 +128,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
     }
 
     /**
-     * Executes the given {@link Packet} based on the registered function or action.
-     * For RMI, the packet executes a RMI function directly.
+     * Executes the given {@link Packet} based on the registered function or
+     * action. For RMI, the packet executes a RMI function directly.
      *
      * @param packet {@link Packet} to send to the {@link Client}.
      */
@@ -138,17 +166,46 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     return null;
                 }
             }
-            
+
             System.out.println(" .. login credentials not valid.");
             return null;
         });
-/*
-        Packet.registerAction(PacketCreateLobby.class, (p) -> {
+        Packet.registerFunc(PacketHighScore.class, (packet) -> {
+            // TODO: Check if email and password work while logging into the mail provider.
+            System.out.print("Login request received for account: " + packet.getClanName());
+
+            //get current score
+            PreparedStatement preparedStatement;
+            ResultSet resultSet = null;
+            ResultSet resultSetWithClans;
+
+            try {
+                preparedStatement = connect.prepareStatement("SELECT `Score` FROM `clan` WHERE Name = ?");
+                preparedStatement.setString(1, packet.getClanName());
+                resultSet = preparedStatement.executeQuery();
+                resultSet.next();
+                int id = resultSet.getInt("Score");
+
+                if (id > packet.getScore()) {
+                    preparedStatement = connect.prepareStatement("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?");
+                    preparedStatement.setInt(1, packet.getScore());
+                    preparedStatement.setString(2, packet.getClanName());
+                    resultSet = preparedStatement.executeQuery();
+                }
+                System.out.println(Integer.toString(id));
+            } catch (SQLException ex) {
+                Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            return false;
+        });
+        /*
+         Packet.registerAction(PacketCreateLobby.class, (p) -> {
             
-           // getRmi().createLobby(p.getLobbyname(), p.getSender());
-            //Game game = new Game(p.getLobbyname(), p.getSender());
-            //games.put(game.getId(), game);
-        });*/
+         // getRmi().createLobby(p.getLobbyname(), p.getSender());
+         //Game game = new Game(p.getLobbyname(), p.getSender());
+         //games.put(game.getId(), game);
+         });*/
 
         Packet.registerAction(PacketHeartbeat.class, packet -> System.out.println("Heartbeat received from: " + packet.getSender()));
     }

@@ -2,7 +2,13 @@ package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class Server<TClient extends IClient> implements IServer, IPacketSender {
     protected Dictionary<UUID, Game> games;
@@ -12,6 +18,7 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     protected Thread updateThread;
     protected boolean isUpdating;
     protected double secondsFromLastUpdate;
+    private Connection connect = null;
 
     /**
      * Gets or sets all {@link IClient clients} currently connected to this {@link Server}.
@@ -23,6 +30,26 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
         this.clients = new Hashtable<>();
         this.secondsFromLastUpdate = System.nanoTime();
         this.isUpdating = true;
+        
+        if (!makeConnection()) {
+            System.out.println("Can't make databaseconnection!");
+        }
+    }
+    
+    public boolean makeConnection(){
+          try {
+            // This will load the MySQL driver, each DB has its own driver
+            Class.forName("com.mysql.jdbc.Driver");
+
+            // Setup the connection with the DB
+            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
+
+            return true;
+        } catch (ClassNotFoundException | SQLException ex) {
+            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return false;
     }
 
     public List<Game> getGames() {
