@@ -10,6 +10,7 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLogin;
 import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
+import ateamproject.kezuino.com.github.render.screens.LoginScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import ateamproject.kezuino.com.github.utility.graphics.DialogHelper;
 import com.badlogic.gdx.Game;
@@ -128,7 +129,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             try {
                 UUID remoteId = Client.getInstance(game).getRmi().getServer().login(packet.getUsername(), packet.getPassword());
                 Client.getInstance(game).setId(remoteId);
-                System.out.println(remoteId);
+                game.setScreen(new MainScreen(game));
                 return remoteId;
             } catch (RemoteException e) {
                 e.printStackTrace();

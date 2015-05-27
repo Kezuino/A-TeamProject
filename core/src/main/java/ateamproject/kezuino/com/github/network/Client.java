@@ -28,6 +28,7 @@ public abstract class Client implements IClient, IPacketSender {
         this.players = new HashMap<>(8);
         this.secondsFromLastUpdate = System.nanoTime();
         this.isUpdating = true;
+        this.id = UUID.randomUUID();
     }
 
     /**

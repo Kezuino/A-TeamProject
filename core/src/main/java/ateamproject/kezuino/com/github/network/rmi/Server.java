@@ -125,12 +125,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             if (MailAccount.isValid(packet.getUsername(), packet.getPassword())) {//check if user is valid
                 // Register client on server.
-                UUID publicId = UUID.randomUUID();
                 try {
-                    clients.put(publicId, new Client());
+                    Client client = new Client();
+                    clients.put(client.getId(), client);
                     System.out.println(" .. login accepted. " + clients.size() + " clients total.");
                     // Tell client what his id is.
-                    return publicId;
+                    return client.getId();
 
                 } catch (RemoteException e) {
                     System.out.println(" .. login is valid but registering failed!.");
