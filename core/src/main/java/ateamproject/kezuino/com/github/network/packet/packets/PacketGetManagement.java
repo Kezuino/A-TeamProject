@@ -13,7 +13,7 @@ import java.util.UUID;
  *
  * @author Sven
  */
-public class PacketCreateClan extends Packet<Boolean> {
+public class PacketGetManagement extends Packet<ManagementType> {
 
     @PacketField(0)
     protected String emailadres;
@@ -21,12 +21,12 @@ public class PacketCreateClan extends Packet<Boolean> {
     @PacketField(1)
     protected String clanName;
 
-    public PacketCreateClan(String emailadres, String clanName) {
+    public PacketGetManagement(String emailadres, String clanName) {
         this.emailadres = emailadres;
         this.clanName = clanName;
     }
 
-    public PacketCreateClan(String emailadres, String clanName, UUID... senderAndReceivers) {
+    public PacketGetManagement(String emailadres, String clanName, UUID... senderAndReceivers) {
         super(senderAndReceivers);
         this.emailadres = emailadres;
         this.clanName = clanName;

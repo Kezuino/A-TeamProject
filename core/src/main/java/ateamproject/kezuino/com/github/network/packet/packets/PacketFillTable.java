@@ -5,10 +5,33 @@
  */
 package ateamproject.kezuino.com.github.network.packet.packets;
 
+import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.PacketField;
+import java.util.ArrayList;
+import java.util.UUID;
+
 /**
  *
  * @author Sven
  */
-public class PacketFillTable {
+public class PacketFillTable extends Packet<ArrayList<String>> {
+    @PacketField(0)
+    protected String emailadres;
+
+    public PacketFillTable(String emailadres) {
+        this.emailadres = emailadres;
+    }
+
+    public PacketFillTable(String emailadres, UUID... senderAndReceivers) {
+        super(senderAndReceivers);
+        this.emailadres = emailadres;
+    }
+
+    public String getEmailadres() {
+        return emailadres;
+    }
+    
+    
+    
     
 }
