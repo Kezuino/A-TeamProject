@@ -16,11 +16,13 @@ import java.util.UUID;
 
 public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     protected transient Server server;
+    private ClanFunctions clanFunctions;
 
     public ServerBase(Server server) throws RemoteException {
         super(Registry.REGISTRY_PORT);
         if (server == null) throw new IllegalArgumentException("Parameter server must not be null.");
         this.server = server;
+        clanFunctions = new ClanFunctions();
     }
 
     @Override
@@ -102,52 +104,52 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public ArrayList<String> clanFillTable(String emailadres) throws RemoteException {
-        return null;
+        return clanFunctions.fillTable(emailadres);
     }
 
     @Override
     public boolean clanCreateClan(String clanName, String emailaddress) throws RemoteException {
-        return false;
+        return clanFunctions.createClan(clanName, emailaddress);
     }
 
     @Override
     public ClanFunctions.InvitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException {
-        return null;
+        return clanFunctions.getInvitation(clanName, emailaddress);
     }
 
     @Override
     public ClanFunctions.ManagementType getManagement(String clanName, String emailaddress) throws RemoteException {
-        return null;
+        return clanFunctions.getManagement(clanName, emailaddress);
     }
 
     @Override
     public String getPeople(String clanName) throws RemoteException {
-        return null;
+        return clanFunctions.getPeople(clanName);
     }
 
     @Override
     public boolean handleInvitation(ClanFunctions.InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException {
-        return false;
+        return clanFunctions.handleInvitation(invite, clanName, emailAddress, nameOfInvitee);
     }
 
     @Override
     public boolean handleManagement(ClanFunctions.ManagementType manage, String clanName, String emailaddress) throws RemoteException {
-        return false;
+        return clanFunctions.handleManagement(manage, clanName, emailaddress);
     }
 
     @Override
     public String getUsername(String emailaddress) throws RemoteException {
-        return null;
+        return clanFunctions.getUsername(emailaddress);
     }
 
     @Override
     public String getEmail(String username) throws RemoteException {
-        return null;
+        return clanFunctions.getEmail(username);
     }
 
     @Override
     public boolean setUsername(String name, String emailaddress) throws RemoteException {
-        return false;
+        return clanFunctions.setUsername(name, emailaddress);
     }
 
 
