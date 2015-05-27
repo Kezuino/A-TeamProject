@@ -1,11 +1,8 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.mail.MailAccount;
-import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
-import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateClan;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketFillTable;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetEmail;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetHasConnection;
@@ -15,7 +12,6 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketGetPeople;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetUsername;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleInvitation;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleManagement;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
@@ -36,7 +32,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -209,7 +204,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
         
         Packet.registerFunc(PacketSetUsername.class, (packet)-> {
-            return clanFunctions.setUsername(packet.getName(), packet.getEmailadres());
+            return clanFunctions.setUsername(packet.getName(), packet.getEmailaddress());
         });
 
         Packet.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
