@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
+import ateamproject.kezuino.com.github.network.mail.MailAccount;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
@@ -16,6 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Server extends ateamproject.kezuino.com.github.network.Server<Client> {
+
     private static Server instance;
     protected ServerBase rmi;
 
@@ -47,10 +49,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
             registry.bind("server", rmi);
 
-            if (updateThread != null) updateThread.interrupt();
+            if (updateThread != null) {
+                updateThread.interrupt();
+            }
             updateThread = new Thread(() -> {
                 while (!Thread.currentThread().isInterrupted()) {
-                    while(isUpdating) {
+                    while (isUpdating) {
                         // Check if all clients are still active.
                         for (Client c : getClients()) {
                             System.out.println(c.getSecondsFromLastPacket());
@@ -83,7 +87,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             System.out.println("Server stopped");
 
             // TODO: Notify clients.
-
             unregisterPackets();
 
             UnicastRemoteObject.unexportObject(rmi, true);
@@ -107,20 +110,24 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // TODO: Check if email and password work while logging into the mail provider.
             System.out.print("Login request received for account: " + packet.getUsername());
 
-            // Register client on server.
-            UUID publicId = UUID.randomUUID();
-            try {
-                clients.put(publicId, new Client());
-                System.out.println(" .. login accepted. " + clients.size() + " clients total.");
+            if (MailAccount.isValid(packet.getUsername(), packet.getPassword())) {//check if user is valid
+                // Register client on server.
+                UUID publicId = UUID.randomUUID();
+                try {
+                    clients.put(publicId, new Client());
+                    System.out.println(" .. login accepted. " + clients.size() + " clients total.");
+                    // Tell client what his id is.
+                    return publicId;
 
-            } catch (RemoteException e) {
-                System.out.println(" .. login denied.");
-                e.printStackTrace();
-                return null;
+                } catch (RemoteException e) {
+                    System.out.println(" .. login is valid but registering failed!.");
+                    e.printStackTrace();
+                    return null;
+                }
             }
-
-            // Tell client what his id is.
-            return publicId;
+            
+            System.out.println(" .. login credentials not valid.");
+            return null;
         });
 
         Packet.registerAction(PacketHeartbeat.class, packet -> System.out.println("Heartbeat received from: " + packet.getSender()));
