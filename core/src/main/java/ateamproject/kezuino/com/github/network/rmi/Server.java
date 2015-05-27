@@ -1,11 +1,8 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.mail.MailAccount;
-import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
-import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateClan;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketFillTable;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetEmail;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetHasConnection;
@@ -15,11 +12,11 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketGetPeople;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetUsername;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleInvitation;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleManagement;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginCreateNewUser;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketSetUsername;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
@@ -36,7 +33,6 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -209,7 +205,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
         
         Packet.registerFunc(PacketSetUsername.class, (packet)-> {
-            return clanFunctions.setUsername(packet.getName(), packet.getEmailadres());
+            return clanFunctions.setUsername(packet.getName(), packet.getEmailaddress());
         });
 
         Packet.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
@@ -234,7 +230,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             System.out.println(" .. login credentials not valid.");
             return null;
         });
-        
+
         Packet.registerFunc(PacketHighScore.class, (packet) -> {
            // TODO: Check if email and password work while logging into the mail provider.
             System.out.print("Login request received for account: " + packet.getClanName());
@@ -264,19 +260,50 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return false;
         });
         
+        Packet.registerFunc(PacketLoginCreateNewUser.class, (packet) -> {
+            System.out.print("Trying to create following user in database: " + packet.getUsername());
+            PreparedStatement preparedStatement = null;
+            ResultSet resultSet = null;
+            int count = 0;
+
+            try {
+                preparedStatement = connect.prepareStatement("SELECT COUNT(*) as amount FROM account WHERE Name = ?");
+                preparedStatement.setString(1, packet.getUsername());
+                resultSet = preparedStatement.executeQuery();
+                resultSet.next();
+                count = resultSet.getInt("amount");
+
+                if (count == 1) {
+                    System.out.print("Following user does already exists: " + packet.getUsername());
+                    return false;
+                } else {
+                    preparedStatement = connect.prepareStatement("INSERT INTO account(Name,Email) VALUES(?,?)");
+                    preparedStatement.setString(1, packet.getUsername());
+                    preparedStatement.setString(2, packet.getEmail());
+                    preparedStatement.executeUpdate();
+                    
+                    System.out.print("Adding following user to database: " + packet.getUsername());
+                    return true;
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            return false;
+        });
+
         Packet.registerFunc(PacketLoginUserExists.class, (packet) -> {
             System.out.print("Checking if the following user exists: " + packet.getEmail());
             PreparedStatement preparedStatement = null;
             ResultSet resultSet = null;
             int count = 0;
-        
+
             try {
                 preparedStatement = connect.prepareStatement("SELECT COUNT(*) as amount FROM account WHERE Email = ?");
                 preparedStatement.setString(1, packet.getEmail());
                 resultSet = preparedStatement.executeQuery();
                 resultSet.next();
                 count = resultSet.getInt("amount");
-                    return true;
             } catch (SQLException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
