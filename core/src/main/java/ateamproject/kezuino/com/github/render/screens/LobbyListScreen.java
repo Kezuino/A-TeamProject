@@ -156,5 +156,3 @@ public class LobbyListScreen extends BaseScreen {
         }
     }
 }
-
-}
