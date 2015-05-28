@@ -8,8 +8,7 @@ package ateamproject.kezuino.com.github.render.screens;
 import ateamproject.kezuino.com.github.network.IClient;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.network.Game;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
@@ -87,16 +86,8 @@ public class LobbyScreen extends BaseScreen {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
                             // remove lobby 
-                            /*
-                            try {
-                                boolean result = client.getRmi().quitLobby(lobbyId);
-                                if (result) {
-                                    game.setScreen(new LobbyListScreen(game, true));
-                                }
-                            } catch (RemoteException ex) {
-                                Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
-                            }*/
-
+                            
+                            
                         }
                     });
                 }
@@ -112,15 +103,18 @@ public class LobbyScreen extends BaseScreen {
                     btnLeaveLobby.addListener(new ClickListener() {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
-                            // leae lobby
-                            /*
-                            try {
-                                if (client.getRmi().leaveLobby(client.getPlayer(0))) {
-                                    game.setScreen(new LobbyListScreen(game, true));
-                                }
-                            } catch (RemoteException ex) {
-                                Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
-                            }*/
+                          //leave lobby
+                            PacketLeaveLobby packet = new PacketLeaveLobby(lobbyId, client.getId());
+                            client.send(packet);
+                            boolean succeeded = packet.getResult();
+                            if(succeeded)
+                            {
+                                game.setScreen(new LobbyListScreen(game, true));
+                            }
+                            else
+                            {
+                                System.out.println("something went wrong when leaveing the lobby!");
+                            }
                         }
                     });
                 }

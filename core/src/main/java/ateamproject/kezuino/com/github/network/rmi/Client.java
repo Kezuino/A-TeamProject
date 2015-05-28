@@ -6,14 +6,7 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginCreateNewUser;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import ateamproject.kezuino.com.github.utility.graphics.DialogHelper;
 import com.badlogic.gdx.Game;
@@ -186,6 +179,20 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         Packet.registerFunc(PacketJoinLobby.class, (p) -> {
             try {
                 PacketJoinLobby.PacketJoinLobbyData result = getRmi().getServer().joinLobby(p.getLobbyid(), p.getSender());
+                return result;
+                 
+                // getRmi().createLobby(p.getLobbyname(), p.getSender());
+                //Game game = new Game(p.getLobbyname(), p.getSender());
+                //games.put(game.getId(), game);
+            } catch (RemoteException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return null;
+        });
+        
+         Packet.registerFunc(PacketLeaveLobby.class, (p) -> {
+            try {
+                Boolean result = getRmi().getServer().leaveLobby(p.getLobbyid(), p.getSender());
                 return result;
                  
                 // getRmi().createLobby(p.getLobbyname(), p.getSender());

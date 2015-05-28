@@ -115,6 +115,13 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
+    public boolean leaveLobby(UUID lobbyId, UUID client) throws RemoteException {
+        Game g = server.findGame(lobbyId);
+        return g.getClients().remove(client);
+    }
+
+    
+    @Override
     public boolean kickClient(UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException {
         return Packet.execute(new PacketKick(reasonType, message, client)).getResult();
     }

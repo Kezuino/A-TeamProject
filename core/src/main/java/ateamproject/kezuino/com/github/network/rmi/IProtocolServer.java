@@ -49,6 +49,8 @@ public interface IProtocolServer extends IProtocol {
      */
     boolean quitLobby(UUID lobbyId) throws RemoteException;
 
+    boolean leaveLobby(UUID lobbyId, UUID client) throws RemoteException;
+    
     /**
      * Kicks the {@link IClient} from any lobby it is currently in.
      *
