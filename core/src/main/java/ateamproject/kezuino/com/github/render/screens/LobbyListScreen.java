@@ -157,44 +157,4 @@ public class LobbyListScreen extends BaseScreen {
     }
 }
 
-/**
- * @author Fatih
- */
-class LobbyFunctions {
-
-    public static List<String[]> getRandomHostList() {
-        // 0 = lobby name
-        // 1 = host name
-        // 2 = clients
-        List<String[]> hostsList = new ArrayList<>();
-
-        String[] host;
-        for (int i = 0; i < 20; i++) {
-            host = new String[3];
-            host[0] = "NewGame";
-            host[1] = "Fatih";
-            host[2] = "1/8";
-            hostsList.add(host);
-        }
-
-        return hostsList;
-    }
-
-    public static List<String[]> getClanHostList() {
-        // 0 = lobby name
-        // 1 = host name
-        // 2 = clients
-        List<String[]> clanList = new ArrayList<>();
-
-        String[] host;
-        for (int i = 0; i < 20; i++) {
-            host = new String[3];
-            host[0] = "NewGame";
-            host[1] = "Fatih";
-            host[2] = "1/8";
-            clanList.add(host);
-        }
-
-        return clanList;
-    }
 }

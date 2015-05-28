@@ -39,6 +39,11 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
         return Collections.list(games.elements());
     }
     
+    public Game removeGame(UUID gameId)
+    {
+        return games.remove(gameId);
+    }
+    
     public void addGame(Game game)
     {
         games.put(game.getId(), game);

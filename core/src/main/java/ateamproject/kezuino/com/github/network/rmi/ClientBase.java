@@ -38,18 +38,6 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
 
-    public Game getLobbyById(UUID lobbyId) throws RemoteException {
-        return this.server.getLobbyById(lobbyId);
-    }
-
-    public boolean quitLobby(UUID lobbyId) throws RemoteException {
-        return this.server.quitLobby(lobbyId);
-    }
-
-    public boolean leaveLobby(UUID client) throws RemoteException {
-        return this.server.kickClient(client, PacketKick.KickReasonType.LOBBY, null);
-    }
-
     @Override
     public boolean drop(String reason) throws RemoteException {
         System.out.println("Kicked by server: " + reason);

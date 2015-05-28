@@ -13,26 +13,22 @@ import java.util.UUID;
  *
  * @author Fatih
  */
-public class PacketCreateLobby extends Packet<UUID> {
+public class PacketQuitLobby extends Packet<Boolean> { 
 
-    @PacketField(0)
-    protected String lobbyname;
-
-    public PacketCreateLobby() {
-    }
-
-    public PacketCreateLobby(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+     @PacketField(0)
+    protected UUID lobbyid;
+    
+    public PacketQuitLobby() {
     }
     
-    public PacketCreateLobby(String lobbyname,UUID... senderAndReceivers) {
-        this(senderAndReceivers);
+    public PacketQuitLobby(UUID lobbyid,UUID... senderAndReceivers) {
+        super(senderAndReceivers);
         
-        this.lobbyname = lobbyname;
+        this.lobbyid = lobbyid;
     }
 
-    public String getLobbyname() {
-        return lobbyname;
+    public UUID getLobbyid() {
+        return this.lobbyid;
     }
-
+    
 }

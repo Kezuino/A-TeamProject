@@ -103,15 +103,20 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public boolean quitLobby(UUID lobbyId) throws RemoteException {
-//        for (Game game : gameList) {
-//            boolean match = game.getId().equals(lobbyId);
-//            System.out.println(match);
-//            if (match) {
-//                return gameList.remove(game);
-//            }
-//        }
-
-        return false;
+        
+        Game deletedGame = server.removeGame(lobbyId);
+        
+        // if null -> game coundnt be found
+        if (deletedGame != null) {
+            // send all clients packet that lobby is closed
+            // packet kick
+            // >> deletedGame.getClients()
+            
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     @Override
@@ -119,7 +124,6 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         Game g = server.findGame(lobbyId);
         return g.getClients().remove(client);
     }
-
     
     @Override
     public boolean kickClient(UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException {

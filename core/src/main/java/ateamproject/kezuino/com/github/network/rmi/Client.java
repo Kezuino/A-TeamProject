@@ -149,16 +149,17 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             return false;
         });
 
-        Packet.registerAction(PacketCreateLobby.class, (p) -> {
+        Packet.registerFunc(PacketCreateLobby.class, (p) -> {
 
             try {
-                getRmi().getServer().createLobby(p.getLobbyname(), p.getSender());
-
+                UUID newGame = getRmi().getServer().createLobby(p.getLobbyname(), p.getSender());
+                return newGame;
                 // ateamproject.kezuino.com.github.network.Game game = new ateamproject.kezuino.com.github.network.Game(p.getLobbyname(), p.getSender());
                 //games.put(game.getId(), game);
             } catch (RemoteException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
+            return null;
         });
         
          Packet.registerFunc(PacketGetLobbies.class, (p) -> {
@@ -180,10 +181,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             try {
                 PacketJoinLobby.PacketJoinLobbyData result = getRmi().getServer().joinLobby(p.getLobbyid(), p.getSender());
                 return result;
-                 
-                // getRmi().createLobby(p.getLobbyname(), p.getSender());
-                //Game game = new Game(p.getLobbyname(), p.getSender());
-                //games.put(game.getId(), game);
             } catch (RemoteException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -195,9 +192,17 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 Boolean result = getRmi().getServer().leaveLobby(p.getLobbyid(), p.getSender());
                 return result;
                  
-                // getRmi().createLobby(p.getLobbyname(), p.getSender());
-                //Game game = new Game(p.getLobbyname(), p.getSender());
-                //games.put(game.getId(), game);
+            } catch (RemoteException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return null;
+        });
+         
+          Packet.registerFunc(PacketQuitLobby.class, (p) -> {
+            try {
+                Boolean result = getRmi().getServer().quitLobby(p.getLobbyid());
+                return result;
+                 
             } catch (RemoteException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }

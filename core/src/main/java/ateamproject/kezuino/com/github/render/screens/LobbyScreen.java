@@ -34,7 +34,7 @@ public class LobbyScreen extends BaseScreen {
     private Client client;
     private String lobbyName;
     private UUID lobbyId;
-    private Dictionary<UUID,String> members;
+    private Dictionary<UUID, String> members;
 
     private boolean isHost;
 
@@ -44,13 +44,17 @@ public class LobbyScreen extends BaseScreen {
     public LobbyScreen(com.badlogic.gdx.Game game, String lobbyname) {
         super(game);
         this.lobbyName = lobbyname;
+        this.isHost = true;
+
         try {
             client = Client.getInstance(game);
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        client.send(new PacketCreateLobby(this.lobbyName,client.getId()));
+
+        PacketCreateLobby p = new PacketCreateLobby(this.lobbyName, client.getId());
+        client.send(p);
+        this.lobbyId = p.getResult();
 
         refreshGui();
     }
@@ -58,6 +62,9 @@ public class LobbyScreen extends BaseScreen {
     // member constructor
     public LobbyScreen(com.badlogic.gdx.Game game, UUID lobbyId) {
         super(game);
+        this.lobbyId = lobbyId;
+        this.isHost = false;
+
         try {
             client = Client.getInstance(game);
         } catch (RemoteException ex) {
@@ -65,13 +72,12 @@ public class LobbyScreen extends BaseScreen {
         }
 
         // get lobby information en fill gui
-        this.lobbyId = lobbyId;
         PacketJoinLobby packet = new PacketJoinLobby(this.lobbyId, client.getId());
         client.send(packet);
-       PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
-       this.lobbyName = lob.lobbyName;
-       this.members = lob.members;
-       
+        PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
+        this.lobbyName = lob.lobbyName;
+        this.members = lob.members;
+
         refreshGui();
     }
 
@@ -85,9 +91,16 @@ public class LobbyScreen extends BaseScreen {
                     btnQuitLobby.addListener(new ClickListener() {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
-                            // remove lobby 
-                            
-                            
+                            // quit lobby 
+                            PacketQuitLobby packet = new PacketQuitLobby(lobbyId);
+                            client.send(packet);
+                            boolean succeeded = packet.getResult();
+                            if (succeeded) {
+                                game.setScreen(new LobbyListScreen(game, true));
+                            } else {
+                                System.out.println("something went wrong quiting the lobby!");
+                            }
+
                         }
                     });
                 }
@@ -103,16 +116,13 @@ public class LobbyScreen extends BaseScreen {
                     btnLeaveLobby.addListener(new ClickListener() {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
-                          //leave lobby
+                            //leave lobby
                             PacketLeaveLobby packet = new PacketLeaveLobby(lobbyId, client.getId());
                             client.send(packet);
                             boolean succeeded = packet.getResult();
-                            if(succeeded)
-                            {
+                            if (succeeded) {
                                 game.setScreen(new LobbyListScreen(game, true));
-                            }
-                            else
-                            {
+                            } else {
                                 System.out.println("something went wrong when leaveing the lobby!");
                             }
                         }
@@ -148,37 +158,35 @@ public class LobbyScreen extends BaseScreen {
         Label lobby = new Label("Lobby name : " + lobbyName, skin);
         lobby.setSize(200, 30);
         lobby.setPosition(0, stage.getHeight() - lobby.getHeight());
-/*
-        Label lobbyid = new Label("UUID : " + curLobby.getId(), skin);
-        lobbyid.setSize(200, 30);
-        lobbyid.setPosition(0, 30);
+        /*
+         Label lobbyid = new Label("UUID : " + curLobby.getId(), skin);
+         lobbyid.setSize(200, 30);
+         lobbyid.setPosition(0, 30);
 
-        Label clients = new Label("clients : " + curLobby.getClients().size() + "/8", skin);
-        clients.setSize(200, 30);
-        clients.setPosition(0, 60);
-*/
+         Label clients = new Label("clients : " + curLobby.getClients().size() + "/8", skin);
+         clients.setSize(200, 30);
+         clients.setPosition(0, 60);
+         */
         if (this.members != null) {
-            
-        
-        for (String membername :  Collections.list(this.members.elements())) {
-           TextField lblmember = new TextField(membername.toString(), skin);
-            lblmember.setDisabled(true);
-            
-            scrollTable.add(lblmember);
-            scrollTable.row();
-        }
+
+            for (String membername : Collections.list(this.members.elements())) {
+                TextField lblmember = new TextField(membername.toString(), skin);
+                lblmember.setDisabled(true);
+
+                scrollTable.add(lblmember);
+                scrollTable.row();
+            }
         }
 
         stage.addActor(lobby);
-        
+
         float x = stage.getWidth() / 2 - table.getWidth() / 2;
         float y = stage.getHeight() - table.getHeight() - 30;
 
         table.setPosition(x, y);
         this.stage.addActor(table);
-        
-        //stage.addActor(lobbyid);
-       // stage.addActor(clients);
 
+        //stage.addActor(lobbyid);
+        // stage.addActor(clients);
     }
 }
