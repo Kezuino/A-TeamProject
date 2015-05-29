@@ -10,6 +10,7 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginCreateN
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
+import ateamproject.kezuino.com.github.utility.graphics.DialogHelper;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -42,13 +43,13 @@ public class LoginScreen extends BaseScreen {
             public void clicked(InputEvent event, float x, float y) {
                 try {
                     PacketLoginAuthenticate packet = new PacketLoginAuthenticate(txtUsername.getText(), txtPassword.getText());
-                    Client.getInstance(game).send(packet);
+                    Client.getInstance().send(packet);
 
                     try {
-                        if (Client.getInstance(game).getPrivateId() != null) {//if login did succeed
-                            PacketLoginUserExists packetUserExists = new PacketLoginUserExists(txtUsername.getText(), Client.getInstance(game).getPrivateId());
-                            Client.getInstance(game).send(packetUserExists);
-                            if (packetUserExists.getResult() == false) {//if user not exists
+                        if (Client.getInstance().getId() != null) {//if login did succeed
+                            PacketLoginUserExists packetUserExists = new PacketLoginUserExists(txtUsername.getText());
+                            Client.getInstance().send(packetUserExists);
+                            if (!packetUserExists.getResult()) {//if user not exists
                                 Dialog d = new Dialog("Geen gebruiker gevonden", skin);
                                 d.add("Gebruikersnaam:");
                                 TextField f = new TextField("", skin);
@@ -58,24 +59,13 @@ public class LoginScreen extends BaseScreen {
                                     @Override
                                     public void clicked(InputEvent event, float x, float y) {
                                         if (!f.getText().equals("")) {
-                                            PacketLoginCreateNewUser packet = null;
+                                            PacketLoginCreateNewUser packet;
                                             try {
-                                                packet = new PacketLoginCreateNewUser(f.getText(), txtUsername.getText(), Client.getInstance(game).getPrivateId());
-                                                Client.getInstance(game).send(packet);
-                                                Dialog d1 = null;
+                                                packet = new PacketLoginCreateNewUser(f.getText(), txtUsername.getText());
+                                                Client.getInstance().send(packet);
                                                 if (!packet.getResult()) {
-                                                    d1 = new Dialog("error", skin);
-                                                    d1.add("De naam bestaat al");
-                                                    TextButton bExit = new TextButton("Oke", skin);
-                                                    final Dialog d1Final = d1;
-                                                    bExit.addListener(new ClickListener() {
-                                                        @Override
-                                                        public void clicked(InputEvent event, float x, float y) {
-                                                            d1Final.hide();
-                                                        }
-                                                    });
-                                                    d1.add(bExit);
-                                                    d1.show(stage);
+                                                    DialogHelper.setSkin(skin);
+                                                    DialogHelper.show("Error", "De naam bestaat al");
                                                 } else {
                                                     d.hide();
                                                     game.setScreen(new MainScreen(game));

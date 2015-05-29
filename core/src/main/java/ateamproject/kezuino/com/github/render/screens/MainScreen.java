@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLogout;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
@@ -52,13 +53,11 @@ public class MainScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //game.setScreen(new GameScreen(game));
-                 boolean remoteId = false;
 
-                    PacketHighScore packet;
+                PacketHighScore packet;
                 try {
-                    packet = new PacketHighScore("MBoiz", 30, Client.getInstance(game).getPrivateId());
-                    Client.getInstance(game).send(packet);
-                   remoteId=  packet.getResult();
+                    packet = new PacketHighScore("MBoiz", 30, Client.getInstance().getId());
+                    Client.getInstance().send(packet);
                 } catch (RemoteException ex) {
                     Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -77,6 +76,11 @@ public class MainScreen extends BaseScreen {
         tbLogout.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                PacketLogout packet = new PacketLogout();
+                try {
+                    Client.getInstance().send(packet);
+                } catch (RemoteException e) {
+                }
                 game.setScreen(new LoginScreen(game));
             }
         });

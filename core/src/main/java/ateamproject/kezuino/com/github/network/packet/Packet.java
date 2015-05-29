@@ -1,6 +1,6 @@
 package ateamproject.kezuino.com.github.network.packet;
 
-import ateamproject.kezuino.com.github.network.IClient;
+import ateamproject.kezuino.com.github.network.IClientInfo;
 
 import java.io.*;
 import java.lang.reflect.Field;
@@ -30,7 +30,7 @@ public abstract class Packet<TResult> {
     }
 
     /**
-     * Gets or sets the {@link IClient} that issued this {@link Packet}.
+     * Gets or sets the {@link IClientInfo} that issued this {@link Packet}.
      * If null, sender was the current executing context (usually the server).
      */
     protected UUID sender;
@@ -39,7 +39,7 @@ public abstract class Packet<TResult> {
      */
     protected PacketAudience audience;
     /**
-     * Gets or sets the {@link HashSet} of {@link IClient clients} that should receive this {@link Packet}.
+     * Gets or sets the {@link HashSet} of {@link IClientInfo clients} that should receive this {@link Packet}.
      */
     protected HashSet<UUID> receivers;
 
@@ -151,14 +151,15 @@ public abstract class Packet<TResult> {
 
         // Get PacketField annotated fields.
         Field[] declaredFields = clazz.getDeclaredFields();
-        for (int i = 0; i <declaredFields.length; i++) {
+        for (int i = 0; i < declaredFields.length; i++) {
             if (declaredFields[i].getAnnotation(PacketField.class) != null) {
                 result.add(declaredFields[i]);
             }
         }
 
         // Sort the fields based on order.
-        Collections.sort(result, (f1, f2) -> Byte.compare(f1.getAnnotation(PacketField.class).value(), f2.getAnnotation(PacketField.class).value()));
+        Collections.sort(result, (f1, f2) -> Byte.compare(f1.getAnnotation(PacketField.class)
+                                                            .value(), f2.getAnnotation(PacketField.class).value()));
 
         return result;
     }
@@ -273,6 +274,15 @@ public abstract class Packet<TResult> {
     }
 
     /**
+     * Sets the {@link UUID} that issued this {@link Packet}.
+     *
+     * @param sender {@link UUID} that issued this {@link Packet}.
+     */
+    public void setSender(UUID sender) {
+        this.sender = sender;
+    }
+
+    /**
      * Gets the {@link ateamproject.kezuino.com.github.network.packet.Packet.PacketAudience} that is interested in this {@link Packet}.
      *
      * @return {@link ateamproject.kezuino.com.github.network.packet.Packet.PacketAudience} that is interested in this {@link Packet}.
@@ -305,7 +315,8 @@ public abstract class Packet<TResult> {
             final ObjectOutput finalOut = out;
 
             // Write packet type.
-            out.writeUTF(this.getClass().getSimpleName().replace("Packet", ""));
+            String packetClassName = this.getClass().getSimpleName();
+            out.writeUTF(packetClassName.substring("Packet".length(), packetClassName.length() - "Packet".length()));
 
             // Write sender.
             if (sender != null) {
@@ -369,17 +380,17 @@ public abstract class Packet<TResult> {
      */
     public enum PacketAudience {
         /**
-         * All {@link IClient clients} on the server.
+         * All {@link IClientInfo clients} on the server.
          */
         BROADCAST_SERVER,
 
         /**
-         * All {@link IClient} connected to a specific {@link ateamproject.kezuino.com.github.network.Game}.
+         * All {@link IClientInfo} connected to a specific {@link ateamproject.kezuino.com.github.network.Game}.
          */
         BROADCAST,
 
         /**
-         * Specific {@link IClient}.
+         * Specific {@link IClientInfo}.
          */
         TARGET,
 

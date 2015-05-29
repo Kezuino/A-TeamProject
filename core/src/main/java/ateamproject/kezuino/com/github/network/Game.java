@@ -6,11 +6,10 @@
 package ateamproject.kezuino.com.github.network;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.UUID;
 
 /**
- * Holds information about a hosted lobby/game. Used by the {@link IServer} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.
+ * Holds information about a hosted lobby/game. Used by the {@link INetworkComponent} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.
  */
 public class Game {
 
@@ -52,25 +51,25 @@ public class Game {
     }
 
     /**
-     * Gets all {@link IClient clients} that are currently in this game / lobby.
+     * Gets all {@link IClientInfo clients} that are currently in this game / lobby.
      *
-     * @return All {@link IClient clients} that are currently in this game / lobby.
+     * @return All {@link IClientInfo clients} that are currently in this game / lobby.
      */
     public HashSet<UUID> getClients() {
         return clients;
     }
 
     /**
-     * Gets if true, {@link IClient clients} are currently playing. False if {@link IClient clients} are in the lobby.
+     * Gets if true, {@link IClientInfo clients} are currently playing. False if {@link IClientInfo clients} are in the lobby.
      *
-     * @return If true, {@link IClient clients} are currently playing. False if {@link IClient clients} are in the lobby.
+     * @return If true, {@link IClientInfo clients} are currently playing. False if {@link IClientInfo clients} are in the lobby.
      */
     public boolean isInGame() {
         return inGame;
     }
 
     /**
-     * Set to true when {@link IClient clients} are currently playing. False if {@link IClient clients} are in the lobby.
+     * Set to true when {@link IClientInfo clients} are currently playing. False if {@link IClientInfo clients} are in the lobby.
      */
     public void setInGame(boolean inGame) {
         this.inGame = inGame;

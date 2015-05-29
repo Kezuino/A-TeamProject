@@ -43,12 +43,12 @@ public class LobbyScreen extends BaseScreen {
         this.isHost = true;
 
         try {
-            client = Client.getInstance(game);
+            client = Client.getInstance();
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        PacketCreateLobby p = new PacketCreateLobby(this.lobbyName, client.getPrivateId());
+        PacketCreateLobby p = new PacketCreateLobby(this.lobbyName);
         client.send(p);
         this.lobbyId = p.getResult();
 
@@ -62,13 +62,13 @@ public class LobbyScreen extends BaseScreen {
         this.isHost = false;
 
         try {
-            client = Client.getInstance(game);
+            client = Client.getInstance();
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         // get lobby information en fill gui
-        PacketJoinLobby packet = new PacketJoinLobby(this.lobbyId, client.getPrivateId());
+        PacketJoinLobby packet = new PacketJoinLobby(this.lobbyId, client.getId());
         client.send(packet);
         PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
         this.lobbyName = lob.lobbyName;
@@ -113,7 +113,7 @@ public class LobbyScreen extends BaseScreen {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
                             //leave lobby
-                            PacketLeaveLobby packet = new PacketLeaveLobby(lobbyId, client.getPrivateId());
+                            PacketLeaveLobby packet = new PacketLeaveLobby(lobbyId, client.getId());
                             client.send(packet);
                             boolean succeeded = packet.getResult();
                             if (succeeded) {

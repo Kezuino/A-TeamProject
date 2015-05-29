@@ -5,13 +5,8 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
-import ateamproject.kezuino.com.github.network.Game;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * @author Kez and Jules

@@ -6,7 +6,6 @@
 package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.rmi.Client;
-import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -14,7 +13,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -115,7 +113,7 @@ public class LobbyListScreen extends BaseScreen {
         List<PacketGetLobbies.GetLobbiesData> hostList = null;
         
         try {
-            Client client = Client.getInstance(game);
+            Client client = Client.getInstance();
             PacketGetLobbies packet = new PacketGetLobbies();
             client.send(packet);
             hostList =  packet.getResult();

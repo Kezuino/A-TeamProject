@@ -1,6 +1,6 @@
 package ateamproject.kezuino.com.github.network.packet.packets;
 
-import ateamproject.kezuino.com.github.network.IClient;
+import ateamproject.kezuino.com.github.network.IClientInfo;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketField;
 
@@ -11,7 +11,7 @@ import java.util.UUID;
  */
 public class PacketKick extends Packet<Boolean> {
     /**
-     * Gets or sets the reason why the {@link IClient} was kicked.
+     * Gets or sets the reason why the {@link IClientInfo} was kicked.
      */
     @PacketField(0)
     protected String reason;
@@ -46,9 +46,9 @@ public class PacketKick extends Packet<Boolean> {
     }
 
     /**
-     * Gets the reason why the {@link IClient} was kicked.
+     * Gets the reason why the {@link IClientInfo} was kicked.
      *
-     * @return Reason why the {@link IClient} was kicked.
+     * @return Reason why the {@link IClientInfo} was kicked.
      */
     public String getReason() {
         reason = reason.trim();

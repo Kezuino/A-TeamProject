@@ -5,10 +5,10 @@ import ateamproject.kezuino.com.github.network.packet.Packet;
 
 import java.util.*;
 
-public abstract class Server<TClient extends IClient> implements IServer, IPacketSender, AutoCloseable {
+public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, AutoCloseable {
 
     /**
-     * Total time in seconds that are allowed to pass before a {@link IClient} is automatically dropped.
+     * Total time in seconds that are allowed to pass before a {@link IClientInfo} is automatically dropped.
      */
     protected double clientTimeout;
 
@@ -21,8 +21,7 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     protected Thread updateThread;
     protected boolean isUpdating;
     /**
-     * Gets or sets all {@link IClient clients} currently connected to this
-     * {@link Server}.
+     * Gets or sets all {@link IClientInfo clients} currently connected to this {@link Server}.
      */
     protected Dictionary<UUID, TClient> clients;
 
@@ -60,18 +59,18 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     public abstract void update();
 
     /**
-     * Gets the total time in seconds that are allowed to pass before a {@link IClient} is automatically dropped.
+     * Gets the total time in seconds that are allowed to pass before a {@link IClientInfo} is automatically dropped.
      *
-     * @return Total time in seconds that are allowed to pass before a {@link IClient} is automatically dropped.
+     * @return Total time in seconds that are allowed to pass before a {@link IClientInfo} is automatically dropped.
      */
     public double getClientTimeout() {
         return clientTimeout;
     }
 
     /**
-     * Sets the total time in seconds that are allowed to pass before a {@link IClient} is automatically dropped.
+     * Sets the total time in seconds that are allowed to pass before a {@link IClientInfo} is automatically dropped.
      *
-     * @param clientTimeout Total time in seconds that are allowed to pass before a {@link IClient} is automatically dropped.
+     * @param clientTimeout Total time in seconds that are allowed to pass before a {@link IClientInfo} is automatically dropped.
      */
     public void setClientTimeout(double clientTimeout) {
         this.clientTimeout = clientTimeout;
@@ -100,11 +99,11 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     /**
      * Removes the {@link TClient} from all references in this {@link Server}.
      *
-     * @param c {@link TClient} to remove.
+     * @param privateId Private id of the {@link TClient} to remove.
      * @return Removed {@link TClient}.
      */
-    public TClient removeClient(TClient c) {
-        return clients.remove(c);
+    public TClient removeClient(UUID privateId) {
+        return clients.remove(privateId);
     }
 
     /**
@@ -128,10 +127,10 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     }
 
     /**
-     * Gets all {@link IClient clients} currently connected to this
+     * Gets all {@link IClientInfo clients} currently connected to this
      * {@link Server}.
      *
-     * @return All {@link IClient clients} currently connected to this
+     * @return All {@link IClientInfo clients} currently connected to this
      * {@link Server}.
      */
     public List<TClient> getClients() {
@@ -139,24 +138,24 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     }
 
     /**
-     * Gets the {@link IClient} based on the private id. Can be null.
+     * Gets the {@link IClientInfo} based on the private id. Can be null.
      *
-     * @param privateId Private id of the {@link IClient}.
-     * @return {@link IClient} based on the private id. Can be null.
+     * @param privateId Private id of the {@link IClientInfo}.
+     * @return {@link IClientInfo} based on the private id. Can be null.
      */
-    public IClient getClient(UUID privateId) {
+    public IClientInfo getClient(UUID privateId) {
         return clients.get(privateId);
     }
 
     /**
-     * Gets the {@link IClient} based on the public id.
+     * Gets the {@link IClientInfo} based on the public id.
      *
-     * @param publicId Public id of the {@link IClient}.
-     * @return {@link IClient} based on the public id.
+     * @param publicId Public id of the {@link IClientInfo}.
+     * @return {@link IClientInfo} based on the public id.
      */
-    public IClient getClientFromPublic(UUID publicId) {
+    public IClientInfo getClientFromPublic(UUID publicId) {
         // Do not simplify code. Needs to be high-performance.
-        for (IClient client : getClients()) {
+        for (IClientInfo client : getClients()) {
             if (client.getPublicId().equals(publicId)) {
                 return client;
             }
@@ -170,11 +169,6 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     @Override
     public void unregisterPackets() {
         Packet.unregisterAll();
-    }
-
-    @Override
-    public double getSecondsInactive() {
-        throw new UnsupportedOperationException("Server doesn't need this method. It's only useful for clients.");
     }
 
     /**

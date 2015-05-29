@@ -30,36 +30,37 @@ public class ClanManagementScreen extends BaseScreen {
         super(game);
 
         try {
-            client = Client.getInstance(game);
+            client = Client.getInstance();
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         scrollTable = new Table();
 
-        boolean hasConnection = false;
-        try {
-            hasConnection = client.getRmi().getServer().getHasConnection();
-        } catch (RemoteException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        if (!hasConnection) {
-            Dialog d = new Dialog("error", skin);
-            d.add("Er kan geen verbinding met de database worden gemaakt!");
-            TextButton bExit = new TextButton("Oke", skin);
-            bExit.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    d.hide();
-                    game.setScreen(new MainScreen(game));
-                }
-            });
-            d.add(bExit);
-            d.show(stage);
-        } else {
-            refreshScreen();//loads up whole screen
-        }
+        // TODO: Disable clan management when singleplayer only.
+//        boolean hasConnection = false;
+//        try {
+//            hasConnection = client.getRmi().getServer().getHasConnection();
+//        } catch (RemoteException ex) {
+//            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//
+//        if (!hasConnection) {
+//            Dialog d = new Dialog("error", skin);
+//            d.add("Er kan geen verbinding met de database worden gemaakt!");
+//            TextButton bExit = new TextButton("Oke", skin);
+//            bExit.addListener(new ClickListener() {
+//                @Override
+//                public void clicked(InputEvent event, float x, float y) {
+//                    d.hide();
+//                    game.setScreen(new MainScreen(game));
+//                }
+//            });
+//            d.add(bExit);
+//            d.show(stage);
+//        } else {
+//            refreshScreen();//loads up whole screen
+//        }
 
     }
 

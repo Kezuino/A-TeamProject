@@ -6,7 +6,7 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.Game;
-import ateamproject.kezuino.com.github.network.IClient;
+import ateamproject.kezuino.com.github.network.IClientInfo;
 import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
@@ -40,7 +40,7 @@ public interface IProtocolServer extends IProtocol {
     PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID lobbyId, UUID client) throws RemoteException;
 
     /**
-     * Requests all connected {@link IClient clients} to stop and closes the
+     * Requests all connected {@link IClientInfo clients} to stop and closes the
      * lobby.
      *
      * @param lobbyId
@@ -52,16 +52,13 @@ public interface IProtocolServer extends IProtocol {
     boolean leaveLobby(UUID lobbyId, UUID client) throws RemoteException;
     
     /**
-     * Kicks the {@link IClient} from any lobby it is currently in.
+     * Kicks the {@link IClientInfo} from any lobby it is currently in.
      *
      * @param client
      * @return
      * @throws RemoteException
      */
     boolean kickClient(UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException;
-
-    //Methodes from ClanFunctions
-    boolean getHasConnection() throws RemoteException;
 
     ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
 
@@ -85,4 +82,5 @@ public interface IProtocolServer extends IProtocol {
 
     boolean setScore(String clanName, int score) throws RemoteException;
 
+    void logout(UUID sender) throws RemoteException;
 }

@@ -4,14 +4,7 @@ import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginCreateNewUser;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 
 import java.rmi.RemoteException;
@@ -49,8 +42,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public void heartbeat(UUID client) throws RemoteException {
-        PacketHeartbeat packet = new PacketHeartbeat(client);
-        server.send(packet);
+        server.send(new PacketHeartbeat(client));
     }
 
     @Override
@@ -67,14 +59,9 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public List<PacketGetLobbies.GetLobbiesData> getLobbies() throws RemoteException {
-        List<PacketGetLobbies.GetLobbiesData> result = new ArrayList<>();
-        for (Game game : this.server.getGames()) {
-            result.add(new PacketGetLobbies.GetLobbiesData(game.getName(), 
-                    game.getId(), 
-                    game.getClients().size(), 
-                    "TODO NAME"));
-        }
-        return result;
+        PacketGetLobbies packet = new PacketGetLobbies();
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
@@ -187,15 +174,16 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean getHasConnection() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public boolean setScore(String clanName, int score) throws RemoteException {
         PacketHighScore packet = new PacketHighScore(clanName, score);
         server.send(packet);
         return packet.getResult();
+    }
+
+    @Override
+    public void logout(UUID sender) throws RemoteException {
+        PacketLogout packet = new PacketLogout(sender);
+        server.send(packet);
     }
 
     @Override

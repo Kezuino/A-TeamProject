@@ -24,7 +24,8 @@ public class DesktopLauncher {
         new LwjglApplication(game, cfg);
 
         try {
-            Client client = Client.getInstance(game);
+            Client client = Client.getInstance();
+            client.setGame(game);
             client.start();
         } catch (RemoteException ex) {
             Logger.getLogger(DesktopLauncher.class.getName()).log(Level.SEVERE, null, ex);

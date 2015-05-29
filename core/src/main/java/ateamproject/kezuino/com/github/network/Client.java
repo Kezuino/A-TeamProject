@@ -15,44 +15,62 @@ import java.util.UUID;
 /**
  * @author Kez and Jules
  */
-public abstract class Client implements IClient, IPacketSender {
+public abstract class Client implements INetworkComponent, IPacketSender {
+    /**
+     * Contains the public ids of all the players currently grouped with this {@link Client}.
+     */
     protected HashMap<Integer, UUID> players;
     protected Game game;
     protected Thread updateThread;
     protected boolean isUpdating;
-    protected UUID privateId;
-
-    /**
-     * Gets the public {@link UUID} used to send to other {@link Client clients} than this {@link Client} so that they can reference this {@link Client}, but not identify themself as him.
-     * @return Public {@link UUID} used to send to other {@link Client clients} than this {@link Client} so that they can reference this {@link Client}, but not identify themself as him.
-     */
-    public UUID getPublicId() {
-        return publicId;
-    }
-
-    /**
-     *  the public {@link UUID} used to send to other {@link Client clients} than this {@link Client} so that they can reference this {@link Client}, but not identify themself as him.
-     * @return Public {@link UUID} used to send to other {@link Client clients} than this {@link Client} so that they can reference this {@link Client}, but not identify themself as him.
-     */
-    public void setPublicId(UUID publicId) {
-        this.publicId = publicId;
-    }
-
+    protected UUID id;
     protected UUID publicId;
 
     public Client(com.badlogic.gdx.Game game) {
         this.game = game;
         this.players = new HashMap<>(8);
         this.isUpdating = true;
+    }
 
-        this.privateId = UUID.randomUUID();
-        this.publicId = UUID.randomUUID();
+    public UUID getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(UUID publicId) {
+        this.publicId = publicId;
     }
 
     /**
-     * Gets the bind of player's index in the game with the public {@link UUID} on the {@link IServer}.
+     * Sets the {@link Game} that the {@link Client} is currently using to render.
      *
-     * @return Bind of player's index in the game with the public {@link UUID} on the {@link IServer}.
+     * @param game {@link Game} that the {@link Client} is currently using to render.
+     */
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    /**
+     * Gets the private id only known by the {@link Server} and this {@link Client}.
+     *
+     * @return Private id only known by the {@link Server} and this {@link Client}.
+     */
+    public UUID getId() {
+        return id;
+    }
+
+    /**
+     * Sets the private id only known by the {@link Server} and this {@link Client}.
+     *
+     * @return Private id only known by the {@link Server} and this {@link Client}.
+     */
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    /**
+     * Gets the bind of player's index in the game with the public {@link UUID} on the {@link INetworkComponent}.
+     *
+     * @return Bind of player's index in the game with the public {@link UUID} on the {@link INetworkComponent}.
      */
     public HashMap<Integer, UUID> getPlayers() {
         return players;
@@ -63,26 +81,13 @@ public abstract class Client implements IClient, IPacketSender {
     }
 
     /**
-     * Gets the private id of this {@link Client}. Do not send this id to other {@link Client clients}.
+     * Sends the {@link Packet} to the {@link Server}. If no senders were specified it sets it to the current {@link Client#id} by default.
      *
-     * @return Private id of this {@link Client}. Do not send this id to other {@link Client clients
+     * @param packet {@link Packet} to send to the {@link IClientInfo}.
      */
-    @Override
-    public UUID getPrivateId() {
-        return privateId;
-    }
-
-    /**
-     * Sets the private {@link UUID} used by this {@link Client} to identify itself with the {@link Server}.
-     *
-     * @param id
-     */
-    public void setPrivateId(UUID id) {
-        this.privateId = id;
-    }
-
     @Override
     public void send(Packet packet) {
+        if (packet.getSender() == null) packet.setSender(getId());
         Packet.execute(packet);
     }
 
@@ -95,17 +100,12 @@ public abstract class Client implements IClient, IPacketSender {
     }
 
     /**
-     * Starts the {@link IClient} and begin making a connection with the {@link IServer}.
+     * Starts the {@link IClientInfo} and begin making a connection with the {@link INetworkComponent}.
      */
     public abstract void start();
 
     /**
-     * Stops the {@link IClient} from listening and sending to {@link IServer}.
+     * Stops the {@link IClientInfo} from listening and sending to {@link INetworkComponent}.
      */
     public abstract void stop();
-
-    @Override
-    public double getSecondsInactive() {
-        throw new UnsupportedOperationException("Cannot get seconds without inactivity on client. Should be done on server.");
-    }
 }
