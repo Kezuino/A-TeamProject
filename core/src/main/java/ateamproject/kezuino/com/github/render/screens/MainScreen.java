@@ -5,7 +5,6 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
@@ -57,7 +56,7 @@ public class MainScreen extends BaseScreen {
 
                     PacketHighScore packet;
                 try {
-                    packet = new PacketHighScore("MBoiz", 30, Client.getInstance(game).getId());
+                    packet = new PacketHighScore("MBoiz", 30, Client.getInstance(game).getPrivateId());
                     Client.getInstance(game).send(packet);
                    remoteId=  packet.getResult();
                 } catch (RemoteException ex) {

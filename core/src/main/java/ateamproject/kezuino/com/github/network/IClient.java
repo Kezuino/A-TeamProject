@@ -1,19 +1,26 @@
 package ateamproject.kezuino.com.github.network;
 
-import ateamproject.kezuino.com.github.network.packet.Packet;
-
 import java.util.UUID;
 
 /**
- * Interface for providing features for server-side as well as client-side. Don't put communication methods here that can only go one way.
+ * Interface for providing features needed for the {@link IServer} to function with its {@link IClient clients}.
  */
 public interface IClient {
 
+
+    /**
+     * Gets the private and server-client only known id of this {@link IClient}.
+     * Clients will <b>NOT</b> know the private ids of all connected clients.
+     *
+     * @return Private and server to referenced client only known id of this {@link IClient}.
+     */
+    UUID getPrivateId();
+
     /**
      * Gets the public and well-known id of this {@link IClient}.
-     * Clients will know the public ids of all connected clients. A client will use this id to reference someone or himself.
+     * Clients will know the public ids of all connected clients. A client will use this id to reference someone but <b>NOT</b> himself. {@see #getPrivateId}.
      *
      * @return Public and well-known id of this {@link IClient}.
      */
-    UUID getId();
+    UUID getPublicId();
 }

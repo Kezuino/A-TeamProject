@@ -2,25 +2,10 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.mail.MailAccount;
 import ateamproject.kezuino.com.github.network.packet.Packet;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateClan;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketFillTable;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketGetEmail;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketGetHasConnection;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketGetInvitation;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketGetManagement;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketGetPeople;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketGetUsername;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleInvitation;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleManagement;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginCreateNewUser;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketSetUsername;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
+import ateamproject.kezuino.com.github.utility.io.Database;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
@@ -28,9 +13,6 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
@@ -40,36 +22,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     private static Server instance;
     protected ServerBase rmi;
-    private Connection connect = null;
     private ClanFunctions clanFunctions = new ClanFunctions();
 
     public Server() throws RemoteException {
         super();
         rmi = new ServerBase(this);
-
-        if (!makeConnection()) {
-            System.out.println("Can't make databaseconnection!");
-        }
-    }
-
-    public boolean makeConnection() {
-        try {
-            // This will load the MySQL driver, each DB has its own driver
-            Class.forName("com.mysql.jdbc.Driver");
-
-            try {
-                // Setup the connection with the DB
-                connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
-            } catch (Exception ex) {
-                return false;
-            }
-
-            return true;
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return false;
     }
 
     public static Server getInstance() throws RemoteException {
@@ -78,6 +35,16 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         }
 
         return instance;
+    }
+
+    @Override
+    public void update() {
+        for (Client c : getClients()) {
+            if (c.getSecondsInactive() >= clientTimeout) {
+                removeClient(c);
+                System.out.printf("Removed client %s from server.", c.getPrivateId().toString());
+            }
+        }
     }
 
     public ServerBase getRmi() {
@@ -95,31 +62,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
             registry.bind("server", rmi);
 
-            if (updateThread != null) {
-                updateThread.interrupt();
-            }
-            updateThread = new Thread(() -> {
-                while (!Thread.currentThread().isInterrupted()) {
-                    while (isUpdating) {
-                        // Check if all clients are still active.
-                        for (Client c : getClients()) {
-                            System.out.println(c.getSecondsFromLastPacket());
-                        }
-
-                        try {
-                            Thread.sleep(5000);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-            updateThread.start();
         } catch (RemoteException | AlreadyBoundException ex) {
             Logger.getLogger(ServerBase.class.getName()).log(Level.SEVERE, ex.getMessage());
         }
@@ -129,13 +71,17 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     @Override
     public void stop() {
-        try {
-            System.out.println("Server stopped");
+        super.stop();
 
-            // TODO: Notify clients.
+        try {
+            // TODO: Notify clients that server is stopping.
+
+
             unregisterPackets();
 
             UnicastRemoteObject.unexportObject(rmi, true);
+
+            System.out.println("Server stopped");
         } catch (NoSuchObjectException ex) {
             System.out.println(ex.getMessage());
 
@@ -162,51 +108,36 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             return true;
         });
-        
-        Packet.registerFunc(PacketCreateClan.class, (packet)-> {
+
+        Packet.registerFunc(PacketCreateClan.class, (packet) -> {
             System.out.print("Create clan packet received");
             return clanFunctions.createClan(packet.getClanName(), packet.getEmailadres());
         });
-        
-        Packet.registerFunc(PacketFillTable.class, (packet)-> {
-            return clanFunctions.fillTable(packet.getEmailadres());
-        });
-         
-        Packet.registerFunc(PacketGetEmail.class, (packet)-> {
-            return clanFunctions.getEmail(packet.getUsername());
-        });
-        
-        Packet.registerFunc(PacketGetHasConnection.class, (packet)-> {
-            return clanFunctions.getHasConnection();
-        });
-        
-        Packet.registerFunc(PacketGetInvitation.class, (packet)-> {
-            return clanFunctions.getInvitation(packet.getClanName(), packet.getEmailadres());
-        });
-        
-        Packet.registerFunc(PacketGetManagement.class, (packet)-> {
-            return clanFunctions.getManagement(packet.getClanName(), packet.getEmailadres());
-        });
-        
-        Packet.registerFunc(PacketGetPeople.class, (packet)-> {
-            return clanFunctions.getPeople(packet.getClanName());
-        });
-        
-        Packet.registerFunc(PacketGetUsername.class, (packet)-> {
-            return clanFunctions.getUsername(packet.getEmailadres());
-        });
-        
-        Packet.registerFunc(PacketHandleInvitation.class, (packet)-> {
-            return clanFunctions.handleInvitation(packet.getInvite(),packet.getClanName(),packet.getEmailadres(),packet.getNameOfInvitee());
-        });
-        
-        Packet.registerFunc(PacketHandleManagement.class, (packet)-> {
-            return clanFunctions.handleManagement(packet.getManage(),packet.getClanName(), packet.getEmailadres());
-        });
-        
-        Packet.registerFunc(PacketSetUsername.class, (packet)-> {
-            return clanFunctions.setUsername(packet.getName(), packet.getEmailaddress());
-        });
+
+        Packet.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
+
+        Packet.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(packet.getUsername()));
+
+        Packet.registerFunc(PacketGetHasConnection.class, (packet) -> clanFunctions.getHasConnection());
+
+        Packet.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(packet.getClanName(), packet
+                .getEmailadres()));
+
+        Packet.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(), packet
+                .getEmailadres()));
+
+        Packet.registerFunc(PacketGetPeople.class, (packet) -> clanFunctions.getPeople(packet.getClanName()));
+
+        Packet.registerFunc(PacketGetUsername.class, (packet) -> clanFunctions.getUsername(packet.getEmailadres()));
+
+        Packet.registerFunc(PacketHandleInvitation.class, (packet) -> clanFunctions.handleInvitation(packet.getInvite(), packet
+                .getClanName(), packet.getEmailadres(), packet
+                .getNameOfInvitee()));
+
+        Packet.registerFunc(PacketHandleManagement.class, (packet) -> clanFunctions.handleManagement(packet.getManage(), packet
+                .getClanName(), packet.getEmailadres()));
+
+        Packet.registerFunc(PacketSetUsername.class, (packet) -> clanFunctions.setUsername(packet.getName(), packet.getEmailaddress()));
 
         Packet.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
             System.out.print("Login request received for account: " + packet.getUsername());
@@ -215,10 +146,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 // Register client on server.
                 try {
                     Client client = new Client();
-                    clients.put(client.getId(), client);
+                    clients.put(client.getPrivateId(), client);
                     System.out.println(" .. login accepted. " + clients.size() + " clients total.");
+
                     // Tell client what his id is.
-                    return client.getId();
+                    return client.getPrivateId();
 
                 } catch (RemoteException e) {
                     System.out.println(" .. login is valid but registering failed!.");
@@ -232,58 +164,42 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         Packet.registerFunc(PacketHighScore.class, (packet) -> {
-           // TODO: Check if email and password work while logging into the mail provider.
-            System.out.print("Login request received for account: " + packet.getClanName());
-
-            //get current score
-            PreparedStatement preparedStatement;
-            ResultSet resultSet = null;
-            ResultSet resultSetWithClans;
-
             try {
-                preparedStatement = connect.prepareStatement("SELECT `Score` FROM `clan` WHERE Name = ?");
-                preparedStatement.setString(1, packet.getClanName());
-                resultSet = preparedStatement.executeQuery();
+                ResultSet resultSet = Database.getInstance()
+                                              .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
+                                                      .getClanName());
                 resultSet.next();
                 int id = resultSet.getInt("Score");
 
                 if (id > packet.getScore()) {
-                    preparedStatement = connect.prepareStatement("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?");
-                    preparedStatement.setInt(1, packet.getScore());
-                    preparedStatement.setString(2, packet.getClanName());
-                    resultSet = preparedStatement.executeQuery();
-                    return true;
+                    return Database.getInstance()
+                                   .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
+                                           .getScore(), packet.getClanName()) > -1;
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
             }
             return false;
         });
-        
+
         Packet.registerFunc(PacketLoginCreateNewUser.class, (packet) -> {
             System.out.print("Trying to create following user in database: " + packet.getUsername());
-            PreparedStatement preparedStatement = null;
             ResultSet resultSet = null;
             int count = 0;
 
             try {
-                preparedStatement = connect.prepareStatement("SELECT COUNT(*) as amount FROM account WHERE Name = ?");
-                preparedStatement.setString(1, packet.getUsername());
-                resultSet = preparedStatement.executeQuery();
+                resultSet = Database.getInstance().query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
                 resultSet.next();
                 count = resultSet.getInt("amount");
 
                 if (count == 1) {
                     System.out.print("Following user does already exists: " + packet.getUsername());
-                    return false;
                 } else {
-                    preparedStatement = connect.prepareStatement("INSERT INTO account(Name,Email) VALUES(?,?)");
-                    preparedStatement.setString(1, packet.getUsername());
-                    preparedStatement.setString(2, packet.getEmail());
-                    preparedStatement.executeUpdate();
-                    
-                    System.out.print("Adding following user to database: " + packet.getUsername());
-                    return true;
+                    int result = Database.getInstance().update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet.getEmail());
+                    if (result > 0) {
+                        System.out.print("Adding following user to database: " + packet.getUsername());
+                        return true;
+                    }
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
@@ -294,30 +210,23 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         Packet.registerFunc(PacketLoginUserExists.class, (packet) -> {
             System.out.print("Checking if the following user exists: " + packet.getEmail());
-            PreparedStatement preparedStatement = null;
             ResultSet resultSet = null;
             int count = 0;
 
             try {
-                preparedStatement = connect.prepareStatement("SELECT COUNT(*) as amount FROM account WHERE Email = ?");
-                preparedStatement.setString(1, packet.getEmail());
-                resultSet = preparedStatement.executeQuery();
+                resultSet = Database.getInstance().query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
                 resultSet.next();
                 count = resultSet.getInt("amount");
             } catch (SQLException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            if (count == 1) {
-                return true;
-            } else {
-                return false;
-            }
+            return count == 1;
         });
 
 
         Packet.registerAction(PacketHeartbeat.class, packet -> System.out.println("Heartbeat received from: " + packet.getSender()));
     }
-    
+
 
 }

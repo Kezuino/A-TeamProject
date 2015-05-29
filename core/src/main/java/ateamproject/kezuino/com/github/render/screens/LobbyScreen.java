@@ -5,9 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.network.IClient;
 import ateamproject.kezuino.com.github.network.rmi.Client;
-import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -18,10 +16,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -52,7 +48,7 @@ public class LobbyScreen extends BaseScreen {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        PacketCreateLobby p = new PacketCreateLobby(this.lobbyName, client.getId());
+        PacketCreateLobby p = new PacketCreateLobby(this.lobbyName, client.getPrivateId());
         client.send(p);
         this.lobbyId = p.getResult();
 
@@ -72,7 +68,7 @@ public class LobbyScreen extends BaseScreen {
         }
 
         // get lobby information en fill gui
-        PacketJoinLobby packet = new PacketJoinLobby(this.lobbyId, client.getId());
+        PacketJoinLobby packet = new PacketJoinLobby(this.lobbyId, client.getPrivateId());
         client.send(packet);
         PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
         this.lobbyName = lob.lobbyName;
@@ -117,7 +113,7 @@ public class LobbyScreen extends BaseScreen {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
                             //leave lobby
-                            PacketLeaveLobby packet = new PacketLeaveLobby(lobbyId, client.getId());
+                            PacketLeaveLobby packet = new PacketLeaveLobby(lobbyId, client.getPrivateId());
                             client.send(packet);
                             boolean succeeded = packet.getResult();
                             if (succeeded) {
@@ -159,7 +155,7 @@ public class LobbyScreen extends BaseScreen {
         lobby.setSize(200, 30);
         lobby.setPosition(0, stage.getHeight() - lobby.getHeight());
         /*
-         Label lobbyid = new Label("UUID : " + curLobby.getId(), skin);
+         Label lobbyid = new Label("UUID : " + curLobby.getPrivateId(), skin);
          lobbyid.setSize(200, 30);
          lobbyid.setPosition(0, 30);
 

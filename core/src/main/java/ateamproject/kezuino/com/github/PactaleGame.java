@@ -1,7 +1,6 @@
 package ateamproject.kezuino.com.github;
 
 import ateamproject.kezuino.com.github.render.screens.BaseScreen;
-import ateamproject.kezuino.com.github.render.screens.GameScreen;
 import ateamproject.kezuino.com.github.render.screens.LoginScreen;
 import ateamproject.kezuino.com.github.utility.graphics.DialogHelper;
 import com.badlogic.gdx.Game;

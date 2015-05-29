@@ -8,7 +8,6 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
-import ateamproject.kezuino.com.github.utility.graphics.DialogHelper;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.utils.Timer;
 
@@ -84,8 +83,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 try {
                     while (!Thread.currentThread().isInterrupted()) {
                         while (isUpdating) {
-                            if (getId() != null) {
-                                rmi.getServer().heartbeat(getId());
+                            if (getPrivateId() != null) {
+                                rmi.getServer().heartbeat(getPrivateId());
                             }
                             try {
                                 Thread.sleep(5000);
@@ -110,7 +109,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     @Override
     public void stop() {
         try {
-            this.rmi.getServer().kickClient(this.getId(), PacketKick.KickReasonType.QUIT, null);
+            this.rmi.getServer().kickClient(this.getPrivateId(), PacketKick.KickReasonType.QUIT, null);
         } catch (RemoteException e) {
             e.printStackTrace();
         } finally {
@@ -131,10 +130,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
 
             if (id != null) {
-                this.setId(id);
+                this.setPrivateId(id);
                 System.out.println("Logged in as: " + id);
             } else {
-                this.setId(null);
+                this.setPrivateId(null);
                 return false;
             }
             return true;
@@ -155,7 +154,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 UUID newGame = getRmi().getServer().createLobby(p.getLobbyname(), p.getSender());
                 return newGame;
                 // ateamproject.kezuino.com.github.network.Game game = new ateamproject.kezuino.com.github.network.Game(p.getLobbyname(), p.getSender());
-                //games.put(game.getId(), game);
+                //games.put(game.getPrivateId(), game);
             } catch (RemoteException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -170,7 +169,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return list;
                 
                 // ateamproject.kezuino.com.github.network.Game game = new ateamproject.kezuino.com.github.network.Game(p.getLobbyname(), p.getSender());
-                //games.put(game.getId(), game);
+                //games.put(game.getPrivateId(), game);
             } catch (RemoteException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }

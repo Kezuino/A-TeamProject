@@ -18,17 +18,38 @@ import java.util.UUID;
 public abstract class Client implements IClient, IPacketSender {
     protected HashMap<Integer, UUID> players;
     protected Game game;
-    protected long secondsFromLastUpdate;
+    protected long secondInactive;
     protected Thread updateThread;
     protected boolean isUpdating;
-    private UUID id;
+    protected UUID privateId;
+    protected UUID publicId;
 
     public Client(com.badlogic.gdx.Game game) {
         this.game = game;
         this.players = new HashMap<>(8);
-        this.secondsFromLastUpdate = System.nanoTime();
+        this.secondInactive = System.nanoTime();
         this.isUpdating = true;
-        this.id = UUID.randomUUID();
+
+        this.privateId = UUID.randomUUID();
+        this.publicId = UUID.randomUUID();
+    }
+
+    /**
+     * Gets the public {@link UUID} used to send to other {@link Client clients} than this {@link Client} so that they can reference this {@link Client}, but not identify themself as him.
+     *
+     * @return Public {@link UUID} used to send to other {@link Client clients} than this {@link Client} so that they can reference this {@link Client}, but not identify themself as him.
+     */
+    public UUID getPublicId() {
+        return publicId;
+    }
+
+    /**
+     * Sets the public {@link UUID} used to send to other {@link Client clients} than this {@link Client} so that they can reference this {@link Client}, but not identify themself as him.
+     *
+     * @return Public {@link UUID} used to send to other {@link Client clients} than this {@link Client} so that they can reference this {@link Client}, but not identify themself as him.
+     */
+    public void setPublicId(UUID publicId) {
+        this.publicId = publicId;
     }
 
     /**
@@ -44,23 +65,28 @@ public abstract class Client implements IClient, IPacketSender {
         return getPlayers().get(index);
     }
 
+    /**
+     * Gets the private id of this {@link Client}. Do not send this id to other {@link Client clients}.
+     *
+     * @return Private id of this {@link Client}. Do not send this id to other {@link Client clients
+     */
     @Override
-    public UUID getId() {
-        return id;
+    public UUID getPrivateId() {
+        return privateId;
     }
 
     /**
-     * Sets the {@link UUID} used by this {@link Client} to identify itself with the {@link Server}.
+     * Sets the private {@link UUID} used by this {@link Client} to identify itself with the {@link Server}.
      *
      * @param id
      */
-    public void setId(UUID id) {
-        this.id = id;
+    public void setPrivateId(UUID id) {
+        this.privateId = id;
     }
 
     @Override
     public void send(Packet packet) {
-        this.secondsFromLastUpdate = System.nanoTime();
+        this.secondInactive = System.nanoTime();
         Packet.execute(packet);
     }
 
@@ -83,7 +109,7 @@ public abstract class Client implements IClient, IPacketSender {
     public abstract void stop();
 
     @Override
-    public double getSecondsFromLastPacket() {
-        return (System.nanoTime() - secondsFromLastUpdate) / 1000000000.0;
+    public double getSecondsInactive() {
+        return (System.nanoTime() - secondInactive) / 1000000000.0;
     }
 }

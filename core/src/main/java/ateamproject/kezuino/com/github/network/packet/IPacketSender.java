@@ -22,9 +22,9 @@ public interface IPacketSender {
     void unregisterPackets();
 
     /**
-     * Gets the total seconds that went past since the last {@link Packet}.
+     * Gets the total time in seconds that have passed since the last activity from the {@link IClient}.
      *
-     * @return Total seconds that went past since the last {@link Packet}.
+     * @return Total time in seconds that have passed since the last activity from the {@link IClient}.
      */
-    double getSecondsFromLastPacket();
+    double getSecondsInactive();
 }

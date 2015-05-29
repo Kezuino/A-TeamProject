@@ -20,7 +20,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
@@ -58,7 +57,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public UUID createLobby(String lobbyName, UUID host) throws RemoteException {
         // add lobby to games array
 
-        Game newGame = new Game(lobbyName, server.getClientFromPublic(host).getId());
+        Game newGame = new Game(lobbyName, server.getClientFromPublic(host).getPrivateId());
         server.addGame(newGame);
 
         System.out.println("Lobby: " + newGame.getName() + " - id " + newGame.getId() + " CREATED !");
@@ -81,7 +80,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     @Override
     public Game getLobbyById(UUID lobbyId) throws RemoteException {
 //        for (Game game : gameList) {
-//            if (game.getId().equals(lobbyId)) {
+//            if (game.getPrivateId().equals(lobbyId)) {
 //                return game;
 //            }
 //        }
@@ -91,7 +90,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     @Override
     public PacketJoinLobby.PacketJoinLobbyData  joinLobby(UUID lobbyId, UUID client) throws RemoteException {
         PacketJoinLobby.PacketJoinLobbyData returnval = new PacketJoinLobby.PacketJoinLobbyData();
-        Game g = server.findGame(lobbyId);
+        Game g = server.getGame(lobbyId);
         g.getClients().add(client);
         returnval.lobbyName = g.getName();
         for ( UUID g1 : g.getClients()) {
@@ -121,7 +120,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public boolean leaveLobby(UUID lobbyId, UUID client) throws RemoteException {
-        Game g = server.findGame(lobbyId);
+        Game g = server.getGame(lobbyId);
         return g.getClients().remove(client);
     }
     

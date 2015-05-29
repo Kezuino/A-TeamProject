@@ -18,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.rmi.RemoteException;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,8 +45,8 @@ public class LoginScreen extends BaseScreen {
                     Client.getInstance(game).send(packet);
 
                     try {
-                        if (Client.getInstance(game).getId() != null) {//if login did succeed
-                            PacketLoginUserExists packetUserExists = new PacketLoginUserExists(txtUsername.getText(), Client.getInstance(game).getId());
+                        if (Client.getInstance(game).getPrivateId() != null) {//if login did succeed
+                            PacketLoginUserExists packetUserExists = new PacketLoginUserExists(txtUsername.getText(), Client.getInstance(game).getPrivateId());
                             Client.getInstance(game).send(packetUserExists);
                             if (packetUserExists.getResult() == false) {//if user not exists
                                 Dialog d = new Dialog("Geen gebruiker gevonden", skin);
@@ -61,7 +60,7 @@ public class LoginScreen extends BaseScreen {
                                         if (!f.getText().equals("")) {
                                             PacketLoginCreateNewUser packet = null;
                                             try {
-                                                packet = new PacketLoginCreateNewUser(f.getText(), txtUsername.getText(), Client.getInstance(game).getId());
+                                                packet = new PacketLoginCreateNewUser(f.getText(), txtUsername.getText(), Client.getInstance(game).getPrivateId());
                                                 Client.getInstance(game).send(packet);
                                                 Dialog d1 = null;
                                                 if (!packet.getResult()) {
