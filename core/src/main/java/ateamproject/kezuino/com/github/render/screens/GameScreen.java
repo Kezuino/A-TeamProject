@@ -19,10 +19,13 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import java.util.ArrayList;
 
 /**
  * @author Anton
@@ -32,8 +35,7 @@ public class GameScreen extends BaseScreen {
     private GameSession session;
     private Pactale player;
     private GameRenderer gameRenderer;
-    private Label lblPause;
-    private Label lblPlayers;
+    private Button b;
     private InputAdapter gameInputAdapter;
 
     public GameScreen(Game game) {
@@ -114,20 +116,6 @@ public class GameScreen extends BaseScreen {
 
         player = session.getPlayer(0);
 
-        // Initialize pause.
-        lblPause = new Label("Game gepauzeerd", skin);
-        lblPause.setColor(Color.RED);
-        lblPause.setPosition(100, 100 + 300);
-        lblPause.setVisible(false);
-        stage.addActor(lblPause);
-
-        // Initialize lblPlayers.
-        lblPlayers = new Label("spelersoverzicht", skin);
-        lblPlayers.setColor(Color.RED);
-        lblPlayers.setPosition(100, 100 + 300);
-        lblPlayers.setVisible(false);
-        stage.addActor(lblPlayers);
-
         // Renderers.
         gameRenderer = addRenderer(new GameRenderer(session));
         addRenderer(new GameUIRenderer(session.getMap()));
@@ -171,39 +159,79 @@ public class GameScreen extends BaseScreen {
     }
 
     public void showPauseView() {
-        lblPause.setVisible(true);
-        Dialog d = new Dialog("error", skin);
-        d.add("De server is niet online.");
-        TextButton bExit = new TextButton("Oke", skin);
-        bExit.addListener(new ClickListener() {
+        Dialog d = new Dialog("Menu", skin);
+
+        TextButton bContinue = new TextButton("Doorgaan", skin);
+        bContinue.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 d.hide();
             }
         });
+        d.add(bContinue);
+
+        TextButton bExit = new TextButton("Verlaten", skin);
+        bExit.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainScreen(game));
+                //TODO signal server that we leave
+            }
+        });
+
         d.add(bExit);
         d.show(stage);
         this.session.showPauseMenu();
-        // TODO: If multiplayer: draw menu on top of game and capture input, but do NOT pause the game!
     }
 
     public void hidePauseView() {
-        lblPause.setVisible(false);
         this.session.showPauseMenu();
-        //this.session.pause();
-        // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
     }
 
     public void showPlayersView() {
-        lblPlayers.setVisible(true);
+        Dialog d = new Dialog("Menu", skin);
+
+        TextButton bContinue = new TextButton("Oke", skin);
+        bContinue.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                d.hide();
+            }
+        });
+        d.add(bContinue);
+
+        Table scrollTable = new Table(skin);
+
+        ArrayList<String> peoples = new ArrayList<>();
+        peoples.add("Gunter 1 2");//TODO get data from server
+        peoples.add("Henk 0 2");
+
+        for (String people : peoples) {
+            TextButton bKick = new TextButton("Kick", skin);
+            bContinue.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    //todo
+                }
+            });
+            String[] peopleResult = people.split(" ");
+
+            scrollTable.add(peopleResult[0]);
+            scrollTable.columnDefaults(0);
+            scrollTable.add(bKick);
+            scrollTable.columnDefaults(1);
+            scrollTable.add(peopleResult[1] + "/" + peopleResult[2]);
+            scrollTable.columnDefaults(2);
+            scrollTable.row();
+        }
+
+        d.add(scrollTable);
+        d.show(stage);
         this.session.showPlayerMenu();
-        // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
     }
 
     public void hidePlayersView() {
-        lblPlayers.setVisible(false);
         this.session.showPlayerMenu();
-        // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
     }
 
     @Override
