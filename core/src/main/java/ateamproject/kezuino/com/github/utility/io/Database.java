@@ -8,9 +8,21 @@ import java.util.logging.Logger;
 
 public class Database {
     private static Database instance = new Database("jdbc:mysql://localhost:3306/pactales", "root", "");
+    /**
+     * {@link Connection} used for executing queries on the database.
+     */
     protected Connection connection;
+    /**
+     * Composed connectionString.
+     */
     protected String connectionString;
+    /**
+     * Username to use for the connectionString.
+     */
     protected String username;
+    /**
+     * Password to use for the connectionString.
+     */
     protected String password;
 
     public Database(String connectionString, String username, String password) {
@@ -29,12 +41,7 @@ public class Database {
      * @return True if connection was opened (or is already open). False otherwise.
      */
     public boolean open() {
-        // Check if already open.
-        try {
-            if (connection != null && !connection.isClosed()) return true;
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+        if (isOpen()) return true;
 
         // Create / reopen connection.
         try {
@@ -50,6 +57,20 @@ public class Database {
             }
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return false;
+    }
+
+    /**
+     * Gets if the {@link #connection} is set and open or not.
+     *
+     * @return True if {@link #connection} is open. False if it's closed.
+     */
+    public boolean isOpen() {
+        try {
+            if (connection != null && !connection.isClosed()) return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return false;
     }

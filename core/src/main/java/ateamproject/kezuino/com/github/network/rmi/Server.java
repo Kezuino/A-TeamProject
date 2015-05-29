@@ -22,7 +22,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     private static Server instance;
     protected ServerBase rmi;
-    private ClanFunctions clanFunctions = new ClanFunctions();
+    private ClanFunctions clanFunctions = ClanFunctions.getInstance();
 
     public Server() throws RemoteException {
         super();
@@ -117,8 +117,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         Packet.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
 
         Packet.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(packet.getUsername()));
-
-        Packet.registerFunc(PacketGetHasConnection.class, (packet) -> clanFunctions.getHasConnection());
 
         Packet.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(packet.getClanName(), packet
                 .getEmailadres()));

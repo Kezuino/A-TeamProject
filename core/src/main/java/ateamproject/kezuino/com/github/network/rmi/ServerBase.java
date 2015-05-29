@@ -32,7 +32,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
             throw new IllegalArgumentException("Parameter server must not be null.");
         }
         this.server = server;
-        clanFunctions = new ClanFunctions();
+        clanFunctions = ClanFunctions.getInstance();
     }
 
     @Override
