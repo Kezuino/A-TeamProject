@@ -134,6 +134,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return clanFunctions.createClan(packet.getClanName(), packet.getEmailadres());
         });
 
+        packets.registerFunc(PacketCreateLobby.class, packet -> {
+            Game newGame = new Game(packet.getLobbyname(), packet.getSender());
+            addGame(newGame);
+            getClient(packet.getSender()).setGame(newGame);
+
+            System.out.println("Lobby: " + newGame.getName() + " - id " + newGame.getId() + " CREATED !");
+            return newGame.getId();
+        });
+
         packets.registerFunc(PacketGetLobbies.class, (packet -> {
             List<PacketGetLobbies.GetLobbiesData> result = new ArrayList<>();
             for (Game game : getGames()) {
@@ -257,21 +266,18 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             getClient(packet.getSender()).resetSecondsActive();
         });
 
-        packets.registerFunc(PacketQuitLobby.class, packet -> {
+        packets.registerFunc(PacketLeaveLobby.class, packet -> {
             Game lobby = getGameFromClientId(packet.getSender());
             if (lobby == null) return false;
 
-//            // if null -> game coundnt be found
-//            if (deletedGame != null) {
-//                // send all clients packet that lobby is closed
-//                // packet kick
-//                // >> deletedGame.getClients()
-//
-//                return true;
-//            }
-//            else {
-//                return false;
-//            }
+            if (packet.getSender().equals(lobby.getHostId())) {
+                // Remove everyone from the lobby.
+                removeGame(lobby.getId());
+            } else {
+                // Remove the requesting client only.
+                lobby.getClients().remove(packet.getSender());
+                getClient(packet.getSender()).setGame(null);
+            }
             return true;
         });
     }

@@ -37,14 +37,6 @@ public interface IProtocolServer extends IProtocol {
 
     PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException;
 
-    /**
-     * Sender must be the host.
-     * @param sender
-     * @return
-     * @throws RemoteException
-     */
-    boolean quitLobby(UUID sender) throws RemoteException;
-
     boolean leaveLobby(UUID sender) throws RemoteException;
     
     /**

@@ -33,7 +33,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
     @Override
     public boolean drop(String reason) throws RemoteException {
-        System.out.println(reason);
+
         return true;
     }
 

@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
+import ateamproject.kezuino.com.github.utility.graphics.DialogHelper;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.utils.Timer;
 
@@ -122,6 +123,11 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     @Override
     public void registerPackets() {
+        packets.registerFunc(PacketKick.class, packet -> {
+            DialogHelper.show("Kicked", packet.getReason());
+            return true;
+        });
+
         packets.registerFunc(PacketLoginAuthenticate.class, packet -> {
             UUID id = null;
             try {
@@ -200,23 +206,11 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         packets.registerFunc(PacketLeaveLobby.class, (p) -> {
             try {
                 return getRmi().getServer().leaveLobby(p.getSender());
-
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
                       .log(Level.SEVERE, null, ex);
             }
-            return null;
-        });
-
-        packets.registerFunc(PacketQuitLobby.class, (p) -> {
-            try {
-                return getRmi().getServer().quitLobby(p.getLobbyid());
-
-            } catch (RemoteException ex) {
-                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
-            }
-            return null;
+            return false;
         });
 
         packets.registerFunc(PacketLoginCreateNewUser.class, (p) -> {

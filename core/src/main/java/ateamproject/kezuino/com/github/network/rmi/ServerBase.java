@@ -43,14 +43,9 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public UUID createLobby(UUID sender, String lobbyName) throws RemoteException {
-        // add lobby to games array
-
-        Game newGame = new Game(lobbyName, server.getClientFromPublic(sender).getPrivateId());
-        server.addGame(newGame);
-
-        System.out.println("Lobby: " + newGame.getName() + " - id " + newGame.getId() + " CREATED !");
-
-        return newGame.getId();
+        PacketCreateLobby packet = new PacketCreateLobby(lobbyName, sender);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
@@ -71,13 +66,6 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
              returnval.members.put(g1, "member name");
         }
        return returnval;
-    }
-
-    @Override
-    public boolean quitLobby(UUID sender) throws RemoteException {
-        PacketQuitLobby packet = new PacketQuitLobby(sender);
-        server.send(packet);
-        return packet.getResult();
     }
 
     @Override

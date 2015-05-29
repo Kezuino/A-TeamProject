@@ -33,7 +33,6 @@ public class LobbyListScreen extends BaseScreen {
 
         scrollTable = new Table();
         createGui();
-
     }
 
     private void createGui() {
@@ -126,7 +125,7 @@ public class LobbyListScreen extends BaseScreen {
         for (PacketGetLobbies.GetLobbiesData game : hostList) {
             TextField lb1 = new TextField(game.name, skin);
             lb1.setDisabled(true);
-            TextField lb2 = new TextField(game.hostName.toString(), skin);
+            TextField lb2 = new TextField(game.hostName, skin);
             lb2.setDisabled(true);
             TextField lb3 = new TextField(Integer.toString(game.membersCount), skin);
             lb3.setDisabled(true);

@@ -105,6 +105,11 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         HashSet<UUID> gameClients = game.getClients();
         send(new PacketKick(PacketKick.KickReasonType.LOBBY, "Lobby closed.", gameClients.toArray(new UUID[gameClients.size()])));
 
+        // Unregister client on game.
+        for (UUID clientId : game.getClients()) {
+            IClientInfo client = getClient(clientId);
+            client.setGame(null);
+        }
         return games.remove(gameId);
     }
 
@@ -116,6 +121,14 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * @return Removed {@link TClient}.
      */
     public TClient removeClient(UUID privateId) {
+        // Remove client from game.
+        Game lobby = getGameFromClientId(privateId);
+        if (lobby != null) {
+            lobby.clients.remove(privateId);
+        }
+        getClient(privateId).setGame(null);
+
+        // Remove client from server.
         return clients.remove(privateId);
     }
 
@@ -183,7 +196,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * @return {@link Game} that the {@link TClient} is currently in. Or null if {@link TClient} is not currently in a game / lobby.
      */
     public Game getGameFromClientId(UUID sender) {
-        TClient client = getClientFromPublic(sender);
+        TClient client = getClient(sender);
         if (client == null) return null;
         return client.getGame();
     }
