@@ -5,7 +5,6 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
-import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import com.badlogic.gdx.Game;
@@ -110,7 +109,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     @Override
     public void stop() {
         try {
-            this.rmi.getServer().kickClient(this.getId(), PacketKick.KickReasonType.QUIT, null);
+            this.rmi.getServer()
+                    .kickClient(this.getId(), this.getId(), PacketKick.KickReasonType.QUIT, "Client disconnected.");
         } catch (RemoteException e) {
             e.printStackTrace();
         } finally {
@@ -122,10 +122,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     @Override
     public void registerPackets() {
-        Packet.registerFunc(PacketLoginAuthenticate.class, packet -> {
+        packets.registerFunc(PacketLoginAuthenticate.class, packet -> {
             UUID id = null;
             try {
-                id = getRmi().getServer().login(packet.getUsername(), packet.getPassword());
+                id = getRmi().getServer().login(packet.getUsername(), packet.getPassword(), getRmi());
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -140,7 +140,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             return true;
         });
 
-        Packet.registerAction(PacketLogout.class, packet -> {
+        packets.registerAction(PacketLogout.class, packet -> {
             try {
                 getRmi().getServer().logout(getId());
             } catch (RemoteException e) {
@@ -148,7 +148,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
         });
 
-        Packet.registerFunc(PacketHighScore.class, (packet) -> {
+        packets.registerFunc(PacketHighScore.class, (packet) -> {
             try {
                 return getRmi().getServer().setScore(packet.getClanName(), packet.getScore());
             } catch (RemoteException ex) {
@@ -157,74 +157,80 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             return false;
         });
 
-        Packet.registerFunc(PacketCreateLobby.class, (p) -> {
+        packets.registerFunc(PacketCreateLobby.class, (p) -> {
 
             try {
-                UUID newGame = getRmi().getServer().createLobby(p.getLobbyname(), p.getSender());
+                UUID newGame = getRmi().getServer().createLobby(p.getSender(), p.getLobbyname());
                 return newGame;
                 // ateamproject.kezuino.com.github.network.Game game = new ateamproject.kezuino.com.github.network.Game(p.getLobbyname(), p.getSender());
                 //games.put(game.getPrivateId(), game);
             } catch (RemoteException ex) {
-                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
+                      .log(Level.SEVERE, null, ex);
             }
             return null;
         });
-        
-         Packet.registerFunc(PacketGetLobbies.class, (p) -> {
-            
+
+        packets.registerFunc(PacketGetLobbies.class, (p) -> {
+
             try {
-                List<PacketGetLobbies.GetLobbiesData> list =  getRmi().getServer().getLobbies();
-               // p.setResult(list);
+                List<PacketGetLobbies.GetLobbiesData> list = getRmi().getServer().getLobbies();
+                // p.setResult(list);
                 return list;
-                
+
                 // ateamproject.kezuino.com.github.network.Game game = new ateamproject.kezuino.com.github.network.Game(p.getLobbyname(), p.getSender());
                 //games.put(game.getPrivateId(), game);
             } catch (RemoteException ex) {
-                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
+                      .log(Level.SEVERE, null, ex);
             }
             return null;
         });
 
-        Packet.registerFunc(PacketJoinLobby.class, (p) -> {
+        packets.registerFunc(PacketJoinLobby.class, (p) -> {
             try {
                 return getRmi().getServer().joinLobby(p.getLobbyid(), p.getSender());
             } catch (RemoteException ex) {
-                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return null;
-        });
-        
-         Packet.registerFunc(PacketLeaveLobby.class, (p) -> {
-            try {
-                return getRmi().getServer().leaveLobby(p.getLobbyid(), p.getSender());
-                 
-            } catch (RemoteException ex) {
-                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return null;
-        });
-         
-          Packet.registerFunc(PacketQuitLobby.class, (p) -> {
-            try {
-                return getRmi().getServer().quitLobby(p.getLobbyid());
-                 
-            } catch (RemoteException ex) {
-                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
+                      .log(Level.SEVERE, null, ex);
             }
             return null;
         });
 
-        Packet.registerFunc(PacketLoginCreateNewUser.class, (p) -> {
+        packets.registerFunc(PacketLeaveLobby.class, (p) -> {
+            try {
+                return getRmi().getServer().leaveLobby(p.getSender());
+
+            } catch (RemoteException ex) {
+                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
+                      .log(Level.SEVERE, null, ex);
+            }
+            return null;
+        });
+
+        packets.registerFunc(PacketQuitLobby.class, (p) -> {
+            try {
+                return getRmi().getServer().quitLobby(p.getLobbyid());
+
+            } catch (RemoteException ex) {
+                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
+                      .log(Level.SEVERE, null, ex);
+            }
+            return null;
+        });
+
+        packets.registerFunc(PacketLoginCreateNewUser.class, (p) -> {
             try {
                 return getRmi().getServer().loginCreateUser(p.getUsername(), p.getEmail());
             } catch (RemoteException ex) {
-                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
+                      .log(Level.SEVERE, null, ex);
             }
 
             return false;
         });
 
-        Packet.registerFunc(PacketLoginUserExists.class, (p) -> {
+        packets.registerFunc(PacketLoginUserExists.class, (p) -> {
             try {
                 return getRmi().getServer().doesUserExists(p.getEmail());
             } catch (RemoteException ex) {

@@ -48,4 +48,47 @@ public interface IClientInfo {
      * Resets the seconds since last activity. Call this when activity from the {@link Client} was received.
      */
     void resetSecondsActive();
+
+    /**
+     * Gets the {@link Game} this {@link IClientInfo} is currently in. Or returns null if this {@link IClientInfo} isn't in a {@link Game}.
+     *
+     * @return {@link Game} this {@link IClientInfo} is currently in. Or returns null if this {@link IClientInfo} isn't in a {@link Game}.
+     */
+    Game getGame();
+
+    /**
+     * Sets the {@link Game} this {@link IClientInfo} is currently in. Can be set to null.
+     *
+     * @param game {@link Game} that the {@link IClientInfo} is currently in.
+     */
+    void setGame(Game game);
+
+    /**
+     * Gets the emailaddress from the {@link IClientInfo}.
+     *
+     * @return Emailaddress from the {@link IClientInfo}.
+     */
+    String getEmailAddress();
+
+
+    /**
+     * Sets the emailaddress from the {@link IClientInfo}.
+     *
+     * @param emailAddress Emailaddress of the {@link IClientInfo}.
+     */
+    void setEmailAddress(String emailAddress);
+
+    /**
+     * Gets the username from the {@link IClientInfo}.
+     *
+     * @return Username from the {@link IClientInfo}.
+     */
+    String getUsername();
+
+    /**
+     * Sets the username from the {@link IClientInfo}.
+     *
+     * @param username Username from the {@link IClientInfo}.
+     */
+    void setUsername(String username);
 }

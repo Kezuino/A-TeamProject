@@ -118,7 +118,7 @@ public class ClanManagementScreen extends BaseScreen {
                 public void clicked(InputEvent event, float x, float y) {
                     if (!tfClannaam.getText().equals("")) {
                         try {
-                            if (!client.getRmi().getServer().clanCreateClan(tfClannaam.getText(), emailaddress)) {
+                            if (!client.getRmi().getServer().createClan(Client.getInstance().getId(), tfClannaam.getText())) {
                                 Dialog d = new Dialog("error", skin);
                                 d.add("Maximum van 8 clans overschreden of de clan bestaat al");
                                 TextButton bExit = new TextButton("Oke", skin);
@@ -248,7 +248,7 @@ public class ClanManagementScreen extends BaseScreen {
             TextField lb1 = new TextField(clanName, skin);
             lb1.setDisabled(true);
 
-            final InvitationType iType = client.getRmi().getServer().clanGetInvitation(clanName, emailaddress);
+            final InvitationType iType = client.getRmi().getServer().clanGetInvitation(Client.getInstance().getId(), clanName);
 
             String bt2Text = iType.toString();
             TextButton bt2 = new TextButton(bt2Text, skin);
@@ -341,7 +341,7 @@ public class ClanManagementScreen extends BaseScreen {
             lb3.setDisabled(
                     true);
 
-            TextButton bt4 = new TextButton(client.getRmi().getServer().getManagement(clanName, emailaddress).toString(), skin);
+            TextButton bt4 = new TextButton(client.getRmi().getServer().getManagement(Client.getInstance().getId(), clanName).toString(), skin);
             final ManagementType iManage = ManagementType.valueOf(bt4.getText().toString());
 
             bt4.addListener(

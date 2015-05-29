@@ -1,10 +1,10 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
-import ateamproject.kezuino.com.github.network.ClientInfo;
 import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.IClientInfo;
 import ateamproject.kezuino.com.github.network.mail.MailAccount;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.PacketManager;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
@@ -20,6 +20,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -27,11 +28,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     private static Server instance;
     protected ServerBase rmi;
+    protected PacketManager packets;
     private ClanFunctions clanFunctions = ClanFunctions.getInstance();
 
     public Server() throws RemoteException {
         super();
         rmi = new ServerBase(this);
+        packets = new PacketManager();
     }
 
     public static Server getInstance() throws RemoteException {
@@ -79,8 +82,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         super.stop();
 
         try {
-            // TODO: Notify clients that server is stopping.
-
+            send(new PacketKick(PacketKick.KickReasonType.QUIT, "Server stopped"));
 
             unregisterPackets();
 
@@ -102,24 +104,37 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
      */
     @Override
     public void send(Packet packet) {
-        Packet.execute(packet);
+        packets.execute(packet);
     }
 
     @Override
     public void registerPackets() {
-        Packet.registerFunc(PacketKick.class, (packet) -> {
-            // Drop client from wherever.
-            this.getClientFromPublic(packet.getSender());
+        packets.registerFunc(PacketKick.class, (packet) -> {
+            switch (packet.getReasonType()) {
+                case LOBBY:
+                    // Drop all receivers.
+                    for (UUID receiver : packet.getReceivers()) {
+                        try {
+                            getClient(receiver).getRmi().drop(packet.getReason());
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    return true;
+                case QUIT:
 
-            return true;
+                    return true;
+            }
+
+            return false;
         });
 
-        Packet.registerFunc(PacketCreateClan.class, (packet) -> {
+        packets.registerFunc(PacketCreateClan.class, (packet) -> {
             System.out.print("Create clan packet received");
             return clanFunctions.createClan(packet.getClanName(), packet.getEmailadres());
         });
 
-        Packet.registerFunc(PacketGetLobbies.class, (packet -> {
+        packets.registerFunc(PacketGetLobbies.class, (packet -> {
             List<PacketGetLobbies.GetLobbiesData> result = new ArrayList<>();
             for (Game game : getGames()) {
                 result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
@@ -130,35 +145,35 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return result;
         }));
 
-        Packet.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
+        packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
 
-        Packet.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(packet.getUsername()));
+        packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(packet.getUsername()));
 
-        Packet.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(packet.getClanName(), packet
+        packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(packet.getClanName(), packet
                 .getEmailadres()));
 
-        Packet.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(), packet
+        packets.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(), packet
                 .getEmailadres()));
 
-        Packet.registerFunc(PacketGetPeople.class, (packet) -> clanFunctions.getPeople(packet.getClanName()));
+        packets.registerFunc(PacketGetPeople.class, (packet) -> clanFunctions.getPeople(packet.getClanName()));
 
-        Packet.registerFunc(PacketGetUsername.class, (packet) -> clanFunctions.getUsername(packet.getEmailadres()));
+        packets.registerFunc(PacketGetUsername.class, (packet) -> clanFunctions.getUsername(packet.getEmailadres()));
 
-        Packet.registerFunc(PacketHandleInvitation.class, (packet) -> clanFunctions.handleInvitation(packet.getInvite(), packet
+        packets.registerFunc(PacketHandleInvitation.class, (packet) -> clanFunctions.handleInvitation(packet.getInvite(), packet
                 .getClanName(), packet.getEmailadres(), packet
                 .getNameOfInvitee()));
 
-        Packet.registerFunc(PacketHandleManagement.class, (packet) -> clanFunctions.handleManagement(packet.getManage(), packet
+        packets.registerFunc(PacketHandleManagement.class, (packet) -> clanFunctions.handleManagement(packet.getManage(), packet
                 .getClanName(), packet.getEmailadres()));
 
-        Packet.registerFunc(PacketSetUsername.class, (packet) -> clanFunctions.setUsername(packet.getName(), packet.getEmailaddress()));
+        packets.registerFunc(PacketSetUsername.class, (packet) -> clanFunctions.setUsername(packet.getName(), packet.getEmailaddress()));
 
-        Packet.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
+        packets.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
             System.out.print("Login request received for account: " + packet.getUsername());
 
             if (MailAccount.isValid(packet.getUsername(), packet.getPassword())) {
                 // Register client on server.
-                ClientInfo client = new ClientInfo();
+                ClientInfo client = new ClientInfo((IProtocolClient) packet.getConnectObject());
                 clients.put(client.getPrivateId(), client);
                 System.out.println(" .. login accepted. " + clients.size() + " clients total.");
 
@@ -170,12 +185,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return null;
         });
 
-        Packet.registerAction(PacketLogout.class, packet -> {
+        packets.registerAction(PacketLogout.class, packet -> {
             removeClient(packet.getSender());
             System.out.printf("Client %s logged out.%n", packet.getSender());
         });
 
-        Packet.registerFunc(PacketHighScore.class, (packet) -> {
+        packets.registerFunc(PacketHighScore.class, (packet) -> {
             try {
                 ResultSet resultSet = Database.getInstance()
                                               .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
@@ -194,7 +209,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return false;
         });
 
-        Packet.registerFunc(PacketLoginCreateNewUser.class, (packet) -> {
+        packets.registerFunc(PacketLoginCreateNewUser.class, (packet) -> {
             System.out.print("Trying to create following user in database: " + packet.getUsername());
             ResultSet resultSet = null;
             int count = 0;
@@ -220,7 +235,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return false;
         });
 
-        Packet.registerFunc(PacketLoginUserExists.class, (packet) -> {
+        packets.registerFunc(PacketLoginUserExists.class, (packet) -> {
             System.out.println("Checking if the following user exists: " + packet.getEmail());
             ResultSet resultSet = null;
             int count = 0;
@@ -237,9 +252,32 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
 
-        Packet.registerAction(PacketHeartbeat.class, packet -> {
+        packets.registerAction(PacketHeartbeat.class, packet -> {
             if (packet.getSender() == null) return;
             getClient(packet.getSender()).resetSecondsActive();
         });
+
+        packets.registerFunc(PacketQuitLobby.class, packet -> {
+            Game lobby = getGameFromClientId(packet.getSender());
+            if (lobby == null) return false;
+
+//            // if null -> game coundnt be found
+//            if (deletedGame != null) {
+//                // send all clients packet that lobby is closed
+//                // packet kick
+//                // >> deletedGame.getClients()
+//
+//                return true;
+//            }
+//            else {
+//                return false;
+//            }
+            return true;
+        });
+    }
+
+    @Override
+    public void unregisterPackets() {
+        packets.unregisterAll();
     }
 }

@@ -10,14 +10,17 @@ public class PacketLoginAuthenticate extends Packet<UUID> {
     protected String username;
     @PacketField(1)
     protected String password;
+    @PacketField(2)
+    protected Object connectObject;
 
     public PacketLoginAuthenticate() {
     }
 
-    public PacketLoginAuthenticate(String username, String password, UUID... senderAndReceivers) {
+    public PacketLoginAuthenticate(String username, String password, Object connectObject, UUID... senderAndReceivers) {
         super(senderAndReceivers);
         this.username = username;
         this.password = password;
+        this.connectObject = connectObject;
     }
 
     public String getUsername() {
@@ -26,5 +29,9 @@ public class PacketLoginAuthenticate extends Packet<UUID> {
 
     public String getPassword() {
         return password;
+    }
+
+    public Object getConnectObject() {
+        return connectObject;
     }
 }

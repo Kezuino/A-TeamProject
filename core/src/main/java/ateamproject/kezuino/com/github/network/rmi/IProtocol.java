@@ -5,13 +5,18 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
+import com.badlogic.gdx.math.Vector2;
+
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.UUID;
 
 /**
  *
  * @author Kez and Jules
  */
 public interface IProtocol extends Remote {
-    void creatureMove(int creatureID) throws RemoteException;
+    void gameObjectSetDirection(UUID sender, UUID objectId) throws RemoteException;
+
+    void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException;
 }

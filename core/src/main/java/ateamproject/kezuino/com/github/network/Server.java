@@ -2,8 +2,10 @@ package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, AutoCloseable {
 
@@ -12,6 +14,9 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      */
     protected double clientTimeout;
 
+    /**
+     * {@link Game Games} that are currently active on this {@link Server}.
+     */
     protected Dictionary<UUID, Game> games;
 
     /**
@@ -19,6 +24,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * Stop the thread by calling {@link #stop()}.
      */
     protected Thread updateThread;
+
     protected boolean isUpdating;
     /**
      * Gets or sets all {@link IClientInfo clients} currently connected to this {@link Server}.
@@ -92,6 +98,13 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * @return Removed {@link Game} or null if no {@link Game} could be removed with the {@link UUID}.
      */
     public Game removeGame(UUID gameId) {
+        Game game = games.get(gameId);
+        if (game == null) return null;
+
+        // Notify all connected clients that the lobby is closing.
+        HashSet<UUID> gameClients = game.getClients();
+        send(new PacketKick(PacketKick.KickReasonType.LOBBY, "Lobby closed.", gameClients.toArray(new UUID[gameClients.size()])));
+
         return games.remove(gameId);
     }
 
@@ -143,19 +156,19 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * @param privateId Private id of the {@link IClientInfo}.
      * @return {@link IClientInfo} based on the private id. Can be null.
      */
-    public IClientInfo getClient(UUID privateId) {
+    public TClient getClient(UUID privateId) {
         return clients.get(privateId);
     }
 
     /**
-     * Gets the {@link IClientInfo} based on the public id.
+     * Gets the {@link TClient} based on the public id.
      *
      * @param publicId Public id of the {@link IClientInfo}.
-     * @return {@link IClientInfo} based on the public id.
+     * @return {@link TClient} based on the public id.
      */
-    public IClientInfo getClientFromPublic(UUID publicId) {
+    public TClient getClientFromPublic(UUID publicId) {
         // Do not simplify code. Needs to be high-performance.
-        for (IClientInfo client : getClients()) {
+        for (TClient client : getClients()) {
             if (client.getPublicId().equals(publicId)) {
                 return client;
             }
@@ -164,11 +177,15 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
     }
 
     /**
-     * Unregisters all the {@link Packet packets} for this domain/process.
+     * Gets the {@link Game} that the {@link TClient} is currently in. Or null if {@link TClient} is not currently in a game / lobby.
+     *
+     * @param sender Private id of the {@link TClient} to find.
+     * @return {@link Game} that the {@link TClient} is currently in. Or null if {@link TClient} is not currently in a game / lobby.
      */
-    @Override
-    public void unregisterPackets() {
-        Packet.unregisterAll();
+    public Game getGameFromClientId(UUID sender) {
+        TClient client = getClientFromPublic(sender);
+        if (client == null) return null;
+        return client.getGame();
     }
 
     /**

@@ -23,7 +23,7 @@ import java.util.UUID;
  */
 public interface IProtocolServer extends IProtocol {
 
-    UUID login(String email, String password) throws RemoteException;
+    UUID login(String email, String password, IProtocolClient client) throws RemoteException;
 
     boolean doesUserExists(String email) throws RemoteException;
 
@@ -31,42 +31,41 @@ public interface IProtocolServer extends IProtocol {
 
     void heartbeat(UUID client) throws RemoteException;
 
-    UUID createLobby(String LobbyName, UUID host) throws RemoteException;
+    UUID createLobby(UUID sender, String LobbyName) throws RemoteException;
 
     List<PacketGetLobbies.GetLobbiesData> getLobbies() throws RemoteException;
 
-    Game getLobbyById(UUID lobbyId) throws RemoteException;
-
-    PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID lobbyId, UUID client) throws RemoteException;
+    PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException;
 
     /**
-     * Requests all connected {@link IClientInfo clients} to stop and closes the
-     * lobby.
-     *
-     * @param lobbyId
+     * Sender must be the host.
+     * @param sender
      * @return
      * @throws RemoteException
      */
-    boolean quitLobby(UUID lobbyId) throws RemoteException;
+    boolean quitLobby(UUID sender) throws RemoteException;
 
-    boolean leaveLobby(UUID lobbyId, UUID client) throws RemoteException;
+    boolean leaveLobby(UUID sender) throws RemoteException;
     
     /**
      * Kicks the {@link IClientInfo} from any lobby it is currently in.
      *
+     * @param sender
      * @param client
+     * @param reasonType
+     * @param message
      * @return
      * @throws RemoteException
      */
-    boolean kickClient(UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException;
+    boolean kickClient(UUID sender, UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException;
 
     ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
 
-    boolean clanCreateClan(String clanName, String emailaddress) throws RemoteException;
+    boolean createClan(UUID sender, String clanName) throws RemoteException;
 
-    InvitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException;
+    InvitationType clanGetInvitation(UUID sender, String clanName) throws RemoteException;
 
-    ManagementType getManagement(String clanName, String emailaddress) throws RemoteException;
+    ManagementType getManagement(UUID sender, String clanName) throws RemoteException;
 
     String getPeople(String clanName) throws RemoteException;
 

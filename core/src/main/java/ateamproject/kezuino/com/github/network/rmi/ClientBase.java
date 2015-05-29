@@ -5,8 +5,11 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
+import com.badlogic.gdx.math.Vector2;
+
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.UUID;
 
 /**
  * @author Kez and Jules
@@ -27,15 +30,20 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         this.server = server;
     }
 
-    @Override
-    public void creatureMove(int creatureID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 
     @Override
     public boolean drop(String reason) throws RemoteException {
-        System.out.println("Kicked by server: " + reason);
+        System.out.println(reason);
         return true;
+    }
+
+    @Override
+    public void gameObjectSetDirection(UUID sender, UUID objectId) throws RemoteException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) {
+        throw new UnsupportedOperationException();
     }
 }

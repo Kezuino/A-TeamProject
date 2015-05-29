@@ -6,6 +6,7 @@ import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
+import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
@@ -29,13 +30,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void creatureMove(int creatureID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public UUID login(String email, String password) throws RemoteException {
-        PacketLoginAuthenticate packet = new PacketLoginAuthenticate(email, password);
+    public UUID login(String email, String password, IProtocolClient client) throws RemoteException {
+        PacketLoginAuthenticate packet = new PacketLoginAuthenticate(email, password, client);
         server.send(packet);
         return packet.getResult();
     }
@@ -46,10 +42,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public UUID createLobby(String lobbyName, UUID host) throws RemoteException {
+    public UUID createLobby(UUID sender, String lobbyName) throws RemoteException {
         // add lobby to games array
 
-        Game newGame = new Game(lobbyName, server.getClientFromPublic(host).getPrivateId());
+        Game newGame = new Game(lobbyName, server.getClientFromPublic(sender).getPrivateId());
         server.addGame(newGame);
 
         System.out.println("Lobby: " + newGame.getName() + " - id " + newGame.getId() + " CREATED !");
@@ -62,16 +58,6 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketGetLobbies packet = new PacketGetLobbies();
         server.send(packet);
         return packet.getResult();
-    }
-
-    @Override
-    public Game getLobbyById(UUID lobbyId) throws RemoteException {
-//        for (Game game : gameList) {
-//            if (game.getPrivateId().equals(lobbyId)) {
-//                return game;
-//            }
-//        }
-        return null;
     }
 
     @Override
@@ -88,32 +74,24 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean quitLobby(UUID lobbyId) throws RemoteException {
-        
-        Game deletedGame = server.removeGame(lobbyId);
-        
-        // if null -> game coundnt be found
-        if (deletedGame != null) {
-            // send all clients packet that lobby is closed
-            // packet kick
-            // >> deletedGame.getClients()
-            
-            return true;
-        }
-        else {
-            return false;
-        }
+    public boolean quitLobby(UUID sender) throws RemoteException {
+        PacketQuitLobby packet = new PacketQuitLobby(sender);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
-    public boolean leaveLobby(UUID lobbyId, UUID client) throws RemoteException {
-        Game g = server.getGame(lobbyId);
-        return g.getClients().remove(client);
+    public boolean leaveLobby(UUID sender) throws RemoteException {
+        PacketLeaveLobby packet = new PacketLeaveLobby(sender);
+        server.send(packet);
+        return packet.getResult();
     }
     
     @Override
-    public boolean kickClient(UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException {
-        return Packet.execute(new PacketKick(reasonType, message, client)).getResult();
+    public boolean kickClient(UUID sender, UUID target, PacketKick.KickReasonType reasonType, String message) throws RemoteException {
+        PacketKick packet = new PacketKick(reasonType, message, sender, target);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
@@ -122,18 +100,18 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean clanCreateClan(String clanName, String emailaddress) throws RemoteException {
-        return clanFunctions.createClan(clanName, emailaddress);
+    public boolean createClan(UUID sender, String clanName) throws RemoteException {
+        return clanFunctions.createClan(clanName, server.getClient(sender).getEmailAddress());
     }
 
     @Override
-    public InvitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException {
-        return clanFunctions.getInvitation(clanName, emailaddress);
+    public InvitationType clanGetInvitation(UUID sender, String clanName) throws RemoteException {
+        return clanFunctions.getInvitation(clanName, server.getClient(sender).getEmailAddress());
     }
 
     @Override
-    public ManagementType getManagement(String clanName, String emailaddress) throws RemoteException {
-        return clanFunctions.getManagement(clanName, emailaddress);
+    public ManagementType getManagement(UUID sender, String clanName) throws RemoteException {
+        return clanFunctions.getManagement(clanName, server.getClient(sender).getEmailAddress());
     }
 
     @Override
@@ -191,5 +169,15 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketLoginCreateNewUser packet = new PacketLoginCreateNewUser(username,email);
         server.send(packet);
         return packet.getResult();
+    }
+
+    @Override
+    public void gameObjectSetDirection(UUID sender, UUID objectId) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 }

@@ -42,7 +42,7 @@ public class LoginScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 try {
-                    PacketLoginAuthenticate packet = new PacketLoginAuthenticate(txtUsername.getText(), txtPassword.getText());
+                    PacketLoginAuthenticate packet = new PacketLoginAuthenticate(txtUsername.getText(), txtPassword.getText(), null);
                     Client.getInstance().send(packet);
 
                     try {
@@ -99,7 +99,7 @@ public class LoginScreen extends BaseScreen {
                         Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } catch (NullPointerException | RemoteException e) {
-                    System.out.println("Can't connect to the server");
+                    Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, e);
 
                     Dialog d = new Dialog("error", skin);
                     d.add("De server is niet online.");

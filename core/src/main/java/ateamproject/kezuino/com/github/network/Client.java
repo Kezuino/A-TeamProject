@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.PacketManager;
 import com.badlogic.gdx.Game;
 
 import java.util.HashMap;
@@ -25,11 +26,13 @@ public abstract class Client implements INetworkComponent, IPacketSender {
     protected boolean isUpdating;
     protected UUID id;
     protected UUID publicId;
+    protected PacketManager packets;
 
     public Client(com.badlogic.gdx.Game game) {
         this.game = game;
         this.players = new HashMap<>(8);
         this.isUpdating = true;
+        this.packets = new PacketManager();
     }
 
     public UUID getPublicId() {
@@ -88,7 +91,7 @@ public abstract class Client implements INetworkComponent, IPacketSender {
     @Override
     public void send(Packet packet) {
         if (packet.getSender() == null) packet.setSender(getId());
-        Packet.execute(packet);
+        packets.execute(packet);
     }
 
     @Override
@@ -96,7 +99,7 @@ public abstract class Client implements INetworkComponent, IPacketSender {
 
     @Override
     public void unregisterPackets() {
-        Packet.unregisterAll();
+        packets.unregisterAll();
     }
 
     /**
