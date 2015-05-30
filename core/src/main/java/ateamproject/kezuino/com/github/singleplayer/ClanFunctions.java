@@ -21,6 +21,7 @@ import java.util.logging.Logger;
  * @author Jip
  */
 public class ClanFunctions {
+
     private static ClanFunctions instance = new ClanFunctions();
 
     private ClanFunctions() {
@@ -37,7 +38,7 @@ public class ClanFunctions {
      * Gives all clans for a specific {@code emailaddress}.
      *
      * @param emailaddress the emailaddress for which the clans needs to
-     *                     searched for.
+     * searched for.
      * @return the String array which contains all the clan names.
      */
     public ArrayList<String> fillTable(String emailaddress) {
@@ -69,28 +70,20 @@ public class ClanFunctions {
     /**
      * Create a clan with the given {@code clanName} and {@code emailaddress}.
      *
-     * @param clanName     Name of the clan.
+     * @param clanName Name of the clan.
      * @param emailaddress Creater of the clan.
      * @return True if creation did succeed else false.
      */
     public boolean createClan(String clanName, String emailaddress) {
         if (!clanExists(clanName)) {
             if (hasRoomForClan(emailaddress)) {
+                int id = getAccountIdFromEmail(emailaddress);
 
-                try {
-                    ResultSet resultSet = Database.getInstance()
-                                                  .query("SELECT Id FROM account WHERE Email = ?", emailaddress);
-                    resultSet.next();
-                    int id = resultSet.getInt("Id");
+                Database.getInstance().update("INSERT INTO clan(Name,Score,ManagerId) VALUES(?,0,?)", clanName, id);
+                Database.getInstance()
+                        .update("INSERT INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,1)", id, getClanIdFromName(clanName));
 
-                    Database.getInstance().update("INSERT INTO clan(Name,Score,ManagerId) VALUES(?,0,?)", clanName, id);
-                    Database.getInstance()
-                            .update("INSERT INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,1)", emailaddress, clanName);
-
-                    return true;
-                } catch (SQLException ex) {
-                    Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                return true;
             }
         }
         return false;
@@ -107,7 +100,7 @@ public class ClanFunctions {
 
         try {
             resultSet = Database.getInstance()
-                                .query("SELECT COUNT(*) as amount FROM clan,account WHERE clan.ManagerId = account.Id AND account.Email = ?", emailaddress);
+                    .query("SELECT COUNT(*) as amount FROM clan,account WHERE clan.ManagerId = account.Id AND account.Email = ?", emailaddress);
             resultSet.next();
             int clans = resultSet.getInt("amount");
 
@@ -122,9 +115,10 @@ public class ClanFunctions {
     }
 
     /**
-     * Gets the {@link InvitationType} for a given clan and a given {@code emailaddress}.
+     * Gets the {@link InvitationType} for a given clan and a given
+     * {@code emailaddress}.
      *
-     * @param clanName     Name of the clan.
+     * @param clanName Name of the clan.
      * @param emailaddress {@code emailaddress} of who is in the clan.
      * @return {@link InvitationType}, or null if failed.
      */
@@ -139,7 +133,7 @@ public class ClanFunctions {
             }
 
             resultSet = Database.getInstance()
-                                .query("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?", emailaddress, clanName);
+                    .query("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?", emailaddress, clanName);
             resultSet.next();
             int accepted = resultSet.getInt("Accepted");
 
@@ -151,14 +145,17 @@ public class ClanFunctions {
         } catch (SQLException ex) {
             Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        return null;
+        System.out.println("Null bij invitation word returned");
+        return InvitationType.ACCEPT;
+        //return null;
     }
 
     /**
-     * Gets the managementType for a given clan and a given {@copde emailaddress}.
+     * Gets the managementType for a given clan and a given {
      *
-     * @param clanName     Name of the clan
+     * @copde emailaddress}.
+     *
+     * @param clanName Name of the clan
      * @param emailaddress Emailaddress of who is in the clan
      * @return {@link ManagementType}, or null if failed.
      */
@@ -171,7 +168,7 @@ public class ClanFunctions {
             }
 
             resultSet = Database.getInstance()
-                                .query("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?", clanName, emailaddress);
+                    .query("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?", clanName, emailaddress);
             resultSet.next();
             int accepted = resultSet.getInt("Accepted");
 
@@ -183,8 +180,9 @@ public class ClanFunctions {
         } catch (SQLException ex) {
             Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        return null;
+        System.out.println("Er word nu ll returned bij clanfunctions");
+        return ManagementType.LEAVE;
+        //return null;
     }
 
     /**
@@ -199,7 +197,7 @@ public class ClanFunctions {
 
         try {
             resultSet = Database.getInstance()
-                                .query("SELECT COUNT(*) AS amount FROM clan_account WHERE ClanId = ?", clanName);
+                    .query("SELECT COUNT(*) AS amount FROM clan_account WHERE ClanId = ?", clanName);
             resultSet.next();
             int amountOfPlayers = resultSet.getInt("amount");
 
@@ -214,13 +212,13 @@ public class ClanFunctions {
     /**
      * Processes an invitation.
      *
-     * @param invite             Invite to process.
-     * @param clanName           Name of the clan where the invite belongs to.
-     * @param emailAddress       Email of the person who did send the invite to this
-     *                           function.
+     * @param invite Invite to process.
+     * @param clanName Name of the clan where the invite belongs to.
+     * @param emailAddress Email of the person who did send the invite to this
+     * function.
      * @param nameOfEmailInvitee Optional name/emailaddress parameter for the
-     *                           'INVITE' invite. Needs to be null when a invite is not of the type
-     *                           'INVITE'.
+     * 'INVITE' invite. Needs to be null when a invite is not of the type
+     * 'INVITE'.
      * @return True if invitation is successfully handled else false.
      */
     public boolean handleInvitation(InvitationType invite, String clanName, String emailAddress, String nameOfEmailInvitee) {
@@ -241,12 +239,12 @@ public class ClanFunctions {
 
                 if (!userIsInOrInvitedInClan(nameOfEmailInvitee, clanName)) {
                     return Database.getInstance()
-                                   .update("UPDATE INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)", getAccountIdFromEmail(getEmail(username)), getClanIdFromName(clanName)) > 0;
+                            .update("UPDATE INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)", getAccountIdFromEmail(getEmail(username)), getClanIdFromName(clanName)) > 0;
                 }
             } else {
                 if (!userIsInOrInvitedInClan(nameOfEmailInvitee, clanName)) {
                     return Database.getInstance()
-                                   .update("UPDATE INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)", getAccountIdFromEmail(emailAddress), getClanIdFromName(clanName)) > 0;
+                            .update("UPDATE INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)", getAccountIdFromEmail(emailAddress), getClanIdFromName(clanName)) > 0;
                 }
             }
         }
@@ -255,18 +253,21 @@ public class ClanFunctions {
     }
 
     /**
-     * Executes an action based on the given {@link ManagementType} to run on the {@code clan} and {@code emailaddress}.
+     * Executes an action based on the given {@link ManagementType} to run on
+     * the {@code clan} and {@code emailaddress}.
      *
      * @param managementType {@link ManagementType} to process.
-     * @param clanName       Name of the clan where the {@link ManagementType} belongs to
-     * @param emailaddress   Emailaddress of the user.
-     * @return True if {@link ManagementType} is successfully handled else false.
+     * @param clanName Name of the clan where the {@link ManagementType} belongs
+     * to
+     * @param emailaddress Emailaddress of the user.
+     * @return True if {@link ManagementType} is successfully handled else
+     * false.
      */
     public boolean handleManagement(ManagementType managementType, String clanName, String emailaddress) {
         int clanIdFromName = getClanIdFromName(clanName);
         if (managementType.equals(ManagementType.REJECT) || managementType.equals(ManagementType.LEAVE)) {
             return Database.getInstance()
-                           .update("DELETE FROM clan_account WHERE AccountId = ? AND ClanId = ?", getAccountIdFromEmail(emailaddress), clanIdFromName) > 0;
+                    .update("DELETE FROM clan_account WHERE AccountId = ? AND ClanId = ?", getAccountIdFromEmail(emailaddress), clanIdFromName) > 0;
         } else if (managementType.equals(ManagementType.REMOVE)) {
             Database.getInstance().update("DELETE FROM clan_account WHERE ClanId = ?", clanIdFromName);
             Database.getInstance().update("DELETE FROM clan WHERE Id = ?", clanIdFromName);
@@ -319,12 +320,15 @@ public class ClanFunctions {
     /**
      * Set the username of an user.
      *
-     * @param name         New name of the user.
+     * @param name New name of the user.
      * @param emailaddress Emailaddress of the user to find in the database.
-     * @return True if it succeeded, false if the {@code name} was already taken.
+     * @return True if it succeeded, false if the {@code name} was already
+     * taken.
      */
     public boolean setUsername(String name, String emailaddress) {
-        if (getEmail(name) != null) return false;//if it cant get the email, the name is not taken
+        if (getEmail(name) != null) {
+            return false;//if it cant get the email, the name is not taken
+        }
         return Database.getInstance().update("UPDATE account SET Name = ? WHERE Email = ?", name, emailaddress) > 0;
     }
 
@@ -332,8 +336,9 @@ public class ClanFunctions {
      * Check if a user is in or invited into a clan.
      *
      * @param nameOfEmailInvitee Name of the person to look for
-     * @param clanName           Clan in which to search for
-     * @return True if the user is currently in or is invited into the clan, else false.
+     * @param clanName Clan in which to search for
+     * @return True if the user is currently in or is invited into the clan,
+     * else false.
      */
     private boolean userIsInOrInvitedInClan(String nameOfEmailInvitee, String clanName) {
         String email = getEmail(nameOfEmailInvitee);
@@ -346,7 +351,7 @@ public class ClanFunctions {
 
             try {
                 resultSet = Database.getInstance()
-                                    .query("SELECT COUNT(*) as amount FROM clan_account WHERE AccountId = ? AND ClanId = ?", getAccountIdFromEmail(getEmail(username)), getClanIdFromName(clanName));
+                        .query("SELECT COUNT(*) as amount FROM clan_account WHERE AccountId = ? AND ClanId = ?", getAccountIdFromEmail(getEmail(username)), getClanIdFromName(clanName));
                 resultSet.next();
                 return resultSet.getInt("amount") == 1;
 
@@ -358,7 +363,7 @@ public class ClanFunctions {
 
             try {
                 resultSet = Database.getInstance()
-                                    .query("SELECT COUNT(*) as amount FROM clan_account WHERE AccountId = ? AND ClanId = ?", getAccountIdFromEmail(email), getClanIdFromName(clanName));
+                        .query("SELECT COUNT(*) as amount FROM clan_account WHERE AccountId = ? AND ClanId = ?", getAccountIdFromEmail(email), getClanIdFromName(clanName));
                 resultSet.next();
                 return resultSet.getInt("amount") == 1;
 
