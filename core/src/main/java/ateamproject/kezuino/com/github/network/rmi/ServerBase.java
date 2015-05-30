@@ -161,4 +161,11 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    @Override
+    public ArrayList<String> getKickInformation(UUID sender) throws RemoteException {
+        PacketGetKickInformation packet = new PacketGetKickInformation(sender);
+        server.send(packet);
+        return packet.getResult();
+    }
 }

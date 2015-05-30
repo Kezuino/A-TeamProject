@@ -5,6 +5,11 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetKickInformation;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
+import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameUIRenderer;
@@ -25,7 +30,11 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Anton
@@ -174,8 +183,14 @@ public class GameScreen extends BaseScreen {
         bExit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Leaved through menu");
+                try {
+                    Client.getInstance().send(packet);
+                } catch (RemoteException ex) {
+                    Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
                 game.setScreen(new MainScreen(game));
-                //TODO signal server that we leave
             }
         });
 
@@ -203,15 +218,28 @@ public class GameScreen extends BaseScreen {
         Table scrollTable = new Table(skin);
 
         ArrayList<String> peoples = new ArrayList<>();
-        peoples.add("Gunter 1 2");//TODO get data from server
-        peoples.add("Henk 0 2");
+        try {
+            PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
+            Client.getInstance().send(packetKickInfo);
+            peoples.addAll(packetKickInfo.getResult());
+        } catch (RemoteException ex) {
+            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         for (String people : peoples) {
             TextButton bKick = new TextButton("Kick", skin);
             bContinue.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    //todo
+                    try {
+                        PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
+                        Client.getInstance().send(packetKickInfo);
+                        peoples.addAll(packetKickInfo.getResult());
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    d.hide();
+                    showPlayersView();
                 }
             });
             String[] peopleResult = people.split(" ");
@@ -223,6 +251,10 @@ public class GameScreen extends BaseScreen {
             scrollTable.add(peopleResult[1] + "/" + peopleResult[2]);
             scrollTable.columnDefaults(2);
             scrollTable.row();
+
+            if (peopleResult[3].equals("0")) {
+                bKick.setDisabled(true);
+            }
         }
 
         d.add(scrollTable);

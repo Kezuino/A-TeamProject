@@ -54,6 +54,8 @@ public interface IProtocolServer extends IProtocol {
     ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
 
     boolean createClan(UUID sender, String clanName) throws RemoteException;
+    
+    ArrayList<String> getKickInformation(UUID sender) throws RemoteException;
 
     InvitationType clanGetInvitation(UUID sender, String clanName) throws RemoteException;
 
