@@ -77,52 +77,72 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public ArrayList<String> clanFillTable(String emailadres) throws RemoteException {
-        return clanFunctions.fillTable(emailadres);
+        PacketFillTable packet = new PacketFillTable(emailadres);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public boolean createClan(UUID sender, String clanName) throws RemoteException {
-        return clanFunctions.createClan(clanName, server.getClient(sender).getEmailAddress());
+        PacketCreateClan packet = new PacketCreateClan(sender, clanName);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public InvitationType clanGetInvitation(UUID sender, String clanName) throws RemoteException {
-        return clanFunctions.getInvitation(clanName, server.getClient(sender).getEmailAddress());
+        PacketGetInvitation packet = new PacketGetInvitation(null, clanName);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public ManagementType getManagement(UUID sender, String clanName) throws RemoteException {
-        return clanFunctions.getManagement(clanName, server.getClient(sender).getEmailAddress());
+        PacketGetManagement packet = new PacketGetManagement(clanName, null);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public String getPeople(String clanName) throws RemoteException {
-        return clanFunctions.getPeople(clanName);
+        PacketGetPeople packet = new PacketGetPeople(clanName);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public boolean handleInvitation(InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException {
-        return clanFunctions.handleInvitation(invite, clanName, emailAddress, nameOfInvitee);
+        PacketHandleInvitation packet = new PacketHandleInvitation(invite, clanName, emailAddress, nameOfInvitee);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public boolean handleManagement(ManagementType manage, String clanName, String emailaddress) throws RemoteException {
-        return clanFunctions.handleManagement(manage, clanName, emailaddress);
+        PacketHandleManagement packet = new PacketHandleManagement(manage, clanName, emailaddress);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public String getUsername(String emailaddress) throws RemoteException {
-        return clanFunctions.getUsername(emailaddress);
+        PacketGetUsername packet = new PacketGetUsername(emailaddress);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public String getEmail(String username) throws RemoteException {
-        return clanFunctions.getEmail(username);
+        PacketGetEmail packet = new PacketGetEmail(username);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public boolean setUsername(String name, String emailaddress) throws RemoteException {
-        return clanFunctions.setUsername(name, emailaddress);
+        PacketSetUsername packet = new PacketSetUsername(name, emailaddress);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override

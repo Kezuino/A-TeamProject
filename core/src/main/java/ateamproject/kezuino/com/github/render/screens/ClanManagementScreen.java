@@ -3,9 +3,13 @@ package ateamproject.kezuino.com.github.render.screens;
 import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateClan;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketFillTable;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetInvitation;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetManagement;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetPeople;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetUsername;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleInvitation;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleManagement;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketSetUsername;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
@@ -68,8 +72,7 @@ public class ClanManagementScreen extends BaseScreen {
 //        }
     }
 
-    private void refreshScreen() {
-        try {
+    private void refreshScreen() {        
             scrollTable.clear();
 
             TextButton btnChangeName = new TextButton("Naam wijzigen", skin);
@@ -237,17 +240,14 @@ public class ClanManagementScreen extends BaseScreen {
             this.stage.addActor(table);
 
             backgroundMusic = Assets.getMusicStream("menu.mp3");
-
-            for (String clan : client.getRmi().getServer().clanFillTable(emailaddress)) {
+            PacketFillTable packetFillTable = new PacketFillTable(emailaddress);
+            client.send(packetFillTable);
+            for (String clan : packetFillTable.getResult()) {
                 generateTableRow(clan);
-            }
-        } catch (RemoteException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }        
     }
 
     private void generateTableRow(String clanName) {
-        try {
             TextField lb1 = new TextField(clanName, skin);
             lb1.setDisabled(true);
             PacketGetInvitation packetGetInvitation = new PacketGetInvitation(null, clanName);
@@ -271,9 +271,10 @@ public class ClanManagementScreen extends BaseScreen {
                         TextButton bAdd = new TextButton("Toevoegen", skin);
                         bAdd.addListener(new ClickListener() {
                             @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                try {
-                                    if (client.getRmi().getServer().handleInvitation(iType, lb1.getText(), emailaddress, tf.getText())) {
+                            public void clicked(InputEvent event, float x, float y) {                               
+                                    PacketHandleInvitation packetHandleInvitation = new PacketHandleInvitation(iType, lb1.getText(), emailaddress, tf.getText());
+                                    client.send(packetHandleInvitation);
+                                    if (packetHandleInvitation.getResult()) {
                                         Dialog d1 = new Dialog("succes", skin);
                                         d1.add("Actie succesvol uitgevoerd");
                                         TextButton bExit = new TextButton("Oke", skin);
@@ -299,10 +300,7 @@ public class ClanManagementScreen extends BaseScreen {
                                         d2.add(bExit);
                                         d.hide();
                                         d2.show(stage);
-                                    }
-                                } catch (RemoteException ex) {
-                                    Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-                                }
+                                    }                                
                             }
                         });
                         d.add(bAdd);
@@ -317,8 +315,9 @@ public class ClanManagementScreen extends BaseScreen {
                         d.add(bExit);
                         d.show(stage);
                     } else {
-                        try {
-                            if (client.getRmi().getServer().handleInvitation(iType, lb1.getText(), emailaddress, null)) {
+                            PacketHandleInvitation packetHandleInvitation2 = new PacketHandleInvitation(iType, lb1.getText(), emailaddress, null);
+                            client.send(packetHandleInvitation2);
+                            if (packetHandleInvitation2.getResult()) {
                                 Dialog d = new Dialog("succes", skin);
                                 d.add("Actie succesvol uitgevoerd");
                                 TextButton bExit = new TextButton("Oke", skin);
@@ -332,15 +331,13 @@ public class ClanManagementScreen extends BaseScreen {
                                 d.add(bExit);
                                 d.show(stage);
                             }
-                        } catch (RemoteException ex) {
-                            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-                        }
                     }
                 }
             }
             );
-
-            TextField lb3 = new TextField(client.getRmi().getServer().getPeople(clanName), skin);
+            PacketGetPeople packetGetPeople = new PacketGetPeople(clanName);
+            client.send(packetGetPeople);
+            TextField lb3 = new TextField(packetGetPeople.getResult(), skin);
 
             lb3.setDisabled(
                     true);
@@ -355,8 +352,9 @@ public class ClanManagementScreen extends BaseScreen {
                         @Override
                         public void clicked(InputEvent event, float x, float y
                         ) {
-                            try {
-                                if (client.getRmi().getServer().handleManagement(iManage, lb1.getText(), emailaddress)) {
+                                PacketHandleManagement packetHandleManagement = new PacketHandleManagement(iManage, lb1.getText(), emailaddress);
+                                client.send(packetHandleManagement);
+                                if (packetHandleManagement.getResult()) {
                                     refreshScreen();//make sure that the changes will be reflected
                                     Dialog d = new Dialog("succes", skin);
                                     d.add("Actie succesvol uitgevoerd");
@@ -384,10 +382,7 @@ public class ClanManagementScreen extends BaseScreen {
                                     d.add(bExit);
                                     d.show(stage);
                                 }
-                            } catch (RemoteException ex) {
-                                Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                        }
 
                     }
             );
@@ -406,9 +401,6 @@ public class ClanManagementScreen extends BaseScreen {
             scrollTable.add(bt4);
             scrollTable.columnDefaults(
                     3);
-            scrollTable.row();
-        } catch (RemoteException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            scrollTable.row();       
     }
 }
