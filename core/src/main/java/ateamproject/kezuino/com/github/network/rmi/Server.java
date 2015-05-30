@@ -131,7 +131,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketCreateClan.class, (packet) -> {
             System.out.print("Create clan packet received");
-            return clanFunctions.createClan(packet.getClanName(), packet.getEmailadres());
+            return clanFunctions.createClan(packet.getClanName(), getClient(packet.getSender()).getEmailAddress());
         });
 
         packets.registerFunc(PacketGetLobbies.class, (packet -> {
@@ -149,11 +149,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(packet.getUsername()));
 
-        packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(packet.getClanName(), packet
-                .getEmailadres()));
+        packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(getClient(packet.getSender()).getEmailAddress(), packet
+                .getClanName()));
 
-        packets.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(), packet
-                .getEmailadres()));
+        packets.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(), 
+                getClient(packet.getSender()).getEmailAddress()));
 
         packets.registerFunc(PacketGetPeople.class, (packet) -> clanFunctions.getPeople(packet.getClanName()));
 

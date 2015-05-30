@@ -23,6 +23,10 @@ public class PacketFillTable extends Packet<ArrayList<String>> {
         this.emailadres = emailadres;
     }
 
+    public PacketFillTable(String emailadres) {
+        this.emailadres = emailadres;
+    }
+
     public String getEmailadres() {
         return emailadres;
     }

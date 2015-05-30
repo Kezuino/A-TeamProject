@@ -17,21 +17,15 @@ import java.util.UUID;
  */
 public class PacketGetInvitation extends Packet<InvitationType> {
 
-    @PacketField(0)
-    protected String emailadres;
 
-    @PacketField(1)
+    @PacketField(0)
     protected String clanName;
 
-    public PacketGetInvitation(String emailadres, String clanName, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
-        this.emailadres = emailadres;
+    public PacketGetInvitation(UUID sender, String clanName) {
+        super(sender);        
         this.clanName = clanName;
     }
 
-    public String getEmailadres() {
-        return emailadres;
-    }
 
     public String getClanName() {
         return clanName;

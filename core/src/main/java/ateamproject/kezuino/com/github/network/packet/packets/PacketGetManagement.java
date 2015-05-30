@@ -17,20 +17,13 @@ import java.util.UUID;
  */
 public class PacketGetManagement extends Packet<ManagementType> {
 
-    @PacketField(0)
-    protected String emailadres;
 
-    @PacketField(1)
+    @PacketField(0)
     protected String clanName;
 
-    public PacketGetManagement(String emailadres, String clanName, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
-        this.emailadres = emailadres;
+    public PacketGetManagement(String clanName,UUID sender) {
+        super(sender);        
         this.clanName = clanName;
-    }
-
-    public String getEmailadres() {
-        return emailadres;
     }
 
     public String getClanName() {

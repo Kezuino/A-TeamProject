@@ -33,6 +33,12 @@ public class PacketHandleManagement extends Packet<Boolean> {
         this.emailadres = emailadres;
     }
 
+    public PacketHandleManagement(ManagementType manage, String clanName, String emailadres) {
+        this.manage = manage;
+        this.clanName = clanName;
+        this.emailadres = emailadres;
+    }
+
     public ManagementType getManage() {
         return manage;
     }

@@ -19,6 +19,12 @@ public class PacketLoginCreateNewUser extends Packet<Boolean> {
         this.email = email;
     }
 
+    public PacketLoginCreateNewUser(String username, String email) {
+        this.username = username;
+        this.email = email;
+    }
+    
+
     public String getUsername() {
         return username;
     }

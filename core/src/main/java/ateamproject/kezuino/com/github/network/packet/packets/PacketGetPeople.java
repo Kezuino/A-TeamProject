@@ -23,6 +23,10 @@ public class PacketGetPeople extends Packet<String> {
         this.clanName = clanName;
     }
 
+    public PacketGetPeople(String clanName) {
+        this.clanName = clanName;
+    }
+
     public String getClanName() {
         return clanName;
     }
