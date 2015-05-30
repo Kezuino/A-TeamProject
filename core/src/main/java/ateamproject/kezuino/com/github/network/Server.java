@@ -101,7 +101,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         Game game = games.get(gameId);
         if (game == null) return null;
 
-        // Notify all connected clients that the lobby is closing.
+        // Notify all connected clients that the game is closing.
         HashSet<UUID> gameClients = game.getClients();
         send(new PacketKick(PacketKick.KickReasonType.LOBBY, "Lobby closed.", gameClients.toArray(new UUID[gameClients.size()])));
 
@@ -110,6 +110,8 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
             IClientInfo client = getClient(clientId);
             client.setGame(null);
         }
+
+        // Remove the game.
         return games.remove(gameId);
     }
 

@@ -37,6 +37,13 @@ public class PacketHandleInvitation extends Packet<Boolean> {
         this.nameOfInvitee = nameOfInvitee;
     }
 
+    public PacketHandleInvitation(InvitationType invite, String clanName, String emailadres, String nameOfInvitee) {
+        this.invite = invite;
+        this.clanName = clanName;
+        this.emailadres = emailadres;
+        this.nameOfInvitee = nameOfInvitee;
+    }
+
     public InvitationType getInvite() {
         return invite;
     }

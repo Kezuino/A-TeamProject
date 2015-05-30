@@ -27,7 +27,7 @@ public interface IProtocolServer extends IProtocol {
 
     boolean doesUserExists(String email) throws RemoteException;
 
-    boolean loginCreateUser(String username, String email) throws RemoteException;
+    boolean loginCreateUser(UUID sender, String username, String email) throws RemoteException;
 
     void heartbeat(UUID client) throws RemoteException;
 

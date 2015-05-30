@@ -7,9 +7,12 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.BaseScreen;
+import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Timer;
 
 import java.net.MalformedURLException;
@@ -131,6 +134,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 {
                     text(packet.getReason());
                     button("Oke");
+
+                    addListener(new ClickListener(0) {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            game.setScreen(new MainScreen(game));
+                        }
+                    });
                 }
             }.show(((BaseScreen) game.getScreen()).getStage());
             return true;
@@ -215,7 +225,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerFunc(PacketLoginCreateNewUser.class, (p) -> {
             try {
-                return getRmi().getServer().loginCreateUser(p.getUsername(), p.getEmail());
+                return getRmi().getServer().loginCreateUser(p.getSender(), p.getUsername(), p.getEmail());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
                         .log(Level.SEVERE, null, ex);

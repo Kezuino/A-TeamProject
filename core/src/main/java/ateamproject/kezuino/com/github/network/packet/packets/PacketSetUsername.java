@@ -26,6 +26,12 @@ public class PacketSetUsername extends Packet<Boolean> {
         this.emailaddress = emailaddress;
     }
 
+    public PacketSetUsername(String name, String emailaddress) {
+        this.name = name;
+        this.emailaddress = emailaddress;
+    }
+    
+
     public String getName() {
         return name;
     }

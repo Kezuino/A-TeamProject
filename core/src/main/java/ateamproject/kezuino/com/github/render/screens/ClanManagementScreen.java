@@ -2,6 +2,15 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateClan;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketFillTable;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetInvitation;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetManagement;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetPeople;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetUsername;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleInvitation;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHandleManagement;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketSetUsername;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
@@ -61,51 +70,50 @@ public class ClanManagementScreen extends BaseScreen {
 //        } else {
 //            refreshScreen();//loads up whole screen
 //        }
-
     }
 
-    private void refreshScreen() {
-        try {
+    private void refreshScreen() {        
             scrollTable.clear();
 
             TextButton btnChangeName = new TextButton("Naam wijzigen", skin);
-            TextField tfName = new TextField(client.getRmi().getServer().getUsername(emailaddress), skin);
+            PacketGetUsername packetGetUsername = new PacketGetUsername(emailaddress);
+            client.send(packetGetUsername);
+            TextField tfName = new TextField(packetGetUsername.getResult(), skin);
             Label lbUsername = new Label("Gebruikersnaam", skin);
             btnChangeName.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     if (!tfName.getText().equals("")) {
-                        try {
-                            if (client.getRmi().getServer().setUsername(tfName.getText(), emailaddress)) {
-                                Dialog d = new Dialog("succes", skin);
-                                d.add("Naam succesvol aangepast");
-                                TextButton bExit = new TextButton("Oke", skin);
-                                bExit.addListener(new ClickListener() {
-                                    @Override
-                                    public void clicked(InputEvent event, float x, float y) {
-                                        d.hide();
-                                        refreshScreen();
-                                    }
-                                });
-                                d.add(bExit);
-                                d.show(stage);
-                            } else {
-                                Dialog d = new Dialog("error", skin);
-                                d.add("De naam kan niet worden aangepast omdat de naam al bestaat");
-                                TextButton bExit = new TextButton("Oke", skin);
-                                bExit.addListener(new ClickListener() {
-                                    @Override
-                                    public void clicked(InputEvent event, float x, float y) {
-                                        d.hide();
-                                        refreshScreen();
-                                    }
-                                });
-                                d.add(bExit);
-                                d.show(stage);
-                            }
-                        } catch (RemoteException ex) {
-                            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+                        PacketSetUsername packetSetUsername = new PacketSetUsername(tfName.getText(), emailaddress);
+                        client.send(packetSetUsername);
+                        if (packetSetUsername.getResult()) {
+                            Dialog d = new Dialog("succes", skin);
+                            d.add("Naam succesvol aangepast");
+                            TextButton bExit = new TextButton("Oke", skin);
+                            bExit.addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    d.hide();
+                                    refreshScreen();
+                                }
+                            });
+                            d.add(bExit);
+                            d.show(stage);
+                        } else {
+                            Dialog d = new Dialog("error", skin);
+                            d.add("De naam kan niet worden aangepast omdat de naam al bestaat");
+                            TextButton bExit = new TextButton("Oke", skin);
+                            bExit.addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    d.hide();
+                                    refreshScreen();
+                                }
+                            });
+                            d.add(bExit);
+                            d.show(stage);
                         }
+
                     }
                 }
             });
@@ -117,37 +125,35 @@ public class ClanManagementScreen extends BaseScreen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     if (!tfClannaam.getText().equals("")) {
-                        try {
-                            if (!client.getRmi().getServer().createClan(Client.getInstance().getId(), tfClannaam.getText())) {
-                                Dialog d = new Dialog("error", skin);
-                                d.add("Maximum van 8 clans overschreden of de clan bestaat al");
-                                TextButton bExit = new TextButton("Oke", skin);
-                                bExit.addListener(new ClickListener() {
-                                    @Override
-                                    public void clicked(InputEvent event, float x, float y) {
-                                        d.hide();
-                                        refreshScreen();
-                                    }
-                                });
-                                d.add(bExit);
-                                d.show(stage);
-                            } else {
-                                Dialog d = new Dialog("succes", skin);
-                                d.add("Clan succesvol toegevoegd");
-                                TextButton bExit = new TextButton("Oke", skin);
-                                bExit.addListener(new ClickListener() {
-                                    @Override
-                                    public void clicked(InputEvent event, float x, float y) {
-                                        d.hide();
-                                        refreshScreen();
-                                    }
-                                });
-                                d.add(bExit);
-                                d.show(stage);
-                                tfClannaam.setText("");
-                            }
-                        } catch (RemoteException ex) {
-                            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+                        PacketCreateClan packetCreateClan = new PacketCreateClan(null, tfClannaam.getText());
+                        client.send(packetCreateClan);
+                        if (!packetCreateClan.getResult()) {
+                            Dialog d = new Dialog("error", skin);
+                            d.add("Maximum van 8 clans overschreden of de clan bestaat al");
+                            TextButton bExit = new TextButton("Oke", skin);
+                            bExit.addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    d.hide();
+                                    refreshScreen();
+                                }
+                            });
+                            d.add(bExit);
+                            d.show(stage);
+                        } else {
+                            Dialog d = new Dialog("succes", skin);
+                            d.add("Clan succesvol toegevoegd");
+                            TextButton bExit = new TextButton("Oke", skin);
+                            bExit.addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    d.hide();
+                                    refreshScreen();
+                                }
+                            });
+                            d.add(bExit);
+                            d.show(stage);
+                            tfClannaam.setText("");
                         }
                     }
 
@@ -234,21 +240,19 @@ public class ClanManagementScreen extends BaseScreen {
             this.stage.addActor(table);
 
             backgroundMusic = Assets.getMusicStream("menu.mp3");
-
-            for (String clan : client.getRmi().getServer().clanFillTable(emailaddress)) {
+            PacketFillTable packetFillTable = new PacketFillTable(emailaddress);
+            client.send(packetFillTable);
+            for (String clan : packetFillTable.getResult()) {
                 generateTableRow(clan);
-            }
-        } catch (RemoteException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            }        
     }
 
     private void generateTableRow(String clanName) {
-        try {
             TextField lb1 = new TextField(clanName, skin);
             lb1.setDisabled(true);
-
-            final InvitationType iType = client.getRmi().getServer().clanGetInvitation(Client.getInstance().getId(), clanName);
+            PacketGetInvitation packetGetInvitation = new PacketGetInvitation(null, clanName);
+            client.send(packetGetInvitation);
+            final InvitationType iType = packetGetInvitation.getResult();
 
             String bt2Text = iType.toString();
             TextButton bt2 = new TextButton(bt2Text, skin);
@@ -257,91 +261,90 @@ public class ClanManagementScreen extends BaseScreen {
             }
 
             bt2.addListener(new ClickListener() {
-                                @Override
-                                public void clicked(InputEvent event, float x, float y) {
-                                    if (iType.equals(InvitationType.INVITE)) {
-                                        Dialog d = new Dialog("toevoegen", skin);
-                                        d.add("Gebruikersnaam/emailadres in: ");
-                                        TextField tf = new TextField("", skin);
-                                        d.add(tf);
-                                        TextButton bAdd = new TextButton("Toevoegen", skin);
-                                        bAdd.addListener(new ClickListener() {
-                                            @Override
-                                            public void clicked(InputEvent event, float x, float y) {
-                                                try {
-                                                    if (client.getRmi().getServer().handleInvitation(iType, lb1.getText(), emailaddress, tf.getText())) {
-                                                        Dialog d1 = new Dialog("succes", skin);
-                                                        d1.add("Actie succesvol uitgevoerd");
-                                                        TextButton bExit = new TextButton("Oke", skin);
-                                                        bExit.addListener(new ClickListener() {
-                                                            @Override
-                                                            public void clicked(InputEvent event, float x, float y) {
-                                                                d1.hide();
-                                                            }
-                                                        });
-                                                        d1.add(bExit);
-                                                        d.hide();
-                                                        d1.show(stage);
-                                                    } else {
-                                                        Dialog d2 = new Dialog("error", skin);
-                                                        d2.add("De gebruiker bestaat niet of is al toegevoegd");
-                                                        TextButton bExit = new TextButton("Oke", skin);
-                                                        bExit.addListener(new ClickListener() {
-                                                            @Override
-                                                            public void clicked(InputEvent event, float x, float y) {
-                                                                d2.hide();
-                                                            }
-                                                        });
-                                                        d2.add(bExit);
-                                                        d.hide();
-                                                        d2.show(stage);
-                                                    }
-                                                } catch (RemoteException ex) {
-                                                    Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-                                                }
-                                            }
-                                        });
-                                        d.add(bAdd);
-                                        TextButton bExit = new TextButton("Annuleren", skin);
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    if (iType.equals(InvitationType.INVITE)) {
+                        Dialog d = new Dialog("toevoegen", skin);
+                        d.add("Gebruikersnaam/emailadres in: ");
+                        TextField tf = new TextField("", skin);
+                        d.add(tf);
+                        TextButton bAdd = new TextButton("Toevoegen", skin);
+                        bAdd.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {                               
+                                    PacketHandleInvitation packetHandleInvitation = new PacketHandleInvitation(iType, lb1.getText(), emailaddress, tf.getText());
+                                    client.send(packetHandleInvitation);
+                                    if (packetHandleInvitation.getResult()) {
+                                        Dialog d1 = new Dialog("succes", skin);
+                                        d1.add("Actie succesvol uitgevoerd");
+                                        TextButton bExit = new TextButton("Oke", skin);
                                         bExit.addListener(new ClickListener() {
                                             @Override
                                             public void clicked(InputEvent event, float x, float y) {
-                                                d.hide();
-                                                refreshScreen();
+                                                d1.hide();
                                             }
                                         });
-                                        d.add(bExit);
-                                        d.show(stage);
+                                        d1.add(bExit);
+                                        d.hide();
+                                        d1.show(stage);
                                     } else {
-                                        try {
-                                            if (client.getRmi().getServer().handleInvitation(iType, lb1.getText(), emailaddress, null)) {
-                                                Dialog d = new Dialog("succes", skin);
-                                                d.add("Actie succesvol uitgevoerd");
-                                                TextButton bExit = new TextButton("Oke", skin);
-                                                bExit.addListener(new ClickListener() {
-                                                    @Override
-                                                    public void clicked(InputEvent event, float x, float y) {
-                                                        d.hide();
-                                                        refreshScreen();
-                                                    }
-                                                });
-                                                d.add(bExit);
-                                                d.show(stage);
+                                        Dialog d2 = new Dialog("error", skin);
+                                        d2.add("De gebruiker bestaat niet of is al toegevoegd");
+                                        TextButton bExit = new TextButton("Oke", skin);
+                                        bExit.addListener(new ClickListener() {
+                                            @Override
+                                            public void clicked(InputEvent event, float x, float y) {
+                                                d2.hide();
                                             }
-                                        } catch (RemoteException ex) {
-                                            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
-                                    }
-                                }
+                                        });
+                                        d2.add(bExit);
+                                        d.hide();
+                                        d2.show(stage);
+                                    }                                
                             }
+                        });
+                        d.add(bAdd);
+                        TextButton bExit = new TextButton("Annuleren", skin);
+                        bExit.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                d.hide();
+                                refreshScreen();
+                            }
+                        });
+                        d.add(bExit);
+                        d.show(stage);
+                    } else {
+                            PacketHandleInvitation packetHandleInvitation2 = new PacketHandleInvitation(iType, lb1.getText(), emailaddress, null);
+                            client.send(packetHandleInvitation2);
+                            if (packetHandleInvitation2.getResult()) {
+                                Dialog d = new Dialog("succes", skin);
+                                d.add("Actie succesvol uitgevoerd");
+                                TextButton bExit = new TextButton("Oke", skin);
+                                bExit.addListener(new ClickListener() {
+                                    @Override
+                                    public void clicked(InputEvent event, float x, float y) {
+                                        d.hide();
+                                        refreshScreen();
+                                    }
+                                });
+                                d.add(bExit);
+                                d.show(stage);
+                            }
+                    }
+                }
+            }
             );
-
-            TextField lb3 = new TextField(client.getRmi().getServer().getPeople(clanName), skin);
+            PacketGetPeople packetGetPeople = new PacketGetPeople(clanName);
+            client.send(packetGetPeople);
+            TextField lb3 = new TextField(packetGetPeople.getResult(), skin);
 
             lb3.setDisabled(
                     true);
 
-            TextButton bt4 = new TextButton(client.getRmi().getServer().getManagement(Client.getInstance().getId(), clanName).toString(), skin);
+            PacketGetManagement packetGetManagement = new PacketGetManagement(clanName, null);
+            client.send(packetGetManagement);
+            TextButton bt4 = new TextButton(packetGetManagement.getResult().toString(), skin);
             final ManagementType iManage = ManagementType.valueOf(bt4.getText().toString());
 
             bt4.addListener(
@@ -349,8 +352,9 @@ public class ClanManagementScreen extends BaseScreen {
                         @Override
                         public void clicked(InputEvent event, float x, float y
                         ) {
-                            try {
-                                if (client.getRmi().getServer().handleManagement(iManage, lb1.getText(), emailaddress)) {
+                                PacketHandleManagement packetHandleManagement = new PacketHandleManagement(iManage, lb1.getText(), emailaddress);
+                                client.send(packetHandleManagement);
+                                if (packetHandleManagement.getResult()) {
                                     refreshScreen();//make sure that the changes will be reflected
                                     Dialog d = new Dialog("succes", skin);
                                     d.add("Actie succesvol uitgevoerd");
@@ -378,10 +382,7 @@ public class ClanManagementScreen extends BaseScreen {
                                     d.add(bExit);
                                     d.show(stage);
                                 }
-                            } catch (RemoteException ex) {
-                                Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
                             }
-                        }
 
                     }
             );
@@ -400,9 +401,6 @@ public class ClanManagementScreen extends BaseScreen {
             scrollTable.add(bt4);
             scrollTable.columnDefaults(
                     3);
-            scrollTable.row();
-        } catch (RemoteException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+            scrollTable.row();       
     }
 }

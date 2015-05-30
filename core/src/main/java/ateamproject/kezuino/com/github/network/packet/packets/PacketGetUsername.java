@@ -23,6 +23,10 @@ public class PacketGetUsername extends Packet<String> {
         this.emailadres = emailadres;
     }
 
+    public PacketGetUsername(String emailadres) {
+        this.emailadres = emailadres;
+    }
+
     public String getEmailadres() {
         return emailadres;
     }

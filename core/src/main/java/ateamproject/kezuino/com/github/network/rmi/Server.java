@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 public class Server extends ateamproject.kezuino.com.github.network.Server<ClientInfo> {
 
@@ -112,20 +111,22 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
     @Override
     public void registerPackets() {
         packets.registerFunc(PacketKick.class, (packet) -> {
-            switch (packet.getReasonType()) {
-                case LOBBY:
-                    // Drop all receivers.
-                    for (UUID receiver : packet.getReceivers()) {
-                        try {
-                            getClient(receiver).getRmi().drop(packet.getReason());
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
+            if (packet.getReceivers().length > 0) {
+                // Drop all receivers.
+                for (UUID receiver : packet.getReceivers()) {
+                    try {
+                        getClient(receiver).getRmi().drop(packet.getReasonType(), packet.getReason());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
                     }
-                    return true;
-                case QUIT:
-
-                    return true;
+                }
+            } else {
+                // Drop sender.
+                try {
+                    getClient(packet.getSender()).getRmi().drop(packet.getReasonType(), packet.getReason());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
 
             return false;
@@ -133,7 +134,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketCreateClan.class, (packet) -> {
             System.out.print("Create clan packet received");
-            return clanFunctions.createClan(packet.getClanName(), packet.getEmailadres());
+            return clanFunctions.createClan(packet.getClanName(), getClient(packet.getSender()).getEmailAddress());
         });
 
         packets.registerFunc(PacketGetLobbies.class, (packet -> {
@@ -142,7 +143,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
                         game.getId(),
                         game.getClients().size(),
-                        "TODO NAME"));
+                        getClient(game.getHostId()).getUsername()));
             }
             return result;
         }));
@@ -151,11 +152,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(packet.getUsername()));
 
-        packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(packet.getClanName(), packet
-                .getEmailadres()));
+        packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(getClient(packet.getSender()).getEmailAddress(), packet
+                .getClanName()));
 
-        packets.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(), packet
-                .getEmailadres()));
+        packets.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(), 
+                getClient(packet.getSender()).getEmailAddress()));
 
         packets.registerFunc(PacketGetPeople.class, (packet) -> clanFunctions.getPeople(packet.getClanName()));
 
@@ -224,7 +225,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerFunc(PacketLoginCreateNewUser.class, (packet) -> {
-            System.out.print("Trying to create following user in database: " + packet.getUsername());
+            System.out.println("Trying to create following user in database: " + packet.getUsername());
             ResultSet resultSet = null;
             int count = 0;
 
@@ -235,13 +236,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 count = resultSet.getInt("amount");
 
                 if (count == 1) {
-                    System.out.print("Following user does already exists: " + packet.getUsername());
+                    System.out.println("Following user does already exists: " + packet.getUsername());
                 } else {
                     int result = Database.getInstance()
                             .update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet
                                     .getEmail());
                     if (result > 0) {
-                        System.out.print("Adding following user to database: " + packet.getUsername());
+                        System.out.println("Adding following user to database: " + packet.getUsername());
+                        getClient(packet.getSender()).setUsername(packet.getUsername());
+                        getClient(packet.getSender()).setEmailAddress(packet.getEmail());
                         return true;
                     }
                 }
@@ -328,8 +331,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // Notify other users that someone joined the lobby (excluding itself).
             PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername());
             packet.setReceivers(lobby.getClients()
-                    .stream()
-                    .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
+                                     .stream()
+                                     .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
             send(p);
 
             return data;

@@ -111,6 +111,20 @@ public class LobbyScreen extends BaseScreen {
         scrollTable.columnDefaults(0);
         scrollTable.row();
 
+        // Run game button.
+        TextButton btnRunGame = new TextButton(isHost ? "Spel starten" : "Ready", skin);
+        btnRunGame.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                // Start loading the game.
+                game.setScreen(new GameScreen(game));
+            }
+        });
+        btnRunGame.setPosition(stage.getWidth() - btnQuitLobby.getWidth() - 10 - btnRunGame.getWidth() - 10, stage.getHeight() - btnRunGame.getHeight() - 10);
+        if (isHost) {
+            this.stage.addActor(btnRunGame);
+        }
+
         // Create member table.
         scrollTable.row();
         scrollTable.setColor(com.badlogic.gdx.graphics.Color.BLUE);
