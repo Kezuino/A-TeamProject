@@ -110,20 +110,22 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
     @Override
     public void registerPackets() {
         packets.registerFunc(PacketKick.class, (packet) -> {
-            switch (packet.getReasonType()) {
-                case LOBBY:
-                    // Drop all receivers.
-                    for (UUID receiver : packet.getReceivers()) {
-                        try {
-                            getClient(receiver).getRmi().drop(packet.getReason());
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
+            if (packet.getReceivers().length > 0) {
+                // Drop all receivers.
+                for (UUID receiver : packet.getReceivers()) {
+                    try {
+                        getClient(receiver).getRmi().drop(packet.getReasonType(), packet.getReason());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
                     }
-                    return true;
-                case QUIT:
-
-                    return true;
+                }
+            } else {
+                // Drop sender.
+                try {
+                    getClient(packet.getSender()).getRmi().drop(packet.getReasonType(), packet.getReason());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
 
             return false;
@@ -140,7 +142,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
                         game.getId(),
                         game.getClients().size(),
-                        "TODO NAME"));
+                        getClient(game.getHostId()).getUsername()));
             }
             return result;
         }));
@@ -302,7 +304,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketJoinLobby.class, packet -> {
             Game lobby = getGame(packet.getLobbyId());
-            if (lobby == null) return false;
+            if (lobby == null) return null;
 
             // Get all clients currently in the game.
             PacketJoinLobby.PacketJoinLobbyData data = new PacketJoinLobby.PacketJoinLobbyData();

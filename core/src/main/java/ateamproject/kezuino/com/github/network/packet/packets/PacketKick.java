@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.network.IClientInfo;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketField;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 /**
@@ -51,6 +52,15 @@ public class PacketKick extends Packet<Boolean> {
      * @return Reason why the {@link IClientInfo} was kicked.
      */
     public String getReason() {
+        return reason;
+    }
+
+    /**
+     * Gets the detailed reason why the {@link IClientInfo} was kicked.
+     *
+     * @return Detailed reason why the {@link IClientInfo} was kicked.
+     */
+    public String getReasonDetailed() {
         reason = reason.trim();
         String message = "";
 
@@ -68,14 +78,14 @@ public class PacketKick extends Packet<Boolean> {
         }
 
         // Add personal message.
-        if (reason != null && !reason.isEmpty()) {
+        if (!reason.isEmpty()) {
             message += ": " + reason;
         }
 
         return message + '.';
     }
 
-    public enum KickReasonType {
+    public enum KickReasonType implements Serializable {
         GAME,
         LOBBY,
         QUIT

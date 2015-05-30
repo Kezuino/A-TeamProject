@@ -5,6 +5,8 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
+
 import java.rmi.RemoteException;
 import java.util.UUID;
 
@@ -19,7 +21,7 @@ public interface IProtocolClient extends IProtocol {
      * @return True if {@link IProtocolClient} was dropped. False otherwise.
      * @throws RemoteException
      */
-    boolean drop(String read) throws RemoteException;
+    boolean drop(PacketKick.KickReasonType kick, String read) throws RemoteException;
 
     /**
      * Notifies the {@link IProtocolClient} that a new {@link IProtocolClient} has joined the session.
