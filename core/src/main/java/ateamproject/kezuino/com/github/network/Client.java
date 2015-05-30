@@ -27,6 +27,8 @@ public abstract class Client implements INetworkComponent, IPacketSender {
     protected UUID id;
     protected UUID publicId;
     protected PacketManager packets;
+    protected String Username;
+    protected String emailadres;
 
     public Client(com.badlogic.gdx.Game game) {
         this.game = game;
@@ -111,4 +113,20 @@ public abstract class Client implements INetworkComponent, IPacketSender {
      * Stops the {@link IClientInfo} from listening and sending to {@link INetworkComponent}.
      */
     public abstract void stop();
+
+    public void setUsername(String Username) {
+        this.Username = Username;
+    }
+
+    public void setEmailadres(String emailadres) {
+        this.emailadres = emailadres;
+    }
+
+    public String getUsername() {
+        return Username;
+    }
+
+    public String getEmailadres() {
+        return emailadres;
+    }
 }

@@ -147,7 +147,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
 
-        packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(packet.getUsername()));
+        packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(getClient(packet.getSender()).getUsername()));
 
         packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(getClient(packet.getSender()).getEmailAddress(), packet
                 .getClanName()));
@@ -190,7 +190,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
 
                 // Tell client what its id is.
-                return client.getPrivateId();
+                PacketLoginAuthenticate.ReturnData packetLoginAuthenticateData = 
+                        new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId());
+                return packetLoginAuthenticateData;
             }
 
             System.out.println(" .. login credentials not valid.");

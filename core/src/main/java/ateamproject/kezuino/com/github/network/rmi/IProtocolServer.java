@@ -12,6 +12,8 @@ import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate.ReturnData;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -23,7 +25,7 @@ import java.util.UUID;
  */
 public interface IProtocolServer extends IProtocol {
 
-    UUID login(String email, String password, IProtocolClient client) throws RemoteException;
+    PacketLoginAuthenticate.ReturnData login(String email, String password, IProtocolClient client) throws RemoteException;
 
     boolean doesUserExists(String email) throws RemoteException;
 
@@ -67,7 +69,7 @@ public interface IProtocolServer extends IProtocol {
 
     String getUsername(String emailaddress) throws RemoteException;
 
-    String getEmail(String username) throws RemoteException;
+    String getEmail(UUID Sender) throws RemoteException;
 
     boolean setUsername(String name, String emailaddress) throws RemoteException;
 

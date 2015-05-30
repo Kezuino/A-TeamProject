@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateClan;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketFillTable;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetEmail;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetInvitation;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetManagement;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetPeople;
@@ -40,11 +41,15 @@ public class ClanManagementScreen extends BaseScreen {
 
         try {
             client = Client.getInstance();
+            System.out.println();
         } catch (RemoteException ex) {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }      
+        emailaddress = client.getEmailadres();
+       
 
         scrollTable = new Table();
+        refreshScreen();
 
         // TODO: Disable clan management when singleplayer only.
 //        boolean hasConnection = false;

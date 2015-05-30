@@ -29,7 +29,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public UUID login(String email, String password, IProtocolClient client) throws RemoteException {
+    public PacketLoginAuthenticate.ReturnData login(String email, String password, IProtocolClient client) throws RemoteException {
         PacketLoginAuthenticate packet = new PacketLoginAuthenticate(email, password, client);
         server.send(packet);
         return packet.getResult();
@@ -91,14 +91,14 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public InvitationType clanGetInvitation(UUID sender, String clanName) throws RemoteException {
-        PacketGetInvitation packet = new PacketGetInvitation(null, clanName);
+        PacketGetInvitation packet = new PacketGetInvitation(sender, clanName);
         server.send(packet);
         return packet.getResult();
     }
 
     @Override
     public ManagementType getManagement(UUID sender, String clanName) throws RemoteException {
-        PacketGetManagement packet = new PacketGetManagement(clanName, null);
+        PacketGetManagement packet = new PacketGetManagement(clanName, sender);
         server.send(packet);
         return packet.getResult();
     }
@@ -132,8 +132,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public String getEmail(String username) throws RemoteException {
-        PacketGetEmail packet = new PacketGetEmail(username);
+    public String getEmail(UUID Sender) throws RemoteException {
+        PacketGetEmail packet = new PacketGetEmail(Sender);
         server.send(packet);
         return packet.getResult();
     }
