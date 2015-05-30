@@ -367,6 +367,15 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
             return false;
         });
+
+        packets.registerAction(PacketSetKickInformation.class, packet -> {
+            try {
+                getRmi().getServer().setKickInformation(packet.getPersonToVoteFor());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        });
+
         packets.registerAction(PacketClientJoined.class, p -> System.out.println("Client joined: " + p.getUsername()));
     }
 }
