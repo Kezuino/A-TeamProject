@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 import ateamproject.kezuino.com.github.utility.io.Database;
+import com.badlogic.gdx.utils.Array;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
@@ -110,20 +111,22 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
     @Override
     public void registerPackets() {
         packets.registerFunc(PacketKick.class, (packet) -> {
-            switch (packet.getReasonType()) {
-                case LOBBY:
-                    // Drop all receivers.
-                    for (UUID receiver : packet.getReceivers()) {
-                        try {
-                            getClient(receiver).getRmi().drop(packet.getReason());
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
+            if (packet.getReceivers().length > 0) {
+                // Drop all receivers.
+                for (UUID receiver : packet.getReceivers()) {
+                    try {
+                        getClient(receiver).getRmi().drop(packet.getReasonType(), packet.getReason());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
                     }
-                    return true;
-                case QUIT:
-
-                    return true;
+                }
+            } else {
+                // Drop sender.
+                try {
+                    getClient(packet.getSender()).getRmi().drop(packet.getReasonType(), packet.getReason());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
 
             return false;
@@ -140,7 +143,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
                         game.getId(),
                         game.getClients().size(),
-                        "TODO NAME"));
+                        getClient(game.getHostId()).getUsername()));
             }
             return result;
         }));
@@ -271,11 +274,14 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return count == 1;
         });
 
-
         packets.registerAction(PacketHeartbeat.class, packet -> {
-            if (packet.getSender() == null) return;
+            if (packet.getSender() == null) {
+                return;
+            }
             IClientInfo client = getClient(packet.getSender());
-            if (client != null) client.resetSecondsActive();
+            if (client != null) {
+                client.resetSecondsActive();
+            }
         });
 
         packets.registerFunc(PacketCreateLobby.class, packet -> {
@@ -289,7 +295,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketLeaveLobby.class, packet -> {
             Game lobby = getGameFromClientId(packet.getSender());
-            if (lobby == null) return false;
+            if (lobby == null) {
+                return false;
+            }
 
             if (packet.getSender().equals(lobby.getHostId())) {
                 // Remove everyone from the lobby.
@@ -304,7 +312,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketJoinLobby.class, packet -> {
             Game lobby = getGame(packet.getLobbyId());
-            if (lobby == null) return false;
+            if (lobby == null) {
+                return false;
+            }
 
             // Get all clients currently in the game.
             PacketJoinLobby.PacketJoinLobbyData data = new PacketJoinLobby.PacketJoinLobbyData();
@@ -323,8 +333,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // Notify other users that someone joined the lobby (excluding itself).
             PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername());
             packet.setReceivers(lobby.getClients()
-                    .stream()
-                    .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
+                                     .stream()
+                                     .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
             send(p);
 
             return data;
@@ -339,6 +349,44 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
             }
+        });
+
+        packets.registerFunc(PacketGetKickInformation.class, packet -> {
+            ArrayList<String> peoples = new ArrayList<>();
+            //peoples.add("Gunter 1 2 0");
+
+            for (UUID personId : getGameFromClientId(packet.getSender()).getClients()) {//for all clients in game
+
+                boolean hasVotedForCurrentPerson = false;
+                int amountOfVotesForCurrentPerson = 0;
+                int amountOfVotesNeededForKick = (int) Math.ceil(getGameFromClientId(packet.getSender()).getClients().size() / 2);
+
+                for (Object voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in game
+                    if (true) {//TODO true if voteCombination contains[0] = packet.getSender() and voteCombination[1] = personId
+                        hasVotedForCurrentPerson = true;
+                        break;
+                    }
+                }
+
+                for (Object voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in game
+                    if (true) {//TODO true if voteCombination[1] = personId
+                        amountOfVotesForCurrentPerson++;
+                    }
+                }
+
+                if (amountOfVotesForCurrentPerson >= amountOfVotesNeededForKick) {
+                    try {
+                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Kick due votes",personId);
+                        Client.getInstance().send(packetKick);
+                    } catch (RemoteException ex) {
+                        Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                } else {
+                    peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String.valueOf(hasVotedForCurrentPerson));
+                }
+            }
+
+            return peoples;
         });
     }
 

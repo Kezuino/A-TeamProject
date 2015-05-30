@@ -5,6 +5,8 @@
  */
 package ateamproject.kezuino.com.github.network;
 
+import ateamproject.kezuino.com.github.singleplayer.Map;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
 
@@ -16,6 +18,7 @@ public class Game {
     protected UUID id;
     protected String name;
     protected HashSet<UUID> clients;
+    protected ArrayList<UUID[]> votes;//first UUID is the voter. second UUID is the person who did recieve the vote.
 
     protected boolean inGame;
 
@@ -23,6 +26,7 @@ public class Game {
         // Generate UUID and give lobby a name
         this.id = UUID.randomUUID();
         this.name = name;
+        this.votes = new ArrayList<>();
 
         // Ingame is set to true if game is started, if started dont show on lobbylist.
         this.inGame = false;
@@ -77,5 +81,9 @@ public class Game {
     
     public UUID getHostId() {
         return this.getClients().stream().findFirst().orElse(null);
+    }
+    
+    public ArrayList getVotes(){
+        return votes;
     }
 }
