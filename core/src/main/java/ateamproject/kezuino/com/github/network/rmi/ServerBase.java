@@ -188,4 +188,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         server.send(packet);
         return packet.getResult();
     }
+
+    @Override
+    public void setKickInformation(UUID getPersonToVoteFor) throws RemoteException {
+        PacketSetKickInformation packet = new PacketSetKickInformation(getPersonToVoteFor);
+        server.send(packet);
+    }
 }

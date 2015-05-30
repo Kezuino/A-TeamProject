@@ -155,7 +155,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(getClient(packet.getSender()).getEmailAddress(), packet
                 .getClanName()));
 
-        packets.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(), 
+        packets.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(),
                 getClient(packet.getSender()).getEmailAddress()));
 
         packets.registerFunc(PacketGetPeople.class, (packet) -> clanFunctions.getPeople(packet.getClanName()));
@@ -331,8 +331,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // Notify other users that someone joined the lobby (excluding itself).
             PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername());
             packet.setReceivers(lobby.getClients()
-                                     .stream()
-                                     .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
+                    .stream()
+                    .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
             send(p);
 
             return data;
@@ -351,40 +351,53 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketGetKickInformation.class, packet -> {
             ArrayList<String> peoples = new ArrayList<>();
-            //peoples.add("Gunter 1 2 0");
 
-            for (UUID personId : getGameFromClientId(packet.getSender()).getClients()) {//for all clients in game
-
+            for (UUID personId : getGameFromClientId(packet.getSender()).getClients()) {//for all clients in this game
                 boolean hasVotedForCurrentPerson = false;
                 int amountOfVotesForCurrentPerson = 0;
                 int amountOfVotesNeededForKick = (int) Math.ceil(getGameFromClientId(packet.getSender()).getClients().size() / 2);
 
-                for (Object voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in game
-                    if (true) {//TODO true if voteCombination contains[0] = packet.getSender() and voteCombination[1] = personId
+                for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
+                    if (voteCombination[0] == packet.getSender() && voteCombination[1] == personId) {
                         hasVotedForCurrentPerson = true;
                         break;
                     }
                 }
 
-                for (Object voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in game
-                    if (true) {//TODO true if voteCombination[1] = personId
+                for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
+                    if (voteCombination[1] == personId) {
                         amountOfVotesForCurrentPerson++;
                     }
                 }
 
                 if (amountOfVotesForCurrentPerson >= amountOfVotesNeededForKick) {
                     try {
-                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Kick due votes",personId);
+                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Kick due votes", personId);
                         Client.getInstance().send(packetKick);
                     } catch (RemoteException ex) {
                         Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 } else {
-                    peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String.valueOf(hasVotedForCurrentPerson));
+                    peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String.valueOf(hasVotedForCurrentPerson + " " + personId));
                 }
             }
 
             return peoples;
+        });
+
+        packets.registerAction(PacketSetKickInformation.class, packet -> {
+            boolean hasVotedForSpecificPerson = false;
+            
+            for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
+                if (voteCombination[0] == packet.getSender() && voteCombination[1] == packet.getPersonToVoteFor()) {
+                    hasVotedForSpecificPerson = true;
+                    break;
+                }
+            }
+            
+            if (!hasVotedForSpecificPerson) {
+                getGameFromClientId(packet.getSender()).getVotes().add(new UUID[]{packet.getSender(),packet.getPersonToVoteFor()});
+            }
         });
     }
 

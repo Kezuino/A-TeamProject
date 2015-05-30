@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketGetKickInfor
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketSetKickInformation;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
@@ -227,11 +228,16 @@ public class GameScreen extends BaseScreen {
         }
 
         for (String people : peoples) {
+            String[] peopleResult = people.split(" ");
+
             TextButton bKick = new TextButton("Kick", skin);
             bContinue.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     try {
+                        PacketSetKickInformation packetKick = new PacketSetKickInformation(UUID.fromString(peopleResult[4]));
+                        Client.getInstance().send(packetKick);
+
                         PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
                         Client.getInstance().send(packetKickInfo);
                         peoples.addAll(packetKickInfo.getResult());
@@ -242,7 +248,6 @@ public class GameScreen extends BaseScreen {
                     showPlayersView();
                 }
             });
-            String[] peopleResult = people.split(" ");
 
             scrollTable.add(peopleResult[0]);
             scrollTable.columnDefaults(0);

@@ -38,7 +38,7 @@ public interface IProtocolServer extends IProtocol {
     PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException;
 
     boolean leaveLobby(UUID sender) throws RemoteException;
-    
+
     /**
      * Kicks the {@link IClientInfo} from any lobby it is currently in.
      *
@@ -54,7 +54,7 @@ public interface IProtocolServer extends IProtocol {
     ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
 
     boolean createClan(UUID sender, String clanName) throws RemoteException;
-    
+
     ArrayList<String> getKickInformation(UUID sender) throws RemoteException;
 
     InvitationType clanGetInvitation(UUID sender, String clanName) throws RemoteException;
@@ -68,6 +68,8 @@ public interface IProtocolServer extends IProtocol {
     boolean handleManagement(ManagementType manage, String clanName, String emailaddress) throws RemoteException;
 
     String getUsername(String emailaddress) throws RemoteException;
+
+    void setKickInformation(UUID getPersonToVoteFor) throws RemoteException;
 
     String getEmail(String username) throws RemoteException;
 

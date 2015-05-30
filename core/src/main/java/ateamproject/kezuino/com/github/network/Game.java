@@ -83,7 +83,7 @@ public class Game {
         return this.getClients().stream().findFirst().orElse(null);
     }
     
-    public ArrayList getVotes(){
+    public ArrayList<UUID[]> getVotes(){
         return votes;
     }
 }
