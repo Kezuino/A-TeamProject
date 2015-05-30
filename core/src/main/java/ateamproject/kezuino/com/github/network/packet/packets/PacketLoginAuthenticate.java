@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class PacketLoginAuthenticate extends Packet<UUID> {
     @PacketField(0)
-    protected String username;
+    protected String emailAddress;
     @PacketField(1)
     protected String password;
     @PacketField(2)
@@ -16,19 +16,19 @@ public class PacketLoginAuthenticate extends Packet<UUID> {
     public PacketLoginAuthenticate() {
     }
 
-    public PacketLoginAuthenticate(String username, String password, UUID... senderAndReceivers) {
+    public PacketLoginAuthenticate(String emailAddress, String password, UUID... senderAndReceivers) {
         super(senderAndReceivers);
-        this.username = username;
+        this.emailAddress = emailAddress;
         this.password = password;
     }
 
-    public PacketLoginAuthenticate(String username, String password, Object connectObject, UUID... senderAndReceivers) {
-        this(username, password, senderAndReceivers);
+    public PacketLoginAuthenticate(String emailAddress, String password, Object connectObject, UUID... senderAndReceivers) {
+        this(emailAddress, password, senderAndReceivers);
         this.connectObject = connectObject;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
     public String getPassword() {

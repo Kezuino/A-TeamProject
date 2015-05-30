@@ -90,7 +90,7 @@ public abstract class Client implements INetworkComponent, IPacketSender {
      */
     @Override
     public void send(Packet packet) {
-        if (packet.getSender() == null) packet.setSender(getId());
+        if (packet.getSender() == null && packet.getReceivers().length <= 0) packet.setSender(getId());
         packets.execute(packet);
     }
 

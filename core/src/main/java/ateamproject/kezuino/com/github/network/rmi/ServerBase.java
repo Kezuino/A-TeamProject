@@ -1,7 +1,6 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.Game;
-import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
@@ -56,16 +55,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public PacketJoinLobby.PacketJoinLobbyData  joinLobby(UUID lobbyId, UUID client) throws RemoteException {
-        PacketJoinLobby.PacketJoinLobbyData returnval = new PacketJoinLobby.PacketJoinLobbyData();
-        Game g = server.getGame(lobbyId);
-        g.getClients().add(client);
-        returnval.lobbyName = g.getName();
-        for ( UUID g1 : g.getClients()) {
-            
-             returnval.members.put(g1, "member name");
-        }
-       return returnval;
+    public PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException {
+        PacketJoinLobby packet = new PacketJoinLobby(sender, lobbyId);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
@@ -74,7 +67,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         server.send(packet);
         return packet.getResult();
     }
-    
+
     @Override
     public boolean kickClient(UUID sender, UUID target, PacketKick.KickReasonType reasonType, String message) throws RemoteException {
         PacketKick packet = new PacketKick(reasonType, message, sender, target);
@@ -154,7 +147,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public boolean loginCreateUser(String username, String email) throws RemoteException {
-        PacketLoginCreateNewUser packet = new PacketLoginCreateNewUser(username,email);
+        PacketLoginCreateNewUser packet = new PacketLoginCreateNewUser(username, email);
         server.send(packet);
         return packet.getResult();
     }

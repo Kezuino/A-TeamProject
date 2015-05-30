@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import java.rmi.RemoteException;
+import java.util.UUID;
 
 /**
  * @author Kez and Jules
@@ -16,6 +17,16 @@ public interface IProtocolClient extends IProtocol {
      *
      * @param read Reason why the {@link IProtocolClient} was dropped.
      * @return True if {@link IProtocolClient} was dropped. False otherwise.
+     * @throws RemoteException
      */
     boolean drop(String read) throws RemoteException;
+
+    /**
+     * Notifies the {@link IProtocolClient} that a new {@link IProtocolClient} has joined the session.
+     *
+     * @param id       Public id of the new {@link IProtocolClient}.
+     * @param username Username of the new {@link IProtocolClient}.
+     * @throws RemoteException
+     */
+    void clientJoined(UUID id, String username) throws RemoteException;
 }

@@ -6,16 +6,16 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
+import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
-import ateamproject.kezuino.com.github.utility.graphics.DialogHelper;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.utils.Timer;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -124,14 +124,19 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     @Override
     public void registerPackets() {
         packets.registerFunc(PacketKick.class, packet -> {
-            DialogHelper.show("Kicked", packet.getReason());
+            new Dialog("Kicked", ((BaseScreen)game.getScreen()).getSkin()) {
+                {
+                    text(packet.getReason());
+                    button("Oke");
+                }
+            }.show(((BaseScreen)game.getScreen()).getStage());
             return true;
         });
 
         packets.registerFunc(PacketLoginAuthenticate.class, packet -> {
             UUID id = null;
             try {
-                id = getRmi().getServer().login(packet.getUsername(), packet.getPassword(), getRmi());
+                id = getRmi().getServer().login(packet.getEmailAddress(), packet.getPassword(), getRmi());
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
@@ -168,8 +173,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             try {
                 UUID newGame = getRmi().getServer().createLobby(p.getSender(), p.getLobbyname());
                 return newGame;
-                // ateamproject.kezuino.com.github.network.Game game = new ateamproject.kezuino.com.github.network.Game(p.getLobbyname(), p.getSender());
-                //games.put(game.getPrivateId(), game);
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
                       .log(Level.SEVERE, null, ex);
@@ -178,14 +181,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         });
 
         packets.registerFunc(PacketGetLobbies.class, (p) -> {
-
             try {
-                List<PacketGetLobbies.GetLobbiesData> list = getRmi().getServer().getLobbies();
-                // p.setResult(list);
-                return list;
-
-                // ateamproject.kezuino.com.github.network.Game game = new ateamproject.kezuino.com.github.network.Game(p.getLobbyname(), p.getSender());
-                //games.put(game.getPrivateId(), game);
+                return getRmi().getServer().getLobbies();
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
                       .log(Level.SEVERE, null, ex);
@@ -195,7 +192,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerFunc(PacketJoinLobby.class, (p) -> {
             try {
-                return getRmi().getServer().joinLobby(p.getLobbyid(), p.getSender());
+                return getRmi().getServer().joinLobby(p.getLobbyId(), p.getSender());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
                       .log(Level.SEVERE, null, ex);
@@ -234,5 +231,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
             return false;
         });
+
+        packets.registerAction(PacketClientJoined.class, p -> System.out.println("Client joined: " + p.getUsername()));
     }
 }

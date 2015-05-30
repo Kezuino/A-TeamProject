@@ -7,8 +7,10 @@ import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public abstract class Packet<TResult> {
 
@@ -73,8 +75,18 @@ public abstract class Packet<TResult> {
      *
      * @return {@link HashSet} of {@link UUID clients} that should receive this {@link Packet}.
      */
-    public HashSet<UUID> getReceivers() {
-        return receivers;
+    public UUID[] getReceivers() {
+        return receivers.toArray(new UUID[receivers.size()]);
+    }
+
+    /**
+     * Sets the receivers of this {@link Packet}.
+     *
+     * @param receivers List of {@link UUID}. Meaning all private id's that should receive this {@link Packet}.
+     */
+    public void setReceivers(UUID[] receivers) {
+        this.receivers.clear();
+        Collections.addAll(this.receivers, receivers);
     }
 
     /**

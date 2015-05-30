@@ -154,11 +154,11 @@ public class PacketManager {
             // Try action instead.
             IPacketAction action = registeredActions.get(packet.getClass());
             if (action == null) return null;
-            action.action(packet);
+            action.execute(packet);
             return null;
         }
         // Try function.
-        packet.setResult(func.function(packet));
+        packet.setResult(func.execute(packet));
         return packet;
     }
 

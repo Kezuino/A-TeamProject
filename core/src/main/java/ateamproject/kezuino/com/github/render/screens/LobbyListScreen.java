@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
 import com.badlogic.gdx.graphics.Color;
@@ -23,7 +24,7 @@ import java.util.logging.Logger;
  */
 public class LobbyListScreen extends BaseScreen {
 
-    private final Table scrollTable;
+    private Table scrollTable;
     TextField lobbyname;
     private boolean clanGame;
 
@@ -31,13 +32,22 @@ public class LobbyListScreen extends BaseScreen {
         super(game);
         this.clanGame = clanGame;
 
-        scrollTable = new Table();
         createGui();
     }
 
     private void createGui() {
-        scrollTable.clear();
+        // Back to main menu.
+        TextButton btnBack = new TextButton("Terug", skin);
+        btnBack.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainScreen(game));
+            }
+        });
+        btnBack.setPosition(10, stage.getHeight() - btnBack.getHeight() - 10);
+        this.stage.addActor(btnBack);
 
+        // Create game button.
         TextButton btnCreateGame = new TextButton("Maak spel", skin);
         btnCreateGame.addListener(new ClickListener() {
             @Override
@@ -77,6 +87,7 @@ public class LobbyListScreen extends BaseScreen {
         pm1.fill();
 
         // add headers to table
+        scrollTable = new Table();
         scrollTable.add(lb1);
         scrollTable.columnDefaults(0);
         scrollTable.add(lb2);
@@ -120,8 +131,6 @@ public class LobbyListScreen extends BaseScreen {
             Logger.getLogger(LobbyListScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-           // Client client = Client.getInstance(game);
-        // hostList = client.getRmi().getLobbies();
         for (PacketGetLobbies.GetLobbiesData game : hostList) {
             TextField lb1 = new TextField(game.name, skin);
             lb1.setDisabled(true);
@@ -133,8 +142,16 @@ public class LobbyListScreen extends BaseScreen {
             btnJoin.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    UUID lobId = game.lobbyId;
-                    LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, lobId));
+                    PacketJoinLobby packet = new PacketJoinLobby(game.lobbyId);
+                    try {
+                        Client.getInstance().send(packet);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+
+                    if (packet.getResult() != null) {
+                        LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, game.lobbyId));
+                    }
                 }
             });
 

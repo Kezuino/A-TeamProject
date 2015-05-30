@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketClientJoined;
 import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
@@ -35,6 +36,11 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     public boolean drop(String reason) throws RemoteException {
 
         return true;
+    }
+
+    @Override
+    public void clientJoined(UUID id, String username) throws RemoteException {
+        client.send(new PacketClientJoined(id, username));
     }
 
     @Override

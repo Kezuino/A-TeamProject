@@ -10,7 +10,6 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginCreateN
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
-import ateamproject.kezuino.com.github.utility.graphics.DialogHelper;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -64,8 +63,12 @@ public class LoginScreen extends BaseScreen {
                                                 packet = new PacketLoginCreateNewUser(f.getText(), txtUsername.getText());
                                                 Client.getInstance().send(packet);
                                                 if (!packet.getResult()) {
-                                                    DialogHelper.setSkin(skin);
-                                                    DialogHelper.show("Error", "De naam bestaat al");
+                                                    new Dialog("Error", skin) {
+                                                        {
+                                                            text("De naam bestaat al.");
+                                                            button("Oke");
+                                                        }
+                                                    }.show(stage);
                                                 } else {
                                                     d.hide();
                                                     game.setScreen(new MainScreen(game));
@@ -101,17 +104,12 @@ public class LoginScreen extends BaseScreen {
                 } catch (NullPointerException | RemoteException e) {
                     Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, e);
 
-                    Dialog d = new Dialog("error", skin);
-                    d.add("De server is niet online.");
-                    TextButton bExit = new TextButton("Oke", skin);
-                    bExit.addListener(new ClickListener() {
-                        @Override
-                        public void clicked(InputEvent event, float x, float y) {
-                            d.hide();
+                    new Dialog("Error", skin) {
+                        {
+                            text("De server is niet online.");
+                            button("Oke");
                         }
-                    });
-                    d.add(bExit);
-                    d.show(stage);
+                    }.show(stage);
                 }
             }
         });

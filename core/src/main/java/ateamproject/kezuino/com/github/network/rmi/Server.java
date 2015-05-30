@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class Server extends ateamproject.kezuino.com.github.network.Server<ClientInfo> {
 
@@ -134,15 +135,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return clanFunctions.createClan(packet.getClanName(), packet.getEmailadres());
         });
 
-        packets.registerFunc(PacketCreateLobby.class, packet -> {
-            Game newGame = new Game(packet.getLobbyname(), packet.getSender());
-            addGame(newGame);
-            getClient(packet.getSender()).setGame(newGame);
-
-            System.out.println("Lobby: " + newGame.getName() + " - id " + newGame.getId() + " CREATED !");
-            return newGame.getId();
-        });
-
         packets.registerFunc(PacketGetLobbies.class, (packet -> {
             List<PacketGetLobbies.GetLobbiesData> result = new ArrayList<>();
             for (Game game : getGames()) {
@@ -178,15 +170,27 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerFunc(PacketSetUsername.class, (packet) -> clanFunctions.setUsername(packet.getName(), packet.getEmailaddress()));
 
         packets.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
-            System.out.print("Login request received for account: " + packet.getUsername());
+            System.out.print("Login request received for account: " + packet.getEmailAddress());
 
-            if (MailAccount.isValid(packet.getUsername(), packet.getPassword())) {
+            if (MailAccount.isValid(packet.getEmailAddress(), packet.getPassword())) {
                 // Register client on server.
                 ClientInfo client = new ClientInfo((IProtocolClient) packet.getConnectObject());
+                client.setEmailAddress(packet.getEmailAddress());
                 clients.put(client.getPrivateId(), client);
                 System.out.println(" .. login accepted. " + clients.size() + " clients total.");
 
-                // Tell client what his id is.
+                // Get username from database.
+                try (ResultSet set = Database.getInstance()
+                                             .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
+                    if (set.isBeforeFirst()) {
+                        set.next();
+                        client.setUsername(set.getString(1));
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+
+                // Tell client what its id is.
                 return client.getPrivateId();
             }
 
@@ -224,14 +228,17 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             int count = 0;
 
             try {
-                resultSet = Database.getInstance().query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
+                resultSet = Database.getInstance()
+                                    .query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
                 resultSet.next();
                 count = resultSet.getInt("amount");
 
                 if (count == 1) {
                     System.out.print("Following user does already exists: " + packet.getUsername());
                 } else {
-                    int result = Database.getInstance().update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet.getEmail());
+                    int result = Database.getInstance()
+                                         .update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet
+                                                 .getEmail());
                     if (result > 0) {
                         System.out.print("Adding following user to database: " + packet.getUsername());
                         return true;
@@ -250,7 +257,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             int count = 0;
 
             try {
-                resultSet = Database.getInstance().query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
+                resultSet = Database.getInstance()
+                                    .query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
                 resultSet.next();
                 count = resultSet.getInt("amount");
             } catch (SQLException ex) {
@@ -263,7 +271,17 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerAction(PacketHeartbeat.class, packet -> {
             if (packet.getSender() == null) return;
-            getClient(packet.getSender()).resetSecondsActive();
+            IClientInfo client = getClient(packet.getSender());
+            if (client != null) client.resetSecondsActive();
+        });
+
+        packets.registerFunc(PacketCreateLobby.class, packet -> {
+            Game newGame = new Game(packet.getLobbyname(), packet.getSender());
+            addGame(newGame);
+            getClient(packet.getSender()).setGame(newGame);
+
+            System.out.println("Lobby: " + newGame.getName() + " - id " + newGame.getId() + " CREATED !");
+            return newGame.getId();
         });
 
         packets.registerFunc(PacketLeaveLobby.class, packet -> {
@@ -279,6 +297,45 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 getClient(packet.getSender()).setGame(null);
             }
             return true;
+        });
+
+        packets.registerFunc(PacketJoinLobby.class, packet -> {
+            Game lobby = getGame(packet.getLobbyId());
+            if (lobby == null) return false;
+
+            // Get all clients currently in the game.
+            PacketJoinLobby.PacketJoinLobbyData data = new PacketJoinLobby.PacketJoinLobbyData();
+            data.lobbyName = lobby.getName();
+
+            for (UUID clientId : lobby.getClients()) {
+                IClientInfo c = getClient(clientId);
+                data.members.put(c.getPublicId(), c.getUsername());
+            }
+
+            // Add new client to game.
+            lobby.getClients().add(packet.getSender());
+            IClientInfo client = getClient(packet.getSender());
+            client.setGame(lobby);
+
+            // Notify other users that someone joined the lobby (excluding itself).
+            PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername());
+            packet.setReceivers(lobby.getClients()
+                                     .stream()
+                                     .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
+            send(p);
+
+            return data;
+        });
+
+        packets.registerAction(PacketClientJoined.class, packet -> {
+            for (UUID id : packet.getReceivers()) {
+                ClientInfo client = getClient(id);
+                try {
+                    client.getRmi().clientJoined(packet.getId(), packet.getUsername());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
         });
     }
 

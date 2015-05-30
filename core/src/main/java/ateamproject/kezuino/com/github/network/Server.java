@@ -122,11 +122,20 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      */
     public TClient removeClient(UUID privateId) {
         // Remove client from game.
+        getClient(privateId).setGame(null);
+
+        // Update/remove game from server.
         Game lobby = getGameFromClientId(privateId);
         if (lobby != null) {
-            lobby.clients.remove(privateId);
+            lobby.getClients().remove(privateId);
+
+            // Close lobby if no more clients or client was host.
+            if (lobby.getClients().size() == 0) {
+                games.remove(lobby.getId());
+            } else if (lobby.getHostId().equals(privateId)) {
+                removeGame(lobby.getId());
+            }
         }
-        getClient(privateId).setGame(null);
 
         // Remove client from server.
         return clients.remove(privateId);

@@ -65,7 +65,7 @@ public class LobbyScreen extends BaseScreen {
             Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        // get lobby information en fill gui
+        // Get lobby information and fill gui.
         PacketJoinLobby packet = new PacketJoinLobby(this.lobbyId, client.getId());
         client.send(packet);
         PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
@@ -76,6 +76,7 @@ public class LobbyScreen extends BaseScreen {
     }
 
     public void createGui() {
+        // Lobby verlaten.
         TextButton btnQuitLobby = new TextButton(isHost ? "Sluit Lobby" : "Leave lobby", skin);
         btnQuitLobby.addListener(new ClickListener() {
             @Override
@@ -110,7 +111,7 @@ public class LobbyScreen extends BaseScreen {
         scrollTable.columnDefaults(0);
         scrollTable.row();
 
-        // set table position
+        // Create member table.
         scrollTable.row();
         scrollTable.setColor(com.badlogic.gdx.graphics.Color.BLUE);
         final ScrollPane scroller = new ScrollPane(scrollTable);
