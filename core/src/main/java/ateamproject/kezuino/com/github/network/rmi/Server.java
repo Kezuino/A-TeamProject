@@ -23,7 +23,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 public class Server extends ateamproject.kezuino.com.github.network.Server<ClientInfo> {
 
@@ -181,7 +180,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
                 // Get username from database.
                 try (ResultSet set = Database.getInstance()
-                                             .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
+                        .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
                     if (set.isBeforeFirst()) {
                         set.next();
                         client.setUsername(set.getString(1));
@@ -206,15 +205,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerFunc(PacketHighScore.class, (packet) -> {
             try {
                 ResultSet resultSet = Database.getInstance()
-                                              .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
-                                                      .getClanName());
+                        .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
+                                .getClanName());
                 resultSet.next();
                 int id = resultSet.getInt("Score");
 
                 if (id > packet.getScore()) {
                     return Database.getInstance()
-                                   .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
-                                           .getScore(), packet.getClanName()) > -1;
+                            .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
+                                    .getScore(), packet.getClanName()) > -1;
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
@@ -223,24 +222,26 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerFunc(PacketLoginCreateNewUser.class, (packet) -> {
-            System.out.print("Trying to create following user in database: " + packet.getUsername());
+            System.out.println("Trying to create following user in database: " + packet.getUsername());
             ResultSet resultSet = null;
             int count = 0;
 
             try {
                 resultSet = Database.getInstance()
-                                    .query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
+                        .query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
                 resultSet.next();
                 count = resultSet.getInt("amount");
 
                 if (count == 1) {
-                    System.out.print("Following user does already exists: " + packet.getUsername());
+                    System.out.println("Following user does already exists: " + packet.getUsername());
                 } else {
                     int result = Database.getInstance()
-                                         .update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet
-                                                 .getEmail());
+                            .update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet
+                                    .getEmail());
                     if (result > 0) {
-                        System.out.print("Adding following user to database: " + packet.getUsername());
+                        System.out.println("Adding following user to database: " + packet.getUsername());
+                        getClient(packet.getSender()).setUsername(packet.getUsername());
+                        getClient(packet.getSender()).setEmailAddress(packet.getEmail());
                         return true;
                     }
                 }
@@ -258,7 +259,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             try {
                 resultSet = Database.getInstance()
-                                    .query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
+                        .query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
                 resultSet.next();
                 count = resultSet.getInt("amount");
             } catch (SQLException ex) {
@@ -320,8 +321,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // Notify other users that someone joined the lobby (excluding itself).
             PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername());
             packet.setReceivers(lobby.getClients()
-                                     .stream()
-                                     .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
+                    .stream()
+                    .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
             send(p);
 
             return data;

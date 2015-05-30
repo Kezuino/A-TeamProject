@@ -146,8 +146,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean loginCreateUser(String username, String email) throws RemoteException {
-        PacketLoginCreateNewUser packet = new PacketLoginCreateNewUser(username, email);
+    public boolean loginCreateUser(UUID sender, String username, String email) throws RemoteException {
+        PacketLoginCreateNewUser packet = new PacketLoginCreateNewUser(username, email, sender);
         server.send(packet);
         return packet.getResult();
     }

@@ -212,7 +212,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerFunc(PacketLoginCreateNewUser.class, (p) -> {
             try {
-                return getRmi().getServer().loginCreateUser(p.getUsername(), p.getEmail());
+                return getRmi().getServer().loginCreateUser(p.getSender(), p.getUsername(), p.getEmail());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
                       .log(Level.SEVERE, null, ex);
