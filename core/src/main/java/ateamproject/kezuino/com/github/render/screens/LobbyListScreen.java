@@ -121,15 +121,11 @@ public class LobbyListScreen extends BaseScreen {
 
     private void fillHostTable() {
         List<PacketGetLobbies.GetLobbiesData> hostList = null;
-        
-        try {
-            Client client = Client.getInstance();
-            PacketGetLobbies packet = new PacketGetLobbies();
-            client.send(packet);
-            hostList =  packet.getResult();
-        } catch (RemoteException ex) {
-            Logger.getLogger(LobbyListScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        Client client = Client.getInstance();
+        PacketGetLobbies packet = new PacketGetLobbies();
+        client.send(packet);
+        hostList =  packet.getResult();
 
         for (PacketGetLobbies.GetLobbiesData game : hostList) {
             TextField lb1 = new TextField(game.name, skin);
@@ -143,11 +139,7 @@ public class LobbyListScreen extends BaseScreen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     PacketJoinLobby packet = new PacketJoinLobby(game.lobbyId);
-                    try {
-                        Client.getInstance().send(packet);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
+                    Client.getInstance().send(packet);
 
                     if (packet.getResult() != null) {
                         LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, game.lobbyId));

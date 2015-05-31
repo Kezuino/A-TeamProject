@@ -31,20 +31,28 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     private static ateamproject.kezuino.com.github.network.rmi.Client instance;
     protected ClientBase rmi;
 
-    protected Client() throws RemoteException {
+    protected Client() {
         super(null);
 
         System.setProperty("pactales.client.servername", "localhost");
         System.setProperty("pactales.client.serverobject", "server");
-        rmi = new ClientBase(this);
+        try {
+            rmi = new ClientBase(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
-    protected Client(Game game) throws RemoteException {
+    protected Client(Game game) {
         super(game);
 
         System.setProperty("pactales.client.servername", "localhost");
         System.setProperty("pactales.client.serverobject", "server");
-        rmi = new ClientBase(this);
+        try {
+            rmi = new ClientBase(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -58,7 +66,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
      * exist.
      * @throws RemoteException
      */
-    public static ateamproject.kezuino.com.github.network.rmi.Client getInstance() throws RemoteException {
+    public static ateamproject.kezuino.com.github.network.rmi.Client getInstance() {
         if (instance == null) {
             instance = new ateamproject.kezuino.com.github.network.rmi.Client();
         }

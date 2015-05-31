@@ -39,12 +39,8 @@ public class ClanManagementScreen extends BaseScreen {
     public ClanManagementScreen(Game game) {
         super(game);
 
-        try {
-            client = Client.getInstance();
-            System.out.println();
-        } catch (RemoteException ex) {
-            Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }      
+        client = Client.getInstance();
+        System.out.println();
         emailaddress = client.getEmailadres();
        
 

@@ -20,7 +20,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     private transient Client client;
     private transient IProtocolServer server;
 
-    protected ClientBase(Client client) throws RemoteException {
+    protected ClientBase(Client client) throws RemoteException{
         this.client = client;
     }
 

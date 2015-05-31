@@ -14,9 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.rmi.RemoteException;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +26,7 @@ public class LobbyScreen extends BaseScreen {
     private Client client;
     private String lobbyName;
     private UUID lobbyId;
-    private Dictionary<UUID, String> members;
+    private Map<UUID, String> members = new HashMap<>();
 
     private boolean isHost;
 
@@ -40,15 +38,14 @@ public class LobbyScreen extends BaseScreen {
         this.lobbyName = lobbyname;
         this.isHost = true;
 
-        try {
-            client = Client.getInstance();
-        } catch (RemoteException ex) {
-            Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        client = Client.getInstance();
 
         PacketCreateLobby p = new PacketCreateLobby(this.lobbyName);
         client.send(p);
         this.lobbyId = p.getResult();
+
+        // Add itself to the list.
+        this.members.put(Client.getInstance().getPublicId(), Client.getInstance().getUsername());
 
         createGui();
     }
@@ -59,15 +56,12 @@ public class LobbyScreen extends BaseScreen {
         this.lobbyId = lobbyId;
         this.isHost = false;
 
-        try {
-            client = Client.getInstance();
-        } catch (RemoteException ex) {
-            Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        client = Client.getInstance();
 
         // Get lobby information and fill gui.
         PacketJoinLobby packet = new PacketJoinLobby(this.lobbyId, client.getId());
         client.send(packet);
+
         PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
         this.lobbyName = lob.lobbyName;
         this.members = lob.members;
@@ -142,8 +136,7 @@ public class LobbyScreen extends BaseScreen {
         lobby.setPosition(0, stage.getHeight() - lobby.getHeight());
 
         if (this.members != null) {
-
-            for (String membername : Collections.list(this.members.elements())) {
+            for (String membername : members.values()) {
                 TextField lblmember = new TextField(membername, skin);
                 lblmember.setDisabled(true);
 

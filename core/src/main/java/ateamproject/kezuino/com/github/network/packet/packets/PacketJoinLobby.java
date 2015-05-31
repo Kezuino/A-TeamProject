@@ -12,6 +12,7 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby.Pa
 import java.io.Serializable;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -38,7 +39,7 @@ public class PacketJoinLobby extends Packet<PacketJoinLobbyData> {
     public static class PacketJoinLobbyData implements Serializable {
 
         public String lobbyName;
-        public Dictionary<UUID, String> members;
+        public Map<UUID, String> members;
 
         public PacketJoinLobbyData() {
             this.members = new Hashtable<>();

@@ -185,11 +185,7 @@ public class GameScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Leaved through menu");
-                try {
-                    Client.getInstance().send(packet);
-                } catch (RemoteException ex) {
-                    Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                Client.getInstance().send(packet);
 
                 game.setScreen(new MainScreen(game));
             }
@@ -219,13 +215,9 @@ public class GameScreen extends BaseScreen {
         Table scrollTable = new Table(skin);
 
         ArrayList<String> peoples = new ArrayList<>();
-        try {
-            PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
-            Client.getInstance().send(packetKickInfo);
-            peoples.addAll(packetKickInfo.getResult());
-        } catch (RemoteException ex) {
-            Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
+        Client.getInstance().send(packetKickInfo);
+        peoples.addAll(packetKickInfo.getResult());
 
         for (String people : peoples) {
             String[] peopleResult = people.split(" ");
@@ -234,16 +226,12 @@ public class GameScreen extends BaseScreen {
             bContinue.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    try {
-                        PacketSetKickInformation packetKick = new PacketSetKickInformation(UUID.fromString(peopleResult[4]));
-                        Client.getInstance().send(packetKick);
+                    PacketSetKickInformation packetKick = new PacketSetKickInformation(UUID.fromString(peopleResult[4]));
+                    Client.getInstance().send(packetKick);
 
-                        PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
-                        Client.getInstance().send(packetKickInfo);
-                        peoples.addAll(packetKickInfo.getResult());
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(GameScreen.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
+                    Client.getInstance().send(packetKickInfo);
+                    peoples.addAll(packetKickInfo.getResult());
                     d.hide();
                     showPlayersView();
                 }

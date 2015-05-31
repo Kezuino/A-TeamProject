@@ -152,7 +152,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(getClient(packet.getSender()).getUsername()));
 
-        packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(getClient(packet.getSender()).getEmailAddress(), packet
+        packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(getClient(packet.getSender())
+                .getEmailAddress(), packet
                 .getClanName()));
 
         packets.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(),
@@ -233,7 +234,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             try {
                 resultSet = Database.getInstance()
-                        .query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
+                                    .query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
                 resultSet.next();
                 count = resultSet.getInt("amount");
 
@@ -241,8 +242,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     System.out.println("Following user does already exists: " + packet.getUsername());
                 } else {
                     int result = Database.getInstance()
-                            .update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet
-                                    .getEmail());
+                                         .update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet
+                                                 .getEmail());
                     if (result > 0) {
                         System.out.println("Adding following user to database: " + packet.getUsername());
                         getClient(packet.getSender()).setUsername(packet.getUsername());
@@ -331,10 +332,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             client.setGame(lobby);
 
             // Notify other users that someone joined the lobby (excluding itself).
-            PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername());
-            packet.setReceivers(lobby.getClients()
-                    .stream()
-                    .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
+            PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername(), lobby.getClients()
+                                                                                                           .stream()
+                                                                                                           .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
             send(p);
 
             return data;
@@ -373,12 +373,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
 
                 if (amountOfVotesForCurrentPerson >= amountOfVotesNeededForKick) {
-                    try {
-                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Kick due votes", personId);
-                        Client.getInstance().send(packetKick);
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Kick due votes", personId);
+                    Client.getInstance().send(packetKick);
                 } else {
                     peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String.valueOf(hasVotedForCurrentPerson + " " + personId));
                 }

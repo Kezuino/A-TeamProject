@@ -48,15 +48,13 @@ public class Database {
             // This will load the MySQL driver, each DB has its own driver
             Class.forName("com.mysql.jdbc.Driver");
 
-            try {
-                // Setup the connection with the DB
-                connection = DriverManager.getConnection(connectionString, username, password);
-                return true;
-            } catch (Exception ex) {
-
-            }
+            // Setup the connection with the DB
+            connection = DriverManager.getConnection(connectionString, username, password);
+            return true;
         } catch (ClassNotFoundException ex) {
             Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return false;
     }
