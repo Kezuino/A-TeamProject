@@ -5,9 +5,7 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
-import ateamproject.kezuino.com.github.network.packet.packets.PacketClientJoined;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketClientLeft;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
 import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
@@ -52,12 +50,25 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
+    public void loadGame(String mapName, boolean isMaster) throws RemoteException {
+        client.send(new PacketLoadGame(mapName, isMaster));
+    }
+
+    @Override
+    public void setLobbyDetails(PacketLobbySetDetails.Data data) throws RemoteException {
+        PacketLobbyGetDetails packet = new PacketLobbyGetDetails();
+        packet.setResult(data);
+        client.send(packet);
+    }
+
+
+    @Override
     public void gameObjectSetDirection(UUID sender, UUID objectId) throws RemoteException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) {
+    public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException {
         throw new UnsupportedOperationException();
     }
 }

@@ -9,10 +9,7 @@ import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.IClientInfo;
 import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate.ReturnData;
 
 import java.rmi.RemoteException;
@@ -80,4 +77,10 @@ public interface IProtocolServer extends IProtocol {
     boolean setScore(String clanName, int score) throws RemoteException;
 
     void logout(UUID sender) throws RemoteException;
+
+    void launchGame(UUID sender) throws RemoteException;
+
+    void setLobbyDetails(UUID sender, PacketLobbySetDetails.Data data) throws RemoteException;
+
+    PacketLobbySetDetails.Data getLobbyDetails(UUID sender) throws RemoteException;
 }

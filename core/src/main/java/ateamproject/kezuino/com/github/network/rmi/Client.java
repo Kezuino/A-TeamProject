@@ -7,8 +7,9 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.BaseScreen;
-import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
+import ateamproject.kezuino.com.github.render.screens.GameScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
+import ateamproject.kezuino.com.github.singleplayer.*;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -19,6 +20,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.EnumSet;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -168,6 +170,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 this.setId(data.getClientUuid());
                 System.out.println("Logged in as: " + data.getClientUuid());
             } else {
+                this.setEmailadres(null);
+                this.setUsername(null);
                 this.setId(null);
                 return false;
             }
@@ -387,5 +391,51 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         packets.registerAction(PacketClientJoined.class, p -> System.out.println("Client joined: " + p.getUsername()));
 
         packets.registerAction(PacketClientLeft.class, p -> System.out.println("Client left: " + p.getUsername()));
+
+        packets.registerAction(PacketLaunchGame.class, p -> {
+            try {
+                rmi.getServer().launchGame(p.getSender());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        });
+
+        packets.registerAction(PacketLobbySetDetails.class, p -> {
+            try {
+                rmi.getServer().setLobbyDetails(p.getSender(), p.getData());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
+        });
+
+        packets.registerFunc(PacketLobbyGetDetails.class, p -> {
+            PacketLobbySetDetails.Data data = p.getResult();
+
+            // TODO: Update lobby screen with new information.
+            if (data.getName() != null) System.out.println("New lobby name: " + data.getName());
+            if (data.getMap() != null) System.out.println("New lobby map: " + data.getMap());
+
+            return data;
+        });
+
+        packets.registerAction(PacketLoadGame.class, p -> {
+            GameSession session = new GameSession();
+            MapLoader loader = Map.getLoader(session, p.getMap());
+            EnumSet<MapLoader.MapObjectTypes> excluded = null;
+            if (p.isMaster()) {
+                // Load everything and synchronize with server.
+                excluded = EnumSet.noneOf(MapLoader.MapObjectTypes.class);
+                loader.addConsumer(Enemy.class, System.out::println);
+                loader.addConsumer(Pactale.class, System.out::println);
+                loader.addConsumer(Item.class, System.out::println);
+            } else {
+                // Load everything that's not network dependant.
+                excluded = EnumSet.of(MapLoader.MapObjectTypes.ENEMY, MapLoader.MapObjectTypes.PACTALE);
+            }
+
+            // Load map.
+            loader.getTypesToLoad().removeAll(excluded);
+            session.setMap(loader.getMap());
+        });
     }
 }

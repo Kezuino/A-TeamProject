@@ -5,19 +5,15 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
-import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
+import ateamproject.kezuino.com.github.network.rmi.Client;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import java.rmi.RemoteException;
+
 import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Fatih
@@ -138,12 +134,9 @@ public class LobbyListScreen extends BaseScreen {
             btnJoin.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    PacketJoinLobby packet = new PacketJoinLobby(game.lobbyId);
-                    Client.getInstance().send(packet);
-
-                    if (packet.getResult() != null) {
-                        LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, game.lobbyId));
-                    }
+//                    PacketJoinLobby packet = new PacketJoinLobby(game.lobbyId);
+//                    Client.getInstance().send(packet);
+                    LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, game.lobbyId));
                 }
             });
 

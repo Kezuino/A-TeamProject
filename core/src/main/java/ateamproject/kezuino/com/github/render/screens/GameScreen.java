@@ -7,8 +7,6 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetKickInformation;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketSetKickInformation;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
@@ -25,29 +23,24 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import java.rmi.RemoteException;
+
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Anton
  */
 public class GameScreen extends BaseScreen {
 
-    private GameSession session;
+    protected GameSession session;
     private Pactale player;
     private GameRenderer gameRenderer;
-    private Button b;
     private InputAdapter gameInputAdapter;
-
     public GameScreen(Game game) {
         this(game, null);
     }
@@ -84,7 +77,9 @@ public class GameScreen extends BaseScreen {
                         }
                         break;
                     case Input.Keys.H:
-                        BalloonMessage.getBalloonMessage(BalloonHelpMe.class).setFollowObject(player).addBalloonMessage();
+                        BalloonMessage.getBalloonMessage(BalloonHelpMe.class)
+                                      .setFollowObject(player)
+                                      .addBalloonMessage();
                         break;
                     case Input.Keys.F1:
                         DebugRenderManager.toggle();
@@ -117,6 +112,10 @@ public class GameScreen extends BaseScreen {
             }
         };
         inputs.addProcessor(gameInputAdapter);
+    }
+
+    public GameSession getSession() {
+        return session;
     }
 
     public void start(Score score) {
@@ -158,7 +157,8 @@ public class GameScreen extends BaseScreen {
                 lblEndGameText.setPosition(stage.getWidth() / 2 - lblEndGameText.getWidth() / 2, stage.getHeight() - 80);
                 lblScore.setPosition(stage.getWidth() / 2 - lblScore.getWidth() / 2, stage.getHeight() - 100);
                 btnContinue.setSize(200, 40);
-                btnContinue.setPosition(stage.getWidth() / 2 - btnContinue.getWidth() / 2, stage.getHeight() / 4 - btnContinue.getHeight() / 2);
+                btnContinue.setPosition(stage.getWidth() / 2 - btnContinue.getWidth() / 2, stage.getHeight() / 4 - btnContinue
+                        .getHeight() / 2);
 
                 stage.addActor(btnContinue);
                 stage.addActor(lblEndGameText);

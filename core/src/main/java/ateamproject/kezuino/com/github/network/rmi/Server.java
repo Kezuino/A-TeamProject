@@ -4,7 +4,6 @@ import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.IClientInfo;
 import ateamproject.kezuino.com.github.network.mail.MailAccount;
 import ateamproject.kezuino.com.github.network.packet.Packet;
-import ateamproject.kezuino.com.github.network.packet.PacketManager;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
@@ -12,7 +11,6 @@ import ateamproject.kezuino.com.github.utility.io.Database;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
-import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -204,7 +202,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
                 // Get username from database.
                 try (ResultSet set = Database.getInstance()
-                        .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
+                                             .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
                     if (set.isBeforeFirst()) {
                         set.next();
                         client.setUsername(set.getString(1));
@@ -231,15 +229,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerFunc(PacketHighScore.class, (packet) -> {
             try {
                 ResultSet resultSet = Database.getInstance()
-                        .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
-                                .getClanName());
+                                              .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
+                                                      .getClanName());
                 resultSet.next();
                 int id = resultSet.getInt("Score");
 
                 if (id > packet.getScore()) {
                     return Database.getInstance()
-                            .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
-                                    .getScore(), packet.getClanName()) > -1;
+                                   .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
+                                           .getScore(), packet.getClanName()) > -1;
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
@@ -285,7 +283,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             try {
                 resultSet = Database.getInstance()
-                        .query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
+                                    .query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
                 resultSet.next();
                 count = resultSet.getInt("amount");
             } catch (SQLException ex) {
@@ -344,11 +342,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             // Get all clients currently in the game.
             PacketJoinLobby.PacketJoinLobbyData data = new PacketJoinLobby.PacketJoinLobbyData();
-            data.lobbyName = lobby.getName();
+            data.setLobbyName(lobby.getName());
+            data.setMap(lobby.getMap());
 
             for (UUID clientId : lobby.getClients()) {
                 IClientInfo c = getClient(clientId);
-                data.members.put(c.getPublicId(), c.getUsername());
+                data.getMembers().put(c.getPublicId(), c.getUsername());
             }
 
             // Add new client to game.
@@ -372,7 +371,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             for (UUID personId : getGameFromClientId(packet.getSender()).getClients()) {//for all clients in this game
                 boolean hasVotedForCurrentPerson = false;
                 int amountOfVotesForCurrentPerson = 0;
-                int amountOfVotesNeededForKick = (int) Math.ceil(getGameFromClientId(packet.getSender()).getClients().size() / 2);
+                int amountOfVotesNeededForKick = (int) Math.ceil(getGameFromClientId(packet.getSender()).getClients()
+                                                                                                        .size() / 2);
 
                 for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
                     if (voteCombination[0] == packet.getSender() && voteCombination[1] == personId) {
@@ -391,7 +391,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Kick due votes", personId);
                     Client.getInstance().send(packetKick);
                 } else {
-                    peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String.valueOf(hasVotedForCurrentPerson + " " + personId));
+                    peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String
+                            .valueOf(hasVotedForCurrentPerson + " " + personId));
                 }
             }
 
@@ -409,7 +410,59 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
 
             if (!hasVotedForSpecificPerson) {
-                getGameFromClientId(packet.getSender()).getVotes().add(new UUID[]{packet.getSender(),packet.getPersonToVoteFor()});
+                getGameFromClientId(packet.getSender()).getVotes()
+                                                       .add(new UUID[]{packet.getSender(), packet.getPersonToVoteFor()});
+            }
+        });
+
+        packets.registerAction(PacketLobbySetDetails.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) return;
+
+            String newName = packet.getData().getName();
+            String newMap = packet.getData().getMap();
+            if (newMap != null && !newMap.isEmpty()) game.setMap(newMap);
+            if (newName != null && !newName.isEmpty()) game.setName(newName);
+
+            // Notify all connected clients (but host) that the game details have changed.
+            for (UUID uuid : game.getClientsAsArray()) {
+                if (game.getHostId().equals(uuid)) continue;
+
+                ClientInfo client = getClient(uuid);
+                try {
+                    client.getRmi().setLobbyDetails(packet.getData());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        packets.registerFunc(PacketLobbyGetDetails.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) return null;
+
+            PacketLobbySetDetails.Data data = new PacketLobbySetDetails.Data();
+            data.setName(game.getName());
+            data.setMap(game.getMap());
+
+            return data;
+        });
+
+        packets.registerAction(PacketLaunchGame.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) {
+                System.out.println("Cannot launch game. The game was not found.");
+                return;
+            }
+
+            // Notify all to start loading their maps.
+            for (UUID uuid : game.getClientsAsArray()) {
+                ClientInfo client = getClient(uuid);
+                try {
+                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }

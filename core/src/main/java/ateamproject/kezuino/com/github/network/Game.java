@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.singleplayer.Map;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
@@ -21,6 +22,7 @@ public class Game {
     protected ArrayList<UUID[]> votes;//first UUID is the voter. second UUID is the person who did recieve the vote.
     protected UUID hostId;
     protected boolean inGame;
+    private String map;
 
     public Game(String name, UUID host) {
         // Generate UUID and give lobby a name
@@ -56,6 +58,15 @@ public class Game {
     }
 
     /**
+     * Sets the name of this {@link Game}.
+     *
+     * @param name New name of this {@link Game}.
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    /**
      * Gets all {@link IClientInfo clients} that are currently in this game / lobby.
      *
      * @return All {@link IClientInfo clients} that are currently in this game / lobby.
@@ -83,12 +94,30 @@ public class Game {
     public void setInGame(boolean inGame) {
         this.inGame = inGame;
     }
-    
+
     public UUID getHostId() {
         return hostId;
     }
-    
-    public ArrayList<UUID[]> getVotes(){
+
+    public ArrayList<UUID[]> getVotes() {
         return votes;
+    }
+
+    /**
+     * Gets the {@link Map} that this {@link Game} will play on.
+     *
+     * @return {@link Map} that this {@link Game} will play on.
+     */
+    public String getMap() {
+        return map;
+    }
+
+    /**
+     * Sets the new {@link Map} name that this {@link Game} will play on.
+     *
+     * @param map New {@link Map} name that this {@link Game} will play on.
+     */
+    public void setMap(String map) {
+        this.map = map;
     }
 }

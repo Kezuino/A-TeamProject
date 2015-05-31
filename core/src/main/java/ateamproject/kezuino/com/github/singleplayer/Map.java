@@ -1,22 +1,16 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.pathfinding.AStar;
-import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import ateamproject.kezuino.com.github.utility.game.Nodes;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.maps.MapLayer;
-import com.badlogic.gdx.maps.MapObject;
-import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.maps.objects.TextureMapObject;
-import com.badlogic.gdx.maps.tiled.*;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
-import java.util.Objects;
 
 public class Map {
 
@@ -80,118 +74,35 @@ public class Map {
      *
      * @param session {@link GameSession} that hosts this {@link Map}.
      * @param mapName Name of the file that has the {@link Map} data.
-     * @return Map information that was loaded from the file.
+     * @return MapLoader Information that was loaded from the file.
      */
     public static Map load(GameSession session, String mapName) {
-        String mapPath = "maps/" + mapName + "/map.tmx";
+        if (mapName == null || mapName.isEmpty()) throw new IllegalArgumentException("Parameter mapName must not be null or empty.");
 
-        if (mapPath == null || mapPath.isEmpty()) throw new IllegalArgumentException();
+        MapLoader loader = new MapLoader(session, mapName);
+        loader.load();
+        return loader.getMap();
+    }
 
-        TiledMap tiledMap = new TmxMapLoader().load(mapPath);
-        MapProperties mapProps = tiledMap.getProperties();
-        Map map = new Map(session, mapProps.get("width", Integer.class), mapProps.get("height", Integer.class));
-        map.baseMap = tiledMap;
+    /**
+     * Gets the {@link MapLoader} associated with the .TMX file.
+     * @param session {@link GameSession} that hosts this {@link Map}.
+     * @param mapName Name of the file that has the {@link Map} data.
+     * @return MapLoader Information that was loaded from the file.
+     */
+    public static MapLoader getLoader(GameSession session, String mapName) {
+        if (mapName == null || mapName.isEmpty()) throw new IllegalArgumentException("Parameter mapName must not be null or empty.");
 
-        // Convert TMX data to game tiles.
-        TiledMapTileLayer background = (TiledMapTileLayer) map.baseMap.getLayers().get(0);
-        for (int x = 0; x < map.width; x++) {
-            for (int y = 0; y < map.height; y++) {
-                Node node = map.getNode(x, y);
-
-                // Set background tiles.
-                node.setTileId(background.getCell(x, y).getTile().getId());
-            }
-        }
-
-        for (MapLayer layer : map.baseMap.getLayers()) {
-            for (MapObject loopObj : layer.getObjects()) {
-                if (!(loopObj instanceof TextureMapObject)) continue;
-                TextureMapObject obj = (TextureMapObject) loopObj;
-
-                TiledMapTileSet objTileLayer = map.baseMap.getTileSets().getTileSet(layer.getName());
-                MapProperties tileSetProps = objTileLayer.getProperties();
-
-                MapProperties objProps = loopObj.getProperties();
-                MapProperties objTileProps = objTileLayer.getTile(objProps.get("gid", int.class)).getProperties();
-
-                Vector2 curPos = new Vector2(objProps.get("x", float.class), objProps.get("y", float.class));
-                Node posNode = map.getNode(curPos);
-
-                Animation animation = new Animation(objTileProps.get("hasInitialFrame", String.class) != null && Boolean
-                        .parseBoolean(objTileProps.get("hasInitialFrame", String.class)));
-
-                if (objTileProps.containsKey("textureGroup")) {
-                    map.baseMap.getTileSets().getTileSet(layer.getName()).forEach((TiledMapTile tile) -> {
-                        MapProperties tileProps = tile.getProperties();
-
-                        if (tileProps.containsKey("textureGroup") && Objects.equals(tileProps.get("textureGroup", int.class), objTileProps
-                                .get("textureGroup", int.class))) {
-                            if (tileProps.containsKey("animateTo")) {
-                                Direction tileDirection = Direction.valueOf(tileProps.get("direction", String.class));
-                                int nextAnimation = Integer.parseInt(tileProps.get("animateTo", String.class)) + tileSetProps
-                                        .get("firstgid", int.class);
-
-                                animation.addFrame(tileDirection, tile.getTextureRegion().getTexture());
-
-                                do {
-                                    TiledMapTile aniTile = map.baseMap.getTileSets()
-                                                                      .getTileSet(layer.getName())
-                                                                      .getTile(nextAnimation);
-                                    MapProperties aniTileProperties = aniTile.getProperties();
-
-                                    animation.addFrame(tileDirection, aniTile.getTextureRegion().getTexture());
-                                    nextAnimation = aniTileProperties.get("animateTo", String.class) == null ? -1 : Integer
-                                            .parseInt(aniTileProperties.get("animateTo", String.class)) + tileSetProps.get("firstgid", int.class);
-                                } while (nextAnimation != -1 && nextAnimation != tile.getId());
-                            } else {
-                                animation.addFrame(Direction.valueOf(tileProps.get("direction", String.class)), tile.getTextureRegion()
-                                                                                                                    .getTexture());
-                            }
-                        }
-                    });
-                }
-
-                if (objTileProps.containsKey("item")) {
-                    // Create item.
-                    String itemTypeName = objTileProps.get("item", String.class);
-                    ItemType itemType = Arrays.stream(ItemType.values())
-                                              .filter(e -> e.name().equalsIgnoreCase(itemTypeName))
-                                              .findAny()
-                                              .orElse(null);
-                    Item item = new Item(curPos, itemType);
-                    item.setMap(map);
-                    item.setTexture(obj.getTextureRegion().getTexture());
-                    posNode.setItem(item);
-                } else if (objTileProps.containsKey("isEnemy")) {
-                    // Create enemy.
-                    Enemy enemy = new Enemy(null, curPos, 2.5f, Direction.Down);
-
-                    if (animation.size() > 0) {
-                        enemy.setAnimation(animation);
-                    }
-                    enemy.setTexture(obj.getTextureRegion().getTexture());
-                    enemy.setMap(map);
-                    map.addGameObject(enemy);
-                } else if (objTileProps.containsKey("isPactale")) {
-                    // Get playerIndex from object properties.
-                    int playerIndex = -1;
-                    if (objProps.containsKey("index")) {
-                        playerIndex = Integer.valueOf(objProps.get("index", String.class));
-                    }
-
-                    // Create pactale.
-                    Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
-                    pactale.setAnimation(animation);
-                    pactale.setTexture(obj.getTextureRegion().getTexture());
-                    map.addGameObject(pactale);
-                }
-            }
-        }
-        return map;
+        MapLoader loader = new MapLoader(session, mapName);
+        return loader;
     }
 
     public TiledMap getBaseMap() {
         return baseMap;
+    }
+
+    public void setBaseMap(TiledMap baseMap) {
+        this.baseMap = baseMap;
     }
 
     /**

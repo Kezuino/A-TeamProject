@@ -10,7 +10,6 @@ import ateamproject.kezuino.com.github.network.packet.PacketField;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby.PacketJoinLobbyData;
 
 import java.io.Serializable;
-import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.UUID;
@@ -38,11 +37,36 @@ public class PacketJoinLobby extends Packet<PacketJoinLobbyData> {
 
     public static class PacketJoinLobbyData implements Serializable {
 
-        public String lobbyName;
-        public Map<UUID, String> members;
+        protected String map;
+        protected String lobbyName;
+        protected Map<UUID, String> members;
 
         public PacketJoinLobbyData() {
             this.members = new Hashtable<>();
+        }
+
+        public String getMap() {
+            return map;
+        }
+
+        public void setMap(String map) {
+            this.map = map;
+        }
+
+        public String getLobbyName() {
+            return lobbyName;
+        }
+
+        public void setLobbyName(String lobbyName) {
+            this.lobbyName = lobbyName;
+        }
+
+        public Map<UUID, String> getMembers() {
+            return members;
+        }
+
+        public void setMembers(Map<UUID, String> members) {
+            this.members = members;
         }
     }
 }

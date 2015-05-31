@@ -5,9 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLeaveLobby;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
@@ -24,6 +22,7 @@ import java.util.logging.Logger;
 public class LobbyScreen extends BaseScreen {
 
     private Client client;
+    private String map;
     private String lobbyName;
     private UUID lobbyId;
     private Map<UUID, String> members = new HashMap<>();
@@ -37,8 +36,7 @@ public class LobbyScreen extends BaseScreen {
         super(game);
         this.lobbyName = lobbyname;
         this.isHost = true;
-
-        client = Client.getInstance();
+        this.client = Client.getInstance();
 
         PacketCreateLobby p = new PacketCreateLobby(this.lobbyName);
         client.send(p);
@@ -46,6 +44,11 @@ public class LobbyScreen extends BaseScreen {
 
         // Add itself to the list.
         this.members.put(Client.getInstance().getPublicId(), Client.getInstance().getUsername());
+
+        // TODO: Add control for selecting maps.
+        PacketLobbySetDetails.Data data = new PacketLobbySetDetails.Data();
+        data.setMap("2");
+        client.send(new PacketLobbySetDetails(data));
 
         createGui();
     }
@@ -63,8 +66,9 @@ public class LobbyScreen extends BaseScreen {
         client.send(packet);
 
         PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
-        this.lobbyName = lob.lobbyName;
-        this.members = lob.members;
+        this.lobbyName = lob.getLobbyName();
+        this.members = lob.getMembers();
+        this.map = lob.getMap();
 
         createGui();
     }
@@ -92,10 +96,10 @@ public class LobbyScreen extends BaseScreen {
             }
         });
 
-        // Create game button
         btnQuitLobby.setPosition(stage.getWidth() - btnQuitLobby.getWidth() - 10, stage.getHeight() - btnQuitLobby.getHeight() - 10);
         this.stage.addActor(btnQuitLobby);
 
+        // Player list.
         scrollTable = new Table();
 
         TextField memberNameHeader = new TextField("Member name", skin);
@@ -110,8 +114,7 @@ public class LobbyScreen extends BaseScreen {
         btnRunGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Start loading the game.
-                game.setScreen(new GameScreen(game));
+                client.send(new PacketLaunchGame());
             }
         });
         btnRunGame.setPosition(stage.getWidth() - btnQuitLobby.getWidth() - 10 - btnRunGame.getWidth() - 10, stage.getHeight() - btnRunGame.getHeight() - 10);

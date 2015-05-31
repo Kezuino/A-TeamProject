@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLobbySetDetails;
 
 import java.rmi.RemoteException;
 import java.util.UUID;
@@ -34,8 +35,26 @@ public interface IProtocolClient extends IProtocol {
 
     /**
      * Notifies the {@link IProtocolClient} that a {@link IProtocolClient} has left the session.
+     *
      * @param clientThatLeft Public id that left.
-     * @param username Username of the {@link IProtocolClient} that left.
+     * @param username       Username of the {@link IProtocolClient} that left.
      */
     void clientLeft(UUID clientThatLeft, String username) throws RemoteException;
+
+    /**
+     * Notifies the {@link IProtocolClient} that is should start loading a map.
+     * If {@code isMaster} is true, the {@link IProtocolClient} should load all objects and synchronize them with the {@link IProtocolServer}.
+     *
+     * @param mapName  Name of the {@link ateamproject.kezuino.com.github.singleplayer.Map} to load.
+     * @param isMaster If true, receiving {@link IProtocolClient} should synchronize all created objects back to the {@link IProtocolServer}.
+     */
+    void loadGame(String mapName, boolean isMaster) throws RemoteException;
+
+
+    /**
+     * Updates the information displayed in the lobby.
+     *
+     * @param data Data that contains the updated information.
+     */
+    void setLobbyDetails(PacketLobbySetDetails.Data data) throws RemoteException;
 }
