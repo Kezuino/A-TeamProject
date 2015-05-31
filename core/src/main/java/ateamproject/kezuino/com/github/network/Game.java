@@ -19,7 +19,7 @@ public class Game {
     protected String name;
     protected HashSet<UUID> clients;
     protected ArrayList<UUID[]> votes;//first UUID is the voter. second UUID is the person who did recieve the vote.
-
+    protected UUID hostId;
     protected boolean inGame;
 
     public Game(String name, UUID host) {
@@ -32,8 +32,9 @@ public class Game {
         this.inGame = false;
 
         // Add host to clients list
-        clients = new HashSet<>();
-        clients.add(host);
+        this.hostId = host;
+        this.clients = new HashSet<>();
+        this.clients.add(host);
     }
 
     /**
@@ -63,6 +64,10 @@ public class Game {
         return clients;
     }
 
+    public UUID[] getClientsAsArray() {
+        return clients.toArray(new UUID[clients.size()]);
+    }
+
     /**
      * Gets if true, {@link IClientInfo clients} are currently playing. False if {@link IClientInfo clients} are in the lobby.
      *
@@ -80,7 +85,7 @@ public class Game {
     }
     
     public UUID getHostId() {
-        return this.getClients().stream().findFirst().orElse(null);
+        return hostId;
     }
     
     public ArrayList<UUID[]> getVotes(){

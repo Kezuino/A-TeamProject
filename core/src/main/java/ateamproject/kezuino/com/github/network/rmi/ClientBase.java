@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketClientJoined;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketClientLeft;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import com.badlogic.gdx.math.Vector2;
 
@@ -43,6 +44,11 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     @Override
     public void clientJoined(UUID id, String username) throws RemoteException {
         client.send(new PacketClientJoined(id, username));
+    }
+
+    @Override
+    public void clientLeft(UUID clientThatLeft, String username) throws RemoteException {
+        client.send(new PacketClientLeft(clientThatLeft, username));
     }
 
     @Override

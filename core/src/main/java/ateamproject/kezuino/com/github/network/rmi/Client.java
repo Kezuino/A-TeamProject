@@ -385,5 +385,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         });
 
         packets.registerAction(PacketClientJoined.class, p -> System.out.println("Client joined: " + p.getUsername()));
+
+        packets.registerAction(PacketClientLeft.class, p -> System.out.println("Client left: " + p.getUsername()));
     }
 }

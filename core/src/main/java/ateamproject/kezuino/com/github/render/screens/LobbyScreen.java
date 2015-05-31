@@ -75,7 +75,7 @@ public class LobbyScreen extends BaseScreen {
         btnQuitLobby.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // quit lobby
+                // Quit lobby
                 PacketLeaveLobby packet = new PacketLeaveLobby();
                 client.send(packet);
                 boolean succeeded = packet.getResult();
