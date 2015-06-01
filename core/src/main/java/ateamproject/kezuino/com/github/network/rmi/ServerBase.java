@@ -47,8 +47,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public List<PacketGetLobbies.GetLobbiesData> getLobbies(boolean isClanGame) throws RemoteException {
-        PacketGetLobbies packet = new PacketGetLobbies(isClanGame);
+    public List<PacketGetLobbies.GetLobbiesData> getLobbies(UUID sender, boolean isClanGame) throws RemoteException {
+        PacketGetLobbies packet = new PacketGetLobbies(isClanGame, sender);
         server.send(packet);
         return packet.getResult();
     }

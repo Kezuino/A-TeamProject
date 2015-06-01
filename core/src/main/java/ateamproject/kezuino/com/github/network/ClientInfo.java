@@ -17,6 +17,7 @@ public abstract class ClientInfo implements IClientInfo {
     public ClientInfo() {
         privateId = UUID.randomUUID();
         publicId = UUID.randomUUID();
+        clans = new ArrayList<>();
         resetSecondsActive();
     }
 

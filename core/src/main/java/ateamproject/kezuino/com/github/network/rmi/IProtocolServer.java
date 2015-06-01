@@ -32,7 +32,7 @@ public interface IProtocolServer extends IProtocol {
 
     UUID createLobby(UUID sender, String LobbyName) throws RemoteException;
 
-    List<PacketGetLobbies.GetLobbiesData> getLobbies(boolean isClanGame) throws RemoteException;
+    List<PacketGetLobbies.GetLobbiesData> getLobbies(UUID sender, boolean isClanGame) throws RemoteException;
 
     PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException;
 

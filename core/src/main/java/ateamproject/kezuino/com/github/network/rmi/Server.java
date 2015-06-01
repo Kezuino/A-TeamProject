@@ -167,15 +167,16 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerFunc(PacketGetLobbies.class, (packet -> {
             List<PacketGetLobbies.GetLobbiesData> result = new ArrayList<>();
             if (packet.getIsClanGame()) {
-                ArrayList<String> clans = getClient(null).getClans();
-
-                for (String clan : clans) {
-                    for (Game game : getGames()) {
-                        if (game.getClanName().equals(clan)) {
-                            result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
-                                    game.getId(),
-                                    game.getClients().size(),
-                                    getClient(game.getHostId()).getUsername()));
+                ArrayList<String> clans = getClient(packet.getSender()).getClans();
+                if (!clans.isEmpty()) {
+                    for (String clan : clans) {
+                        for (Game game : getGames()) {
+                            if (game.getClanName().equals(clan)) {
+                                result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
+                                        game.getId(),
+                                        game.getClients().size(),
+                                        getClient(game.getHostId()).getUsername()));
+                            }
                         }
                     }
                 }
@@ -215,12 +216,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 .getClanName(), packet.getEmailadres()));
 
         packets.registerFunc(PacketSetUsername.class, (packet) -> {
-           boolean setUsername = clanFunctions.setUsername(packet.getName(), packet.getEmailaddress()); 
-           if (setUsername){
-                  getClient(packet.getSender()).setUsername(packet.getName());
-               }
-           return setUsername;
-                });
+            boolean setUsername = clanFunctions.setUsername(packet.getName(), packet.getEmailaddress());
+            if (setUsername) {
+                getClient(packet.getSender()).setUsername(packet.getName());
+            }
+            return setUsername;
+        });
 
         packets.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
             System.out.print("Login request received for account: " + packet.getEmailAddress());
