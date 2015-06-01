@@ -21,14 +21,23 @@ import java.util.logging.Logger;
  * @author David
  */
 public class MainScreen extends BaseScreen {
+
     public MainScreen(Game game) {
         super(game);
+
+        TextButton tbFastSinglePlayerGame = new TextButton("setScreen(new GameScreen(game)", skin);
+        tbFastSinglePlayerGame.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new GameScreen(game));
+            }
+        });
 
         TextButton tbSearchGame = new TextButton("Spel zoeken", skin);
         tbSearchGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game));
+                game.setScreen(new LobbyListScreen(game, false));
             }
         });
 
@@ -85,6 +94,9 @@ public class MainScreen extends BaseScreen {
                 game.setScreen(new ClanManagementScreen(game));
             }
         });
+        
+          
+        
 
         tbChangeLook.setSize(300, 40);
         tbClanGame.setSize(300, 40);
@@ -93,6 +105,7 @@ public class MainScreen extends BaseScreen {
         tbOptions.setSize(300, 40);
         tbSearchGame.setSize(300, 40);
         tbClanManagement.setSize(300, 40);
+        tbFastSinglePlayerGame.setSize(300, 40);
 
         float xOfSearchGameButton = stage.getWidth() / 2 - tbSearchGame.getWidth() / 2;
         float yOfSearchGameButton = stage.getHeight() - 50;
@@ -104,6 +117,9 @@ public class MainScreen extends BaseScreen {
         tbOptions.setPosition(xOfSearchGameButton, yOfSearchGameButton - 200);
         tbClanManagement.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
         tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 300);
+        tbFastSinglePlayerGame.setPosition(xOfSearchGameButton, yOfSearchGameButton - 350);
+        
+        
 
         stage.addActor(tbSearchGame);
         stage.addActor(tbClanGame);
@@ -112,6 +128,7 @@ public class MainScreen extends BaseScreen {
         stage.addActor(tbOptions);
         stage.addActor(tbClanManagement);
         stage.addActor(tbLogout);
+        stage.addActor(tbFastSinglePlayerGame);
 
         backgroundMusic = Assets.getMusicStream("menu.mp3");
     }

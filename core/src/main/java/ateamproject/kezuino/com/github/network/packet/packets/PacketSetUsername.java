@@ -20,8 +20,8 @@ public class PacketSetUsername extends Packet<Boolean> {
     @PacketField(1)
     protected String emailaddress;
 
-    public PacketSetUsername(String name, String emailaddress, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketSetUsername(String name, String emailaddress, UUID sender) {
+        super(sender);
         this.name = name;
         this.emailaddress = emailaddress;
     }

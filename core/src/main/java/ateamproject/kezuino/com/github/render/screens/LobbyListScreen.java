@@ -51,15 +51,38 @@ public class LobbyListScreen extends BaseScreen {
 
                 Dialog d = new Dialog("Lobby Name", skin);
                 lobbyname = new TextField("", skin);
+
+                SelectBox<Object> clanDropdown = null;
+                String dropDownResult = "";
+                if (clanGame) {
+                    Object[] clans = new Object[2];
+                    clans[0] = new Label("clan 1", skin);
+                    clans[1] = new Label("clan 2", skin);
+                    clanDropdown = new SelectBox<Object>(skin);
+                    clanDropdown.setItems(clans);
+
+                    clanDropdown.setSelectedIndex(0);
+                    d.add(clanDropdown);
+
+                    dropDownResult = clanDropdown.getSelected().toString();
+                }
+
                 TextButton btnsubmit = new TextButton("Maken", skin);
                 lobbyname.setSize(150, 30);
                 d.add(lobbyname);
                 d.add(btnsubmit);
+
+                final String dropDownResultFinal = dropDownResult;
                 btnsubmit.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         d.hide();
-                        game.setScreen(new LobbyScreen(game, lobbyname.getText()));
+                        if (clanGame) {
+                            
+                            game.setScreen(new LobbyScreen(game, lobbyname.getText(), dropDownResultFinal));
+                        } else {
+                            game.setScreen(new LobbyScreen(game, lobbyname.getText(), null));
+                        }
                     }
                 });
                 d.show(stage);
@@ -83,14 +106,13 @@ public class LobbyListScreen extends BaseScreen {
         pm1.fill();
 
         // add headers to table
-        scrollTable = new Table();
+        scrollTable = new Table(skin);
         scrollTable.add(lb1);
         scrollTable.columnDefaults(0);
         scrollTable.add(lb2);
         scrollTable.columnDefaults(1);
         scrollTable.add(lb3);
         scrollTable.columnDefaults(2);
-        scrollTable.columnDefaults(3);
 
         // set table position
         scrollTable.row();
@@ -119,39 +141,46 @@ public class LobbyListScreen extends BaseScreen {
         List<PacketGetLobbies.GetLobbiesData> hostList = null;
 
         Client client = Client.getInstance();
-        PacketGetLobbies packet = new PacketGetLobbies();
+        PacketGetLobbies packet;
+        if (this.clanGame) {
+            packet = new PacketGetLobbies(true, client.getId());
+        } else {
+            packet = new PacketGetLobbies(false, client.getId());
+        }
         client.send(packet);
-        hostList =  packet.getResult();
+        hostList = packet.getResult();
 
-        for (PacketGetLobbies.GetLobbiesData game : hostList) {
-            TextField lb1 = new TextField(game.name, skin);
-            lb1.setDisabled(true);
-            TextField lb2 = new TextField(game.hostName, skin);
-            lb2.setDisabled(true);
-            TextField lb3 = new TextField(Integer.toString(game.membersCount), skin);
-            lb3.setDisabled(true);
-            TextButton btnJoin = new TextButton("Join", skin);
-            btnJoin.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
+        if (!hostList.isEmpty()) {
+            for (PacketGetLobbies.GetLobbiesData game : hostList) {
+                TextField lb1 = new TextField(game.name, skin);
+                lb1.setDisabled(true);
+                TextField lb2 = new TextField(game.hostName, skin);
+                lb2.setDisabled(true);
+                TextField lb3 = new TextField(Integer.toString(game.membersCount), skin);
+                lb3.setDisabled(true);
+                TextButton btnJoin = new TextButton("Join", skin);
+                btnJoin.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
 //                    PacketJoinLobby packet = new PacketJoinLobby(game.lobbyId);
 //                    Client.getInstance().send(packet);
-                    LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, game.lobbyId));
-                }
-            });
+                        LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, game.lobbyId));
+                    }
+                });
 
-            btnJoin.setDisabled(true);
+                btnJoin.setDisabled(true);
 
-            scrollTable.add(lb1);
-            scrollTable.columnDefaults(0);
-            scrollTable.add(lb2);
-            scrollTable.columnDefaults(1);
-            scrollTable.add(lb3);
-            scrollTable.columnDefaults(2);
-            scrollTable.add(btnJoin);
-            scrollTable.columnDefaults(3);
+                scrollTable.add(lb1);
+                scrollTable.columnDefaults(0);
+                scrollTable.add(lb2);
+                scrollTable.columnDefaults(1);
+                scrollTable.add(lb3);
+                scrollTable.columnDefaults(2);
+                scrollTable.add(btnJoin);
+                scrollTable.columnDefaults(3);
 
-            scrollTable.row();
+                scrollTable.row();
+            }
         }
     }
 }

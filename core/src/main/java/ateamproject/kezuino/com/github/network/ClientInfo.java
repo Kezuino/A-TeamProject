@@ -2,6 +2,7 @@ package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketSetLoadStatus;
+import java.util.ArrayList;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 
 import java.util.UUID;
@@ -13,6 +14,7 @@ public abstract class ClientInfo implements IClientInfo {
     protected Game game;
     protected String emailAddress;
     protected String username;
+    protected ArrayList<String> clans;
 
     /**
      * Determines if this {@link ClientInfo} has a {@link Map} loaded. And if so, what status it is currently in.
@@ -23,6 +25,7 @@ public abstract class ClientInfo implements IClientInfo {
         privateId = UUID.randomUUID();
         publicId = UUID.randomUUID();
         loadStatus = PacketSetLoadStatus.LoadStatus.Empty;
+        clans = new ArrayList<>();
 
         resetSecondsActive();
     }
@@ -92,14 +95,25 @@ public abstract class ClientInfo implements IClientInfo {
     public void setUsername(String username) {
         this.username = username;
     }
-
+    
     @Override
     public PacketSetLoadStatus.LoadStatus getLoadStatus() {
         return this.loadStatus;
+    }
+    
+    @Override
+    public ArrayList<String> getClans(){
+        return this.clans;
     }
 
     @Override
     public void setLoadStatus(PacketSetLoadStatus.LoadStatus status) {
         this.loadStatus = status;
+    }
+    
+     @Override
+    public ArrayList<String> setClans(ArrayList<String> clans){
+        this.clans = clans;
+        return this.clans;
     }
 }

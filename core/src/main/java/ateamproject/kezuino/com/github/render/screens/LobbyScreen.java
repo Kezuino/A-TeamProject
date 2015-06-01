@@ -24,6 +24,7 @@ public class LobbyScreen extends BaseScreen {
 
     private Client client;
     private String lobbyName;
+    private String clanName;
     private UUID lobbyId;
     private Map<UUID, String> members = new HashMap<>();
 
@@ -32,11 +33,12 @@ public class LobbyScreen extends BaseScreen {
     private Table scrollTable;
 
     // host constructor
-    public LobbyScreen(com.badlogic.gdx.Game game, String lobbyname) {
+    public LobbyScreen(com.badlogic.gdx.Game game, String lobbyname, String clanName) {
         super(game);
         this.lobbyName = lobbyname;
         this.isHost = true;
         this.client = Client.getInstance();
+        this.clanName = clanName;
 
         PacketCreateLobby p = new PacketCreateLobby(this.lobbyName);
         client.send(p);

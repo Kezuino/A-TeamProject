@@ -32,7 +32,7 @@ public interface IProtocolServer extends IProtocol {
 
     UUID createLobby(UUID sender, String LobbyName) throws RemoteException;
 
-    List<PacketGetLobbies.GetLobbiesData> getLobbies() throws RemoteException;
+    List<PacketGetLobbies.GetLobbiesData> getLobbies(UUID sender, boolean isClanGame) throws RemoteException;
 
     PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException;
 
@@ -50,7 +50,12 @@ public interface IProtocolServer extends IProtocol {
      */
     boolean kickClient(UUID sender, UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException;
 
-    ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
+    ArrayList<String> clanFillTable(String emailadres) throws RemoteException;    
+    
+    ArrayList<String> getClans(UUID client) throws RemoteException;    
+    
+    void setClans(UUID client) throws RemoteException;
+
 
     boolean createClan(UUID sender, String clanName) throws RemoteException;
 
@@ -72,7 +77,7 @@ public interface IProtocolServer extends IProtocol {
 
     String getEmail(UUID Sender) throws RemoteException;
 
-    boolean setUsername(String name, String emailaddress) throws RemoteException;
+    boolean setUsername(String name, String emailaddress,UUID sender) throws RemoteException;
 
     boolean setScore(String clanName, int score) throws RemoteException;
 
