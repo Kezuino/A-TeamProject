@@ -5,11 +5,10 @@
  */
 package ateamproject.kezuino.com.github.network;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateGameObject;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Holds information about a hosted lobby/game. Used by the {@link INetworkComponent} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.
@@ -22,6 +21,7 @@ public class Game {
     protected ArrayList<UUID[]> votes;//first UUID is the voter. second UUID is the person who did recieve the vote.
     protected UUID hostId;
     protected boolean inGame;
+    protected Queue<PacketCreateGameObject> loadQueue;
     private String map;
 
     public Game(String name, UUID host) {
@@ -29,6 +29,7 @@ public class Game {
         this.id = UUID.randomUUID();
         this.name = name;
         this.votes = new ArrayList<>();
+        this.loadQueue = new ArrayDeque<>();
 
         // Ingame is set to true if game is started, if started dont show on lobbylist.
         this.inGame = false;
@@ -37,6 +38,10 @@ public class Game {
         this.hostId = host;
         this.clients = new HashSet<>();
         this.clients.add(host);
+    }
+
+    public Queue<PacketCreateGameObject> getLoadQueue() {
+        return loadQueue;
     }
 
     /**

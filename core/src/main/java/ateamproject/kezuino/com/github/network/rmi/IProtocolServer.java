@@ -83,4 +83,6 @@ public interface IProtocolServer extends IProtocol {
     void setLobbyDetails(UUID sender, PacketLobbySetDetails.Data data) throws RemoteException;
 
     PacketLobbySetDetails.Data getLobbyDetails(UUID sender) throws RemoteException;
+
+    void setLoadStatus(UUID sender, PacketSetLoadStatus.LoadStatus status) throws RemoteException;
 }

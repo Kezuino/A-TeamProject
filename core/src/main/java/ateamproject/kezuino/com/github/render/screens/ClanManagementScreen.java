@@ -42,7 +42,6 @@ public class ClanManagementScreen extends BaseScreen {
         client = Client.getInstance();
         System.out.println();
         emailaddress = client.getEmailadres();
-       
 
         scrollTable = new Table();
         refreshScreen();

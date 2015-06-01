@@ -7,13 +7,10 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.BaseScreen;
-import ateamproject.kezuino.com.github.render.screens.GameScreen;
-import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import ateamproject.kezuino.com.github.singleplayer.*;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -407,26 +404,27 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             GameSession session = BaseScreen.getSession();
             if (session == null) return;
 
-            if (p.getTypeName().equalsIgnoreCase("item")) {
-
-            } else {
-                GameObject object = null;
-                try {
-                    object = (GameObject) Class.forName(GameObject.class.getName() + '.' + p.getTypeName()).newInstance();
-                } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-
-                if (object == null) return;
-                object.setId(p.getId());
-                object.setDirection(p.getDirection());
-                object.setExactPosition(p.getPosition());
-                object.setMap(session.getMap());
-                object.setMovementSpeed(p.getSpeed());
-                object.setColor(Color.WHITE);
-
-                session.getMap().addGameObject(object);
-            }
+            System.out.println(p.getTypeName());
+//            if (p.getTypeName().equalsIgnoreCase("item")) {
+//
+//            } else {
+//                GameObject object = null;
+//                try {
+//                    object = (GameObject) Class.forName(GameObject.class.getName() + '.' + p.getTypeName()).newInstance();
+//                } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                if (object == null) return;
+//                object.setId(p.getId());
+//                object.setDirection(p.getDirection());
+//                object.setExactPosition(p.getPosition());
+//                object.setMap(session.getMap());
+//                object.setMovementSpeed(p.getSpeed());
+//                object.setColor(Color.WHITE);
+//
+//                session.getMap().addGameObject(object);
+//            }
         });
 
         packets.registerAction(PacketLobbySetDetails.class, p -> {
@@ -454,11 +452,27 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             if (p.isMaster()) {
                 // Load everything and synchronize with server.
                 excluded = EnumSet.noneOf(MapLoader.MapObjectTypes.class);
-                loader.addConsumer(Enemy.class, enemy -> {
-
+                loader.addConsumer(Enemy.class, obj -> {
+                    try {
+                        getRmi().getServer().createObject(p.getSender(), Enemy.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj.getMovementSpeed(), obj.getId());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 });
-                loader.addConsumer(Pactale.class, System.out::println);
-                loader.addConsumer(Item.class, System.out::println);
+                loader.addConsumer(Pactale.class, obj -> {
+                    try {
+                        getRmi().getServer().createObject(p.getSender(), Pactale.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj.getMovementSpeed(), obj.getId());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                });
+                loader.addConsumer(Item.class, obj -> {
+                    try {
+                        getRmi().getServer().createObject(p.getSender(), Item.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj.getMovementSpeed(), obj.getId());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                });
             } else {
                 // Load everything that's not network dependant.
                 excluded = EnumSet.of(MapLoader.MapObjectTypes.ENEMY, MapLoader.MapObjectTypes.PACTALE);
@@ -470,7 +484,22 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 loader.getTypesToLoad().removeAll(finalExcluded);
                 loader.load();
                 session.setMap(loader.getMap());
+
+                // Tell the game that we are done loading.
+                if (p.isMaster()) {
+                    Client.getInstance().send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.ObjectsLoaded));
+                } else {
+                    Client.getInstance().send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.MapLoaded));
+                }
             });
+        });
+
+        packets.registerAction(PacketSetLoadStatus.class, packet -> {
+            try {
+                getRmi().getServer().setLoadStatus(packet.getSender(), packet.getStatus());
+            } catch (RemoteException e) {
+                e.printStackTrace();
+            }
         });
     }
 }

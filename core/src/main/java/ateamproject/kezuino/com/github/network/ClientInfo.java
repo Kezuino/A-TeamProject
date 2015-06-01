@@ -1,6 +1,8 @@
 package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketSetLoadStatus;
+import ateamproject.kezuino.com.github.singleplayer.Map;
 
 import java.util.UUID;
 
@@ -12,9 +14,16 @@ public abstract class ClientInfo implements IClientInfo {
     protected String emailAddress;
     protected String username;
 
+    /**
+     * Determines if this {@link ClientInfo} has a {@link Map} loaded. And if so, what status it is currently in.
+     */
+    protected PacketSetLoadStatus.LoadStatus loadStatus;
+
     public ClientInfo() {
         privateId = UUID.randomUUID();
         publicId = UUID.randomUUID();
+        loadStatus = PacketSetLoadStatus.LoadStatus.Empty;
+
         resetSecondsActive();
     }
 
@@ -82,5 +91,15 @@ public abstract class ClientInfo implements IClientInfo {
     @Override
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    @Override
+    public PacketSetLoadStatus.LoadStatus getLoadStatus() {
+        return this.loadStatus;
+    }
+
+    @Override
+    public void setLoadStatus(PacketSetLoadStatus.LoadStatus status) {
+        this.loadStatus = status;
     }
 }

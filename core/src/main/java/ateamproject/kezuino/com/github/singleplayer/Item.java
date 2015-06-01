@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class Item implements IRenderable, IPositionable {
+public class Item extends GameObject implements IRenderable, IPositionable {
 
     private Vector2 exactPosition;
     private String name;

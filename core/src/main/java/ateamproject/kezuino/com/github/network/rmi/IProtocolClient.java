@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLobbySetDetails;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketSetLoadStatus;
 
 import java.rmi.RemoteException;
 import java.util.UUID;

@@ -209,7 +209,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
                 // Get username from database.
                 try (ResultSet set = Database.getInstance()
-                                             .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
+                        .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
                     if (set.isBeforeFirst()) {
                         set.next();
                         client.setUsername(set.getString(1));
@@ -236,15 +236,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerFunc(PacketHighScore.class, (packet) -> {
             try {
                 ResultSet resultSet = Database.getInstance()
-                                              .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
-                                                      .getClanName());
+                        .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
+                                .getClanName());
                 resultSet.next();
                 int id = resultSet.getInt("Score");
 
                 if (id > packet.getScore()) {
                     return Database.getInstance()
-                                   .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
-                                           .getScore(), packet.getClanName()) > -1;
+                            .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
+                                    .getScore(), packet.getClanName()) > -1;
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
@@ -259,7 +259,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             try {
                 resultSet = Database.getInstance()
-                                    .query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
+                        .query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
                 resultSet.next();
                 count = resultSet.getInt("amount");
 
@@ -267,8 +267,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     System.out.println("Following user does already exists: " + packet.getUsername());
                 } else {
                     int result = Database.getInstance()
-                                         .update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet
-                                                 .getEmail());
+                            .update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet
+                                    .getEmail());
                     if (result > 0) {
                         System.out.println("Adding following user to database: " + packet.getUsername());
                         getClient(packet.getSender()).setUsername(packet.getUsername());
@@ -290,7 +290,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             try {
                 resultSet = Database.getInstance()
-                                    .query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
+                        .query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
                 resultSet.next();
                 count = resultSet.getInt("amount");
             } catch (SQLException ex) {
@@ -365,8 +365,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // Notify other users that someone joined the lobby (excluding itself).
             PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername());
             p.setReceivers(lobby.getClients()
-                                .stream()
-                                .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
+                    .stream()
+                    .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
             send(p);
 
             return data;
@@ -379,7 +379,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 boolean hasVotedForCurrentPerson = false;
                 int amountOfVotesForCurrentPerson = 0;
                 int amountOfVotesNeededForKick = (int) Math.ceil(getGameFromClientId(packet.getSender()).getClients()
-                                                                                                        .size() / 2);
+                        .size() / 2);
 
                 for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
                     if (voteCombination[0] == packet.getSender() && voteCombination[1] == personId) {
@@ -418,7 +418,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             if (!hasVotedForSpecificPerson) {
                 getGameFromClientId(packet.getSender()).getVotes()
-                                                       .add(new UUID[]{packet.getSender(), packet.getPersonToVoteFor()});
+                        .add(new UUID[]{packet.getSender(), packet.getPersonToVoteFor()});
             }
         });
 
@@ -462,9 +462,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 return;
             }
 
-            // Notify all to start loading their maps.
+            // Set the loading states of everyone to empty and notify everyone to start loading the map.
             for (UUID uuid : game.getClientsAsArray()) {
                 ClientInfo client = getClient(uuid);
+                client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
+
                 try {
                     client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid));
                 } catch (RemoteException e) {
@@ -474,12 +476,28 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketCreateGameObject.class, packet -> {
-            for (IProtocolClient client : getRmiClientsFromGameId(getGameFromClientId(packet.getSender()).getId())) {
-                try {
-                    client.gameObjectCreate(null, packet.getTypeName(), packet.getPosition(), packet.getDirection(), packet.getSpeed(), packet.getId());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+            Game game = getGameFromClientId(packet.getSender());
+            game.getLoadQueue().add(packet);
+
+            System.out.println("Added to queue: " + packet);
+        });
+
+        packets.registerAction(PacketSetLoadStatus.class, packet -> {
+            ClientInfo client = getClient(packet.getSender());
+            client.setLoadStatus(packet.getStatus());
+
+            Game game = getGameFromClientId(packet.getSender());
+            if (game.getClients().stream().map(this::getClient).allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded || info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
+                game.getClients().stream().map(this::getClient).forEach(c -> {
+                    while (!game.getLoadQueue().isEmpty()) {
+                        PacketCreateGameObject packetCreate = game.getLoadQueue().remove();
+                        try {
+                            c.getRmi().createObject(null, packetCreate.getTypeName(), packetCreate.getPosition(), packetCreate.getDirection(), packetCreate.getSpeed(), packetCreate.getId());
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
     }

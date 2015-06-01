@@ -74,7 +74,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void gameObjectCreate(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId) throws RemoteException {
+    public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId) throws RemoteException {
         PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, sender);
         client.send(packet);
     }
