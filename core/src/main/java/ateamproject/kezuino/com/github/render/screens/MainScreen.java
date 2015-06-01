@@ -85,6 +85,9 @@ public class MainScreen extends BaseScreen {
                 game.setScreen(new ClanManagementScreen(game));
             }
         });
+        
+          
+        
 
         tbChangeLook.setSize(300, 40);
         tbClanGame.setSize(300, 40);
@@ -104,6 +107,8 @@ public class MainScreen extends BaseScreen {
         tbOptions.setPosition(xOfSearchGameButton, yOfSearchGameButton - 200);
         tbClanManagement.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
         tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 300);
+        
+        
 
         stage.addActor(tbSearchGame);
         stage.addActor(tbClanGame);
@@ -112,6 +117,7 @@ public class MainScreen extends BaseScreen {
         stage.addActor(tbOptions);
         stage.addActor(tbClanManagement);
         stage.addActor(tbLogout);
+       
 
         backgroundMusic = Assets.getMusicStream("menu.mp3");
     }
