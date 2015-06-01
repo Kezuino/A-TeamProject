@@ -5,6 +5,7 @@ import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
@@ -17,7 +18,6 @@ import java.util.UUID;
 public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     protected transient Server server;
-    private ClanFunctions clanFunctions;
 
     public ServerBase(Server server) throws RemoteException {
         super(Registry.REGISTRY_PORT);
@@ -25,7 +25,6 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
             throw new IllegalArgumentException("Parameter server must not be null.");
         }
         this.server = server;
-        clanFunctions = ClanFunctions.getInstance();
     }
 
     @Override
@@ -166,6 +165,25 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
+    public void launchGame(UUID sender) throws RemoteException {
+        PacketLaunchGame packet = new PacketLaunchGame(sender);
+        server.send(packet);
+    }
+
+    @Override
+    public void setLobbyDetails(UUID sender, PacketLobbySetDetails.Data data) throws RemoteException {
+        PacketLobbySetDetails packet = new PacketLobbySetDetails(data, sender);
+        server.send(packet);
+    }
+
+    @Override
+    public PacketLobbySetDetails.Data getLobbyDetails(UUID sender) throws RemoteException {
+        PacketLobbyGetDetails packet = new PacketLobbyGetDetails();
+        server.send(packet);
+        return packet.getResult();
+    }
+
+    @Override
     public boolean loginCreateUser(UUID sender, String username, String email) throws RemoteException {
         PacketLoginCreateNewUser packet = new PacketLoginCreateNewUser(username, email, sender);
         server.send(packet);
@@ -178,8 +196,14 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) {
+    public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void gameObjectCreate(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId) throws RemoteException {
+        PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, sender);
+        server.send(packet);
     }
 
     @Override

@@ -37,17 +37,13 @@ public class ClientTest {
 
     @Test
     public void testConnectie() {
-        boolean gelukt = true;
-        
-        try {
-            client = Client.getInstance();
-            client.start();
-            client.stop();
-        } catch (RemoteException ex) {
-            gelukt = false;
-        }
+        boolean succeeded = true;
+
+        client = Client.getInstance();
+        client.start();
+        client.stop();
         //Als de boolean nog true is, is er geen RemoteException.
-        assertTrue(gelukt);
+        assertTrue(succeeded);
         client.stop();
     }
 

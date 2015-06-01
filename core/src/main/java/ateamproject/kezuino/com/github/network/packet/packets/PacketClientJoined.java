@@ -7,7 +7,7 @@ import java.util.UUID;
 
 public class PacketClientJoined extends Packet {
     @PacketField(0)
-    protected UUID id;
+    protected UUID joinenId;
     @PacketField(1)
     protected String username;
 
@@ -18,14 +18,14 @@ public class PacketClientJoined extends Packet {
         super(senderAndReceivers);
     }
 
-    public PacketClientJoined(UUID id, String username, UUID... senderAndReceivers) {
+    public PacketClientJoined(UUID joinenId, String username, UUID... senderAndReceivers) {
         super(senderAndReceivers);
-        this.id = id;
+        this.joinenId = joinenId;
         this.username = username;
     }
 
-    public UUID getId() {
-        return id;
+    public UUID getJoinenId() {
+        return joinenId;
     }
 
     public String getUsername() {

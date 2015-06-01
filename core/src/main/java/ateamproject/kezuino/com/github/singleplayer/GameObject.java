@@ -95,6 +95,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
     private float moveTotalStep;
     private float animateTime;
 
+    public GameObject() {
+    }
+
     /**
      * Initializes this {@link GameObject}.
      * <p>
@@ -347,11 +350,10 @@ public abstract class GameObject implements IRenderable, IPositionable {
         if (this.isMoving) {
             this.nextDirection = direction;
         } else {
-            if (getNode().getAdjacentNode(direction).isWall()) {
+            if (getNode().getAdjacentNode(direction) == null || getNode().getAdjacentNode(direction).isWall()) {
                 return;
             }
             this.direction = direction;
-
         }
     }
 
@@ -438,9 +440,11 @@ public abstract class GameObject implements IRenderable, IPositionable {
      *                  {@link Node}).
      */
     public void moveAdjacent(Direction direction) {
+
         if (map == null) {
             throw new IllegalArgumentException("Field map must not be null.");
         }
+
 
         setDirection(direction);
         Node targetNode = getMap().getAdjacentNode(getNode(), this.direction);

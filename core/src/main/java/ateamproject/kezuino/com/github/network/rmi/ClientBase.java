@@ -5,8 +5,8 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
-import ateamproject.kezuino.com.github.network.packet.packets.PacketClientJoined;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
@@ -20,7 +20,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     private transient Client client;
     private transient IProtocolServer server;
 
-    protected ClientBase(Client client) throws RemoteException {
+    protected ClientBase(Client client) throws RemoteException{
         this.client = client;
     }
 
@@ -46,12 +46,36 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
+    public void clientLeft(UUID clientThatLeft, String username) throws RemoteException {
+        client.send(new PacketClientLeft(clientThatLeft, username));
+    }
+
+    @Override
+    public void loadGame(String mapName, boolean isMaster) throws RemoteException {
+        client.send(new PacketLoadGame(mapName, isMaster));
+    }
+
+    @Override
+    public void setLobbyDetails(PacketLobbySetDetails.Data data) throws RemoteException {
+        PacketLobbyGetDetails packet = new PacketLobbyGetDetails();
+        packet.setResult(data);
+        client.send(packet);
+    }
+
+
+    @Override
     public void gameObjectSetDirection(UUID sender, UUID objectId) throws RemoteException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) {
+    public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void gameObjectCreate(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId) throws RemoteException {
+        PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, sender);
+        client.send(packet);
     }
 }

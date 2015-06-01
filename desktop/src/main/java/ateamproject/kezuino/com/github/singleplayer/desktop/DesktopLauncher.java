@@ -23,13 +23,9 @@ public class DesktopLauncher {
         PactaleGame game = new PactaleGame();
         new LwjglApplication(game, cfg);
 
-        try {
-            Client client = Client.getInstance();
-            client.setGame(game);
-            client.start();
-        } catch (RemoteException ex) {
-            Logger.getLogger(DesktopLauncher.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Client client = Client.getInstance();
+        client.setGame(game);
+        client.start();
     }
 
     public static void frameRateTest(LwjglApplicationConfiguration cfg) {

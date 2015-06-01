@@ -5,18 +5,15 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateLobby;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLeaveLobby;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.network.rmi.Client;
+import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.rmi.RemoteException;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,7 +25,7 @@ public class LobbyScreen extends BaseScreen {
     private Client client;
     private String lobbyName;
     private UUID lobbyId;
-    private Dictionary<UUID, String> members;
+    private Map<UUID, String> members = new HashMap<>();
 
     private boolean isHost;
 
@@ -39,16 +36,19 @@ public class LobbyScreen extends BaseScreen {
         super(game);
         this.lobbyName = lobbyname;
         this.isHost = true;
-
-        try {
-            client = Client.getInstance();
-        } catch (RemoteException ex) {
-            Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        this.client = Client.getInstance();
 
         PacketCreateLobby p = new PacketCreateLobby(this.lobbyName);
         client.send(p);
         this.lobbyId = p.getResult();
+
+        // Add itself to the list.
+        this.members.put(Client.getInstance().getPublicId(), Client.getInstance().getUsername());
+
+        // TODO: Add control for selecting maps.
+        PacketLobbySetDetails.Data data = new PacketLobbySetDetails.Data();
+        data.setMap("2");
+        client.send(new PacketLobbySetDetails(data));
 
         createGui();
     }
@@ -59,18 +59,15 @@ public class LobbyScreen extends BaseScreen {
         this.lobbyId = lobbyId;
         this.isHost = false;
 
-        try {
-            client = Client.getInstance();
-        } catch (RemoteException ex) {
-            Logger.getLogger(LobbyScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        client = Client.getInstance();
 
         // Get lobby information and fill gui.
         PacketJoinLobby packet = new PacketJoinLobby(this.lobbyId, client.getId());
         client.send(packet);
+
         PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
-        this.lobbyName = lob.lobbyName;
-        this.members = lob.members;
+        this.lobbyName = lob.getLobbyName();
+        this.members = lob.getMembers();
 
         createGui();
     }
@@ -81,7 +78,7 @@ public class LobbyScreen extends BaseScreen {
         btnQuitLobby.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // quit lobby
+                // Quit lobby
                 PacketLeaveLobby packet = new PacketLeaveLobby();
                 client.send(packet);
                 boolean succeeded = packet.getResult();
@@ -98,10 +95,10 @@ public class LobbyScreen extends BaseScreen {
             }
         });
 
-        // Create game button
         btnQuitLobby.setPosition(stage.getWidth() - btnQuitLobby.getWidth() - 10, stage.getHeight() - btnQuitLobby.getHeight() - 10);
         this.stage.addActor(btnQuitLobby);
 
+        // Player list.
         scrollTable = new Table();
 
         TextField memberNameHeader = new TextField("Member name", skin);
@@ -116,8 +113,7 @@ public class LobbyScreen extends BaseScreen {
         btnRunGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                // Start loading the game.
-                game.setScreen(new GameScreen(game));
+                client.send(new PacketLaunchGame());
             }
         });
         btnRunGame.setPosition(stage.getWidth() - btnQuitLobby.getWidth() - 10 - btnRunGame.getWidth() - 10, stage.getHeight() - btnRunGame.getHeight() - 10);
@@ -142,8 +138,7 @@ public class LobbyScreen extends BaseScreen {
         lobby.setPosition(0, stage.getHeight() - lobby.getHeight());
 
         if (this.members != null) {
-
-            for (String membername : Collections.list(this.members.elements())) {
+            for (String membername : members.values()) {
                 TextField lblmember = new TextField(membername, skin);
                 lblmember.setDisabled(true);
 

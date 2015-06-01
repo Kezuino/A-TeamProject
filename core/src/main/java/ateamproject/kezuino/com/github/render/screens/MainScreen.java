@@ -55,12 +55,8 @@ public class MainScreen extends BaseScreen {
                 //game.setScreen(new GameScreen(game));
 
                 PacketHighScore packet;
-                try {
-                    packet = new PacketHighScore("MBoiz", 30, Client.getInstance().getId());
-                    Client.getInstance().send(packet);
-                } catch (RemoteException ex) {
-                    Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                packet = new PacketHighScore("MBoiz", 30, Client.getInstance().getId());
+                Client.getInstance().send(packet);
             }
         });
 
@@ -77,10 +73,7 @@ public class MainScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 PacketLogout packet = new PacketLogout();
-                try {
-                    Client.getInstance().send(packet);
-                } catch (RemoteException e) {
-                }
+                Client.getInstance().send(packet);
                 game.setScreen(new LoginScreen(game));
             }
         });

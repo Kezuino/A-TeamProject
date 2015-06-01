@@ -8,6 +8,7 @@ package ateamproject.kezuino.com.github.render.screens;
 import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
+import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -29,6 +30,7 @@ import java.util.List;
  */
 public abstract class BaseScreen implements Screen {
 
+    private static GameSession session;
     private final List<IRenderer> renderers;
     protected boolean clearOnRender;
     protected Color clearOnRenderColor;
@@ -39,6 +41,7 @@ public abstract class BaseScreen implements Screen {
     protected Stage stage;
     protected Skin skin;
     protected InputMultiplexer inputs;
+
     public BaseScreen(Game game) {
         // Bootstrap screen.
         renderers = new ArrayList<>();
@@ -61,6 +64,14 @@ public abstract class BaseScreen implements Screen {
         camera = stage.getCamera();
         viewport = new FitViewport(stage.getWidth(), stage.getHeight(), camera);
         stage.setViewport(viewport);
+    }
+
+    public static GameSession getSession() {
+        return session;
+    }
+
+    public static void setSession(GameSession session) {
+        BaseScreen.session = session;
     }
 
     public Stage getStage() {

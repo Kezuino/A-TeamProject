@@ -5,19 +5,15 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
-import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
+import ateamproject.kezuino.com.github.network.rmi.Client;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import java.rmi.RemoteException;
+
 import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Fatih
@@ -121,15 +117,11 @@ public class LobbyListScreen extends BaseScreen {
 
     private void fillHostTable() {
         List<PacketGetLobbies.GetLobbiesData> hostList = null;
-        
-        try {
-            Client client = Client.getInstance();
-            PacketGetLobbies packet = new PacketGetLobbies();
-            client.send(packet);
-            hostList =  packet.getResult();
-        } catch (RemoteException ex) {
-            Logger.getLogger(LobbyListScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+
+        Client client = Client.getInstance();
+        PacketGetLobbies packet = new PacketGetLobbies();
+        client.send(packet);
+        hostList =  packet.getResult();
 
         for (PacketGetLobbies.GetLobbiesData game : hostList) {
             TextField lb1 = new TextField(game.name, skin);
@@ -142,16 +134,9 @@ public class LobbyListScreen extends BaseScreen {
             btnJoin.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    PacketJoinLobby packet = new PacketJoinLobby(game.lobbyId);
-                    try {
-                        Client.getInstance().send(packet);
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
-
-                    if (packet.getResult() != null) {
-                        LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, game.lobbyId));
-                    }
+//                    PacketJoinLobby packet = new PacketJoinLobby(game.lobbyId);
+//                    Client.getInstance().send(packet);
+                    LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, game.lobbyId));
                 }
             });
 

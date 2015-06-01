@@ -44,64 +44,56 @@ public class LoginScreen extends BaseScreen {
                     PacketLoginAuthenticate packet = new PacketLoginAuthenticate(txtUsername.getText(), txtPassword.getText());
                     Client.getInstance().send(packet);
 
-                    try {
-                        if (Client.getInstance().getId() != null) {//if login did succeed
-                            PacketLoginUserExists packetUserExists = new PacketLoginUserExists(txtUsername.getText());
-                            Client.getInstance().send(packetUserExists);
-                            if (!packetUserExists.getResult()) {//if user not exists
-                                Dialog d = new Dialog("Geen gebruiker gevonden", skin);
-                                d.add("Gebruikersnaam:");
-                                TextField f = new TextField("", skin);
-                                d.add(f);
-                                TextButton bExit = new TextButton("Oke", skin);
-                                bExit.addListener(new ClickListener() {
-                                    @Override
-                                    public void clicked(InputEvent event, float x, float y) {
-                                        if (!f.getText().equals("")) {
-                                            PacketLoginCreateNewUser packet;
-                                            try {
-                                                packet = new PacketLoginCreateNewUser(f.getText(), txtUsername.getText());
-                                                Client.getInstance().send(packet);
-                                                if (!packet.getResult()) {
-                                                    new Dialog("Error", skin) {
-                                                        {
-                                                            text("De naam bestaat al.");
-                                                            button("Oke");
-                                                        }
-                                                    }.show(stage);
-                                                } else {
-                                                    d.hide();
-                                                    game.setScreen(new MainScreen(game));
-                                                }
-                                            } catch (RemoteException ex) {
-                                                Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, ex);
-                                            }
-                                        }
-                                    }
-                                });
-                                d.add(bExit);
-                                d.show(stage);
-                            }
-                            else{
-                                 game.setScreen(new MainScreen(game));
-                            }
-                        } else {
-                            Dialog d = new Dialog("error", skin);
-                            d.add("Inloggegevens niet correct.");
+                    if (Client.getInstance().getId() != null) {//if login did succeed
+                        PacketLoginUserExists packetUserExists = new PacketLoginUserExists(txtUsername.getText());
+                        Client.getInstance().send(packetUserExists);
+                        if (!packetUserExists.getResult()) {//if user not exists
+                            Dialog d = new Dialog("Geen gebruiker gevonden", skin);
+                            d.add("Gebruikersnaam:");
+                            TextField f = new TextField("", skin);
+                            d.add(f);
                             TextButton bExit = new TextButton("Oke", skin);
                             bExit.addListener(new ClickListener() {
                                 @Override
                                 public void clicked(InputEvent event, float x, float y) {
-                                    d.hide();
+                                    if (!f.getText().equals("")) {
+                                        PacketLoginCreateNewUser packet;
+                                        packet = new PacketLoginCreateNewUser(f.getText(), txtUsername.getText());
+                                        Client.getInstance().send(packet);
+                                        if (!packet.getResult()) {
+                                            new Dialog("Error", skin) {
+                                                {
+                                                    text("De naam bestaat al.");
+                                                    button("Oke");
+                                                }
+                                            }.show(stage);
+                                        } else {
+                                            d.hide();
+                                            game.setScreen(new MainScreen(game));
+                                        }
+                                    }
                                 }
                             });
                             d.add(bExit);
                             d.show(stage);
                         }
-                    } catch (RemoteException ex) {
-                        Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, ex);
+                        else{
+                             game.setScreen(new MainScreen(game));
+                        }
+                    } else {
+                        Dialog d = new Dialog("error", skin);
+                        d.add("Inloggegevens niet correct.");
+                        TextButton bExit = new TextButton("Oke", skin);
+                        bExit.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                d.hide();
+                            }
+                        });
+                        d.add(bExit);
+                        d.show(stage);
                     }
-                } catch (NullPointerException | RemoteException e) {
+                } catch (NullPointerException e) {
                     Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, e);
 
                     new Dialog("Error", skin) {

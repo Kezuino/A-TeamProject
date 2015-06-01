@@ -1,13 +1,19 @@
 package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
-import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.PacketManager;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketClientLeft;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
+import ateamproject.kezuino.com.github.network.packet.Packet;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, AutoCloseable {
+
+    /**
+     * Manager for registering {@link Packet} actions to.
+     */
+    protected PacketManager packets;
 
     /**
      * Total time in seconds that are allowed to pass before a {@link IClientInfo} is automatically dropped.
@@ -18,6 +24,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * {@link Game Games} that are currently active on this {@link Server}.
      */
     protected Dictionary<UUID, Game> games;
+
 
     /**
      * Thread for updating the {@link Server} state. Is executed in a while loop with a {@link Thread#sleep(long)} of 10 milliseconds.
@@ -36,6 +43,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         this.clients = new Hashtable<>();
         this.isUpdating = true;
         this.clientTimeout = 30; // Default 30 seconds before client is dropped for all servers.
+        this.packets = new PacketManager();
 
         // Start updating thread.
         startUpdating();
@@ -92,7 +100,8 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
     }
 
     /**
-     * Removes a {@link Game} from this {@link Server} if it exists. Does nothing otherwise.
+     * Removes a {@link Game} from this {@link Server} if it exists and notifies all connected users that the {@link Game} has closed.
+     * Does nothing otherwise.
      *
      * @param gameId {@link UUID} of the {@link Game} to removed from the {@link Server}.
      * @return Removed {@link Game} or null if no {@link Game} could be removed with the {@link UUID}.
@@ -124,7 +133,8 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      */
     public TClient removeClient(UUID privateId) {
         // Remove client from game.
-        getClient(privateId).setGame(null);
+        IClientInfo client = getClient(privateId);
+        client.setGame(null);
 
         // Update/remove game from server.
         Game lobby = getGameFromClientId(privateId);
@@ -136,6 +146,10 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
                 games.remove(lobby.getId());
             } else if (lobby.getHostId().equals(privateId)) {
                 removeGame(lobby.getId());
+            } else {
+                // Notify other clients that someone left.
+                PacketClientLeft packet = new PacketClientLeft(client.getPublicId(), client.getUsername(), lobby.getClientsAsArray());
+                send(packet);
             }
         }
 
@@ -155,12 +169,12 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
     /**
      * Gets the {@link Game} assosicated with the given id.
      *
-     * @param lobbyId {@link UUID} of the {@link Game} to get.
+     * @param gameId {@link UUID} of the {@link Game} to get.
      * @return {@link Game} that was found or null.
      */
-    public Game getGame(UUID lobbyId) {
-        if (lobbyId == null) throw new IllegalArgumentException("Parameter lobbyId must not be null.");
-        return games.get(lobbyId);
+    public Game getGame(UUID gameId) {
+        if (gameId == null) throw new IllegalArgumentException("Parameter gameId must not be null.");
+        return games.get(gameId);
     }
 
     /**
@@ -232,4 +246,5 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
     public void stop() {
         close();
     }
+
 }
