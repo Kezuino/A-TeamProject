@@ -17,6 +17,12 @@ public class Pactale extends GameObject {
     private Portal portal;
 
     /**
+     * Empty constructor needed for reflection instantiation.
+     */
+    public Pactale() {
+    }
+
+    /**
      * Initialize a {@link Pactale}.
      *
      * @param lives            Times that the

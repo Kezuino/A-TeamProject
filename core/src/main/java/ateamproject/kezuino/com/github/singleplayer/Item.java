@@ -2,7 +2,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.render.IRenderable;
 import ateamproject.kezuino.com.github.utility.game.IPositionable;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
@@ -17,6 +17,12 @@ public class Item extends GameObject implements IRenderable, IPositionable {
     private TextureRegion texture;
 
     /**
+     * Empty constructor needed for reflection instantiation.
+     */
+    public Item() {
+    }
+
+    /**
      * Initializes an {@link Item} at the given {@link Node}.
      *
      * @param name Name of the {@link Item}.
@@ -27,6 +33,7 @@ public class Item extends GameObject implements IRenderable, IPositionable {
         this.name = name;
         this.type = type;
         this.exactPosition = exactPosition.cpy();
+        this.setColor(Color.WHITE);
     }
 
     /**

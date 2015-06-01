@@ -140,16 +140,11 @@ public class LobbyListScreen extends BaseScreen {
         List<PacketGetLobbies.GetLobbiesData> hostList = null;
 
         Client client = Client.getInstance();
-        PacketGetLobbies packet;
-        if (this.clanGame) {
-            packet = new PacketGetLobbies(true, client.getId());
-        } else {
-            packet = new PacketGetLobbies(false, client.getId());
-        }
+        PacketGetLobbies packet = new PacketGetLobbies(this.clanGame, client.getId());
         client.send(packet);
         hostList = packet.getResult();
 
-        if (!hostList.isEmpty()) {
+        if (hostList != null && !hostList.isEmpty()) {
             for (PacketGetLobbies.GetLobbiesData game : hostList) {
                 TextField lb1 = new TextField(game.name, skin);
                 lb1.setDisabled(true);

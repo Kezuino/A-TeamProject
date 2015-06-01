@@ -56,6 +56,12 @@ public class Enemy extends GameObject {
     private float timeToChangePathStart;
 
     /**
+     * Empty constructor needed for reflection instantiation.
+     */
+    public Enemy() {
+    }
+
+    /**
      * Constructs a new {@link Enemy}.
      * The newly constructed {@link Enemy} is not dead.
      * The newly constructed {@link Enemy} is not edible.

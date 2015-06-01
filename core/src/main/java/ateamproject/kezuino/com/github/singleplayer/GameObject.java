@@ -308,7 +308,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * {@link GameObject}.
      */
     public Color getColor() {
-        return new Color(this.color);
+        return this.color.cpy();
     }
 
     /**
@@ -344,6 +344,12 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     public void setDirection(Direction direction) {
         if (direction == null) {
+            return;
+        }
+
+        // Allow the direction to be set when this object is not yet on a map.
+        if (map == null) {
+            this.direction = direction;
             return;
         }
 

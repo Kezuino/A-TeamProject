@@ -15,6 +15,12 @@ public class Projectile extends GameObject {
     private Pactale owner;
 
     /**
+     * Empty constructor needed for reflection instantiation.
+     */
+    public Projectile() {
+    }
+
+    /**
      * Initializes a new {@link Projectile}.
      *
      * @param owner         {@link Pactale} this {@link Projectile} origined from.

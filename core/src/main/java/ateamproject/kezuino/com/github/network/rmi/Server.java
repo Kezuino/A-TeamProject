@@ -552,18 +552,52 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             ClientInfo client = getClient(packet.getSender());
             client.setLoadStatus(packet.getStatus());
 
+            // Find game with the player that sended the new load status.
             Game game = getGameFromClientId(packet.getSender());
-            if (game.getClients().stream().map(this::getClient).allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded || info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
-                game.getClients().stream().map(this::getClient).forEach(c -> {
-                    while (!game.getLoadQueue().isEmpty()) {
-                        PacketCreateGameObject packetCreate = game.getLoadQueue().remove();
+            if (game == null) {
+                System.out.println(String.format("Error: Client '%s' tried to load a game while not in a lobby.", packet.getSender()));
+                return;
+            }
+
+            if (game.getClients().stream().map(this::getClient).allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
+                // Launch the game (everyone is done loading).
+                game.getClients().stream().map(id -> getClient(id).getRmi()).forEach(rmi -> {
+                    try {
+                        rmi.launchGame(null);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                });
+            } else if (game.getClients().stream().map(this::getClient).allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded || info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
+                // Send all packets that were queued from the host to all the other clients (so, excluding the host).
+                int objectsToSend = game.getLoadQueue().size();
+
+                IProtocolClient[] receivers = game.getClients().stream().filter(c -> !c.equals(game.getHostId())).map(id -> getClient(id).getRmi()).toArray(IProtocolClient[]::new);
+
+                // Tell clients that they should announce when they reached the right amount of objects created.
+                for (IProtocolClient receiver : receivers) {
+                    try {
+                        receiver.requestCompleted("game_load_objects", objectsToSend);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                // Unload all queued createObject packets to all connected clients of the lobby.
+                while (!game.getLoadQueue().isEmpty()) {
+                    // Remove one packet from queue.
+                    PacketCreateGameObject packetCreate = game.getLoadQueue().remove();
+
+                    // Send it to all receivers.
+                    for (IProtocolClient receiver : receivers) {
                         try {
-                            c.getRmi().createObject(null, packetCreate.getTypeName(), packetCreate.getPosition(), packetCreate.getDirection(), packetCreate.getSpeed(), packetCreate.getId());
+                            receiver.createObject(null, packetCreate.getTypeName(), packetCreate.getPosition(), packetCreate.getDirection(), packetCreate
+                                    .getSpeed(), packetCreate.getId(), packetCreate.getColor());
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
                     }
-                });
+                }
             }
         });
     }

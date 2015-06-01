@@ -24,6 +24,7 @@ public class Game {
     protected Queue<PacketCreateGameObject> loadQueue;
     protected String map;
     protected String clanName;//the name of the clan who did create this game. If no clan did create it, it should be null
+    private int mapObjectCount;
 
     public Game(String name,String clanName, UUID host) {
         // Generate UUID and give lobby a name
@@ -130,5 +131,13 @@ public class Game {
     
     public String getClanName(){
         return this.clanName;
+    }
+
+    public void setMapObjectCount(int mapObjectCount) {
+        this.mapObjectCount = mapObjectCount;
+    }
+
+    public int getMapObjectCount() {
+        return mapObjectCount;
     }
 }

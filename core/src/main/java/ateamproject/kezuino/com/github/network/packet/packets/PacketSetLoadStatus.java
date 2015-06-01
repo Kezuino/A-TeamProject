@@ -8,6 +8,10 @@ import java.util.UUID;
 public class PacketSetLoadStatus extends Packet {
     @PacketField(0)
     protected LoadStatus status;
+    @PacketField(1)
+    protected int progress;
+    @PacketField(2)
+    protected int maxProgress;
 
     public PacketSetLoadStatus() {
     }
@@ -15,6 +19,20 @@ public class PacketSetLoadStatus extends Packet {
     public PacketSetLoadStatus(LoadStatus status, UUID... senderAndReceivers) {
         super(senderAndReceivers);
         this.status = status;
+    }
+
+    public PacketSetLoadStatus(LoadStatus status, int progress, int maxProgress, UUID... senderAndReceivers) {
+        this(status, senderAndReceivers);
+        this.progress = progress;
+        this.maxProgress = maxProgress;
+    }
+
+    public int getProgress() {
+        return progress;
+    }
+
+    public int getMaxProgress() {
+        return maxProgress;
     }
 
     public LoadStatus getStatus() {
