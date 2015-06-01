@@ -77,8 +77,7 @@ public class LobbyListScreen extends BaseScreen {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         d.hide();
-                        if (clanGame) {
-                            
+                        if (clanGame) { 
                             game.setScreen(new LobbyScreen(game, lobbyname.getText(), dropDownResultFinal));
                         } else {
                             game.setScreen(new LobbyScreen(game, lobbyname.getText(), null));

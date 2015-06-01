@@ -40,8 +40,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public UUID createLobby(UUID sender, String lobbyName) throws RemoteException {
-        PacketCreateLobby packet = new PacketCreateLobby(lobbyName, sender);
+    public UUID createLobby(UUID sender, String lobbyName, String clanname) throws RemoteException {
+        PacketCreateLobby packet = new PacketCreateLobby(lobbyName, clanname, sender);
         server.send(packet);
         return packet.getResult();
     }

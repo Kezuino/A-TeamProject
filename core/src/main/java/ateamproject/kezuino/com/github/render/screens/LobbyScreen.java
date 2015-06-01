@@ -7,15 +7,10 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.network.rmi.Client;
-import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-
-import java.rmi.RemoteException;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Fatih
@@ -40,7 +35,7 @@ public class LobbyScreen extends BaseScreen {
         this.client = Client.getInstance();
         this.clanName = clanName;
 
-        PacketCreateLobby p = new PacketCreateLobby(this.lobbyName);
+        PacketCreateLobby p = new PacketCreateLobby(this.lobbyName,this.clanName);
         client.send(p);
         this.lobbyId = p.getResult();
 

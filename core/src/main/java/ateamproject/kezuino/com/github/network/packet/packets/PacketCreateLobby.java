@@ -17,6 +17,8 @@ public class PacketCreateLobby extends Packet<UUID> {
 
     @PacketField(0)
     protected String lobbyname;
+    @PacketField(1)
+    protected String clanname;
 
     public PacketCreateLobby() {
     }
@@ -24,15 +26,19 @@ public class PacketCreateLobby extends Packet<UUID> {
     public PacketCreateLobby(UUID... senderAndReceivers) {
         super(senderAndReceivers);
     }
-    
-    public PacketCreateLobby(String lobbyname,UUID... senderAndReceivers) {
+
+    public PacketCreateLobby(String lobbyname, String clanname, UUID... senderAndReceivers) {
         this(senderAndReceivers);
-        
+
         this.lobbyname = lobbyname;
+        this.clanname = clanname;
     }
 
     public String getLobbyname() {
         return lobbyname;
     }
 
+    public String getClanname() {
+        return clanname;
+    }
 }

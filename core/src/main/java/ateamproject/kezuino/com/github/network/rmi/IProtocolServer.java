@@ -30,7 +30,7 @@ public interface IProtocolServer extends IProtocol {
 
     void heartbeat(UUID client) throws RemoteException;
 
-    UUID createLobby(UUID sender, String LobbyName) throws RemoteException;
+    UUID createLobby(UUID sender, String LobbyName, String clan) throws RemoteException;
 
     List<PacketGetLobbies.GetLobbiesData> getLobbies(UUID sender, boolean isClanGame) throws RemoteException;
 

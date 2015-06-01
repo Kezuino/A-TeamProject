@@ -25,10 +25,11 @@ public class Game {
     protected String map;
     protected String clanName;//the name of the clan who did create this game. If no clan did create it, it should be null
 
-    public Game(String name, UUID host) {
+    public Game(String name,String clanName, UUID host) {
         // Generate UUID and give lobby a name
         this.id = UUID.randomUUID();
         this.name = name;
+        this.clanName = clanName;
         this.votes = new ArrayList<>();
         this.loadQueue = new ArrayDeque<>();
 

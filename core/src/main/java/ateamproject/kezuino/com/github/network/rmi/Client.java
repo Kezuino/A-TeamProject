@@ -198,7 +198,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         packets.registerFunc(PacketCreateLobby.class, (p) -> {
 
             try {
-                UUID newGame = getRmi().getServer().createLobby(p.getSender(), p.getLobbyname());
+                UUID newGame = getRmi().getServer().createLobby(p.getSender(), p.getLobbyname(),p.getClanname());
                 return newGame;
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
