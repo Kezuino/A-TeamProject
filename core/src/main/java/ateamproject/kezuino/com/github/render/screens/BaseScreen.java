@@ -25,6 +25,10 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,8 +62,19 @@ public abstract class BaseScreen implements Screen {
         this.game = game;
 
         // Bootstrap skin.
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
+       
+       
 
+            /*FileHandle fh = Gdx.files.internal("uiskin.atlas");
+            FileHandle fh1 = new FileHandle("skins");
+            fh.copyTo(fh1);
+            fh = Gdx.files.internal("uiskin.png");
+            fh1 = new FileHandle("skins");
+            fh.copyTo(fh1);*/
+        
+        
+           
         // Bootstrap input.
         inputs.addProcessor(stage);
         Gdx.input.setInputProcessor(inputs);
@@ -80,11 +95,8 @@ public abstract class BaseScreen implements Screen {
 
     public Stage getStage() {
         return stage;
-    }
-    
-    public void setDifferentSkin(){
-        
-    }
+    }    
+  
 
     public Skin getSkin() {
         return skin;

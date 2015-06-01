@@ -136,6 +136,13 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         server.send(packet);
         return packet.getResult();
     }
+    
+    @Override
+    public ArrayList<String> getClans(UUID Sender) throws RemoteException {
+        PacketGetClans packet = new PacketGetClans(Sender);
+        server.send(packet);
+        return packet.getResult();
+    }
 
     @Override
     public boolean setUsername(String name, String emailaddress,UUID sender) throws RemoteException {

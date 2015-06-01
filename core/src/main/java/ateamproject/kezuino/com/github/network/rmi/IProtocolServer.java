@@ -50,7 +50,10 @@ public interface IProtocolServer extends IProtocol {
      */
     boolean kickClient(UUID sender, UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException;
 
-    ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
+    ArrayList<String> clanFillTable(String emailadres) throws RemoteException;    
+    
+    ArrayList<String> getClans(UUID client) throws RemoteException;
+
 
     boolean createClan(UUID sender, String clanName) throws RemoteException;
 

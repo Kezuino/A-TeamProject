@@ -18,6 +18,7 @@ public class Assets {
     public static final String AUDIO_SOUND_DIR = "audio/sound/";
     public static final String AUDIO_MUSIC_DIR = "audio/music/";
     public static final String FONTS_DIR = "fonts/";
+    public static final String SKINS_DIR ="skins/";
 
     public static AssetManager manager;
     private static HashMap<String, Music> musicInstances;
@@ -27,7 +28,7 @@ public class Assets {
         musicInstances = new HashMap<>();
 
         // Add loaders to the ContentManager.
-        manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));
+        manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));        
     }
 
     /**
@@ -62,6 +63,9 @@ public class Assets {
         manager.load(AUDIO_SOUND_DIR + "enemy_eat.mp3", Sound.class);
 
         // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
+        
+        //Skins
+        //manager.load(SKINS_DIR + "pacskin.json",FileHandle.class);
 
         // Wait for assets to load.
         manager.finishLoading();
