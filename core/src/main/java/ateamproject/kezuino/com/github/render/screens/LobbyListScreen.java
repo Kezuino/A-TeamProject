@@ -51,15 +51,34 @@ public class LobbyListScreen extends BaseScreen {
 
                 Dialog d = new Dialog("Lobby Name", skin);
                 lobbyname = new TextField("", skin);
+
+                SelectBox<Object> clanDropdown = null;
+                if (clanGame) {
+                    Object[] clans = new Object[2];
+                    clans[0] = new Label("clan 1", skin);
+                    clans[1] = new Label("clan 2", skin);
+                    clanDropdown = new SelectBox<Object>(skin);
+                    clanDropdown.setSelectedIndex(0);
+                    
+                    clanDropdown.setItems(clans);
+                    d.add(clanDropdown);
+                }
+
                 TextButton btnsubmit = new TextButton("Maken", skin);
                 lobbyname.setSize(150, 30);
                 d.add(lobbyname);
                 d.add(btnsubmit);
+                
+                final String dropDownResult = clanDropdown.getSelected().toString();
                 btnsubmit.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         d.hide();
-                        game.setScreen(new LobbyScreen(game, lobbyname.getText()));
+                        if (clanGame) {
+                            game.setScreen(new LobbyScreen(game, lobbyname.getText(),dropDownResult));
+                        }
+                        else
+                            game.setScreen(new LobbyScreen(game, lobbyname.getText(),null));
                     }
                 });
                 d.show(stage);
@@ -119,9 +138,14 @@ public class LobbyListScreen extends BaseScreen {
         List<PacketGetLobbies.GetLobbiesData> hostList = null;
 
         Client client = Client.getInstance();
-        PacketGetLobbies packet = new PacketGetLobbies();
+        PacketGetLobbies packet;
+        if (this.clanGame) {
+            packet = new PacketGetLobbies(true);
+        } else {
+            packet = new PacketGetLobbies(false);
+        }
         client.send(packet);
-        hostList =  packet.getResult();
+        hostList = packet.getResult();
 
         for (PacketGetLobbies.GetLobbiesData game : hostList) {
             TextField lb1 = new TextField(game.name, skin);

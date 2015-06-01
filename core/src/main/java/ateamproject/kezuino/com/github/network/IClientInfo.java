@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.network;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 /**
@@ -91,4 +92,6 @@ public interface IClientInfo {
      * @param username Username from the {@link IClientInfo}.
      */
     void setUsername(String username);
+    
+     ArrayList<String> getClans();
 }
