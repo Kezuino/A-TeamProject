@@ -75,17 +75,8 @@ public class Enemy extends GameObject {
         this.edibleTime = 2f;
         this.graphPath = new DefaultGraphPath<>();
         this.drawOnDirection = false;
-        
-        Animation pacAnimation = new Animation();
-        Texture atlas = Assets.get("textures/enemy.png", Texture.class);
-        
-        TextureRegion[][] reg = TextureRegion.split(atlas, 32, 32);
-        
-        pacAnimation.addFrame(Direction.Down, new Array(reg[0]));
-        pacAnimation.addFrame(Direction.Right, new Array(reg[1]));
-        pacAnimation.addFrame(Direction.Up, new Array(reg[2]));
-        pacAnimation.addFrame(Direction.Left, new Array(reg[3]));
 
+        Animation pacAnimation = new Animation(Assets.get("textures/enemy.png", Texture.class));
         this.setAnimation(pacAnimation);
     }
 

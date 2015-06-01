@@ -5,62 +5,36 @@
  */
 package ateamproject.kezuino.com.github.utility.game;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.utils.Array;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 /**
  *
  * @author Kez and Jules
  */
 public class Animation {
-    private final HashMap<Direction, List<TextureRegion>> textures;
-    private List<TextureRegion> upFrames, downFrames, leftFrames, rightFrames;  
+    private final HashMap<Direction, Array<TextureRegion>> textures;
     private int currentFrame;
-    private boolean hasInitialFrame;
+    private final boolean hasInitialFrame;
     
-    public Animation() {
-        this(false);
+    public Animation(Texture frames) {
+        this(false, frames);
     }
     
-    public Animation(boolean hasInitialFrame) {
-        this.upFrames = new ArrayList<>();
-        this.downFrames = new ArrayList<>();
-        this.leftFrames = new ArrayList<>();
-        this.rightFrames = new ArrayList<>();
+    public Animation(boolean hasInitialFrame, Texture frames) {
+        TextureRegion[][] region = TextureRegion.split(frames, 32, 32);
 
         this.textures = new HashMap<>();
-        this.textures.put(Direction.Up, upFrames);
-        this.textures.put(Direction.Down, downFrames);
-        this.textures.put(Direction.Left, leftFrames);
-        this.textures.put(Direction.Right, rightFrames);
-        
+        this.textures.put(Direction.Down, new Array(region[0]));
+        this.textures.put(Direction.Right, new Array(region[1]));
+        this.textures.put(Direction.Up, new Array(region[2]));
+        this.textures.put(Direction.Left, new Array(region[3]));
         this.currentFrame = 0;
         this.hasInitialFrame = hasInitialFrame;
     }
-    
-    public void addFrame(Direction direction, Array<? extends TextureRegion> frames) {
-        for(TextureRegion t : frames) {
-            switch(direction) {
-                case Up:
-                    this.upFrames.add(t);
-                    break;
-                case Down:
-                    this.downFrames.add(t);
-                    break;
-                case Left:
-                    this.leftFrames.add(t);
-                    break;
-                case Right:
-                    this.rightFrames.add(t);
-                    break;
-            }            
-        }
-    }
-    
+
     public TextureRegion getFrame(Direction direction) {
         return this.textures.get(direction).get(this.currentFrame);
     }
@@ -80,6 +54,6 @@ public class Animation {
     }
     
     public int frameSize() {
-        return (this.downFrames.size() + this.upFrames.size() + this.leftFrames.size() + this.rightFrames.size()) / 4;
+        return (this.textures.get(Direction.Down).size + this.textures.get(Direction.Up).size + this.textures.get(Direction.Left).size + this.textures.get(Direction.Right).size) / 4;
     }
 }

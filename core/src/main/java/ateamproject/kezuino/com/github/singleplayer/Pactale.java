@@ -33,17 +33,8 @@ public class Pactale extends GameObject {
         this.lives = lives;
         this.playerIndex = -1;
         this.drawOnDirection = false;
-        
-        Animation pacAnimation = new Animation(true);
-        Texture atlas = Assets.get("textures/pactale.png", Texture.class);
-        
-        TextureRegion[][] reg = TextureRegion.split(atlas, 32, 32);
-        
-        pacAnimation.addFrame(Direction.Down, new Array(reg[0]));
-        pacAnimation.addFrame(Direction.Right, new Array(reg[1]));
-        pacAnimation.addFrame(Direction.Up, new Array(reg[2]));
-        pacAnimation.addFrame(Direction.Left, new Array(reg[3]));
 
+        Animation pacAnimation = new Animation(true, Assets.get("textures/pactale.png", Texture.class));
         this.setAnimation(pacAnimation);
     }
 

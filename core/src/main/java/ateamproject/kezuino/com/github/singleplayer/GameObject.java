@@ -133,7 +133,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
         this.exactPosition = exactPosition.cpy();
         this.setColor(color);
         this.isActive = true;
-        this.animation = new Animation();
     }
 
 
@@ -457,7 +456,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
         } else if (targetNode == null || targetNode.isWall()) {
             this.direction = direction;
             collisionWithWall(getNode());
-            this.animation.resetFrame();
+            if(this.animation != null) {
+                this.animation.resetFrame();
+            }
             return;
         }
 
@@ -499,7 +500,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
                 movementStartTime = moveTotalStep;
             }
 
-            if (moveTotalStep - animateTime >= 0.35) {
+            if (moveTotalStep - animateTime >= 0.35 && this.animation != null) {
                 animateTime = moveTotalStep;
                 this.animation.nextFrame();
             }
@@ -548,7 +549,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         //float xOffset = (32 - texture.getRegionWidth()) / 2f;
         //float yOffset = (32 - texture.getRegionHeight()) / 2f;
 
-        if (this.animation.frameSize() > 0) {
+        if (this.animation != null) {
             this.setTexture(this.animation.getFrame(this.direction));
         }
 
