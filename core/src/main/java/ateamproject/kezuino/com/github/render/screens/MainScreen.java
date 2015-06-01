@@ -94,6 +94,9 @@ public class MainScreen extends BaseScreen {
                 game.setScreen(new ClanManagementScreen(game));
             }
         });
+        
+          
+        
 
         tbChangeLook.setSize(300, 40);
         tbClanGame.setSize(300, 40);
@@ -115,6 +118,8 @@ public class MainScreen extends BaseScreen {
         tbClanManagement.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
         tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 300);
         tbFastSinglePlayerGame.setPosition(xOfSearchGameButton, yOfSearchGameButton - 350);
+        
+        
 
         stage.addActor(tbSearchGame);
         stage.addActor(tbClanGame);

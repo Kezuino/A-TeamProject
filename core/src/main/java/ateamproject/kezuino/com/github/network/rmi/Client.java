@@ -212,7 +212,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerFunc(PacketGetLobbies.class, (p) -> {
             try {
-                return getRmi().getServer().getLobbies(p.getIsClanGame());
+                return getRmi().getServer().getLobbies(p.getSender(), p.getIsClanGame());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
                         .log(Level.SEVERE, null, ex);
