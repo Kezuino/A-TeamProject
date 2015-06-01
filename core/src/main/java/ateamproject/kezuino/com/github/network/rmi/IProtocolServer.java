@@ -72,7 +72,7 @@ public interface IProtocolServer extends IProtocol {
 
     String getEmail(UUID Sender) throws RemoteException;
 
-    boolean setUsername(String name, String emailaddress) throws RemoteException;
+    boolean setUsername(String name, String emailaddress,UUID sender) throws RemoteException;
 
     boolean setScore(String clanName, int score) throws RemoteException;
 
