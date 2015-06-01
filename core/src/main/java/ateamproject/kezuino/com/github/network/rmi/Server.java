@@ -44,7 +44,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     public IProtocolClient[] getRmiClientsFromGameId(UUID gameId) {
         Game game = getGame(gameId);
-        if (game == null) return null;
+        if (game == null) {
+            return null;
+        }
 
         return game.getClients().stream().map(id -> getClient(id).getRmi()).toArray(IProtocolClient[]::new);
     }
@@ -164,11 +166,28 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketGetLobbies.class, (packet -> {
             List<PacketGetLobbies.GetLobbiesData> result = new ArrayList<>();
-            for (Game game : getGames()) {
-                result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
-                        game.getId(),
-                        game.getClients().size(),
-                        getClient(game.getHostId()).getUsername()));
+            if (packet.getIsClanGame()) {
+                ArrayList<String> clans = getClient(null).getClans();
+
+                for (String clan : clans) {
+                    for (Game game : getGames()) {
+                        if (game.getClanName().equals(clan)) {
+                            result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
+                                    game.getId(),
+                                    game.getClients().size(),
+                                    getClient(game.getHostId()).getUsername()));
+                        }
+                    }
+                }
+            } else {
+                for (Game game : getGames()) {
+                    if (game.getClanName() == null) {
+                        result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
+                                game.getId(),
+                                game.getClients().size(),
+                                getClient(game.getHostId()).getUsername()));
+                    }
+                }
             }
             return result;
         }));
@@ -209,7 +228,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
                 // Get username from database.
                 try (ResultSet set = Database.getInstance()
-                                             .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
+                        .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
                     if (set.isBeforeFirst()) {
                         set.next();
                         client.setUsername(set.getString(1));
@@ -219,8 +238,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
 
                 // Tell client what its id is.
-                PacketLoginAuthenticate.ReturnData packetLoginAuthenticateData =
-                        new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId());
+                PacketLoginAuthenticate.ReturnData packetLoginAuthenticateData
+                        = new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId());
                 return packetLoginAuthenticateData;
             }
 
@@ -236,15 +255,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerFunc(PacketHighScore.class, (packet) -> {
             try {
                 ResultSet resultSet = Database.getInstance()
-                                              .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
-                                                      .getClanName());
+                        .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
+                                .getClanName());
                 resultSet.next();
                 int id = resultSet.getInt("Score");
 
                 if (id > packet.getScore()) {
                     return Database.getInstance()
-                                   .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
-                                           .getScore(), packet.getClanName()) > -1;
+                            .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
+                                    .getScore(), packet.getClanName()) > -1;
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
@@ -259,7 +278,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             try {
                 resultSet = Database.getInstance()
-                                    .query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
+                        .query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
                 resultSet.next();
                 count = resultSet.getInt("amount");
 
@@ -267,8 +286,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     System.out.println("Following user does already exists: " + packet.getUsername());
                 } else {
                     int result = Database.getInstance()
-                                         .update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet
-                                                 .getEmail());
+                            .update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet
+                                    .getEmail());
                     if (result > 0) {
                         System.out.println("Adding following user to database: " + packet.getUsername());
                         getClient(packet.getSender()).setUsername(packet.getUsername());
@@ -290,7 +309,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             try {
                 resultSet = Database.getInstance()
-                                    .query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
+                        .query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
                 resultSet.next();
                 count = resultSet.getInt("amount");
             } catch (SQLException ex) {
@@ -345,7 +364,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketJoinLobby.class, packet -> {
             Game lobby = getGame(packet.getLobbyId());
-            if (lobby == null) return null;
+            if (lobby == null) {
+                return null;
+            }
 
             // Get all clients currently in the game.
             PacketJoinLobby.PacketJoinLobbyData data = new PacketJoinLobby.PacketJoinLobbyData();
@@ -365,8 +386,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // Notify other users that someone joined the lobby (excluding itself).
             PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername());
             p.setReceivers(lobby.getClients()
-                                .stream()
-                                .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
+                    .stream()
+                    .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
             send(p);
 
             return data;
@@ -379,7 +400,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 boolean hasVotedForCurrentPerson = false;
                 int amountOfVotesForCurrentPerson = 0;
                 int amountOfVotesNeededForKick = (int) Math.ceil(getGameFromClientId(packet.getSender()).getClients()
-                                                                                                        .size() / 2);
+                        .size() / 2);
 
                 for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
                     if (voteCombination[0] == packet.getSender() && voteCombination[1] == personId) {
@@ -418,22 +439,30 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             if (!hasVotedForSpecificPerson) {
                 getGameFromClientId(packet.getSender()).getVotes()
-                                                       .add(new UUID[]{packet.getSender(), packet.getPersonToVoteFor()});
+                        .add(new UUID[]{packet.getSender(), packet.getPersonToVoteFor()});
             }
         });
 
         packets.registerAction(PacketLobbySetDetails.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) return;
+            if (game == null) {
+                return;
+            }
 
             String newName = packet.getData().getName();
             String newMap = packet.getData().getMap();
-            if (newMap != null && !newMap.isEmpty()) game.setMap(newMap);
-            if (newName != null && !newName.isEmpty()) game.setName(newName);
+            if (newMap != null && !newMap.isEmpty()) {
+                game.setMap(newMap);
+            }
+            if (newName != null && !newName.isEmpty()) {
+                game.setName(newName);
+            }
 
             // Notify all connected clients (but host) that the game details have changed.
             for (UUID uuid : game.getClientsAsArray()) {
-                if (game.getHostId().equals(uuid)) continue;
+                if (game.getHostId().equals(uuid)) {
+                    continue;
+                }
 
                 ClientInfo client = getClient(uuid);
                 try {
@@ -446,7 +475,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketLobbyGetDetails.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) return null;
+            if (game == null) {
+                return null;
+            }
 
             PacketLobbySetDetails.Data data = new PacketLobbySetDetails.Data();
             data.setName(game.getName());

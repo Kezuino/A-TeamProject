@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
+import java.util.ArrayList;
 
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ public abstract class ClientInfo implements IClientInfo {
     protected Game game;
     protected String emailAddress;
     protected String username;
+    protected ArrayList<String> clans;
 
     public ClientInfo() {
         privateId = UUID.randomUUID();
@@ -82,5 +84,10 @@ public abstract class ClientInfo implements IClientInfo {
     @Override
     public void setUsername(String username) {
         this.username = username;
+    }
+    
+    @Override
+    public ArrayList<String> getClans(){
+        return this.clans;
     }
 }

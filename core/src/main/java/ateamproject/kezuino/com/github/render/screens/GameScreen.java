@@ -42,6 +42,7 @@ import java.util.UUID;
  * @author Anton
  */
 public class GameScreen extends BaseScreen {
+
     private Pactale player;
     private GameRenderer gameRenderer;
     private InputAdapter gameInputAdapter;
@@ -86,8 +87,8 @@ public class GameScreen extends BaseScreen {
                         break;
                     case Input.Keys.H:
                         BalloonMessage.getBalloonMessage(BalloonHelpMe.class)
-                                      .setFollowObject(player)
-                                      .addBalloonMessage();
+                                .setFollowObject(player)
+                                .addBalloonMessage();
                         break;
                     case Input.Keys.F1:
                         DebugRenderManager.toggle();
@@ -149,53 +150,6 @@ public class GameScreen extends BaseScreen {
         });
 
         pauseMenu.add(bExit);
-
-        // Create player menu.
-//        playerMenu = new Dialog("Menu", skin) {
-//            {
-//                button("Oke");
-//            }
-//        };
-//
-//        Table scrollTable = new Table(skin);
-//
-//        ArrayList<String> people = new ArrayList<>();
-//        PacketGetKickInformation packetGetKickInfo = new PacketGetKickInformation();
-//        Client.getInstance().send(packetGetKickInfo);
-//        people.addAll(packetGetKickInfo.getResult());
-//
-//        for (String person : people) {
-//            String[] peopleResult = person.split(" ");
-//
-//            TextButton bKick = new TextButton("Kick", skin);
-//            bContinue.addListener(new ClickListener() {
-//                @Override
-//                public void clicked(InputEvent event, float x, float y) {
-//                    PacketSetKickInformation packetKick = new PacketSetKickInformation(UUID.fromString(peopleResult[4]));
-//                    Client.getInstance().send(packetKick);
-//
-//                    PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
-//                    Client.getInstance().send(packetKickInfo);
-//                    people.addAll(packetKickInfo.getResult());
-//                    playerMenu.hide();
-//                    showPlayersView();
-//                }
-//            });
-//
-//            scrollTable.add(peopleResult[0]);
-//            scrollTable.columnDefaults(0);
-//            scrollTable.add(bKick);
-//            scrollTable.columnDefaults(1);
-//            scrollTable.add(peopleResult[1] + "/" + peopleResult[2]);
-//            scrollTable.columnDefaults(2);
-//            scrollTable.row();
-//
-//            if (peopleResult[3].equals("0")) {
-//                bKick.setDisabled(true);
-//            }
-//        }
-//
-//        playerMenu.add(scrollTable);
     }
 
     public void start(Score score) {
@@ -262,6 +216,54 @@ public class GameScreen extends BaseScreen {
     }
 
     public void showPlayersView() {
+        //Create player menu.
+        playerMenu = new Dialog("Menu", skin) {
+            {
+                button("Oke");
+            }
+        };
+
+        Table scrollTable = new Table(skin);
+
+        ArrayList<String> people = new ArrayList<>();
+        PacketGetKickInformation packetGetKickInfo = new PacketGetKickInformation();
+        Client.getInstance().send(packetGetKickInfo);
+        people.addAll(packetGetKickInfo.getResult());
+
+        for (String person : people) {
+            String[] peopleResult = person.split(" ");
+
+            TextButton bKick = new TextButton("Kick", skin);
+            TextButton bContinue = new TextButton("Doorgaan", skin);
+            bContinue.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    PacketSetKickInformation packetKick = new PacketSetKickInformation(UUID.fromString(peopleResult[4]));
+                    Client.getInstance().send(packetKick);
+
+                    PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
+                    Client.getInstance().send(packetKickInfo);
+                    people.addAll(packetKickInfo.getResult());
+                    playerMenu.hide();
+                    showPlayersView();
+                }
+            }); 
+
+            scrollTable.add(peopleResult[0]);
+            scrollTable.columnDefaults(0);
+            scrollTable.add(bKick);
+            scrollTable.columnDefaults(1);
+            scrollTable.add(peopleResult[1] + "/" + peopleResult[2]);
+            scrollTable.columnDefaults(2);
+            scrollTable.row();
+
+            if (peopleResult[3].equals("0")) {
+                bKick.setDisabled(true);
+            }
+        }
+
+        playerMenu.add(scrollTable);
+
         playerMenu.show(stage);
         getSession().showPlayerMenu();
     }

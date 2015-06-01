@@ -19,8 +19,11 @@ import java.util.UUID;
  */
 public class PacketGetLobbies extends Packet<List<GetLobbiesData>> {
 
-    public PacketGetLobbies(UUID... senderAndReceivers) {
+    private boolean isClanGame;
+    
+    public PacketGetLobbies(boolean isClanGame, UUID... senderAndReceivers) {
         super(senderAndReceivers);
+        this.isClanGame = isClanGame;
     }
 
     public static class GetLobbiesData implements Serializable{
@@ -36,8 +39,9 @@ public class PacketGetLobbies extends Packet<List<GetLobbiesData>> {
             this.membersCount = membersCount;
             this.hostName = hostName;
         }
-        
-        
     }
 
+    public boolean getIsClanGame(){
+        return this.isClanGame;
+    }
 }
