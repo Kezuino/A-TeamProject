@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class Projectile extends GameObject {
@@ -27,7 +28,8 @@ public class Projectile extends GameObject {
         super(exactPosition, movementSpeed, direction, color);
         this.owner = owner;
         this.drawOnDirection = true;
-        this.setTexture(Assets.get("textures/projectile.png", Texture.class));
+        
+        this.setTexture(new TextureRegion(Assets.get("textures/projectile.png", Texture.class)));
     }
 
     /**

@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.render.IRenderable;
 import ateamproject.kezuino.com.github.utility.game.IPositionable;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
@@ -13,7 +14,7 @@ public class Item extends GameObject implements IRenderable, IPositionable {
     private String name;
     private ItemType type;
     private Map map;
-    private Texture texture;
+    private TextureRegion texture;
 
     /**
      * Initializes an {@link Item} at the given {@link Node}.
@@ -39,12 +40,12 @@ public class Item extends GameObject implements IRenderable, IPositionable {
     }
 
     @Override
-    public Texture getTexture() {
+    public TextureRegion getTexture() {
         return texture;
     }
 
     @Override
-    public void setTexture(Texture texture) {
+    public void setTexture(TextureRegion texture) {
         this.texture = texture;
     }
 
@@ -154,7 +155,7 @@ public class Item extends GameObject implements IRenderable, IPositionable {
      */
     public Rectangle getBounds() {
         Vector2 pos = getExactPosition();
-        return new Rectangle(pos.x, pos.y, texture.getWidth(), texture.getHeight());
+        return new Rectangle(pos.x, pos.y, texture.getRegionWidth(), texture.getRegionHeight());
     }
 
     /**
@@ -178,8 +179,8 @@ public class Item extends GameObject implements IRenderable, IPositionable {
     @Override
     public void draw(SpriteBatch batch) {
         if (texture == null) return;
-        float xOffset = (32 - texture.getWidth()) / 2f;
-        float yOffset = (32 - texture.getHeight()) / 2f;
+        float xOffset = (32 - texture.getRegionWidth()) / 2f;
+        float yOffset = (32 - texture.getRegionHeight()) / 2f;
         batch.draw(texture, this.getExactPosition().x + xOffset, this.getExactPosition().y + yOffset);
     }
 

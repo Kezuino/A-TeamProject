@@ -9,6 +9,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
@@ -55,6 +56,8 @@ public class Assets {
         // Textures (only load those that aren't loaded by the TmxMapLoader).
         manager.load("textures/projectile.png", Texture.class);
         manager.load("textures/portal.png", Texture.class);
+        manager.load("textures/pactale.png", Texture.class);
+        manager.load("textures/enemy.png", Texture.class);
 
         // Sounds (Only short clips that are mainly used for interaction/action effects).
         manager.load(AUDIO_SOUND_DIR + "defeat.wav", Sound.class);

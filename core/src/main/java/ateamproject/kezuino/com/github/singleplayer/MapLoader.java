@@ -1,6 +1,5 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -125,40 +124,6 @@ public class MapLoader {
                 Vector2 curPos = new Vector2(objProps.get("x", float.class), objProps.get("y", float.class));
                 Node posNode = map.getNode(curPos);
 
-                Animation animation = new Animation(objTileProps.get("hasInitialFrame", String.class) != null && Boolean
-                        .parseBoolean(objTileProps.get("hasInitialFrame", String.class)));
-
-                if (objTileProps.containsKey("textureGroup")) {
-                    tiledMap.getTileSets().getTileSet(layer.getName()).forEach((TiledMapTile tile) -> {
-                        MapProperties tileProps = tile.getProperties();
-
-                        if (tileProps.containsKey("textureGroup") && Objects.equals(tileProps.get("textureGroup", int.class), objTileProps
-                                .get("textureGroup", int.class))) {
-                            if (tileProps.containsKey("animateTo")) {
-                                Direction tileDirection = Direction.valueOf(tileProps.get("direction", String.class));
-                                int nextAnimation = Integer.parseInt(tileProps.get("animateTo", String.class)) + tileSetProps
-                                        .get("firstgid", int.class);
-
-                                animation.addFrame(tileDirection, tile.getTextureRegion().getTexture());
-
-                                do {
-                                    TiledMapTile aniTile = tiledMap.getTileSets()
-                                                                   .getTileSet(layer.getName())
-                                                                   .getTile(nextAnimation);
-                                    MapProperties aniTileProperties = aniTile.getProperties();
-
-                                    animation.addFrame(tileDirection, aniTile.getTextureRegion().getTexture());
-                                    nextAnimation = aniTileProperties.get("animateTo", String.class) == null ? -1 : Integer
-                                            .parseInt(aniTileProperties.get("animateTo", String.class)) + tileSetProps.get("firstgid", int.class);
-                                } while (nextAnimation != -1 && nextAnimation != tile.getId());
-                            } else {
-                                animation.addFrame(Direction.valueOf(tileProps.get("direction", String.class)), tile.getTextureRegion()
-                                                                                                                    .getTexture());
-                            }
-                        }
-                    });
-                }
-
                 if (getTypesToLoad().contains(MapObjectTypes.ITEM) && objTileProps.containsKey(MapObjectTypes.ITEM.getKey())) {
                     // Create item.
                     String itemTypeName = objTileProps.get("item", String.class);
@@ -168,7 +133,7 @@ public class MapLoader {
                                               .orElse(null);
                     Item item = new Item(curPos, itemType);
                     item.setMap(map);
-                    item.setTexture(obj.getTextureRegion().getTexture());
+                    item.setTexture(obj.getTextureRegion());
                     posNode.setItem(item);
 
                     runConsumers(MapObjectTypes.ITEM.getType(), item);
@@ -177,10 +142,7 @@ public class MapLoader {
                     // Create enemy.
                     Enemy enemy = new Enemy(null, curPos, 2.5f, Direction.Down);
 
-                    if (animation.size() > 0) {
-                        enemy.setAnimation(animation);
-                    }
-                    enemy.setTexture(obj.getTextureRegion().getTexture());
+                    enemy.setTexture(obj.getTextureRegion());
                     enemy.setMap(map);
                     enemy.setId();
                     map.addGameObject(enemy);
@@ -196,8 +158,7 @@ public class MapLoader {
 
                     // Create pactale.
                     Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
-                    pactale.setAnimation(animation);
-                    pactale.setTexture(obj.getTextureRegion().getTexture());
+                    pactale.setTexture(obj.getTextureRegion());
                     pactale.setId();
                     map.addGameObject(pactale);
 

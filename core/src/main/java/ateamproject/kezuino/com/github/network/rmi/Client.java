@@ -36,7 +36,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     protected Client() {
         super(null);
 
-        System.setProperty("pactales.client.servername", "localhost");
+        System.setProperty("pactales.client.servername", "darkhellentertainment.com");
         System.setProperty("pactales.client.serverobject", "server");
         try {
             rmi = new ClientBase(this);
@@ -48,7 +48,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     protected Client(Game game) {
         super(game);
 
-        System.setProperty("pactales.client.servername", "localhost");
+        System.setProperty("pactales.client.servername", "darkhellentertainment.com");
         System.setProperty("pactales.client.serverobject", "server");
         try {
             rmi = new ClientBase(this);
@@ -107,6 +107,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                                 Thread.sleep(5000);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
+                                break;
                             }
                         }
                         Thread.sleep(100);

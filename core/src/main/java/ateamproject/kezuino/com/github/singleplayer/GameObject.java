@@ -8,6 +8,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
@@ -48,7 +49,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     /**
      * {@link Texture} of this {@link GameObject} for drawing.
      */
-    protected Texture texture;
+    protected TextureRegion texture;
     protected Animation animation;
     /**
      * {@link com.badlogic.gdx.graphics.Color} this {@link GameObject}
@@ -223,14 +224,14 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     public Rectangle getBounds() {
         Vector2 pos = getExactPosition();
-        return new Rectangle(pos.x, pos.y, texture.getWidth(), texture.getHeight());
+        return new Rectangle(pos.x, pos.y, 32, 32);
     }
 
     /**
      * Gets the {@link Texture} of this {@link GameObject} for drawing.
      */
     @Override
-    public Texture getTexture() {
+    public TextureRegion getTexture() {
         return texture;
     }
 
@@ -238,7 +239,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * Sets the {@link Texture} of this {@link GameObject} for drawing.
      */
     @Override
-    public void setTexture(Texture texture) {
+    public void setTexture(TextureRegion texture) {
         this.texture = texture;
     }
 
@@ -544,17 +545,15 @@ public abstract class GameObject implements IRenderable, IPositionable {
         }
 
         // Draw centered in node.
-        float xOffset = (32 - texture.getWidth()) / 2f;
-        float yOffset = (32 - texture.getHeight()) / 2f;
+        //float xOffset = (32 - texture.getRegionWidth()) / 2f;
+        //float yOffset = (32 - texture.getRegionHeight()) / 2f;
 
         if (this.animation.frameSize() > 0) {
             this.setTexture(this.animation.getFrame(this.direction));
         }
 
-        batch.draw(texture, this.getExactPosition().x + xOffset, this.getExactPosition().y + yOffset, texture.getWidth() / 2, texture
-                .getHeight() / 2, texture
-                .getWidth(), texture.getHeight(), 1, 1, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
-
+        batch.draw(this.texture, this.getExactPosition().x, this.getExactPosition().y, this.texture.getRegionHeight() / 2, this.texture.getRegionWidth() / 2, this.texture.getRegionHeight(), this.texture.getRegionWidth(), 1, 1, rotation);
+        
         // Reset batch color for other draws.
         batch.setColor(oldColor);
     }

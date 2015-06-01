@@ -5,8 +5,10 @@
  */
 package ateamproject.kezuino.com.github.utility.game;
 
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.utils.Array;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
@@ -15,8 +17,8 @@ import java.util.List;
  * @author Kez and Jules
  */
 public class Animation {
-    private final HashMap<Direction, List<Texture>> textures;
-    private final List<Texture> upFrames, downFrames, leftFrames, rightFrames;  
+    private final HashMap<Direction, List<TextureRegion>> textures;
+    private List<TextureRegion> upFrames, downFrames, leftFrames, rightFrames;  
     private int currentFrame;
     private boolean hasInitialFrame;
     
@@ -40,24 +42,26 @@ public class Animation {
         this.hasInitialFrame = hasInitialFrame;
     }
     
-    public void addFrame(Direction direction, Texture texture) {
-        switch(direction) {
-            case Up:
-                this.upFrames.add(texture);
-                break;
-            case Down:
-                this.downFrames.add(texture);
-                break;
-            case Left:
-                this.leftFrames.add(texture);
-                break;
-            case Right:
-                this.rightFrames.add(texture);
-                break;
+    public void addFrame(Direction direction, Array<? extends TextureRegion> frames) {
+        for(TextureRegion t : frames) {
+            switch(direction) {
+                case Up:
+                    this.upFrames.add(t);
+                    break;
+                case Down:
+                    this.downFrames.add(t);
+                    break;
+                case Left:
+                    this.leftFrames.add(t);
+                    break;
+                case Right:
+                    this.rightFrames.add(t);
+                    break;
+            }            
         }
     }
     
-    public Texture getFrame(Direction direction) {
+    public TextureRegion getFrame(Direction direction) {
         return this.textures.get(direction).get(this.currentFrame);
     }
     
