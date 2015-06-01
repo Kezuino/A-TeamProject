@@ -155,7 +155,7 @@ public class GameScreen extends BaseScreen {
     public void start(Score score) {
         setSession(new GameSession());
         getSession().setScore(score);
-        getSession().setMap(Map.load(getSession(), "1"));
+        getSession().setMap(Map.load(getSession(), "2"));
 
         player = getSession().getPlayer(0);
 
