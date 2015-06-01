@@ -138,8 +138,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean setUsername(String name, String emailaddress) throws RemoteException {
-        PacketSetUsername packet = new PacketSetUsername(name, emailaddress);
+    public boolean setUsername(String name, String emailaddress,UUID sender) throws RemoteException {
+        PacketSetUsername packet = new PacketSetUsername(name, emailaddress,sender);
         server.send(packet);
         return packet.getResult();
     }

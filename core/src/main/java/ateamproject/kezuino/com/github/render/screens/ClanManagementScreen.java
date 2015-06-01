@@ -85,11 +85,12 @@ public class ClanManagementScreen extends BaseScreen {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     if (!tfName.getText().equals("")) {
-                        PacketSetUsername packetSetUsername = new PacketSetUsername(tfName.getText(), emailaddress);
+                        PacketSetUsername packetSetUsername = new PacketSetUsername(tfName.getText(), emailaddress,null);
                         client.send(packetSetUsername);
                         if (packetSetUsername.getResult()) {
                             Dialog d = new Dialog("succes", skin);
                             d.add("Naam succesvol aangepast");
+                            client.setUsername(packetSetUsername.getName());
                             TextButton bExit = new TextButton("Oke", skin);
                             bExit.addListener(new ClickListener() {
                                 @Override

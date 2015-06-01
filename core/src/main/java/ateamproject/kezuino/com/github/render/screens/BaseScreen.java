@@ -9,14 +9,18 @@ import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.attributes.CubemapAttribute;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -76,6 +80,10 @@ public abstract class BaseScreen implements Screen {
 
     public Stage getStage() {
         return stage;
+    }
+    
+    public void setDifferentSkin(){
+        
     }
 
     public Skin getSkin() {

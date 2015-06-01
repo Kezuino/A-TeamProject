@@ -214,7 +214,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerFunc(PacketHandleManagement.class, (packet) -> clanFunctions.handleManagement(packet.getManage(), packet
                 .getClanName(), packet.getEmailadres()));
 
-        packets.registerFunc(PacketSetUsername.class, (packet) -> clanFunctions.setUsername(packet.getName(), packet.getEmailaddress()));
+        packets.registerFunc(PacketSetUsername.class, (packet) -> {
+           boolean setUsername = clanFunctions.setUsername(packet.getName(), packet.getEmailaddress()); 
+           if (setUsername){
+                  getClient(packet.getSender()).setUsername(packet.getName());
+               }
+           return setUsername;
+                });
 
         packets.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
             System.out.print("Login request received for account: " + packet.getEmailAddress());
