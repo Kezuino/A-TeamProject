@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
@@ -70,5 +71,11 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     @Override
     public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void gameObjectCreate(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId) throws RemoteException {
+        PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, sender);
+        client.send(packet);
     }
 }

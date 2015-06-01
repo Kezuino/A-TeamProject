@@ -5,6 +5,7 @@ import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
@@ -197,6 +198,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     @Override
     public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void gameObjectCreate(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId) throws RemoteException {
+        PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, sender);
+        server.send(packet);
     }
 
     @Override

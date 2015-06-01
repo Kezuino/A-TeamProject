@@ -57,7 +57,6 @@ public class Pactale extends GameObject {
 
     /**
      * Hurts the {@link Pactale} so that it loses one life and resets it's position to spawn.
-     *
      */
     public void hurt() {
         if (this.lives < 0) return;
@@ -75,7 +74,7 @@ public class Pactale extends GameObject {
      * that this {@link Pactale} currently is heading.
      */
     public void shootProjectile() {
-        if (this.getActive()){
+        if (this.getActive()) {
             // create projectile
             Projectile proj = new Projectile(this.getExactPosition(), this, this.getMovementSpeed() * 3, this.getDirection(), this
                     .getColor());
@@ -111,10 +110,10 @@ public class Pactale extends GameObject {
     }
 
     public void addPortal(Portal portal) {
-        // remove current portal
+        // Remove current portal.
         removePortal();
 
-        // add portal to new node
+        // Add portal to new node.
         this.setPortal(portal);
         this.getMap()
             .getNode(portal.getNode().getX(), portal.getNode().getY())

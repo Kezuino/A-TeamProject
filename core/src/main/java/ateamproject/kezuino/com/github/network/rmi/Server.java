@@ -42,6 +42,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         return instance;
     }
 
+    public IProtocolClient[] getRmiClientsFromGameId(UUID gameId) {
+        Game game = getGame(gameId);
+        if (game == null) return null;
+
+        return game.getClients().stream().map(id -> getClient(id).getRmi()).toArray(IProtocolClient[]::new);
+    }
+
     @Override
     public void update() {
         for (IClientInfo c : getClients()) {
@@ -460,6 +467,16 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 ClientInfo client = getClient(uuid);
                 try {
                     client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        packets.registerAction(PacketCreateGameObject.class, packet -> {
+            for (IProtocolClient client : getRmiClientsFromGameId(getGameFromClientId(packet.getSender()).getId())) {
+                try {
+                    client.gameObjectCreate(null, packet.getTypeName(), packet.getPosition(), packet.getDirection(), packet.getSpeed(), packet.getId());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

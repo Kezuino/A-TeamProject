@@ -169,12 +169,12 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
     /**
      * Gets the {@link Game} assosicated with the given id.
      *
-     * @param lobbyId {@link UUID} of the {@link Game} to get.
+     * @param gameId {@link UUID} of the {@link Game} to get.
      * @return {@link Game} that was found or null.
      */
-    public Game getGame(UUID lobbyId) {
-        if (lobbyId == null) throw new IllegalArgumentException("Parameter lobbyId must not be null.");
-        return games.get(lobbyId);
+    public Game getGame(UUID gameId) {
+        if (gameId == null) throw new IllegalArgumentException("Parameter gameId must not be null.");
+        return games.get(gameId);
     }
 
     /**

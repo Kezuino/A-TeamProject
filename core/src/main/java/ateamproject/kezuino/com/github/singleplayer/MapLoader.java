@@ -182,6 +182,7 @@ public class MapLoader {
                     }
                     enemy.setTexture(obj.getTextureRegion().getTexture());
                     enemy.setMap(map);
+                    enemy.setId();
                     map.addGameObject(enemy);
 
                     runConsumers(MapObjectTypes.ENEMY.getType(), enemy);
@@ -197,6 +198,7 @@ public class MapLoader {
                     Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
                     pactale.setAnimation(animation);
                     pactale.setTexture(obj.getTextureRegion().getTexture());
+                    pactale.setId();
                     map.addGameObject(pactale);
 
                     runConsumers(MapObjectTypes.PACTALE.getType(), pactale);
@@ -231,6 +233,7 @@ public class MapLoader {
                 throw new IllegalArgumentException("Parameter key must not be null or empty.");
             if (type == null) throw new IllegalArgumentException("Parameter type must not be null or empty.");
             this.key = key;
+            this.type = type;
         }
 
         /**

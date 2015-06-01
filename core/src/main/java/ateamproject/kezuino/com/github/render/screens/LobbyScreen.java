@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.network.rmi.Client;
+import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -22,7 +23,6 @@ import java.util.logging.Logger;
 public class LobbyScreen extends BaseScreen {
 
     private Client client;
-    private String map;
     private String lobbyName;
     private UUID lobbyId;
     private Map<UUID, String> members = new HashMap<>();
@@ -68,7 +68,6 @@ public class LobbyScreen extends BaseScreen {
         PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
         this.lobbyName = lob.getLobbyName();
         this.members = lob.getMembers();
-        this.map = lob.getMap();
 
         createGui();
     }

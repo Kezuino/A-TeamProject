@@ -18,11 +18,17 @@ import ateamproject.kezuino.com.github.utility.game.Direction;
 import ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage;
 import ateamproject.kezuino.com.github.utility.game.balloons.messages.BalloonHelpMe;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.scenes.scene2d.Action;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
+import com.badlogic.gdx.scenes.scene2d.actions.RotateToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -36,11 +42,13 @@ import java.util.UUID;
  * @author Anton
  */
 public class GameScreen extends BaseScreen {
-
-    protected GameSession session;
     private Pactale player;
     private GameRenderer gameRenderer;
     private InputAdapter gameInputAdapter;
+
+    private Dialog pauseMenu;
+    private Dialog playerMenu;
+
     public GameScreen(Game game) {
         this(game, null);
     }
@@ -72,7 +80,7 @@ public class GameScreen extends BaseScreen {
                         player.setDirection(Direction.Right);
                         break;
                     case Input.Keys.SPACE:
-                        if (session.getState() != GameState.Paused) {
+                        if (getSession().getState() != GameState.Paused) {
                             player.shootProjectile();
                         }
                         break;
@@ -88,8 +96,8 @@ public class GameScreen extends BaseScreen {
                         gameRenderer.toggleFullscreen();
                         break;
                     case Input.Keys.TAB:
-                        if (!session.isPauseMenuShowing()) {
-                            if (session.isPlayerMenuShowing()) {
+                        if (!getSession().isPauseMenuShowing()) {
+                            if (getSession().isPlayerMenuShowing()) {
                                 hidePlayersView();
                             } else {
                                 showPlayersView();
@@ -97,12 +105,8 @@ public class GameScreen extends BaseScreen {
                         }
                         break;
                     case Input.Keys.ESCAPE:
-                        if (!session.isPlayerMenuShowing()) {
-                            if (session.isPauseMenuShowing()) {
-                                hidePauseView();
-                            } else {
-                                showPauseView();
-                            }
+                        if (!getSession().isPlayerMenuShowing()) {
+                            showPauseMenu();
                         }
                         break;
                     default:
@@ -112,22 +116,98 @@ public class GameScreen extends BaseScreen {
             }
         };
         inputs.addProcessor(gameInputAdapter);
+
+        createGui();
     }
 
-    public GameSession getSession() {
-        return session;
+    private void createGui() {
+        // Create pause menu.
+        pauseMenu = new Dialog("Menu", skin);
+        pauseMenu.setKeepWithinStage(false);
+
+        TextButton bContinue = new TextButton("Doorgaan", skin);
+        bContinue.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                MoveToAction action = Actions.action(MoveToAction.class);
+                action.setPosition(stage.getWidth() / 2 - pauseMenu.getWidth() / 2, stage.getHeight() + pauseMenu.getHeight());
+                action.setDuration(0.1f);
+                pauseMenu.hide(action);
+            }
+        });
+        pauseMenu.add(bContinue);
+
+        TextButton bExit = new TextButton("Verlaten", skin);
+        bExit.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Client disconnected.");
+                Client.getInstance().send(packet);
+
+                game.setScreen(new MainScreen(game));
+            }
+        });
+
+        pauseMenu.add(bExit);
+
+        // Create player menu.
+//        playerMenu = new Dialog("Menu", skin) {
+//            {
+//                button("Oke");
+//            }
+//        };
+//
+//        Table scrollTable = new Table(skin);
+//
+//        ArrayList<String> people = new ArrayList<>();
+//        PacketGetKickInformation packetGetKickInfo = new PacketGetKickInformation();
+//        Client.getInstance().send(packetGetKickInfo);
+//        people.addAll(packetGetKickInfo.getResult());
+//
+//        for (String person : people) {
+//            String[] peopleResult = person.split(" ");
+//
+//            TextButton bKick = new TextButton("Kick", skin);
+//            bContinue.addListener(new ClickListener() {
+//                @Override
+//                public void clicked(InputEvent event, float x, float y) {
+//                    PacketSetKickInformation packetKick = new PacketSetKickInformation(UUID.fromString(peopleResult[4]));
+//                    Client.getInstance().send(packetKick);
+//
+//                    PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
+//                    Client.getInstance().send(packetKickInfo);
+//                    people.addAll(packetKickInfo.getResult());
+//                    playerMenu.hide();
+//                    showPlayersView();
+//                }
+//            });
+//
+//            scrollTable.add(peopleResult[0]);
+//            scrollTable.columnDefaults(0);
+//            scrollTable.add(bKick);
+//            scrollTable.columnDefaults(1);
+//            scrollTable.add(peopleResult[1] + "/" + peopleResult[2]);
+//            scrollTable.columnDefaults(2);
+//            scrollTable.row();
+//
+//            if (peopleResult[3].equals("0")) {
+//                bKick.setDisabled(true);
+//            }
+//        }
+//
+//        playerMenu.add(scrollTable);
     }
 
     public void start(Score score) {
-        session = new GameSession();
-        session.setScore(score);
-        session.setMap(Map.load(session, "2"));
+        setSession(new GameSession());
+        getSession().setScore(score);
+        getSession().setMap(Map.load(getSession(), "2"));
 
-        player = session.getPlayer(0);
+        player = getSession().getPlayer(0);
 
         // Renderers.
-        gameRenderer = addRenderer(new GameRenderer(session));
-        addRenderer(new GameUIRenderer(session.getMap()));
+        gameRenderer = addRenderer(new GameRenderer(getSession()));
+        addRenderer(new GameUIRenderer(getSession().getMap()));
     }
 
     @Override
@@ -135,22 +215,22 @@ public class GameScreen extends BaseScreen {
         // Render Game and UI.
         super.render(delta);
 
-        switch (this.session.getState()) {
+        switch (getSession().getState()) {
             case GameOver:
-                game.setScreen(new GameOverScreen(game, this.session.getScore()));
+                game.setScreen(new GameOverScreen(game, getSession().getScore()));
                 break;
 
             case Completed:
                 Actor btnContinue = new TextButton("Doorgaan", skin);
                 Actor lblEndGameText = new Label("Your score was:", skin);
-                Actor lblScore = new Label(Integer.toString(this.session.getScore().valueOf()), skin);
+                Actor lblScore = new Label(Integer.toString(getSession().getScore().valueOf()), skin);
                 btnContinue.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         btnContinue.remove();
                         lblEndGameText.remove();
                         lblScore.remove();
-                        start(session.getScore());
+                        start(getSession().getScore());
                     }
                 });
 
@@ -163,112 +243,43 @@ public class GameScreen extends BaseScreen {
                 stage.addActor(btnContinue);
                 stage.addActor(lblEndGameText);
                 stage.addActor(lblScore);
-                this.session.end();
+                getSession().end();
                 break;
         }
     }
 
-    public void showPauseView() {
-        Dialog d = new Dialog("Menu", skin);
+    public void showPauseMenu() {
+        pauseMenu.show(stage);
+        pauseMenu.setPosition(stage.getWidth() / 2 - pauseMenu.getWidth() / 2, stage.getHeight() + pauseMenu.getHeight());
 
-        TextButton bContinue = new TextButton("Doorgaan", skin);
-        bContinue.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                d.hide();
-            }
-        });
-        d.add(bContinue);
+        MoveToAction action = Actions.action(MoveToAction.class);
+        action.setPosition(stage.getWidth() / 2 - pauseMenu.getWidth() / 2, stage.getHeight() / 2 - pauseMenu.getHeight() / 2);
+        action.setDuration(0.3f);
+        action.setInterpolation(Interpolation.bounceOut);
+        pauseMenu.addAction(action);
 
-        TextButton bExit = new TextButton("Verlaten", skin);
-        bExit.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Leaved through menu");
-                Client.getInstance().send(packet);
-
-                game.setScreen(new MainScreen(game));
-            }
-        });
-
-        d.add(bExit);
-        d.show(stage);
-        this.session.showPauseMenu();
-    }
-
-    public void hidePauseView() {
-        this.session.showPauseMenu();
+        getSession().showPauseMenu();
     }
 
     public void showPlayersView() {
-        Dialog d = new Dialog("Menu", skin);
-
-        TextButton bContinue = new TextButton("Oke", skin);
-        bContinue.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                d.hide();
-            }
-        });
-        d.add(bContinue);
-
-        Table scrollTable = new Table(skin);
-
-        ArrayList<String> peoples = new ArrayList<>();
-        PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
-        Client.getInstance().send(packetKickInfo);
-        peoples.addAll(packetKickInfo.getResult());
-
-        for (String people : peoples) {
-            String[] peopleResult = people.split(" ");
-
-            TextButton bKick = new TextButton("Kick", skin);
-            bContinue.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    PacketSetKickInformation packetKick = new PacketSetKickInformation(UUID.fromString(peopleResult[4]));
-                    Client.getInstance().send(packetKick);
-
-                    PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
-                    Client.getInstance().send(packetKickInfo);
-                    peoples.addAll(packetKickInfo.getResult());
-                    d.hide();
-                    showPlayersView();
-                }
-            });
-
-            scrollTable.add(peopleResult[0]);
-            scrollTable.columnDefaults(0);
-            scrollTable.add(bKick);
-            scrollTable.columnDefaults(1);
-            scrollTable.add(peopleResult[1] + "/" + peopleResult[2]);
-            scrollTable.columnDefaults(2);
-            scrollTable.row();
-
-            if (peopleResult[3].equals("0")) {
-                bKick.setDisabled(true);
-            }
-        }
-
-        d.add(scrollTable);
-        d.show(stage);
-        this.session.showPlayerMenu();
+        playerMenu.show(stage);
+        getSession().showPlayerMenu();
     }
 
     public void hidePlayersView() {
-        this.session.showPlayerMenu();
+        getSession().showPlayerMenu();
     }
 
     @Override
     public void resume() {
         // TODO: If multiplayer (not host): Set the state of the client to unpause. If all clients are unpaused the game can resume as a whole. The host can always force a resume.
-        this.session.resume();
+        getSession().resume();
     }
 
     @Override
     public void pause() {
         // TODO: If multiplayer: Request pausing to server when it's enabled for this game.
-        this.session.pause();
+        getSession().pause();
     }
 
     @Override
