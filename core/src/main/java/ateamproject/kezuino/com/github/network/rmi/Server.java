@@ -192,12 +192,35 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
             return result;
         }));
-        
-        packets.registerFunc(PacketGetLobbies.class, (p) -> {
-            getClient(p.getSender()).getClans();
-             return null;
+
+        packets.registerFunc(PacketGetClans.class, (p) -> {
+            return getClient(p.getSender()).getClans();
         });
-        
+
+        packets.registerAction(PacketGetClans.class, (p) -> {
+            try {
+                //logica voor setclans
+                // naar database
+                // getcleint.(p.sender).setclans(array uit de db);
+                ArrayList<String> clans = new ArrayList<>();
+
+                ResultSet resultSet = Database.getInstance()
+                        .query("SELECT c.Name as clanname FROM `clan_account` cn, `clan` c, `account` a WHERE cn.ClanId = c.Id AND cn.AccountId = a.Id AND a.Name = '?'",
+                                getClient(p.getSender()).getUsername()
+                        );
+
+                while (resultSet.next()) {
+                    clans.add(resultSet.getString("clanname"));
+                }
+                
+                getClient(p.getSender()).setClans(clans);
+                
+            } catch (SQLException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+        });
+
         packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
 
         packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(getClient(packet.getSender()).getUsername()));
@@ -505,9 +528,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 return;
             }
 
-            // Notify all to start loading their maps.
+            // Set the loading states of everyone to empty and notify everyone to start loading the map.
             for (UUID uuid : game.getClientsAsArray()) {
                 ClientInfo client = getClient(uuid);
+                client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
+
                 try {
                     client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid));
                 } catch (RemoteException e) {
@@ -517,12 +542,28 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketCreateGameObject.class, packet -> {
-            for (IProtocolClient client : getRmiClientsFromGameId(getGameFromClientId(packet.getSender()).getId())) {
-                try {
-                    client.gameObjectCreate(null, packet.getTypeName(), packet.getPosition(), packet.getDirection(), packet.getSpeed(), packet.getId());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
+            Game game = getGameFromClientId(packet.getSender());
+            game.getLoadQueue().add(packet);
+
+            System.out.println("Added to queue: " + packet);
+        });
+
+        packets.registerAction(PacketSetLoadStatus.class, packet -> {
+            ClientInfo client = getClient(packet.getSender());
+            client.setLoadStatus(packet.getStatus());
+
+            Game game = getGameFromClientId(packet.getSender());
+            if (game.getClients().stream().map(this::getClient).allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded || info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
+                game.getClients().stream().map(this::getClient).forEach(c -> {
+                    while (!game.getLoadQueue().isEmpty()) {
+                        PacketCreateGameObject packetCreate = game.getLoadQueue().remove();
+                        try {
+                            c.getRmi().createObject(null, packetCreate.getTypeName(), packetCreate.getPosition(), packetCreate.getDirection(), packetCreate.getSpeed(), packetCreate.getId());
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
     }

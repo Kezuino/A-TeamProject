@@ -143,6 +143,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         server.send(packet);
         return packet.getResult();
     }
+    
+    @Override
+    public void setClans(UUID Sender) throws RemoteException {
+        PacketReloadClans packet = new PacketReloadClans(Sender);
+        server.send(packet);
+    }
 
     @Override
     public boolean setUsername(String name, String emailaddress,UUID sender) throws RemoteException {
@@ -191,6 +197,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
+    public void setLoadStatus(UUID sender, PacketSetLoadStatus.LoadStatus status) throws RemoteException {
+        PacketSetLoadStatus packet = new PacketSetLoadStatus(status, sender);
+        server.send(packet);
+    }
+
+    @Override
     public boolean loginCreateUser(UUID sender, String username, String email) throws RemoteException {
         PacketLoginCreateNewUser packet = new PacketLoginCreateNewUser(username, email, sender);
         server.send(packet);
@@ -208,7 +220,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void gameObjectCreate(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId) throws RemoteException {
+    public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId) throws RemoteException {
         PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, sender);
         server.send(packet);
     }

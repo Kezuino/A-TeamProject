@@ -1,6 +1,8 @@
 package ateamproject.kezuino.com.github.network;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketSetLoadStatus;
 import java.util.ArrayList;
+
 import java.util.UUID;
 
 /**
@@ -94,4 +96,20 @@ public interface IClientInfo {
     void setUsername(String username);
     
      ArrayList<String> getClans();
+     
+     ArrayList<String> setClans(ArrayList<String> clans);
+
+    /**
+     * Gets the {@link ateamproject.kezuino.com.github.network.packet.packets.PacketSetLoadStatus.LoadStatus} that this {@link IClientInfo} is currently in.
+     *
+     * @return New {@link ateamproject.kezuino.com.github.network.packet.packets.PacketSetLoadStatus.LoadStatus} to set for this {@link IClientInfo}.
+     */
+    PacketSetLoadStatus.LoadStatus getLoadStatus();
+
+    /**
+     * Sets the {@link ateamproject.kezuino.com.github.network.packet.packets.PacketSetLoadStatus.LoadStatus} that this {@link IClientInfo} is currently in.
+     *
+     * @param status New {@link ateamproject.kezuino.com.github.network.packet.packets.PacketSetLoadStatus.LoadStatus} to set for this {@link IClientInfo}.
+     */
+    void setLoadStatus(PacketSetLoadStatus.LoadStatus status);
 }
