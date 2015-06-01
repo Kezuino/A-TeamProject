@@ -219,6 +219,18 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
             return null;
         });
+        
+        packets.registerFunc(PacketGetClans.class, (p) -> {
+            // run methode op de serverbase .getclans
+            try{
+                return getRmi().getServer().getClans(p.getSender());
+            } catch (RemoteException ex) {
+                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
+                        .log(Level.SEVERE, null, ex);
+            }
+            
+            return null;
+        });
 
         packets.registerFunc(PacketJoinLobby.class, (p) -> {
             try {

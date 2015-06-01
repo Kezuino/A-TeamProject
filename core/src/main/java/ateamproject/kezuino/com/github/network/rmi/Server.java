@@ -191,7 +191,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
             return result;
         }));
-
+        
+        packets.registerFunc(PacketGetLobbies.class, (p) -> {
+            getClient(p.getSender()).getClans();
+             return null;
+        });
+        
         packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
 
         packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(getClient(packet.getSender()).getUsername()));
