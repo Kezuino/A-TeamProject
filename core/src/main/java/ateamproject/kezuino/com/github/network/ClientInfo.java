@@ -90,4 +90,10 @@ public abstract class ClientInfo implements IClientInfo {
     public ArrayList<String> getClans(){
         return this.clans;
     }
+    
+     @Override
+    public ArrayList<String> setClans(ArrayList<String> clans){
+        this.clans = clans;
+        return this.clans;
+    }
 }

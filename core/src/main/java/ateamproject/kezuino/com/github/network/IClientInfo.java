@@ -94,4 +94,6 @@ public interface IClientInfo {
     void setUsername(String username);
     
      ArrayList<String> getClans();
+     
+     ArrayList<String> setClans(ArrayList<String> clans);
 }
