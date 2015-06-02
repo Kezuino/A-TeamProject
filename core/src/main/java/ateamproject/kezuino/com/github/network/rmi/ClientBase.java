@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
+import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
 
@@ -51,8 +52,8 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void loadGame(String mapName, boolean isMaster) throws RemoteException {
-        client.send(new PacketLoadGame(mapName, isMaster));
+    public void loadGame(String mapName, boolean isMaster, int playerLimit) throws RemoteException {
+        client.send(new PacketLoadGame(mapName, isMaster, playerLimit));
     }
 
     @Override
@@ -86,9 +87,16 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException {
+    public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index, ItemType itemType) throws RemoteException {
         PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, color, sender);
         packet.setIndex(index);
+        packet.setItemType(itemType);
+        client.send(packet);
+    }
+
+    @Override
+    public void shootProjectile(UUID sender, Vector2 position, Direction direction, float speed, UUID objId) throws RemoteException {
+        PacketShootProjectile packet = new PacketShootProjectile(position, direction, speed, objId, sender, null);
         client.send(packet);
     }
 }

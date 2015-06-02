@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLobbySetDetails;
+import ateamproject.kezuino.com.github.singleplayer.Map;
 import com.badlogic.gdx.Game;
 
 import java.rmi.RemoteException;
@@ -46,10 +47,12 @@ public interface IProtocolClient extends IProtocol {
      * Notifies the {@link IProtocolClient} that is should start loading a map.
      * If {@code isMaster} is true, the {@link IProtocolClient} should load all objects and synchronize them with the {@link IProtocolServer}.
      *
-     * @param mapName  Name of the {@link ateamproject.kezuino.com.github.singleplayer.Map} to load.
-     * @param isMaster If true, receiving {@link IProtocolClient} should synchronize all created objects back to the {@link IProtocolServer}.
+     * @param mapName     Name of the {@link Map} to load.
+     * @param isMaster    If true, receiving {@link IProtocolClient} should synchronize all created objects back to the {@link IProtocolServer}.
+     * @param playerLimit Amount of players that should be loaded for this {@link Map}.
+     * @throws RemoteException
      */
-    void loadGame(String mapName, boolean isMaster) throws RemoteException;
+    void loadGame(String mapName, boolean isMaster, int playerLimit) throws RemoteException;
 
 
     /**

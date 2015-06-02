@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.network.Client;
 import ateamproject.kezuino.com.github.network.Server;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketField;
+import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
 
@@ -28,6 +29,8 @@ public class PacketCreateGameObject extends Packet {
     protected int color;
     @PacketField(6)
     protected int index;
+    @PacketField(7)
+    protected ItemType type;
 
     public PacketCreateGameObject() {
     }
@@ -44,6 +47,14 @@ public class PacketCreateGameObject extends Packet {
         this.speed = speed;
         this.color = color;
         this.id = id;
+    }
+
+    public ItemType getItemType() {
+        return type;
+    }
+
+    public void setItemType(ItemType type) {
+        this.type = type;
     }
 
     public int getIndex() {

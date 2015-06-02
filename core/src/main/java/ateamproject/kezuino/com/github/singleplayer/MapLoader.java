@@ -7,7 +7,10 @@ import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.TextureMapObject;
-import com.badlogic.gdx.maps.tiled.*;
+import com.badlogic.gdx.maps.tiled.TiledMap;
+import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
+import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
+import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.*;
@@ -24,6 +27,7 @@ public class MapLoader {
     protected TiledMap tiledMap;
     protected EnumSet<MapObjectTypes> typesToLoad;
     protected HashMap<Class, List<Consumer>> consumers;
+    protected int playerLimit;
 
     public MapLoader(GameSession session, String mapName) {
         if (session == null) throw new IllegalArgumentException("Parameter session must not be null.");
@@ -85,6 +89,10 @@ public class MapLoader {
         return map;
     }
 
+    public void setPlayerLimit(int limit) {
+        this.playerLimit = limit;
+    }
+
     /**
      * Fully loads the {@link Map} from the TMX file.
      */
@@ -102,6 +110,7 @@ public class MapLoader {
         list.add(consumer);
     }
 
+    @SuppressWarnings("unchecked")
     protected <T> void runConsumers(Class<?> type, T obj) {
         if (!consumers.containsKey(type)) return;
         for (Consumer consumer : consumers.get(type)) {
@@ -155,14 +164,15 @@ public class MapLoader {
                     if (objProps.containsKey("index")) {
                         playerIndex = Integer.valueOf(objProps.get("index", String.class));
                     }
+                    if (playerLimit <= 0 || playerIndex + 1 <= playerLimit) {
+                        // Create pactale.
+                        Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
+                        pactale.setTexture(obj.getTextureRegion());
+                        pactale.setId();
+                        map.addGameObject(pactale);
 
-                    // Create pactale.
-                    Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
-                    pactale.setTexture(obj.getTextureRegion());
-                    pactale.setId();
-                    map.addGameObject(pactale);
-
-                    runConsumers(MapObjectTypes.PACTALE.getType(), pactale);
+                        runConsumers(MapObjectTypes.PACTALE.getType(), pactale);
+                    }
                 }
             }
         }

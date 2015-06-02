@@ -1,6 +1,8 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.pathfinding.AStar;
+import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import ateamproject.kezuino.com.github.utility.game.Nodes;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -204,7 +206,7 @@ public class Map {
      */
     public GameObject addGameObject(GameObject object) {
         if (object == null) throw new IllegalArgumentException("Parameter object must not be null.");
-        if (hasGameObject(object)) return null;
+        if (hasGameObject(object)) throw new IllegalStateException("Object already exists on this map.");
         if (gameObjects.add(object)) {
             object.setMap(this);
             return object;
@@ -292,7 +294,7 @@ public class Map {
      * @return The current {@link GameSession}
      */
     public GameSession getSession() {
-        return this.gameSession;
+        return gameSession;
     }
 
     /**

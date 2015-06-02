@@ -5,11 +5,7 @@ import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class Pactale extends GameObject {
     private int playerIndex;
@@ -53,6 +49,10 @@ public class Pactale extends GameObject {
         return this.playerIndex;
     }
 
+    public void setPlayerIndex(int playerIndex) {
+        this.playerIndex = playerIndex;
+    }
+
     public Portal getPortal() {
         return this.portal;
     }
@@ -88,17 +88,20 @@ public class Pactale extends GameObject {
      * If this {@link Pactale} is active, will shoot a portal in the direction
      * that this {@link Pactale} currently is heading.
      */
-    public void shootProjectile() {
+    public Projectile shootProjectile() {
         if (this.getActive()) {
             // create projectile
             Projectile proj = new Projectile(this.getExactPosition(), this, this.getMovementSpeed() * 3, this.getDirection(), this
                     .getColor());
+            proj.setId();
             getMap().addGameObject(proj);
             Assets.playSound("portal_shot.mp3");
 
             // check if next node has collision
             proj.moveAdjacent(direction);
+            return proj;
         }
+        return null;
     }
 
     @Override

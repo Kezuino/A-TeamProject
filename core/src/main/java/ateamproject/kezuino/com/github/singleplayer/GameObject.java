@@ -97,6 +97,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
     private float animateTime;
 
     public GameObject() {
+        this.isActive = true;
     }
 
     /**

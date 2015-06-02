@@ -8,6 +8,7 @@ package ateamproject.kezuino.com.github.render.screens;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetKickInformation;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketSetKickInformation;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketShootProjectile;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
@@ -22,6 +23,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -51,17 +53,11 @@ public class GameScreen extends BaseScreen {
     private Dialog playerMenu;
 
     public GameScreen(Game game) {
-        this(game, null);
-    }
-
-    public GameScreen(Game game, Score score) {
         super(game);
 
         clearOnRenderColor = Color.BLACK;
         Assets.create();
         backgroundMusic = Assets.getMusicStream("action.mp3");
-
-        start(score);
 
         // Gameplay controls handling:
         gameInputAdapter = new InputAdapter() {
@@ -69,20 +65,25 @@ public class GameScreen extends BaseScreen {
             public boolean keyDown(int keycode) {
                 switch (keycode) {
                     case Input.Keys.W:
+                        if (getSession().getState() == GameState.Paused) break;
                         player.setDirection(Direction.Up);
                         break;
                     case Input.Keys.S:
+                        if (getSession().getState() == GameState.Paused) break;
                         player.setDirection(Direction.Down);
                         break;
                     case Input.Keys.A:
+                        if (getSession().getState() == GameState.Paused) break;
                         player.setDirection(Direction.Left);
                         break;
                     case Input.Keys.D:
+                        if (getSession().getState() == GameState.Paused) break;
                         player.setDirection(Direction.Right);
                         break;
                     case Input.Keys.SPACE:
                         if (getSession().getState() != GameState.Paused) {
-                            player.shootProjectile();
+                            Projectile proj = player.shootProjectile();
+                            Client.getInstance().send(new PacketShootProjectile(proj.getExactPosition(), proj.getDirection(), proj.getMovementSpeed(), proj.getId()));
                         }
                         break;
                     case Input.Keys.H:
@@ -152,15 +153,22 @@ public class GameScreen extends BaseScreen {
         pauseMenu.add(bExit);
     }
 
+    public void start() {
+        start(null);
+    }
+
     public void start(Score score) {
-        setSession(new GameSession());
-        getSession().setScore(score);
-        getSession().setMap(Map.load(getSession(), "2"));
+        if (getSession() == null) {
+            System.out.println("Resetted session on GameScreen.start");
+            setSession(new GameSession());
+        }
+        if (getSession().getScore() == null) getSession().setScore(score);
+        if (getSession().getMap() == null) throw new IllegalStateException("Map should be loaded before the GameScreen can be started.");
 
         player = getSession().getPlayer(0);
 
         // Renderers.
-        gameRenderer = addRenderer(new GameRenderer(getSession()));
+        gameRenderer = addRenderer(new GameRenderer());
         addRenderer(new GameUIRenderer(getSession().getMap()));
     }
 
@@ -176,7 +184,7 @@ public class GameScreen extends BaseScreen {
 
             case Completed:
                 Actor btnContinue = new TextButton("Doorgaan", skin);
-                Actor lblEndGameText = new Label("Your score was:", skin);
+                Actor lblEndGameText = new Label("Je score is:", skin);
                 Actor lblScore = new Label(Integer.toString(getSession().getScore().valueOf()), skin);
                 btnContinue.addListener(new ClickListener() {
                     @Override

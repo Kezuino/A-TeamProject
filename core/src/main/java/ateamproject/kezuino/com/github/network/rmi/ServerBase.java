@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
+import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
 
@@ -135,14 +136,14 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         server.send(packet);
         return packet.getResult();
     }
-    
+
     @Override
     public ArrayList<String> getClans(UUID Sender) throws RemoteException {
         PacketGetClans packet = new PacketGetClans(Sender);
         server.send(packet);
         return packet.getResult();
     }
-    
+
     @Override
     public void setClans(UUID Sender) throws RemoteException {
         PacketReloadClans packet = new PacketReloadClans(Sender);
@@ -150,8 +151,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean setUsername(String name, String emailaddress,UUID sender) throws RemoteException {
-        PacketSetUsername packet = new PacketSetUsername(name, emailaddress,sender);
+    public boolean setUsername(String name, String emailaddress, UUID sender) throws RemoteException {
+        PacketSetUsername packet = new PacketSetUsername(name, emailaddress, sender);
         server.send(packet);
         return packet.getResult();
     }
@@ -225,9 +226,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException {
+    public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index, ItemType itemType) throws RemoteException {
         PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, color, sender);
         packet.setIndex(index);
+        packet.setItemType(itemType);
         server.send(packet);
     }
 
@@ -241,6 +243,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     @Override
     public void setKickInformation(UUID getPersonToVoteFor) throws RemoteException {
         PacketSetKickInformation packet = new PacketSetKickInformation(getPersonToVoteFor);
+        server.send(packet);
+    }
+
+    @Override
+    public void shootProjectile(UUID sender, Vector2 position, Direction direction, float speed, UUID objId) throws RemoteException {
+        PacketShootProjectile packet = new PacketShootProjectile(position, direction, speed, objId, sender);
         server.send(packet);
     }
 

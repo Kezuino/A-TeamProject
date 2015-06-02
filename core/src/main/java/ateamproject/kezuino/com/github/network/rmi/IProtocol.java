@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
+import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
@@ -21,5 +22,7 @@ public interface IProtocol extends Remote {
 
     void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException;
 
-    void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException;
+    void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index, ItemType itemType) throws RemoteException;
+    
+    void shootProjectile(UUID sender,Vector2 position, Direction direction, float speed, UUID objId) throws RemoteException;
 }
