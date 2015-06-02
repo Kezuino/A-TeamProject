@@ -179,7 +179,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 this.setUsername(data.getUsername());
                 this.setId(data.getPrivateId());
                 this.setPublicId(data.getPublicId());
-                System.out.println("Logged in as: " + data.getPrivateId());
+                System.out.printf("Logged in as: (Private: %s), (Public: %s)%n", data.getPrivateId(), data.getPublicId());
             } else {
                 this.setEmailadres(null);
                 this.setUsername(null);
@@ -662,16 +662,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 }
             } else {
                 // Server sended this.
-                System.out.println("(Pub) Our id: " + Client.getInstance().getPublicId());
-                System.out.println("(Pri) Our id: " + Client.getInstance().getId());
-                System.out.println("(Pub) Sender" + packet.getSender());
-
-                System.out.println("IDS: ");
-                for (int i = 0; i < 2; i++) {
-                    System.out.println(BaseScreen.getSession().getPlayer(i).getId());
-                }
-
-
                 BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
             }
         });
