@@ -67,7 +67,7 @@ public class LobbyListScreen extends BaseScreen {
                     Object[] arrayClans = new Object[listclans.size()];
                     for (int i = 0; i < listclans.size(); i++) {
                         
-                        arrayClans[i] = new Label(listclans.get(i), skin);
+                        arrayClans[i] =listclans.get(i);
                         
                     }
                     clanDropdown = new SelectBox<Object>(skin);
