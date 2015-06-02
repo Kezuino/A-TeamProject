@@ -146,4 +146,8 @@ public class Pactale extends GameObject {
         this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).removePortal(portal.getDirection());
         this.portal = null;
     }
+
+    public void setPlayerIndex(int playerIndex) {
+        this.playerIndex = playerIndex;
+    }
 }

@@ -24,6 +24,7 @@ public class MapLoader {
     protected TiledMap tiledMap;
     protected EnumSet<MapObjectTypes> typesToLoad;
     protected HashMap<Class, List<Consumer>> consumers;
+    protected int playerLimit;
 
     public MapLoader(GameSession session, String mapName) {
         if (session == null) throw new IllegalArgumentException("Parameter session must not be null.");
@@ -83,6 +84,10 @@ public class MapLoader {
             }
         }
         return map;
+    }
+
+    public void setPlayerLimit(int limit) {
+        this.playerLimit = limit;
     }
 
     /**
@@ -155,14 +160,16 @@ public class MapLoader {
                     if (objProps.containsKey("index")) {
                         playerIndex = Integer.valueOf(objProps.get("index", String.class));
                     }
+                    if (playerLimit <= 0 || playerIndex + 1 <= playerLimit) {
+                        // Create pactale.
+                        Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
+                        pactale.setTexture(obj.getTextureRegion());
+                        pactale.setId();
+                        map.addGameObject(pactale);
 
-                    // Create pactale.
-                    Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
-                    pactale.setTexture(obj.getTextureRegion());
-                    pactale.setId();
-                    map.addGameObject(pactale);
-
-                    runConsumers(MapObjectTypes.PACTALE.getType(), pactale);
+                        runConsumers(MapObjectTypes.PACTALE.getType(), pactale);
+                        System.out.printf("Index: %s, limit: %s %n", playerIndex, playerLimit);
+                    }
                 }
             }
         }

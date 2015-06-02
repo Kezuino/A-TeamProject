@@ -19,7 +19,9 @@ public class PacketLoadGame extends Packet {
      * If true, the receiver should send created objects from the TMX file back to the server for broadcasting.
      */
     @PacketField(1)
-    private boolean master;
+    protected boolean master;
+    @PacketField(2)
+    protected int playerLimit;
 
     public PacketLoadGame() {
     }
@@ -32,6 +34,19 @@ public class PacketLoadGame extends Packet {
         super(senderAndReceivers);
         this.mapName = mapName;
         this.master = master;
+    }
+
+    public PacketLoadGame(String mapName, boolean master, int playerLimit, UUID... senderAndReceivers) {
+        this(mapName, master);
+        this.playerLimit = playerLimit;
+    }
+
+    public int getPlayerLimit() {
+        return playerLimit;
+    }
+
+    public void setPlayerLimit(int playerLimit) {
+        this.playerLimit = playerLimit;
     }
 
     /**

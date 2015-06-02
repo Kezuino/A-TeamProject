@@ -51,8 +51,8 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void loadGame(String mapName, boolean isMaster) throws RemoteException {
-        client.send(new PacketLoadGame(mapName, isMaster));
+    public void loadGame(String mapName, boolean isMaster, int playerLimit) throws RemoteException {
+        client.send(new PacketLoadGame(mapName, isMaster, playerLimit));
     }
 
     @Override

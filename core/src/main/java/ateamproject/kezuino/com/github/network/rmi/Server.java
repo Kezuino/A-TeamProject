@@ -515,7 +515,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
 
                 try {
-                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid));
+                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -524,12 +524,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerAction(PacketCreateGameObject.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-
-            // Don't add pactales that are outside of the client count in the lobby.
-            if (packet.getTypeName().equalsIgnoreCase("pactale")) {
-                if (packet.getIndex() + 1 > game.getClients().size()) return;
-            }
-
             game.getLoadQueue().add(packet);
         });
 

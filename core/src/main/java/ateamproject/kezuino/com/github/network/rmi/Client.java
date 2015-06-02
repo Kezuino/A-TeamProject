@@ -469,6 +469,11 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             Color.rgba8888ToColor(color, p.getColor());
             object.setColor(color);
 
+            if (object instanceof Pactale) {
+                Pactale pactale = (Pactale) object;
+                pactale.setPlayerIndex(p.getIndex());
+            }
+
             session.getMap().addGameObject(object);
             session.setObjectsLoaded(session.getObjectsLoaded() + 1);
 
@@ -543,6 +548,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             final EnumSet<MapLoader.MapObjectTypes> finalExcluded = excluded;
             Gdx.app.postRunnable(() -> {
                 loader.getTypesToLoad().removeAll(finalExcluded);
+                loader.setPlayerLimit(p.getPlayerLimit());
                 loader.load();
                 session.setMap(loader.getMap());
 
