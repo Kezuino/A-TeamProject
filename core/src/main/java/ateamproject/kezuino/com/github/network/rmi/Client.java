@@ -653,20 +653,26 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         });
 
         packets.registerAction(PacketShootProjectile.class, packet -> {
-            try {
-                if (packet.getSender() != null) {
-                    getRmi().getServer()
-                            .shootProjectile(packet.getSender(), packet.getPosition(), packet.getDirection(), packet.getSpeed(), packet
-                                    .getId());
-                } else if (BaseScreen.getSession() != null && BaseScreen.getSession().getMap() != null) {
-                    Pactale player = BaseScreen.getSession().getPlayer(packet.getSender());
-                    Projectile projectile = new Projectile(packet.getPosition(), player, packet.getSpeed(), packet.getDirection(), player
-                            .getColor());
-                    projectile.setId(packet.getId());
-                    BaseScreen.getSession().getMap().addGameObject(projectile);
+            // If client sended it..send this private id to server.
+            if (packet.getSender() != null && packet.getSender().equals(getId())) {
+                try {
+                    getRmi().getServer().shootProjectile(packet.getSender());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
-            } catch (RemoteException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            } else {
+                // Server sended this.
+                System.out.println("(Pub) Our id: " + Client.getInstance().getPublicId());
+                System.out.println("(Pri) Our id: " + Client.getInstance().getId());
+                System.out.println("(Pub) Sender" + packet.getSender());
+
+                System.out.println("IDS: ");
+                for (int i = 0; i < 2; i++) {
+                    System.out.println(BaseScreen.getSession().getPlayer(i).getId());
+                }
+
+
+                BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
             }
         });
     }

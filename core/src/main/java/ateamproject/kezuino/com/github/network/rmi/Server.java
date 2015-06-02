@@ -522,7 +522,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
 
             // Set the loading states of everyone to empty and notify everyone to start loading the map.
-            for (UUID uuid : game.getClientsAsArray()) {
+            for (UUID uuid : game.getClients()) {
                 ClientInfo client = getClient(uuid);
                 client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
 
@@ -537,9 +537,18 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerAction(PacketCreateGameObject.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
 
+            System.out.printf("Sender (private): %s%n", packet.getSender());
+            System.out.printf("Sender (public): %s%n", getClient(game.getClients().get(packet.getIndex())).getPublicId());
+
+            System.out.println("All clients: ");
+            game.getClients().stream().forEach(id -> {
+                System.out.println("Private id: " + id);
+                System.out.println("Public id: " + getClient(id).getPublicId());
+            });
+
             // Replace Pactale UUID with the public id of the connected client (needed for sync with movement).
             if (packet.getTypeName().equalsIgnoreCase(Pactale.class.getSimpleName())) {
-                packet.setId(getClient(game.getClientsAsArray()[packet.getIndex()]).getPublicId());
+                packet.setId(getClient(game.getClients().get(packet.getIndex())).getPublicId());
             }
 
             game.getLoadQueue().add(packet);
@@ -653,14 +662,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             Game game = getGameFromClientId(packet.getSender());
             IProtocolClient[] receivers = game.getClients()
                                               .stream()
-                                              .filter(c -> !c.equals(game.getHostId()))
+                                              .filter(c -> !c.equals(packet.getSender()))
                                               .map(id -> getClient(id).getRmi())
                                               .toArray(IProtocolClient[]::new);
 
             for (IProtocolClient receiver : receivers) {
                 try {
-                    receiver.shootProjectile(null, packet.getPosition(), packet.getDirection(), packet.getSpeed(), packet
-                            .getId());
+                    receiver.shootProjectile(getClient(packet.getSender()).getPublicId());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

@@ -82,8 +82,8 @@ public class GameScreen extends BaseScreen {
                         break;
                     case Input.Keys.SPACE:
                         if (getSession().getState() != GameState.Paused) {
-                            Projectile proj = player.shootProjectile();
-                            Client.getInstance().send(new PacketShootProjectile(proj.getExactPosition(), proj.getDirection(), proj.getMovementSpeed(), proj.getId()));
+                            player.shootProjectile();
+                            Client.getInstance().send(new PacketShootProjectile());
                         }
                         break;
                     case Input.Keys.H:

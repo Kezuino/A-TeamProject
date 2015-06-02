@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateGameObject;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -86,12 +87,13 @@ public class Game {
      *
      * @return All {@link IClientInfo clients} that are currently in this game / lobby.
      */
-    public LinkedHashSet<UUID> getClients() {
-        return clients;
+    public ArrayList<UUID> getClients() {
+        return new ArrayList<>(clients);
     }
 
     public UUID[] getClientsAsArray() {
-        return clients.toArray(new UUID[clients.size()]);
+        ArrayList<UUID> uuids = getClients();
+        return uuids.toArray(new UUID[uuids.size()]);
     }
 
     /**
