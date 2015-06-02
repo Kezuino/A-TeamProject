@@ -82,8 +82,8 @@ public class Enemy extends GameObject {
         this.graphPath = new DefaultGraphPath<>();
         this.drawOnDirection = false;
 
-        Animation pacAnimation = new Animation(Assets.get("textures/enemy.png", Texture.class));
-        this.setAnimation(pacAnimation);
+        Animation animation = new Animation(Assets.get("textures/enemy.png", Texture.class));
+        this.setAnimation(animation);
     }
 
     /**

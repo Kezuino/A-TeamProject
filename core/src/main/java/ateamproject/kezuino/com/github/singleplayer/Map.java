@@ -2,6 +2,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.pathfinding.AStar;
+import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import ateamproject.kezuino.com.github.utility.game.Nodes;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -293,7 +294,7 @@ public class Map {
      * @return The current {@link GameSession}
      */
     public GameSession getSession() {
-        return this.gameSession;
+        return gameSession;
     }
 
     /**

@@ -10,9 +10,12 @@ import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.render.screens.GameScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import ateamproject.kezuino.com.github.singleplayer.*;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
+import ateamproject.kezuino.com.github.utility.game.Animation;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -437,7 +440,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     });
                 } else {
                     // Request came from server.. resume game.
-                    //Gdx.app.postRunnable(() -> BaseScreen.getSession().resume());
+                    Gdx.app.postRunnable(() -> BaseScreen.getSession().resume());
                 }
             }
         });
@@ -466,7 +469,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             object.setExactPosition(p.getPosition());
             object.setMap(session.getMap());
             object.setMovementSpeed(p.getSpeed());
-            //object.setTexture();
 
             Color color = Color.WHITE.cpy();
             Color.rgba8888ToColor(color, p.getColor());
@@ -475,6 +477,18 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             if (object instanceof Pactale) {
                 Pactale pactale = (Pactale) object;
                 pactale.setPlayerIndex(p.getIndex());
+                final GameObject finalObject = object;
+                Gdx.app.postRunnable(() -> {
+                    finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
+                                                                                               .getSimpleName()
+                                                                                               .toLowerCase() + ".png", Texture.class)));
+                    System.out.println(finalObject);
+                });
+            } else if (object instanceof Enemy) {
+                final GameObject finalObject = object;
+                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
+                                                                                                                      .getSimpleName()
+                                                                                                                      .toLowerCase() + ".png", Texture.class))));
             } else if (object instanceof Item) {
                 Item item = (Item) object;
                 item.setItemType(p.getItemType());
