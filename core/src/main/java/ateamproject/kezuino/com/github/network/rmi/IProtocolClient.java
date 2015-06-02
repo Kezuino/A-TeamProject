@@ -42,6 +42,8 @@ public interface IProtocolClient extends IProtocol {
      * @param username       Username of the {@link IProtocolClient} that left.
      */
     void clientLeft(UUID clientThatLeft, String username) throws RemoteException;
+    
+    void lobbiesChanged()throws RemoteException;
 
     /**
      * Notifies the {@link IProtocolClient} that is should start loading a map.

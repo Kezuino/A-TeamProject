@@ -76,7 +76,7 @@ public class LobbyScreen extends BaseScreen {
 
     public void createGui() {
         // Lobby verlaten.
-        TextButton btnQuitLobby = new TextButton(isHost ? "Sluit Lobby" : "Leave lobby", skin);
+        TextButton btnQuitLobby = new TextButton(isHost ? "Lobby sluiten" : "Lobby verlaten", skin);
         btnQuitLobby.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {

@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.network.IClientInfo;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.render.screens.GameScreen;
+import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
 import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import ateamproject.kezuino.com.github.singleplayer.*;
@@ -227,6 +228,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
             return null;
         });
+        
+        packets.registerAction(PacketLobbiesChanged.class, packet -> {
+            if(game.getScreen() instanceof LobbyListScreen) {
+                LobbyListScreen screen = (LobbyListScreen)game.getScreen();
+                screen.fillHostTable();
+            }
+        });
 
         packets.registerFunc(PacketGetClans.class, (p) -> {
             try {
@@ -424,15 +432,19 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         });
 
         packets.registerAction(PacketClientJoined.class, p -> {
-            LobbyScreen t = (LobbyScreen)game.getScreen();
-            t.addMember(p.getJoinenId(), p.getUsername());
+            if(game.getScreen() instanceof LobbyScreen) {
+                LobbyScreen t = (LobbyScreen)game.getScreen();
+                t.addMember(p.getJoinenId(), p.getUsername());
+            }
             
             System.out.println("Client joined: " + p.getUsername());
         });
 
         packets.registerAction(PacketClientLeft.class, p -> {
-            LobbyScreen t = (LobbyScreen)game.getScreen();
-            t.removeMember(p.getClientThatLeft());
+            if(game.getScreen() instanceof LobbyScreen) {
+                LobbyScreen t = (LobbyScreen)game.getScreen();
+                t.removeMember(p.getClientThatLeft());
+            }
 
             System.out.println("Client left: " + p.getUsername());
         });

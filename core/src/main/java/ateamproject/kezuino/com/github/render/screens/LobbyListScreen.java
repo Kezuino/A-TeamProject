@@ -105,29 +105,12 @@ public class LobbyListScreen extends BaseScreen {
         btnCreateGame.setPosition(stage.getWidth() - btnCreateGame.getWidth() - 10, stage.getHeight() - btnCreateGame.getHeight() - 10);
         this.stage.addActor(btnCreateGame);
 
-        // table headers
-        TextField lb1 = new TextField("Lobby naam", skin);
-        lb1.setDisabled(true);
-        TextField lb2 = new TextField("Host", skin);
-        lb2.setDisabled(true);
-        TextField lb3 = new TextField("Deelnemers", skin);
-        lb3.setDisabled(true);
-
         Pixmap pm1 = new Pixmap(1, 1, Pixmap.Format.RGB565);
         pm1.setColor(Color.GREEN);
         pm1.fill();
 
-        // add headers to table
-        scrollTable = new Table(skin);
-        scrollTable.add(lb1);
-        scrollTable.columnDefaults(0);
-        scrollTable.add(lb2);
-        scrollTable.columnDefaults(1);
-        scrollTable.add(lb3);
-        scrollTable.columnDefaults(2);
-
         // set table position
-        scrollTable.row();
+        scrollTable = new Table(skin);
         scrollTable.setColor(com.badlogic.gdx.graphics.Color.BLUE);
         final ScrollPane scroller = new ScrollPane(scrollTable);
         scroller.sizeBy(200, 400);
@@ -149,7 +132,26 @@ public class LobbyListScreen extends BaseScreen {
 
     }
 
-    private void fillHostTable() {
+    public void fillHostTable() {
+        this.scrollTable.clear();
+
+        // table headers
+        TextField lb1 = new TextField("Lobby naam", skin);
+        lb1.setDisabled(true);
+        TextField lb2 = new TextField("Host", skin);
+        lb2.setDisabled(true);
+        TextField lb3 = new TextField("Deelnemers", skin);
+        lb3.setDisabled(true);
+        
+        // add headers to table
+        scrollTable.add(lb1);
+        scrollTable.columnDefaults(0);
+        scrollTable.add(lb2);
+        scrollTable.columnDefaults(1);
+        scrollTable.add(lb3);
+        scrollTable.columnDefaults(2);
+        scrollTable.row();
+        
         List<PacketGetLobbies.GetLobbiesData> hostList = null;
 
         Client client = Client.getInstance();
@@ -159,12 +161,12 @@ public class LobbyListScreen extends BaseScreen {
 
         if (hostList != null && !hostList.isEmpty()) {
             for (PacketGetLobbies.GetLobbiesData game : hostList) {
-                TextField lb1 = new TextField(game.name, skin);
-                lb1.setDisabled(true);
-                TextField lb2 = new TextField(game.hostName, skin);
-                lb2.setDisabled(true);
-                TextField lb3 = new TextField(Integer.toString(game.membersCount), skin);
-                lb3.setDisabled(true);
+                TextField lbName = new TextField(game.name, skin);
+                lbName.setDisabled(true);
+                TextField lbNameHost = new TextField(game.hostName, skin);
+                lbNameHost.setDisabled(true);
+                TextField lbAmountMembers = new TextField(Integer.toString(game.membersCount), skin);
+                lbAmountMembers.setDisabled(true);
                 TextButton btnJoin = new TextButton("Join", skin);
                 btnJoin.addListener(new ClickListener() {
                     @Override
@@ -177,11 +179,11 @@ public class LobbyListScreen extends BaseScreen {
 
                 btnJoin.setDisabled(true);
 
-                scrollTable.add(lb1);
+                scrollTable.add(lbName);
                 scrollTable.columnDefaults(0);
-                scrollTable.add(lb2);
+                scrollTable.add(lbNameHost);
                 scrollTable.columnDefaults(1);
-                scrollTable.add(lb3);
+                scrollTable.add(lbAmountMembers);
                 scrollTable.columnDefaults(2);
                 scrollTable.add(btnJoin);
                 scrollTable.columnDefaults(3);

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
@@ -43,6 +44,9 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public UUID createLobby(UUID sender, String lobbyName, String clanname) throws RemoteException {
         PacketCreateLobby packet = new PacketCreateLobby(lobbyName, clanname, sender);
         server.send(packet);
+        
+        PacketLobbiesChanged tmp = new PacketLobbiesChanged(this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
+        server.send(tmp);
         return packet.getResult();
     }
 
@@ -57,6 +61,9 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException {
         PacketJoinLobby packet = new PacketJoinLobby(sender, lobbyId);
         server.send(packet);
+        
+        PacketLobbiesChanged tmp = new PacketLobbiesChanged(this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
+        server.send(tmp);
         return packet.getResult();
     }
 
@@ -64,6 +71,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public boolean leaveLobby(UUID sender) throws RemoteException {
         PacketLeaveLobby packet = new PacketLeaveLobby(sender);
         server.send(packet);
+        
+        PacketLobbiesChanged tmp = new PacketLobbiesChanged(this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
+        server.send(tmp);
+        
         return packet.getResult();
     }
 

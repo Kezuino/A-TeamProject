@@ -62,6 +62,11 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         packet.setResult(data);
         client.send(packet);
     }
+    
+    @Override
+    public void lobbiesChanged() throws RemoteException {
+        client.send(new PacketLobbiesChanged());
+    }
 
     @Override
     public void requestCompleted(String requestId, int progress) throws RemoteException {
