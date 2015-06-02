@@ -8,6 +8,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.render.screens.GameScreen;
+import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import ateamproject.kezuino.com.github.singleplayer.*;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
@@ -207,8 +208,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         packets.registerFunc(PacketCreateLobby.class, (p) -> {
 
             try {
-                UUID newGame = getRmi().getServer().createLobby(p.getSender(), p.getLobbyname(), p.getClanname());
-                return newGame;
+                return getRmi().getServer().createLobby(p.getSender(), p.getLobbyname(), p.getClanname());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
                       .log(Level.SEVERE, null, ex);
@@ -421,9 +421,19 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
         });
 
-        packets.registerAction(PacketClientJoined.class, p -> System.out.println("Client joined: " + p.getUsername()));
+        packets.registerAction(PacketClientJoined.class, p -> {
+            LobbyScreen t = (LobbyScreen)game.getScreen();
+            t.addMember(p.getJoinenId(), p.getUsername());
 
-        packets.registerAction(PacketClientLeft.class, p -> System.out.println("Client left: " + p.getUsername()));
+            System.out.println("Client joined: " + p.getUsername());
+        });
+
+        packets.registerAction(PacketClientLeft.class, p -> {
+            LobbyScreen t = (LobbyScreen)game.getScreen();
+            t.removeMember(p.getClientThatLeft());
+
+            System.out.println("Client left: " + p.getUsername());
+        });
 
         packets.registerAction(PacketLaunchGame.class, p -> {
             if (p.getSender() != null) {
