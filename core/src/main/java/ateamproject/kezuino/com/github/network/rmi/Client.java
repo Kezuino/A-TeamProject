@@ -569,10 +569,12 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 //                    }
                 });
                 loader.addConsumer(Pactale.class, obj -> {
+                    if (obj.getPlayerIndex() == 0) obj.setId(getPublicId());
+
                     try {
                         getRmi().getServer()
                                 .createObject(p.getSender(), Pactale.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj
-                                        .getMovementSpeed(), obj.getPlayerIndex() == 0 ? getPublicId() : obj.getId(), Color.argb8888(obj.getColor()), obj.getPlayerIndex());
+                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()), obj.getPlayerIndex());
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
