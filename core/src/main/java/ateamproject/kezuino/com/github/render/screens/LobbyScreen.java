@@ -16,7 +16,6 @@ import java.util.*;
  * @author Fatih
  */
 public class LobbyScreen extends BaseScreen {
-
     private Client client;
     private String lobbyName;
     private String clanName;
@@ -95,7 +94,7 @@ public class LobbyScreen extends BaseScreen {
                 } else {
                     new Dialog("Error", skin) {
                         {
-                            text("Could not leave lobby.");
+                            text("You're currently unable to leave this lobby.");
                             button("Oke");
                         }
                     }.show(stage);
@@ -183,5 +182,41 @@ public class LobbyScreen extends BaseScreen {
     {
         this.members = members;
         reloadMembers();
+    }
+    
+    public void addMember(UUID client, String username) {
+        this.members.put(client, username);
+        
+        this.updateMembers();
+    }
+    
+    public void removeMember(UUID client) {
+        UUID i = this.members.keySet().stream().filter(uuid -> uuid.equals(client)).findFirst().orElse(null);
+        
+        if(i != null) {
+            this.members.remove(i);
+
+            this.updateMembers();
+        }
+    }
+    
+    private void updateMembers() {
+        scrollTable.clear();
+
+        TextField memberNameHeader = new TextField("Member name", skin);
+        memberNameHeader.setDisabled(true);
+
+        scrollTable.add(memberNameHeader);
+        scrollTable.row();
+        
+        if (this.members != null) {
+            for (String membername : members.values()) {
+                TextField lblmember = new TextField(membername, skin);
+                lblmember.setDisabled(true);
+
+                scrollTable.add(lblmember);
+                scrollTable.row();
+            }
+        }           
     }
 }

@@ -20,7 +20,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -380,6 +382,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             if (lobby == null) {
                 return null;
             }
+            
+            // Add new client to game.
+            lobby.getClients().add(packet.getSender());
+            IClientInfo client = getClient(packet.getSender());
+            client.setGame(lobby);
 
             // Get all clients currently in the game.
             PacketJoinLobby.PacketJoinLobbyData data = new PacketJoinLobby.PacketJoinLobbyData();
@@ -390,11 +397,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 IClientInfo c = getClient(clientId);
                 data.getMembers().put(c.getPublicId(), c.getUsername());
             }
-
-            // Add new client to game.
-            lobby.getClients().add(packet.getSender());
-            IClientInfo client = getClient(packet.getSender());
-            client.setGame(lobby);
 
             // Notify other users that someone joined the lobby (excluding itself).
             PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername());

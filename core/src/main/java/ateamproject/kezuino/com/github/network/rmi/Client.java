@@ -210,8 +210,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         packets.registerFunc(PacketCreateLobby.class, (p) -> {
 
             try {
-                UUID newGame = getRmi().getServer().createLobby(p.getSender(), p.getLobbyname(), p.getClanname());
-                return newGame;
+                return getRmi().getServer().createLobby(p.getSender(), p.getLobbyname(), p.getClanname());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
                       .log(Level.SEVERE, null, ex);
@@ -424,18 +423,19 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
         });
 
-        packets.registerAction(PacketClientJoined.class, (p) -> {
+        packets.registerAction(PacketClientJoined.class, p -> {
+            LobbyScreen t = (LobbyScreen)game.getScreen();
+            t.addMember(p.getJoinenId(), p.getUsername());
+            
             System.out.println("Client joined: " + p.getUsername());
-            
-            // get game.getscreen (lobbyscreen)
-            // screen .setmembers
-            
-            if (game.getScreen() instanceof LobbyScreen) {
-                try {
-                    LobbyScreen a = (LobbyScreen)game.getScreen();
-                    // get members
-                    java.util.Map<UUID, String> members = getRmi().getServer().getLobbyMembers(a.getLobbyId());
-                    a.setMembers(members);
+        });
+
+        packets.registerAction(PacketClientLeft.class, p -> {
+            LobbyScreen t = (LobbyScreen)game.getScreen();
+            t.removeMember(p.getClientThatLeft());
+
+            System.out.println("Client left: " + p.getUsername());
+        });
                     
                 } catch (RemoteException ex) {
                     Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
