@@ -173,7 +173,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 ArrayList<String> clans = getClient(packet.getSender()).getClans();
                 if (!clans.isEmpty()) {
                     for (String clan : clans) {
-                        for (Game game : getGames()) {
+                        for (Game game : getGamesAsList()) {
                             if (game.getClanName().equals(clan)) {
                                 result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
                                         game.getId(),
@@ -184,7 +184,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
                 }
             } else {
-                for (Game game : getGames()) {
+                for (Game game : getGamesAsList()) {
                     if (game.getClanName() == null) {
                         result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
                                 game.getId(),
@@ -539,7 +539,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             // Replace Pactale UUID with the public id of the connected client (needed for sync with movement).
             if (packet.getTypeName().equalsIgnoreCase(Pactale.class.getSimpleName())) {
-                packet.setId(getClient(game.getClients().get(packet.getIndex())).getPublicId());
+                packet.setId(getClient(game.getClientsAsArray()[packet.getIndex()]).getPublicId());
             }
 
             game.getLoadQueue().add(packet);

@@ -1,12 +1,15 @@
 package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
+import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketManager;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketClientLeft;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.Packet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, AutoCloseable {
 
@@ -95,7 +98,16 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      *
      * @return A copy of all the {@link Game games} that are on the server.
      */
-    public List<Game> getGames() {
+    public LinkedHashMap<UUID, Game> getGames() {
+        return games;
+    }
+
+    /**
+     * Do not modify this list! It's a copy.
+     *
+     * @return
+     */
+    public ArrayList<Game> getGamesAsList() {
         return new ArrayList<>(games.values());
     }
 
@@ -111,8 +123,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         if (game == null) return null;
 
         // Notify all connected clients that the game is closing.
-        ArrayList<UUID> gameClients = game.getClients();
-        send(new PacketKick(PacketKick.KickReasonType.LOBBY, "Lobby closed.", gameClients.toArray(new UUID[gameClients.size()])));
+        send(new PacketKick(PacketKick.KickReasonType.LOBBY, "Lobby closed.", game.getClientsAsArray()));
 
         // Unregister client on game.
         for (UUID clientId : game.getClients()) {
