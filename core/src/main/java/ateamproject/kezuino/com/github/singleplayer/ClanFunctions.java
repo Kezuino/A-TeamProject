@@ -68,6 +68,32 @@ public class ClanFunctions {
     }
 
     /**
+     * Gives all clans for a specific {@code emailaddress}.
+     *
+     * @param emailaddress the emailaddress for which the clans needs to
+     * searched for.
+     * @return the String array which contains all the clan names.
+     */
+    public ArrayList<String> fillTable2(String username) {
+        try {
+            ArrayList<String> clans = new ArrayList<>();
+            ResultSet resultSet = Database.getInstance()
+                    .query("SELECT c.Name as clanname FROM clan_account cn, clan c, account a WHERE cn.ClanId = c.Id AND cn.AccountId = a.Id AND a.Name = ?",
+                            username
+                    );
+            while (resultSet.next()) {
+                clans.add(resultSet.getString("clanname"));
+            }
+            return clans;
+
+        } catch (SQLException ex) {
+            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        return null;
+    }
+
+    /**
      * Create a clan with the given {@code clanName} and {@code emailaddress}.
      *
      * @param clanName Name of the clan.

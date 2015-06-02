@@ -197,28 +197,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return getClient(p.getSender()).getClans();
         });
 
-        packets.registerAction(PacketGetClans.class, (p) -> {
-            try {
-                //logica voor setclans
-                // naar database
-                // getcleint.(p.sender).setclans(array uit de db);
-                ArrayList<String> clans = new ArrayList<>();
-
-                ResultSet resultSet = Database.getInstance()
-                        .query("SELECT c.Name as clanname FROM `clan_account` cn, `clan` c, `account` a WHERE cn.ClanId = c.Id AND cn.AccountId = a.Id AND a.Name = '?'",
-                                getClient(p.getSender()).getUsername()
-                        );
-
-                while (resultSet.next()) {
-                    clans.add(resultSet.getString("clanname"));
-                }
-                
-                getClient(p.getSender()).setClans(clans);
-                
-            } catch (SQLException ex) {
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
+        packets.registerAction(PacketReloadClans.class, (p) -> {
+                getClient(p.getSender()).setClans(clanFunctions.fillTable2(getClient(p.getSender()).getUsername()));
         });
 
         packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
@@ -271,6 +251,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
+                // fill clans
+                client.setClans(clanFunctions.fillTable2(client.getUsername()));
 
                 // Tell client what its id is.
                 PacketLoginAuthenticate.ReturnData packetLoginAuthenticateData
@@ -327,6 +309,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                         System.out.println("Adding following user to database: " + packet.getUsername());
                         getClient(packet.getSender()).setUsername(packet.getUsername());
                         getClient(packet.getSender()).setEmailAddress(packet.getEmail());
+                        
                         return true;
                     }
                 }

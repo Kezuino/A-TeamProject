@@ -85,7 +85,12 @@ public class LobbyScreen extends BaseScreen {
                 client.send(packet);
                 boolean succeeded = packet.getResult();
                 if (succeeded) {
-                    game.setScreen(new LobbyListScreen(game, true));
+                    if (clanName != null) {
+                        game.setScreen(new LobbyListScreen(game, true));
+                    } else {
+                        game.setScreen(new LobbyListScreen(game, false));
+                    }
+
                 } else {
                     new Dialog("Error", skin) {
                         {

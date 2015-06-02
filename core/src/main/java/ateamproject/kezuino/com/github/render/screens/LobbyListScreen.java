@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetClans;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import com.badlogic.gdx.graphics.Color;
@@ -12,6 +13,7 @@ import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import java.util.ArrayList;
 
 import java.util.List;
 
@@ -55,11 +57,22 @@ public class LobbyListScreen extends BaseScreen {
                 SelectBox<Object> clanDropdown = null;
                 String dropDownResult = "";
                 if (clanGame) {
-                    Object[] clans = new Object[2];
-                    clans[0] = new Label("clan 1", skin);
-                    clans[1] = new Label("clan 2", skin);
+                    Client client = Client.getInstance();
+                    PacketGetClans packet = new PacketGetClans();
+                    
+                    client.send(packet);
+                    ArrayList<String> listclans = packet.getResult();
+                    
+                    
+                    Object[] arrayClans = new Object[listclans.size()];
+                    for (int i = 0; i < listclans.size(); i++) {
+                        
+                        arrayClans[i] = new Label(listclans.get(i), skin);
+                        
+                    }
                     clanDropdown = new SelectBox<Object>(skin);
-                    clanDropdown.setItems(clans);
+                    
+                    clanDropdown.setItems(arrayClans);
 
                     clanDropdown.setSelectedIndex(0);
                     d.add(clanDropdown);
