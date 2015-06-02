@@ -5,9 +5,11 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
+import ateamproject.kezuino.com.github.network.IClientInfo;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.render.screens.GameScreen;
+import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import ateamproject.kezuino.com.github.singleplayer.*;
 import com.badlogic.gdx.Game;
@@ -23,6 +25,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -415,9 +418,52 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
         });
 
-        packets.registerAction(PacketClientJoined.class, p -> System.out.println("Client joined: " + p.getUsername()));
+        packets.registerAction(PacketClientJoined.class, (p) -> {
+            System.out.println("Client joined: " + p.getUsername());
+            
+            // get game.getscreen (lobbyscreen)
+            // screen .setmembers
+            
+            if (game.getScreen() instanceof LobbyScreen) {
+                try {
+                    LobbyScreen a = (LobbyScreen)game.getScreen();
+                    // get members
+                    java.util.Map<UUID, String> members = getRmi().getServer().getLobbyMembers(a.getLobbyId());
+                    a.setMembers(members);
+                    
+                } catch (RemoteException ex) {
+                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+ 
+        });
 
-        packets.registerAction(PacketClientLeft.class, p -> System.out.println("Client left: " + p.getUsername()));
+        packets.registerAction(PacketClientLeft.class, (p) -> {
+            System.out.println("Client left: " + p.getUsername());
+            
+             if (game.getScreen() instanceof LobbyScreen) {
+                try {
+                    LobbyScreen a = (LobbyScreen)game.getScreen();
+                    // get members
+                    java.util.Map<UUID, String> members = getRmi().getServer().getLobbyMembers(a.getLobbyId());
+                    a.setMembers(members);
+                    
+                } catch (RemoteException ex) {
+                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        
+         packets.registerFunc(PacketLobbyMembers.class, packet -> {
+               try {
+                // return all current members in the lobby
+                return getRmi().getServer().getLobbyMembers(packet.getLobbyId());
+                
+            } catch (RemoteException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+          return null;
+        });
 
         packets.registerAction(PacketLaunchGame.class, p -> {
             if (p.getSender() != null) {

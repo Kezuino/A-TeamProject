@@ -11,6 +11,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
@@ -241,5 +242,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public void setKickInformation(UUID getPersonToVoteFor) throws RemoteException {
         PacketSetKickInformation packet = new PacketSetKickInformation(getPersonToVoteFor);
         server.send(packet);
+    }
+
+    @Override
+    public Map<UUID, String> getLobbyMembers(UUID Lobbyid) throws RemoteException {
+        PacketLobbyMembers packet = new PacketLobbyMembers(Lobbyid);
+        server.send(packet);
+        return packet.getResult();
     }
 }

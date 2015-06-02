@@ -31,6 +31,8 @@ public interface IProtocolServer extends IProtocol {
     UUID createLobby(UUID sender, String LobbyName, String clan) throws RemoteException;
 
     List<PacketGetLobbies.GetLobbiesData> getLobbies(UUID sender, boolean isClanGame) throws RemoteException;
+    
+    java.util.Map<UUID, String> getLobbyMembers(UUID Lobbyid) throws RemoteException;
 
     PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException;
 

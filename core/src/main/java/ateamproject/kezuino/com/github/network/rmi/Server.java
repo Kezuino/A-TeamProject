@@ -18,7 +18,9 @@ import java.rmi.server.UnicastRemoteObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -406,6 +408,19 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             return data;
         });
+        
+        packets.registerFunc(PacketLobbyMembers.class, packet -> {
+            // return all current members in the lobby
+            
+            Map<UUID, String> curMembers = new HashMap<>();
+            
+            for (UUID lobby : games.get(packet.getLobbyId()).getClients()) {
+                IClientInfo client = getClient(lobby);
+                curMembers.put(lobby, client.getUsername());
+            }      
+            return curMembers;
+        });
+        
 
         packets.registerFunc(PacketGetKickInformation.class, packet -> {
             ArrayList<String> peoples = new ArrayList<>();

@@ -21,6 +21,8 @@ public class LobbyScreen extends BaseScreen {
     private String lobbyName;
     private String clanName;
     private UUID lobbyId;
+
+   
     private Map<UUID, String> members = new HashMap<>();
 
     private boolean isHost;
@@ -64,7 +66,11 @@ public class LobbyScreen extends BaseScreen {
 
         PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
         this.lobbyName = lob.getLobbyName();
-        this.members = lob.getMembers();
+                
+         PacketLobbyMembers p = new PacketLobbyMembers(this.lobbyId, client.getId());
+         client.send(p);
+         
+        this.members = p.getResult();
 
         createGui();
     }
@@ -109,7 +115,7 @@ public class LobbyScreen extends BaseScreen {
         scrollTable.add(memberNameHeader);
         scrollTable.columnDefaults(0);
         scrollTable.row();
-
+        
         // Run game button.
         TextButton btnRunGame = new TextButton(isHost ? "Spel starten" : "Ready", skin);
         btnRunGame.addListener(new ClickListener() {
@@ -139,6 +145,29 @@ public class LobbyScreen extends BaseScreen {
         lobby.setSize(200, 30);
         lobby.setPosition(0, stage.getHeight() - lobby.getHeight());
 
+        reloadMembers();
+
+        stage.addActor(lobby);
+
+        float x = stage.getWidth() / 2 - table.getWidth() / 2;
+        float y = stage.getHeight() - table.getHeight() - 30;
+
+        table.setPosition(x, y);
+        this.stage.addActor(table);
+    }
+    
+     public UUID getLobbyId() {
+        return lobbyId;
+    }
+    
+    private void reloadMembers()
+    {
+        scrollTable.clear();
+         TextField memberNameHeader = new TextField("Member name", skin);
+        scrollTable.add(memberNameHeader);
+        scrollTable.row();
+        
+       
         if (this.members != null) {
             for (String membername : members.values()) {
                 TextField lblmember = new TextField(membername, skin);
@@ -148,13 +177,11 @@ public class LobbyScreen extends BaseScreen {
                 scrollTable.row();
             }
         }
-
-        stage.addActor(lobby);
-
-        float x = stage.getWidth() / 2 - table.getWidth() / 2;
-        float y = stage.getHeight() - table.getHeight() - 30;
-
-        table.setPosition(x, y);
-        this.stage.addActor(table);
+    }
+    
+    public void setMembers(Map<UUID, String> members)
+    {
+        this.members = members;
+        reloadMembers();
     }
 }
