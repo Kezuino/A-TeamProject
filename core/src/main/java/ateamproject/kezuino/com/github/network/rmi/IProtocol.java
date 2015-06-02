@@ -21,5 +21,5 @@ public interface IProtocol extends Remote {
 
     void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException;
 
-    void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color) throws RemoteException;
+    void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException;
 }

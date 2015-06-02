@@ -224,8 +224,9 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color) throws RemoteException {
+    public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException {
         PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, color, sender);
+        packet.setIndex(index);
         server.send(packet);
     }
 

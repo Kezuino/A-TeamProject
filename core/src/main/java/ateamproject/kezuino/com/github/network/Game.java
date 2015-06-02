@@ -18,12 +18,18 @@ public class Game {
     protected UUID id;
     protected String name;
     protected HashSet<UUID> clients;
-    protected ArrayList<UUID[]> votes;//first UUID is the voter. second UUID is the person who did recieve the vote.
+    /**
+     * First UUID is the voter. second UUID is the person that received the vote.
+     */
+    protected ArrayList<UUID[]> votes;
     protected UUID hostId;
     protected boolean inGame;
     protected Queue<PacketCreateGameObject> loadQueue;
     protected String map;
-    protected String clanName;//the name of the clan who did create this game. If no clan did create it, it should be null
+    /**
+     * The name of the clan who did create this game. If no clan did create it, it should be null.
+     */
+    protected String clanName;
     private int mapObjectCount;
 
     public Game(String name,String clanName, UUID host) {

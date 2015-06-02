@@ -17,7 +17,9 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -191,9 +193,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return result;
         }));
 
-        packets.registerFunc(PacketGetClans.class, (p) -> {
-            return getClient(p.getSender()).getClans();
-        });
+        packets.registerFunc(PacketGetClans.class, (p) -> getClient(p.getSender()).getClans());
 
         packets.registerAction(PacketReloadClans.class, (p) -> {
                 getClient(p.getSender()).setClans(clanFunctions.fillTable2(getClient(p.getSender()).getUsername()));
@@ -253,9 +253,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 client.setClans(clanFunctions.fillTable2(client.getUsername()));
 
                 // Tell client what its id is.
-                PacketLoginAuthenticate.ReturnData packetLoginAuthenticateData
-                        = new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId());
-                return packetLoginAuthenticateData;
+                return new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId());
             }
 
             System.out.println(" .. login credentials not valid.");
@@ -275,7 +273,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 resultSet.next();
                 int id = resultSet.getInt("Score");
 
-                if (id > packet.getScore()) {
+                if (id < packet.getScore()) {
                     return Database.getInstance()
                             .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
                                     .getScore(), packet.getClanName()) > -1;
@@ -346,7 +344,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerFunc(PacketCreateLobby.class, packet -> {
-            Game newGame = new Game(packet.getLobbyname(),packet.getClanname(), packet.getSender());
+            Game newGame = new Game(packet.getLobbyname(), packet.getClanname(), packet.getSender());
             addGame(newGame);
             getClient(packet.getSender()).setGame(newGame);
 
@@ -524,6 +522,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerAction(PacketCreateGameObject.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
+
+            // Don't add pactales that are outside of the client count in the lobby.
+            if (packet.getTypeName().equalsIgnoreCase("pactale")) {
+                if (packet.getIndex() + 1 > game.getClients().size()) return;
+            }
+
             game.getLoadQueue().add(packet);
         });
 
@@ -549,22 +553,23 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
                 });
 
+                // TODO: Fix pause before play starts.
                 // Set game to run unpaused.
-                Timer timer = new Timer(true);
-                timer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        game.getClients().stream().map(id -> getClient(id).getRmi()).forEach(rmi -> {
-                            try {
-                                rmi.launchGame(false);
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            } finally {
-                                timer.cancel();
-                            }
-                        });
-                    }
-                }, 5);
+//                Timer timer = new Timer(true);
+//                timer.schedule(new TimerTask() {
+//                    @Override
+//                    public void run() {
+//                        game.getClients().stream().map(id -> getClient(id).getRmi()).forEach(rmi -> {
+//                            try {
+//                                rmi.launchGame(false);
+//                            } catch (RemoteException e) {
+//                                e.printStackTrace();
+//                            } finally {
+//                                timer.cancel();
+//                            }
+//                        });
+//                    }
+//                }, 3);
 
             } else if (game.getClients().stream().map(this::getClient).allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded || info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
                 // Send all packets that were queued from the host to all the other clients (so, excluding the host).
@@ -590,7 +595,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     for (IProtocolClient receiver : receivers) {
                         try {
                             receiver.createObject(null, packetCreate.getTypeName(), packetCreate.getPosition(), packetCreate.getDirection(), packetCreate
-                                    .getSpeed(), packetCreate.getId(), packetCreate.getColor());
+                                    .getSpeed(), packetCreate.getId(), packetCreate.getColor(), packetCreate.getIndex());
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }
