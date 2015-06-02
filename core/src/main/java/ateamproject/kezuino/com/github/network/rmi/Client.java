@@ -509,7 +509,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 //                    try {
 //                        getRmi().getServer()
 //                                .createObject(p.getSender(), Enemy.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj
-//                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()));
+//                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()), 0);
 //                    } catch (RemoteException e) {
 //                        e.printStackTrace();
 //                    }
@@ -518,7 +518,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     try {
                         getRmi().getServer()
                                 .createObject(p.getSender(), Pactale.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj
-                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()));
+                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()), obj.getPlayerIndex());
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
@@ -527,7 +527,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     try {
                         getRmi().getServer()
                                 .createObject(p.getSender(), Item.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj
-                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()));
+                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()), 0);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
