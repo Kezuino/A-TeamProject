@@ -5,7 +5,6 @@ import ateamproject.kezuino.com.github.network.Server;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketField;
 import ateamproject.kezuino.com.github.utility.game.Direction;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.UUID;
@@ -27,6 +26,8 @@ public class PacketCreateGameObject extends Packet {
     protected UUID id;
     @PacketField(5)
     protected int color;
+    @PacketField(6)
+    protected int index;
 
     public PacketCreateGameObject() {
     }
@@ -43,6 +44,14 @@ public class PacketCreateGameObject extends Packet {
         this.speed = speed;
         this.color = color;
         this.id = id;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
     }
 
     public int getColor() {
