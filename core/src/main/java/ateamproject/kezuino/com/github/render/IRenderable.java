@@ -2,6 +2,7 @@ package ateamproject.kezuino.com.github.render;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Matrix4;
 
 /**
@@ -13,14 +14,14 @@ public interface IRenderable {
      *
      * @return {@link Texture} used in the {@link #draw(SpriteBatch)} method.
      */
-    Texture getTexture();
+    TextureRegion getTexture();
 
     /**
      * Sets the {@link Texture} used in the {@link #draw(SpriteBatch)} method.
      *
      * @param texture {@link Texture} used in the {@link #draw(SpriteBatch)} method.
      */
-    void setTexture(Texture texture);
+    void setTexture(TextureRegion texture);
 
     /**
      * Called before the {@link #draw(SpriteBatch)} to update the state of this {@link IRenderable}.

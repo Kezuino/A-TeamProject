@@ -5,12 +5,10 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
-import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.IClientInfo;
 import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate.ReturnData;
 
 import java.rmi.RemoteException;
 import java.util.ArrayList;
@@ -30,7 +28,7 @@ public interface IProtocolServer extends IProtocol {
 
     void heartbeat(UUID client) throws RemoteException;
 
-    UUID createLobby(UUID sender, String LobbyName) throws RemoteException;
+    UUID createLobby(UUID sender, String LobbyName, String clan) throws RemoteException;
 
     List<PacketGetLobbies.GetLobbiesData> getLobbies(UUID sender, boolean isClanGame) throws RemoteException;
 
@@ -50,10 +48,10 @@ public interface IProtocolServer extends IProtocol {
      */
     boolean kickClient(UUID sender, UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException;
 
-    ArrayList<String> clanFillTable(String emailadres) throws RemoteException;    
-    
-    ArrayList<String> getClans(UUID client) throws RemoteException;    
-    
+    ArrayList<String> clanFillTable(String emailadres) throws RemoteException;
+
+    ArrayList<String> getClans(UUID client) throws RemoteException;
+
     void setClans(UUID client) throws RemoteException;
 
 
@@ -77,15 +75,26 @@ public interface IProtocolServer extends IProtocol {
 
     String getEmail(UUID Sender) throws RemoteException;
 
-    boolean setUsername(String name, String emailaddress,UUID sender) throws RemoteException;
+    boolean setUsername(String name, String emailaddress, UUID sender) throws RemoteException;
 
     boolean setScore(String clanName, int score) throws RemoteException;
 
     void logout(UUID sender) throws RemoteException;
 
-    void launchGame(UUID sender) throws RemoteException;
-
     void setLobbyDetails(UUID sender, PacketLobbySetDetails.Data data) throws RemoteException;
 
     PacketLobbySetDetails.Data getLobbyDetails(UUID sender) throws RemoteException;
+
+    void setLoadStatus(UUID sender, PacketSetLoadStatus.LoadStatus status) throws RemoteException;
+
+    void setLoadStatus(UUID sender, PacketSetLoadStatus.LoadStatus status, int progress, int maxProgress) throws RemoteException;
+
+    /**
+     * Searches the {@link ateamproject.kezuino.com.github.network.Game} list for the {@link ateamproject.kezuino.com.github.network.Game} that the {@link UUID sender} is in.
+     * If no {@link ateamproject.kezuino.com.github.network.Game} was found, the {@link ateamproject.kezuino.com.github.network.Game} will not be started.
+     *
+     * @param sender {@link UUID} that sended this message.
+     * @throws RemoteException If RMI fails to connect.
+     */
+    void launchGame(UUID sender) throws RemoteException;
 }

@@ -22,10 +22,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
-import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  * @author Jip
  */
@@ -33,7 +29,7 @@ public class ClanManagementScreen extends BaseScreen {
 
     private final Table scrollTable;
     private TextField tfClannaam;
-    private String emailaddress = "jip.vandevijfeijke@gmail.com";
+    private String emailaddress;
     private Client client;
 
     public ClanManagementScreen(Game game) {
@@ -42,35 +38,9 @@ public class ClanManagementScreen extends BaseScreen {
         client = Client.getInstance();
         System.out.println();
         emailaddress = client.getEmailadres();
-       
 
         scrollTable = new Table();
         refreshScreen();
-
-        // TODO: Disable clan management when singleplayer only.
-//        boolean hasConnection = false;
-//        try {
-//            hasConnection = client.getRmi().getServer().getHasConnection();
-//        } catch (RemoteException ex) {
-//            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-//        }
-//
-//        if (!hasConnection) {
-//            Dialog d = new Dialog("error", skin);
-//            d.add("Er kan geen verbinding met de database worden gemaakt!");
-//            TextButton bExit = new TextButton("Oke", skin);
-//            bExit.addListener(new ClickListener() {
-//                @Override
-//                public void clicked(InputEvent event, float x, float y) {
-//                    d.hide();
-//                    game.setScreen(new MainScreen(game));
-//                }
-//            });
-//            d.add(bExit);
-//            d.show(stage);
-//        } else {
-//            refreshScreen();//loads up whole screen
-//        }
     }
 
     private void refreshScreen() {        

@@ -1,10 +1,8 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
-import ateamproject.kezuino.com.github.network.Game;
 import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
-import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
 
@@ -40,8 +38,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public UUID createLobby(UUID sender, String lobbyName) throws RemoteException {
-        PacketCreateLobby packet = new PacketCreateLobby(lobbyName, sender);
+    public UUID createLobby(UUID sender, String lobbyName, String clanname) throws RemoteException {
+        PacketCreateLobby packet = new PacketCreateLobby(lobbyName, clanname, sender);
         server.send(packet);
         return packet.getResult();
     }
@@ -179,7 +177,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public void launchGame(UUID sender) throws RemoteException {
-        PacketLaunchGame packet = new PacketLaunchGame(sender);
+        PacketLaunchGame packet = new PacketLaunchGame(false, sender);
         server.send(packet);
     }
 
@@ -194,6 +192,18 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketLobbyGetDetails packet = new PacketLobbyGetDetails();
         server.send(packet);
         return packet.getResult();
+    }
+
+    @Override
+    public void setLoadStatus(UUID sender, PacketSetLoadStatus.LoadStatus status) throws RemoteException {
+        PacketSetLoadStatus packet = new PacketSetLoadStatus(status, sender);
+        server.send(packet);
+    }
+
+    @Override
+    public void setLoadStatus(UUID sender, PacketSetLoadStatus.LoadStatus status, int progress, int maxProgress) throws RemoteException {
+        PacketSetLoadStatus packet = new PacketSetLoadStatus(status, progress, maxProgress, sender);
+        server.send(packet);
     }
 
     @Override
@@ -214,8 +224,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void gameObjectCreate(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId) throws RemoteException {
-        PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, sender);
+    public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color) throws RemoteException {
+        PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, color, sender);
         server.send(packet);
     }
 

@@ -1,14 +1,26 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.utility.assets.Assets;
+import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Pactale extends GameObject {
     private int playerIndex;
     private int lives;
     private Portal portal;
+
+    /**
+     * Empty constructor needed for reflection instantiation.
+     */
+    public Pactale() {
+    }
 
     /**
      * Initialize a {@link Pactale}.
@@ -27,6 +39,9 @@ public class Pactale extends GameObject {
         this.lives = lives;
         this.playerIndex = -1;
         this.drawOnDirection = false;
+
+        Animation pacAnimation = new Animation(true, Assets.get("textures/pactale.png", Texture.class));
+        this.setAnimation(pacAnimation);
     }
 
     public Pactale(int playerIndex, Vector2 exactPosition, int lives, float movementSpeed, Direction walkingDirection, Color color) {

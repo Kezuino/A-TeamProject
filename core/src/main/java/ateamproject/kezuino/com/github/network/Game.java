@@ -5,11 +5,10 @@
  */
 package ateamproject.kezuino.com.github.network;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateGameObject;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Holds information about a hosted lobby/game. Used by the {@link INetworkComponent} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.
@@ -22,14 +21,18 @@ public class Game {
     protected ArrayList<UUID[]> votes;//first UUID is the voter. second UUID is the person who did recieve the vote.
     protected UUID hostId;
     protected boolean inGame;
+    protected Queue<PacketCreateGameObject> loadQueue;
     protected String map;
     protected String clanName;//the name of the clan who did create this game. If no clan did create it, it should be null
+    private int mapObjectCount;
 
-    public Game(String name, UUID host) {
+    public Game(String name,String clanName, UUID host) {
         // Generate UUID and give lobby a name
         this.id = UUID.randomUUID();
         this.name = name;
+        this.clanName = clanName;
         this.votes = new ArrayList<>();
+        this.loadQueue = new ArrayDeque<>();
 
         // Ingame is set to true if game is started, if started dont show on lobbylist.
         this.inGame = false;
@@ -38,6 +41,10 @@ public class Game {
         this.hostId = host;
         this.clients = new HashSet<>();
         this.clients.add(host);
+    }
+
+    public Queue<PacketCreateGameObject> getLoadQueue() {
+        return loadQueue;
     }
 
     /**
@@ -124,5 +131,13 @@ public class Game {
     
     public String getClanName(){
         return this.clanName;
+    }
+
+    public void setMapObjectCount(int mapObjectCount) {
+        this.mapObjectCount = mapObjectCount;
+    }
+
+    public int getMapObjectCount() {
+        return mapObjectCount;
     }
 }

@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLobbySetDetails;
+import com.badlogic.gdx.Game;
 
 import java.rmi.RemoteException;
 import java.util.UUID;
@@ -57,4 +58,21 @@ public interface IProtocolClient extends IProtocol {
      * @param data Data that contains the updated information.
      */
     void setLobbyDetails(PacketLobbySetDetails.Data data) throws RemoteException;
+
+    /**
+     * Request to this {@link IProtocolClient} that it should respond whenever its progress matched the given {@code progress} count.
+     *
+     * @param requestId Identifier of this request.
+     * @param progress  Number to reach before {@link IProtocolClient} should return a message.
+     * @throws RemoteException
+     */
+    void requestCompleted(String requestId, int progress) throws RemoteException;
+
+    /**
+     * Launches the {@link Game}. Can be started on pause.
+     *
+     * @param paused If true, {@link Game} will be paused on start.
+     * @throws RemoteException If the RMI connection failed.
+     */
+    void launchGame(boolean paused) throws RemoteException;
 }

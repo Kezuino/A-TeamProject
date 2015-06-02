@@ -17,9 +17,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -348,7 +346,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerFunc(PacketCreateLobby.class, packet -> {
-            Game newGame = new Game(packet.getLobbyname(), packet.getSender());
+            Game newGame = new Game(packet.getLobbyname(),packet.getClanname(), packet.getSender());
             addGame(newGame);
             getClient(packet.getSender()).setGame(newGame);
 
@@ -511,9 +509,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 return;
             }
 
-            // Notify all to start loading their maps.
+            // Set the loading states of everyone to empty and notify everyone to start loading the map.
             for (UUID uuid : game.getClientsAsArray()) {
                 ClientInfo client = getClient(uuid);
+                client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
+
                 try {
                     client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid));
                 } catch (RemoteException e) {
@@ -523,11 +523,78 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketCreateGameObject.class, packet -> {
-            for (IProtocolClient client : getRmiClientsFromGameId(getGameFromClientId(packet.getSender()).getId())) {
-                try {
-                    client.gameObjectCreate(null, packet.getTypeName(), packet.getPosition(), packet.getDirection(), packet.getSpeed(), packet.getId());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+            Game game = getGameFromClientId(packet.getSender());
+            game.getLoadQueue().add(packet);
+        });
+
+        packets.registerAction(PacketSetLoadStatus.class, packet -> {
+            ClientInfo client = getClient(packet.getSender());
+            client.setLoadStatus(packet.getStatus());
+
+            // Find game with the player that sended the new load status.
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) {
+                System.out.println(String.format("Error: Client '%s' tried to load a game while not in a lobby.", packet.getSender()));
+                return;
+            }
+
+            if (game.getClients().stream().map(this::getClient).allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
+                // Launch the game (everyone is done loading).
+                game.getClients().stream().map(id -> getClient(id).getRmi()).forEach(rmi -> {
+                    try {
+                        game.setInGame(true);
+                        rmi.launchGame(true);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                // Set game to run unpaused.
+                Timer timer = new Timer(true);
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        game.getClients().stream().map(id -> getClient(id).getRmi()).forEach(rmi -> {
+                            try {
+                                rmi.launchGame(false);
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            } finally {
+                                timer.cancel();
+                            }
+                        });
+                    }
+                }, 5);
+
+            } else if (game.getClients().stream().map(this::getClient).allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded || info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
+                // Send all packets that were queued from the host to all the other clients (so, excluding the host).
+                int objectsToSend = game.getLoadQueue().size();
+
+                IProtocolClient[] receivers = game.getClients().stream().filter(c -> !c.equals(game.getHostId())).map(id -> getClient(id).getRmi()).toArray(IProtocolClient[]::new);
+
+                // Tell clients that they should announce when they reached the right amount of objects created.
+                for (IProtocolClient receiver : receivers) {
+                    try {
+                        receiver.requestCompleted("game_load_objects", objectsToSend);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                // Unload all queued createObject packets to all connected clients of the lobby.
+                while (!game.getLoadQueue().isEmpty()) {
+                    // Remove one packet from queue.
+                    PacketCreateGameObject packetCreate = game.getLoadQueue().remove();
+
+                    // Send it to all receivers.
+                    for (IProtocolClient receiver : receivers) {
+                        try {
+                            receiver.createObject(null, packetCreate.getTypeName(), packetCreate.getPosition(), packetCreate.getDirection(), packetCreate
+                                    .getSpeed(), packetCreate.getId(), packetCreate.getColor());
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
             }
         });
