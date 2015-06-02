@@ -51,7 +51,7 @@ public class MainScreen extends BaseScreen {
                 //game.setScreen(new GameScreen(game));
 
                 PacketHighScore packet;
-                packet = new PacketHighScore("MBoiz", 30, Client.getInstance().getId());
+                packet = new PacketHighScore("MBoiz", 100, Client.getInstance().getId());
                 Client.getInstance().send(packet);
                 packet.getResult();
             }

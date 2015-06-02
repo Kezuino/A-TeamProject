@@ -275,7 +275,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 resultSet.next();
                 int id = resultSet.getInt("Score");
 
-                if (id > packet.getScore()) {
+                if (id < packet.getScore()) {
                     return Database.getInstance()
                             .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
                                     .getScore(), packet.getClanName()) > -1;
