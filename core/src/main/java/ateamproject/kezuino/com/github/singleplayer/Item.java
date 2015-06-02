@@ -14,7 +14,6 @@ public class Item extends GameObject implements IRenderable, IPositionable {
     private String name;
     private ItemType type;
     private Map map;
-    private TextureRegion texture;
 
     /**
      * Empty constructor needed for reflection instantiation.

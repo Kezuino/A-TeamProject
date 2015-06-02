@@ -482,7 +482,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
                                                                                                .getSimpleName()
                                                                                                .toLowerCase() + ".png", Texture.class)));
-                    System.out.println(finalObject);
                 });
             } else if (object instanceof Enemy) {
                 final GameObject finalObject = object;
