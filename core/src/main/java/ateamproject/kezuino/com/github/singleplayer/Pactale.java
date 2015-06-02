@@ -1,14 +1,26 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.utility.assets.Assets;
+import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Pactale extends GameObject {
     private int playerIndex;
     private int lives;
     private Portal portal;
+
+    /**
+     * Empty constructor needed for reflection instantiation.
+     */
+    public Pactale() {
+    }
 
     /**
      * Initialize a {@link Pactale}.
@@ -27,6 +39,9 @@ public class Pactale extends GameObject {
         this.lives = lives;
         this.playerIndex = -1;
         this.drawOnDirection = false;
+
+        Animation pacAnimation = new Animation(true, Assets.get("textures/pactale.png", Texture.class));
+        this.setAnimation(pacAnimation);
     }
 
     public Pactale(int playerIndex, Vector2 exactPosition, int lives, float movementSpeed, Direction walkingDirection, Color color) {
@@ -57,7 +72,6 @@ public class Pactale extends GameObject {
 
     /**
      * Hurts the {@link Pactale} so that it loses one life and resets it's position to spawn.
-     *
      */
     public void hurt() {
         if (this.lives < 0) return;
@@ -75,7 +89,7 @@ public class Pactale extends GameObject {
      * that this {@link Pactale} currently is heading.
      */
     public void shootProjectile() {
-        if (this.getActive()){
+        if (this.getActive()) {
             // create projectile
             Projectile proj = new Projectile(this.getExactPosition(), this, this.getMovementSpeed() * 3, this.getDirection(), this
                     .getColor());
@@ -111,10 +125,10 @@ public class Pactale extends GameObject {
     }
 
     public void addPortal(Portal portal) {
-        // remove current portal
+        // Remove current portal.
         removePortal();
 
-        // add portal to new node
+        // Add portal to new node.
         this.setPortal(portal);
         this.getMap()
             .getNode(portal.getNode().getX(), portal.getNode().getY())

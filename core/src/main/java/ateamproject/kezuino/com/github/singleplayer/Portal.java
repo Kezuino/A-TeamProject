@@ -6,6 +6,7 @@ import ateamproject.kezuino.com.github.utility.game.Direction;
 import ateamproject.kezuino.com.github.utility.game.IPositionable;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class Portal implements IRenderable, IPositionable {
@@ -13,7 +14,7 @@ public class Portal implements IRenderable, IPositionable {
     private Node node;
     private Pactale owner;
     private Direction direction;
-    private Texture texture;
+    private TextureRegion texture;
     
     public Direction getDirection() {
         return direction;
@@ -55,12 +56,12 @@ public class Portal implements IRenderable, IPositionable {
     }
 
     @Override
-    public Texture getTexture() {
+    public TextureRegion getTexture() {
         return texture;
     }
 
     @Override
-    public void setTexture(Texture texture) {
+    public void setTexture(TextureRegion texture) {
         this.texture = texture;
     }
 
@@ -72,12 +73,11 @@ public class Portal implements IRenderable, IPositionable {
     @Override
     public void draw(SpriteBatch batch) {
         if (texture == null) {
-            this.setTexture(Assets.get("textures/portal.png", Texture.class));
+            this.setTexture(new TextureRegion(Assets.get("textures/portal.png", Texture.class)));
         }
-        float xOffset = (32 - texture.getWidth()) / 2f;
-        float yOffset = (32 - texture.getHeight()) / 2f;
+        float xOffset = (32 - texture.getRegionWidth()) / 2f;
+        float yOffset = (32 - texture.getRegionHeight()) / 2f;
         float rotation = this.getDirection().getRotation();
-        batch.draw(texture, this.node.getX()* 32 + xOffset, this.node.getY() * 32 + yOffset, texture.getWidth() / 2, texture.getHeight() / 2, texture.getWidth(), texture.getHeight(), 1, 1, rotation, 0, 0, texture.getWidth(), texture.getHeight(), false, false);
-   
+        batch.draw(texture, this.node.getX()* 32 + xOffset, this.node.getY() * 32 + yOffset, texture.getRegionWidth() / 2, texture.getRegionHeight() / 2, texture.getRegionWidth(), texture.getRegionHeight(), 1, 1, rotation, false);
     }
 }

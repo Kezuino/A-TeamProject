@@ -5,6 +5,15 @@ import java.util.Date;
 public class GameSession {
 
     private final Date startTime;
+    /**
+     * Used for lobby hosting.
+     * Counts the amount of objects received from the host. If count is equal, all objects were received and game can start.
+     */
+    private int objectsLoaded;
+    /**
+     * Total amount of objects the {@link ateamproject.kezuino.com.github.network.Client} should load.
+     */
+    private int objectsToLoad;
     private Map map;
     private Score score;
     private GameState state;
@@ -14,7 +23,6 @@ public class GameSession {
      * Whether this game is synchronizing with a server.
      */
     private boolean isMultiplayer;
-
     /**
      * Creates a new @see GameSession with the default skin.
      */
@@ -26,8 +34,25 @@ public class GameSession {
         this.state = GameState.Running;
     }
 
+    public int getObjectsToLoad() {
+        return objectsToLoad;
+    }
+
+    public void setObjectsToLoad(int objectsToLoad) {
+        this.objectsToLoad = objectsToLoad;
+    }
+
+    public int getObjectsLoaded() {
+        return objectsLoaded;
+    }
+
+    public void setObjectsLoaded(int objectsLoaded) {
+        this.objectsLoaded = objectsLoaded;
+    }
+
     /**
      * Gets the {@link GameState} in which this {@link GameSession} is currently in.
+     *
      * @return {@link GameState} in which this {@link GameSession} is currently in.
      */
     public GameState getState() {
@@ -74,30 +99,14 @@ public class GameSession {
         return this.map;
     }
 
-    public boolean isPlayerMenuShowing() {
-        return this.showingPlayerMenu;
-    }
-
-    public boolean isPauseMenuShowing() {
-        return this.showingPauseMenu;
-    }
-    
-    public void showPauseMenu() {
-        this.showingPauseMenu = !this.showingPauseMenu;
-    }
-    
-    public void showPlayerMenu() {
-        this.showingPlayerMenu = !this.showingPlayerMenu;
-    }
-
     /**
-     * Gets the current game {@link Score} this {@link GameSession} is applied
-     * to.
+     * Sets a new {@link Map} for this {@link GameSession}. Connected clients
+     * should be synced here if the current computer is the host.
      *
-     * @return The current {@link Score} from this {@link GameSession}.
+     * @param squareSize X and Y dimension of the {@link Map}.
      */
-    public Score getScore() {
-        return this.score;
+    public void setMap(int squareSize) {
+        setMap(new Map(this, squareSize));
     }
 
     /**
@@ -110,14 +119,38 @@ public class GameSession {
         this.map = map;
     }
 
+    public boolean isPlayerMenuShowing() {
+        return this.showingPlayerMenu;
+    }
+
+    public void setPlayerMenuShowing(boolean value) {
+        this.showingPlayerMenu = value;
+    }
+
+    public boolean isPauseMenuShowing() {
+        return this.showingPauseMenu;
+    }
+
+    public void setPauseMenuShowing(boolean value) {
+        this.showingPauseMenu = value;
+    }
+
+    public void showPauseMenu() {
+        this.showingPauseMenu = !this.showingPauseMenu;
+    }
+
+    public void showPlayerMenu() {
+        this.showingPlayerMenu = !this.showingPlayerMenu;
+    }
+
     /**
-     * Sets a new {@link Map} for this {@link GameSession}. Connected clients
-     * should be synced here if the current computer is the host.
+     * Gets the current game {@link Score} this {@link GameSession} is applied
+     * to.
      *
-     * @param squareSize X and Y dimension of the {@link Map}.
+     * @return The current {@link Score} from this {@link GameSession}.
      */
-    public void setMap(int squareSize) {
-        setMap(new Map(this, squareSize));
+    public Score getScore() {
+        return this.score;
     }
 
     public void setScore(Score score) {
@@ -134,30 +167,22 @@ public class GameSession {
      */
     public Pactale getPlayer(int playerIndex) {
         return this.map.getAllGameObjects()
-                .stream()
-                .filter(gameObject -> gameObject instanceof Pactale)
-                .map(gameObject -> (Pactale) gameObject)
-                .filter((Pactale pactale) -> pactale.getPlayerIndex() == playerIndex)
-                .findFirst()
-                .orElse(null);
+                       .stream()
+                       .filter(gameObject -> gameObject instanceof Pactale)
+                       .map(gameObject -> (Pactale) gameObject)
+                       .filter((Pactale pactale) -> pactale.getPlayerIndex() == playerIndex)
+                       .findFirst()
+                       .orElse(null);
     }
 
     /**
      * Sets a new {@link Map} for this {@link GameSession}. Connected clients
      * should be synced here if the current computer is the host.
      *
-     * @param width X dimension of the {@link Map}.
+     * @param width  X dimension of the {@link Map}.
      * @param height Y dimension of the {@link Map}.
      */
     public void setMap(int width, int height) {
         setMap(new Map(this, width, height));
-    }
-
-    public void setPlayerMenuShowing(boolean value) {
-        this.showingPlayerMenu = value;
-    }
-
-    public void setPauseMenuShowing(boolean value) {
-        this.showingPauseMenu = value;
     }
 }

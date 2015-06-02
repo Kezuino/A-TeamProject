@@ -9,6 +9,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
@@ -18,6 +19,7 @@ public class Assets {
     public static final String AUDIO_SOUND_DIR = "audio/sound/";
     public static final String AUDIO_MUSIC_DIR = "audio/music/";
     public static final String FONTS_DIR = "fonts/";
+    public static final String SKINS_DIR ="skins/";
 
     public static AssetManager manager;
     private static HashMap<String, Music> musicInstances;
@@ -27,7 +29,7 @@ public class Assets {
         musicInstances = new HashMap<>();
 
         // Add loaders to the ContentManager.
-        manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));
+        manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));        
     }
 
     /**
@@ -54,6 +56,8 @@ public class Assets {
         // Textures (only load those that aren't loaded by the TmxMapLoader).
         manager.load("textures/projectile.png", Texture.class);
         manager.load("textures/portal.png", Texture.class);
+        manager.load("textures/pactale.png", Texture.class);
+        manager.load("textures/enemy.png", Texture.class);
 
         // Sounds (Only short clips that are mainly used for interaction/action effects).
         manager.load(AUDIO_SOUND_DIR + "defeat.wav", Sound.class);
@@ -62,6 +66,9 @@ public class Assets {
         manager.load(AUDIO_SOUND_DIR + "enemy_eat.mp3", Sound.class);
 
         // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
+        
+        //Skins
+        //manager.load(SKINS_DIR + "pacskin.json",FileHandle.class);
 
         // Wait for assets to load.
         manager.finishLoading();

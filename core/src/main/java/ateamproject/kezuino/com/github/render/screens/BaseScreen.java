@@ -8,18 +8,27 @@ package ateamproject.kezuino.com.github.render.screens;
 import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
+import ateamproject.kezuino.com.github.singleplayer.GameSession;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.g3d.Environment;
+import com.badlogic.gdx.graphics.g3d.attributes.CubemapAttribute;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +38,7 @@ import java.util.List;
  */
 public abstract class BaseScreen implements Screen {
 
+    private static GameSession session;
     private final List<IRenderer> renderers;
     protected boolean clearOnRender;
     protected Color clearOnRenderColor;
@@ -39,6 +49,7 @@ public abstract class BaseScreen implements Screen {
     protected Stage stage;
     protected Skin skin;
     protected InputMultiplexer inputs;
+
     public BaseScreen(Game game) {
         // Bootstrap screen.
         renderers = new ArrayList<>();
@@ -51,8 +62,19 @@ public abstract class BaseScreen implements Screen {
         this.game = game;
 
         // Bootstrap skin.
-        skin = new Skin(Gdx.files.internal("uiskin.json"));
+        skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
+       
+       
 
+            /*FileHandle fh = Gdx.files.internal("uiskin.atlas");
+            FileHandle fh1 = new FileHandle("skins");
+            fh.copyTo(fh1);
+            fh = Gdx.files.internal("uiskin.png");
+            fh1 = new FileHandle("skins");
+            fh.copyTo(fh1);*/
+        
+        
+           
         // Bootstrap input.
         inputs.addProcessor(stage);
         Gdx.input.setInputProcessor(inputs);
@@ -63,9 +85,18 @@ public abstract class BaseScreen implements Screen {
         stage.setViewport(viewport);
     }
 
+    public static GameSession getSession() {
+        return session;
+    }
+
+    public static void setSession(GameSession session) {
+        BaseScreen.session = session;
+    }
+
     public Stage getStage() {
         return stage;
-    }
+    }    
+  
 
     public Skin getSkin() {
         return skin;

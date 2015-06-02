@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginCreateNewUser;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
@@ -17,7 +18,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.rmi.RemoteException;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -36,36 +36,72 @@ public class LoginScreen extends BaseScreen {
         txtPassword.setPasswordMode(true);
 
         TextButton btnLogin = new TextButton("Login", skin);
+
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Boolean doesUserExists;
-                try {
-                    PacketLoginUserExists packetDoesUserExists = new PacketLoginUserExists(txtUsername.getText());
-                    Client.getInstance(game).send(packetDoesUserExists);
-                    doesUserExists = packetDoesUserExists.getResult();
-                } catch (RemoteException ex) {
-                    Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                UUID remoteId;
                 try {
                     PacketLoginAuthenticate packet = new PacketLoginAuthenticate(txtUsername.getText(), txtPassword.getText());
-                    Client.getInstance(game).send(packet);
-                } catch (NullPointerException|RemoteException e) {
-                    System.out.println("Can't connect to the server");
+                    Client.getInstance().send(packet);
 
-                    Dialog d = new Dialog("error", skin);
-                    d.add("De server is niet online.");
-                    TextButton bExit = new TextButton("Oke", skin);
-                    bExit.addListener(new ClickListener() {
-                        @Override
-                        public void clicked(InputEvent event, float x, float y) {
-                            d.hide();
+                    if (Client.getInstance().getId() != null) {//if login did succeed
+                        PacketLoginUserExists packetUserExists = new PacketLoginUserExists(txtUsername.getText());
+                        Client.getInstance().send(packetUserExists);
+                        if (!packetUserExists.getResult()) {//if user not exists
+                            Dialog d = new Dialog("Geen gebruiker gevonden", skin);
+                            d.add("Gebruikersnaam:");
+                            TextField f = new TextField("", skin);
+                            d.add(f);
+                            TextButton bExit = new TextButton("Oke", skin);
+                            bExit.addListener(new ClickListener() {
+                                @Override
+                                public void clicked(InputEvent event, float x, float y) {
+                                    if (!f.getText().equals("")) {
+                                        PacketLoginCreateNewUser packet;
+                                        packet = new PacketLoginCreateNewUser(f.getText(), txtUsername.getText());
+                                        Client.getInstance().send(packet);
+                                        if (!packet.getResult()) {
+                                            new Dialog("Error", skin) {
+                                                {
+                                                    text("De naam bestaat al.");
+                                                    button("Oke");
+                                                }
+                                            }.show(stage);
+                                        } else {
+                                            d.hide();
+                                            game.setScreen(new MainScreen(game));
+                                        }
+                                    }
+                                }
+                            });
+                            d.add(bExit);
+                            d.show(stage);
                         }
-                    });
-                    d.add(bExit);
-                    d.show(stage);
+                        else{
+                             game.setScreen(new MainScreen(game));
+                        }
+                    } else {
+                        Dialog d = new Dialog("error", skin);
+                        d.add("Inloggegevens niet correct.");
+                        TextButton bExit = new TextButton("Oke", skin);
+                        bExit.addListener(new ClickListener() {
+                            @Override
+                            public void clicked(InputEvent event, float x, float y) {
+                                d.hide();
+                            }
+                        });
+                        d.add(bExit);
+                        d.show(stage);
+                    }
+                } catch (NullPointerException e) {
+                    Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, e);
+
+                    new Dialog("Error", skin) {
+                        {
+                            text("De server is niet online.");
+                            button("Oke");
+                        }
+                    }.show(stage);
                 }
             }
         });

@@ -15,16 +15,11 @@ import java.util.UUID;
  */
 public class PacketGetEmail extends Packet<String> {
 
-    @PacketField(0)
-    protected String username;
 
-    public PacketGetEmail(String username, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
-        this.username = username;
+    public PacketGetEmail(UUID sender) {
+        super(sender);       
     }
 
-    public String getUsername() {
-        return username;
-    }
+
 
 }

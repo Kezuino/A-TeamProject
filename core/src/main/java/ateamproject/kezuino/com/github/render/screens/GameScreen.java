@@ -5,6 +5,10 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetKickInformation;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketSetKickInformation;
+import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameUIRenderer;
@@ -17,24 +21,34 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import java.util.ArrayList;
+import java.util.UUID;
+
+import java.util.ArrayList;
+import java.util.UUID;
+
 
 /**
  * @author Anton
  */
 public class GameScreen extends BaseScreen {
 
-    private GameSession session;
     private Pactale player;
     private GameRenderer gameRenderer;
-    private Label lblPause;
-    private Label lblPlayers;
     private InputAdapter gameInputAdapter;
+
+    private Dialog pauseMenu;
+    private Dialog playerMenu;
 
     public GameScreen(Game game) {
         this(game, null);
@@ -67,12 +81,14 @@ public class GameScreen extends BaseScreen {
                         player.setDirection(Direction.Right);
                         break;
                     case Input.Keys.SPACE:
-                        if (session.getState() != GameState.Paused) {
+                        if (getSession().getState() != GameState.Paused) {
                             player.shootProjectile();
                         }
                         break;
                     case Input.Keys.H:
-                        BalloonMessage.getBalloonMessage(BalloonHelpMe.class).setFollowObject(player).addBalloonMessage();
+                        BalloonMessage.getBalloonMessage(BalloonHelpMe.class)
+                                .setFollowObject(player)
+                                .addBalloonMessage();
                         break;
                     case Input.Keys.F1:
                         DebugRenderManager.toggle();
@@ -81,8 +97,8 @@ public class GameScreen extends BaseScreen {
                         gameRenderer.toggleFullscreen();
                         break;
                     case Input.Keys.TAB:
-                        if (!session.isPauseMenuShowing()) {
-                            if (session.isPlayerMenuShowing()) {
+                        if (!getSession().isPauseMenuShowing()) {
+                            if (getSession().isPlayerMenuShowing()) {
                                 hidePlayersView();
                             } else {
                                 showPlayersView();
@@ -90,12 +106,8 @@ public class GameScreen extends BaseScreen {
                         }
                         break;
                     case Input.Keys.ESCAPE:
-                        if (!session.isPlayerMenuShowing()) {
-                            if (session.isPauseMenuShowing()) {
-                                hidePauseView();
-                            } else {
-                                showPauseView();
-                            }
+                        if (!getSession().isPlayerMenuShowing()) {
+                            showPauseMenu();
                         }
                         break;
                     default:
@@ -105,32 +117,51 @@ public class GameScreen extends BaseScreen {
             }
         };
         inputs.addProcessor(gameInputAdapter);
+
+        createGui();
+    }
+
+    private void createGui() {
+        // Create pause menu.
+        pauseMenu = new Dialog("Menu", skin);
+        pauseMenu.setKeepWithinStage(false);
+
+        TextButton bContinue = new TextButton("Doorgaan", skin);
+        bContinue.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                MoveToAction action = Actions.action(MoveToAction.class);
+                action.setPosition(stage.getWidth() / 2 - pauseMenu.getWidth() / 2, stage.getHeight() + pauseMenu.getHeight());
+                action.setDuration(0.1f);
+                pauseMenu.hide(action);
+            }
+        });
+        pauseMenu.add(bContinue);
+
+        TextButton bExit = new TextButton("Verlaten", skin);
+        bExit.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Client disconnected.");
+                Client.getInstance().send(packet);
+
+                game.setScreen(new MainScreen(game));
+            }
+        });
+
+        pauseMenu.add(bExit);
     }
 
     public void start(Score score) {
-        session = new GameSession();
-        session.setScore(score);
-        session.setMap(Map.load(session, "2"));
+        setSession(new GameSession());
+        getSession().setScore(score);
+        getSession().setMap(Map.load(getSession(), "2"));
 
-        player = session.getPlayer(0);
-
-        // Initialize pause.
-        lblPause = new Label("Game gepauzeerd", skin);
-        lblPause.setColor(Color.RED);
-        lblPause.setPosition(100, 100 + 300);
-        lblPause.setVisible(false);
-        stage.addActor(lblPause);
-
-        // Initialize lblPlayers.
-        lblPlayers = new Label("spelersoverzicht", skin);
-        lblPlayers.setColor(Color.RED);
-        lblPlayers.setPosition(100, 100 + 300);
-        lblPlayers.setVisible(false);
-        stage.addActor(lblPlayers);
+        player = getSession().getPlayer(0);
 
         // Renderers.
-        gameRenderer = addRenderer(new GameRenderer(session));
-        addRenderer(new GameUIRenderer(session.getMap()));
+        gameRenderer = addRenderer(new GameRenderer(getSession()));
+        addRenderer(new GameUIRenderer(getSession().getMap()));
     }
 
     @Override
@@ -138,84 +169,119 @@ public class GameScreen extends BaseScreen {
         // Render Game and UI.
         super.render(delta);
 
-        switch (this.session.getState()) {
+        switch (getSession().getState()) {
             case GameOver:
-                game.setScreen(new GameOverScreen(game, this.session.getScore()));
+                game.setScreen(new GameOverScreen(game, getSession().getScore()));
                 break;
 
             case Completed:
                 Actor btnContinue = new TextButton("Doorgaan", skin);
                 Actor lblEndGameText = new Label("Your score was:", skin);
-                Actor lblScore = new Label(Integer.toString(this.session.getScore().valueOf()), skin);
+                Actor lblScore = new Label(Integer.toString(getSession().getScore().valueOf()), skin);
                 btnContinue.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         btnContinue.remove();
                         lblEndGameText.remove();
                         lblScore.remove();
-                        start(session.getScore());
+                        start(getSession().getScore());
                     }
                 });
 
                 lblEndGameText.setPosition(stage.getWidth() / 2 - lblEndGameText.getWidth() / 2, stage.getHeight() - 80);
                 lblScore.setPosition(stage.getWidth() / 2 - lblScore.getWidth() / 2, stage.getHeight() - 100);
                 btnContinue.setSize(200, 40);
-                btnContinue.setPosition(stage.getWidth() / 2 - btnContinue.getWidth() / 2, stage.getHeight() / 4 - btnContinue.getHeight() / 2);
+                btnContinue.setPosition(stage.getWidth() / 2 - btnContinue.getWidth() / 2, stage.getHeight() / 4 - btnContinue
+                        .getHeight() / 2);
 
                 stage.addActor(btnContinue);
                 stage.addActor(lblEndGameText);
                 stage.addActor(lblScore);
-                this.session.end();
+                getSession().end();
                 break;
         }
     }
 
-    public void showPauseView() {
-        lblPause.setVisible(true);
-        Dialog d = new Dialog("error", skin);
-        d.add("De server is niet online.");
-        TextButton bExit = new TextButton("Oke", skin);
-        bExit.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                d.hide();
-            }
-        });
-        d.add(bExit);
-        d.show(stage);
-        this.session.showPauseMenu();
-        // TODO: If multiplayer: draw menu on top of game and capture input, but do NOT pause the game!
-    }
+    public void showPauseMenu() {
+        pauseMenu.show(stage);
+        pauseMenu.setPosition(stage.getWidth() / 2 - pauseMenu.getWidth() / 2, stage.getHeight() + pauseMenu.getHeight());
 
-    public void hidePauseView() {
-        lblPause.setVisible(false);
-        this.session.showPauseMenu();
-        //this.session.pause();
-        // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
+        MoveToAction action = Actions.action(MoveToAction.class);
+        action.setPosition(stage.getWidth() / 2 - pauseMenu.getWidth() / 2, stage.getHeight() / 2 - pauseMenu.getHeight() / 2);
+        action.setDuration(0.3f);
+        action.setInterpolation(Interpolation.bounceOut);
+        pauseMenu.addAction(action);
+
+        getSession().showPauseMenu();
     }
 
     public void showPlayersView() {
-        lblPlayers.setVisible(true);
-        this.session.showPlayerMenu();
-        // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
+        //Create player menu.
+        playerMenu = new Dialog("Menu", skin) {
+            {
+                button("Oke");
+            }
+        };
+
+        Table scrollTable = new Table(skin);
+
+        ArrayList<String> people = new ArrayList<>();
+        PacketGetKickInformation packetGetKickInfo = new PacketGetKickInformation();
+        Client.getInstance().send(packetGetKickInfo);
+        people.addAll(packetGetKickInfo.getResult());
+
+        for (String person : people) {
+            String[] peopleResult = person.split(" ");
+
+            TextButton bKick = new TextButton("Kick", skin);
+            TextButton bContinue = new TextButton("Doorgaan", skin);
+            bContinue.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    PacketSetKickInformation packetKick = new PacketSetKickInformation(UUID.fromString(peopleResult[4]));
+                    Client.getInstance().send(packetKick);
+
+                    PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
+                    Client.getInstance().send(packetKickInfo);
+                    people.addAll(packetKickInfo.getResult());
+                    playerMenu.hide();
+                    showPlayersView();
+                }
+            }); 
+
+            scrollTable.add(peopleResult[0]);
+            scrollTable.columnDefaults(0);
+            scrollTable.add(bKick);
+            scrollTable.columnDefaults(1);
+            scrollTable.add(peopleResult[1] + "/" + peopleResult[2]);
+            scrollTable.columnDefaults(2);
+            scrollTable.row();
+
+            if (peopleResult[3].equals("0")) {
+                bKick.setDisabled(true);
+            }
+        }
+
+        playerMenu.add(scrollTable);
+
+        playerMenu.show(stage);
+        getSession().showPlayerMenu();
     }
 
     public void hidePlayersView() {
-        lblPlayers.setVisible(false);
-        this.session.showPlayerMenu();
-        // TODO: If multiplayer: stop rendering the menu on top of the game and resume input processing of the game.
+        getSession().showPlayerMenu();
     }
 
     @Override
     public void resume() {
         // TODO: If multiplayer (not host): Set the state of the client to unpause. If all clients are unpaused the game can resume as a whole. The host can always force a resume.
-        this.session.resume();
+        getSession().resume();
     }
 
     @Override
     public void pause() {
         // TODO: If multiplayer: Request pausing to server when it's enabled for this game.
-        this.session.pause();
+        getSession().pause();
     }
 
     @Override

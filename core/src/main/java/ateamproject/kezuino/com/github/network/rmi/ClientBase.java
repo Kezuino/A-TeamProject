@@ -5,12 +5,12 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
-import ateamproject.kezuino.com.github.network.Game;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
+import ateamproject.kezuino.com.github.utility.game.Direction;
+import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -20,7 +20,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     private transient Client client;
     private transient IProtocolServer server;
 
-    protected ClientBase(Client client) throws RemoteException {
+    protected ClientBase(Client client) throws RemoteException{
         this.client = client;
     }
 
@@ -32,38 +32,62 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         this.server = server;
     }
 
+
     @Override
-    public void creatureMove(int creatureID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    //public Game createLobby(String lobbyName, UUID host) throws RemoteException {
-    //    return this.server.createLobby(lobbyName, host);
-    //}
-
-    public List<Game> getLobbies() throws RemoteException {
-        return this.server.getLobbies();
-    }
-
-    public Game getLobbyById(UUID lobbyId) throws RemoteException {
-        return this.server.getLobbyById(lobbyId);
-    }
-
-    public Game joinLobby(UUID lobbyId, UUID client) throws RemoteException {
-        return this.server.joinLobby(lobbyId, client);
-    }
-
-    public boolean quitLobby(UUID lobbyId) throws RemoteException {
-        return this.server.quitLobby(lobbyId);
-    }
-
-    public boolean leaveLobby(UUID client) throws RemoteException {
-        return this.server.kickClient(client, PacketKick.KickReasonType.LOBBY, null);
+    public boolean drop(PacketKick.KickReasonType kick, String reason) throws RemoteException {
+        PacketKick packet = new PacketKick(kick, reason);
+        this.client.send(packet);
+        return packet.getResult();
     }
 
     @Override
-    public boolean drop(String reason) throws RemoteException {
-        System.out.println("Kicked by server: " + reason);
-        return true;
+    public void clientJoined(UUID id, String username) throws RemoteException {
+        client.send(new PacketClientJoined(id, username));
+    }
+
+    @Override
+    public void clientLeft(UUID clientThatLeft, String username) throws RemoteException {
+        client.send(new PacketClientLeft(clientThatLeft, username));
+    }
+
+    @Override
+    public void loadGame(String mapName, boolean isMaster) throws RemoteException {
+        client.send(new PacketLoadGame(mapName, isMaster));
+    }
+
+    @Override
+    public void setLobbyDetails(PacketLobbySetDetails.Data data) throws RemoteException {
+        PacketLobbyGetDetails packet = new PacketLobbyGetDetails();
+        packet.setResult(data);
+        client.send(packet);
+    }
+
+    @Override
+    public void requestCompleted(String requestId, int progress) throws RemoteException {
+        PacketRequestCompleted packet = new PacketRequestCompleted(requestId, progress);
+        client.send(packet);
+    }
+
+
+    @Override
+    public void gameObjectSetDirection(UUID sender, UUID objectId) throws RemoteException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color) throws RemoteException {
+        PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, color, sender);
+        client.send(packet);
+    }
+
+    @Override
+    public void launchGame(UUID sender) throws RemoteException {
+        PacketLaunchGame packet = new PacketLaunchGame(null, null);
+        client.send(packet);
     }
 }

@@ -13,10 +13,17 @@ import java.util.UUID;
  *
  * @author Sven
  */
-public class PacketGetHasConnection extends Packet<Boolean> {
+public class PacketSetKickInformation extends Packet<Void> {
 
-    public PacketGetHasConnection(UUID... senderAndReceivers) {
+    @PacketField(0)
+    protected UUID personToVoteFor;
+
+    public PacketSetKickInformation(UUID personToVoteFor, UUID... senderAndReceivers) {
         super(senderAndReceivers);
+        this.personToVoteFor = personToVoteFor;
     }
-
+    
+    public UUID getPersonToVoteFor(){
+        return personToVoteFor;
+    }
 }

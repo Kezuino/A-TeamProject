@@ -1,13 +1,10 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
-import ateamproject.kezuino.com.github.network.Game;
-import ateamproject.kezuino.com.github.network.packet.Packet;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketHeartbeat;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginAuthenticate;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExists;
-import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
+import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
+import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
+import ateamproject.kezuino.com.github.utility.game.Direction;
+import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
@@ -19,7 +16,6 @@ import java.util.UUID;
 public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     protected transient Server server;
-    private ClanFunctions clanFunctions;
 
     public ServerBase(Server server) throws RemoteException {
         super(Registry.REGISTRY_PORT);
@@ -27,132 +23,136 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
             throw new IllegalArgumentException("Parameter server must not be null.");
         }
         this.server = server;
-        clanFunctions = new ClanFunctions();
     }
 
     @Override
-    public void creatureMove(int creatureID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public UUID login(String email, String password) throws RemoteException {
-        PacketLoginAuthenticate packet = new PacketLoginAuthenticate(email, password);
+    public PacketLoginAuthenticate.ReturnData login(String email, String password, IProtocolClient client) throws RemoteException {
+        PacketLoginAuthenticate packet = new PacketLoginAuthenticate(email, password, client);
         server.send(packet);
         return packet.getResult();
     }
 
     @Override
     public void heartbeat(UUID client) throws RemoteException {
-        PacketHeartbeat packet = new PacketHeartbeat(client);
+        server.send(new PacketHeartbeat(client));
+    }
+
+    @Override
+    public UUID createLobby(UUID sender, String lobbyName, String clanname) throws RemoteException {
+        PacketCreateLobby packet = new PacketCreateLobby(lobbyName, clanname, sender);
         server.send(packet);
+        return packet.getResult();
     }
 
     @Override
-    public Game createLobby(String lobbyName, UUID host) throws RemoteException {
-        // add lobby to games array
-
-        Game newGame = new Game(lobbyName, server.getClientFromPublic(host).getId());
-        server.getGames().add(newGame);
-
-        System.out.println("Lobby: " + newGame.getName() + " - id " + newGame.getId() + " CREATED !");
-
-        return newGame;
+    public List<PacketGetLobbies.GetLobbiesData> getLobbies(UUID sender, boolean isClanGame) throws RemoteException {
+        PacketGetLobbies packet = new PacketGetLobbies(isClanGame, sender);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
-    public List<Game> getLobbies() throws RemoteException {
-        return new ArrayList<>(this.server.getGames());
+    public PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException {
+        PacketJoinLobby packet = new PacketJoinLobby(sender, lobbyId);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
-    public Game getLobbyById(UUID lobbyId) throws RemoteException {
-//        for (Game game : gameList) {
-//            if (game.getId().equals(lobbyId)) {
-//                return game;
-//            }
-//        }
-        return null;
+    public boolean leaveLobby(UUID sender) throws RemoteException {
+        PacketLeaveLobby packet = new PacketLeaveLobby(sender);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
-    public Game joinLobby(UUID lobbyId, UUID client) throws RemoteException {
-        //        for (Game game : gameList) {
-//            if (game.getId().equals(lobbyId)) {
-//                if (game.invite(client)) {
-//                    return game;
-//                }
-//            }
-//        }
-        return null;
-    }
-
-    @Override
-    public boolean quitLobby(UUID lobbyId) throws RemoteException {
-//        for (Game game : gameList) {
-//            boolean match = game.getId().equals(lobbyId);
-//            System.out.println(match);
-//            if (match) {
-//                return gameList.remove(game);
-//            }
-//        }
-
-        return false;
-    }
-
-    @Override
-    public boolean kickClient(UUID client, PacketKick.KickReasonType reasonType, String message) throws RemoteException {
-        return Packet.execute(new PacketKick(reasonType, message, client)).getResult();
+    public boolean kickClient(UUID sender, UUID target, PacketKick.KickReasonType reasonType, String message) throws RemoteException {
+        PacketKick packet = new PacketKick(reasonType, message, sender, target);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public ArrayList<String> clanFillTable(String emailadres) throws RemoteException {
-        return clanFunctions.fillTable(emailadres);
+        PacketFillTable packet = new PacketFillTable(emailadres);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
-    public boolean clanCreateClan(String clanName, String emailaddress) throws RemoteException {
-        return clanFunctions.createClan(clanName, emailaddress);
+    public boolean createClan(UUID sender, String clanName) throws RemoteException {
+        PacketCreateClan packet = new PacketCreateClan(sender, clanName);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
-    public ClanFunctions.InvitationType clanGetInvitation(String clanName, String emailaddress) throws RemoteException {
-        return clanFunctions.getInvitation(clanName, emailaddress);
+    public InvitationType clanGetInvitation(UUID sender, String clanName) throws RemoteException {
+        PacketGetInvitation packet = new PacketGetInvitation(sender, clanName);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
-    public ClanFunctions.ManagementType getManagement(String clanName, String emailaddress) throws RemoteException {
-        return clanFunctions.getManagement(clanName, emailaddress);
+    public ManagementType getManagement(UUID sender, String clanName) throws RemoteException {
+        PacketGetManagement packet = new PacketGetManagement(clanName, sender);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public String getPeople(String clanName) throws RemoteException {
-        return clanFunctions.getPeople(clanName);
+        PacketGetPeople packet = new PacketGetPeople(clanName);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
-    public boolean handleInvitation(ClanFunctions.InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException {
-        return clanFunctions.handleInvitation(invite, clanName, emailAddress, nameOfInvitee);
+    public boolean handleInvitation(InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException {
+        PacketHandleInvitation packet = new PacketHandleInvitation(invite, clanName, emailAddress, nameOfInvitee);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
-    public boolean handleManagement(ClanFunctions.ManagementType manage, String clanName, String emailaddress) throws RemoteException {
-        return clanFunctions.handleManagement(manage, clanName, emailaddress);
+    public boolean handleManagement(ManagementType manage, String clanName, String emailaddress) throws RemoteException {
+        PacketHandleManagement packet = new PacketHandleManagement(manage, clanName, emailaddress);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
     public String getUsername(String emailaddress) throws RemoteException {
-        return clanFunctions.getUsername(emailaddress);
+        PacketGetUsername packet = new PacketGetUsername(emailaddress);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
-    public String getEmail(String username) throws RemoteException {
-        return clanFunctions.getEmail(username);
+    public String getEmail(UUID Sender) throws RemoteException {
+        PacketGetEmail packet = new PacketGetEmail(Sender);
+        server.send(packet);
+        return packet.getResult();
+    }
+    
+    @Override
+    public ArrayList<String> getClans(UUID Sender) throws RemoteException {
+        PacketGetClans packet = new PacketGetClans(Sender);
+        server.send(packet);
+        return packet.getResult();
+    }
+    
+    @Override
+    public void setClans(UUID Sender) throws RemoteException {
+        PacketReloadClans packet = new PacketReloadClans(Sender);
+        server.send(packet);
     }
 
     @Override
-    public boolean setUsername(String name, String emailaddress) throws RemoteException {
-        return clanFunctions.setUsername(name, emailaddress);
+    public boolean setUsername(String name, String emailaddress,UUID sender) throws RemoteException {
+        PacketSetUsername packet = new PacketSetUsername(name, emailaddress,sender);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override
@@ -163,14 +163,82 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean getHasConnection() throws RemoteException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
     public boolean setScore(String clanName, int score) throws RemoteException {
         PacketHighScore packet = new PacketHighScore(clanName, score);
         server.send(packet);
         return packet.getResult();
+    }
+
+    @Override
+    public void logout(UUID sender) throws RemoteException {
+        PacketLogout packet = new PacketLogout(sender);
+        server.send(packet);
+    }
+
+    @Override
+    public void launchGame(UUID sender) throws RemoteException {
+        PacketLaunchGame packet = new PacketLaunchGame(sender);
+        server.send(packet);
+    }
+
+    @Override
+    public void setLobbyDetails(UUID sender, PacketLobbySetDetails.Data data) throws RemoteException {
+        PacketLobbySetDetails packet = new PacketLobbySetDetails(data, sender);
+        server.send(packet);
+    }
+
+    @Override
+    public PacketLobbySetDetails.Data getLobbyDetails(UUID sender) throws RemoteException {
+        PacketLobbyGetDetails packet = new PacketLobbyGetDetails();
+        server.send(packet);
+        return packet.getResult();
+    }
+
+    @Override
+    public void setLoadStatus(UUID sender, PacketSetLoadStatus.LoadStatus status) throws RemoteException {
+        PacketSetLoadStatus packet = new PacketSetLoadStatus(status, sender);
+        server.send(packet);
+    }
+
+    @Override
+    public void setLoadStatus(UUID sender, PacketSetLoadStatus.LoadStatus status, int progress, int maxProgress) throws RemoteException {
+        PacketSetLoadStatus packet = new PacketSetLoadStatus(status, progress, maxProgress, sender);
+        server.send(packet);
+    }
+
+    @Override
+    public boolean loginCreateUser(UUID sender, String username, String email) throws RemoteException {
+        PacketLoginCreateNewUser packet = new PacketLoginCreateNewUser(username, email, sender);
+        server.send(packet);
+        return packet.getResult();
+    }
+
+    @Override
+    public void gameObjectSetDirection(UUID sender, UUID objectId) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    @Override
+    public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color) throws RemoteException {
+        PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, color, sender);
+        server.send(packet);
+    }
+
+    @Override
+    public ArrayList<String> getKickInformation(UUID sender) throws RemoteException {
+        PacketGetKickInformation packet = new PacketGetKickInformation(sender);
+        server.send(packet);
+        return packet.getResult();
+    }
+
+    @Override
+    public void setKickInformation(UUID getPersonToVoteFor) throws RemoteException {
+        PacketSetKickInformation packet = new PacketSetKickInformation(getPersonToVoteFor);
+        server.send(packet);
     }
 }

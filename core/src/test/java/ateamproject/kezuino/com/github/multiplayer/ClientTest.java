@@ -5,17 +5,14 @@
  */
 package ateamproject.kezuino.com.github.multiplayer;
 
-import ateamproject.kezuino.com.github.PactaleGame;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 import ateamproject.kezuino.com.github.network.rmi.Client;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
 import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
+import static org.junit.Assert.assertTrue;
 
 /**
  *
@@ -24,7 +21,6 @@ import java.util.logging.Logger;
 public class ClientTest {
 
     private Client client;
-    private PactaleGame game = new PactaleGame();
 
     public ClientTest() {
 
@@ -41,17 +37,13 @@ public class ClientTest {
 
     @Test
     public void testConnectie() {
-        boolean gelukt = true;
-        
-        try {
-            client = Client.getInstance(game);
-            client.start();
-            client.stop();
-        } catch (RemoteException ex) {
-            gelukt = false;
-        }
+        boolean succeeded = true;
+
+        client = Client.getInstance();
+        client.start();
+        client.stop();
         //Als de boolean nog true is, is er geen RemoteException.
-        assertTrue(gelukt);
+        assertTrue(succeeded);
         client.stop();
     }
 

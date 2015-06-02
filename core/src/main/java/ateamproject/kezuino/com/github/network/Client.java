@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.PacketManager;
 import com.badlogic.gdx.Game;
 
 import java.util.HashMap;
@@ -15,26 +16,66 @@ import java.util.UUID;
 /**
  * @author Kez and Jules
  */
-public abstract class Client implements IClient, IPacketSender {
+public abstract class Client implements INetworkComponent, IPacketSender {
+    /**
+     * Contains the public ids of all the players currently grouped with this {@link Client}.
+     */
     protected HashMap<Integer, UUID> players;
     protected Game game;
-    protected long secondsFromLastUpdate;
     protected Thread updateThread;
     protected boolean isUpdating;
-    private UUID id;
+    protected UUID id;
+    protected UUID publicId;
+    protected PacketManager packets;
+    protected String Username;
+    protected String emailadres;
 
     public Client(com.badlogic.gdx.Game game) {
         this.game = game;
         this.players = new HashMap<>(8);
-        this.secondsFromLastUpdate = System.nanoTime();
         this.isUpdating = true;
-        this.id = UUID.randomUUID();
+        this.packets = new PacketManager();
+    }
+
+    public UUID getPublicId() {
+        return publicId;
+    }
+
+    public void setPublicId(UUID publicId) {
+        this.publicId = publicId;
     }
 
     /**
-     * Gets the bind of player's index in the game with the public {@link UUID} on the {@link IServer}.
+     * Sets the {@link Game} that the {@link Client} is currently using to render.
      *
-     * @return Bind of player's index in the game with the public {@link UUID} on the {@link IServer}.
+     * @param game {@link Game} that the {@link Client} is currently using to render.
+     */
+    public void setGame(Game game) {
+        this.game = game;
+    }
+
+    /**
+     * Gets the private id only known by the {@link Server} and this {@link Client}.
+     *
+     * @return Private id only known by the {@link Server} and this {@link Client}.
+     */
+    public UUID getId() {
+        return id;
+    }
+
+    /**
+     * Sets the private id only known by the {@link Server} and this {@link Client}.
+     *
+     * @return Private id only known by the {@link Server} and this {@link Client}.
+     */
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    /**
+     * Gets the bind of player's index in the game with the public {@link UUID} on the {@link INetworkComponent}.
+     *
+     * @return Bind of player's index in the game with the public {@link UUID} on the {@link INetworkComponent}.
      */
     public HashMap<Integer, UUID> getPlayers() {
         return players;
@@ -44,24 +85,15 @@ public abstract class Client implements IClient, IPacketSender {
         return getPlayers().get(index);
     }
 
-    @Override
-    public UUID getId() {
-        return id;
-    }
-
     /**
-     * Sets the {@link UUID} used by this {@link Client} to identify itself with the {@link Server}.
+     * Sends the {@link Packet} to the {@link Server}. If no senders were specified it sets it to the current {@link Client#id} by default.
      *
-     * @param id
+     * @param packet {@link Packet} to send to the {@link IClientInfo}.
      */
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     @Override
     public void send(Packet packet) {
-        this.secondsFromLastUpdate = System.nanoTime();
-        Packet.execute(packet);
+        if (packet.getSender() == null && packet.getReceivers().length <= 0) packet.setSender(getId());
+        packets.execute(packet);
     }
 
     @Override
@@ -69,21 +101,32 @@ public abstract class Client implements IClient, IPacketSender {
 
     @Override
     public void unregisterPackets() {
-        Packet.unregisterAll();
+        packets.unregisterAll();
     }
 
     /**
-     * Starts the {@link IClient} and begin making a connection with the {@link IServer}.
+     * Starts the {@link IClientInfo} and begin making a connection with the {@link INetworkComponent}.
      */
     public abstract void start();
 
     /**
-     * Stops the {@link IClient} from listening and sending to {@link IServer}.
+     * Stops the {@link IClientInfo} from listening and sending to {@link INetworkComponent}.
      */
     public abstract void stop();
 
-    @Override
-    public double getSecondsFromLastPacket() {
-        return (System.nanoTime() - secondsFromLastUpdate) / 1000000000.0;
+    public void setUsername(String Username) {
+        this.Username = Username;
+    }
+
+    public void setEmailadres(String emailadres) {
+        this.emailadres = emailadres;
+    }
+
+    public String getUsername() {
+        return Username;
+    }
+
+    public String getEmailadres() {
+        return emailadres;
     }
 }

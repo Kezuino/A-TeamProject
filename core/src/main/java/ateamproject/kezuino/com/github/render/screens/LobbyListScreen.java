@@ -5,25 +5,22 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
 import ateamproject.kezuino.com.github.network.rmi.Client;
-import ateamproject.kezuino.com.github.network.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * @author Fatih
  */
 public class LobbyListScreen extends BaseScreen {
-    private final Table scrollTable;
+
+    private Table scrollTable;
     TextField lobbyname;
     private boolean clanGame;
 
@@ -31,14 +28,22 @@ public class LobbyListScreen extends BaseScreen {
         super(game);
         this.clanGame = clanGame;
 
-        scrollTable = new Table();
         createGui();
-
     }
 
     private void createGui() {
-        scrollTable.clear();
+        // Back to main menu.
+        TextButton btnBack = new TextButton("Terug", skin);
+        btnBack.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                game.setScreen(new MainScreen(game));
+            }
+        });
+        btnBack.setPosition(10, stage.getHeight() - btnBack.getHeight() - 10);
+        this.stage.addActor(btnBack);
 
+        // Create game button.
         TextButton btnCreateGame = new TextButton("Maak spel", skin);
         btnCreateGame.addListener(new ClickListener() {
             @Override
@@ -46,15 +51,37 @@ public class LobbyListScreen extends BaseScreen {
 
                 Dialog d = new Dialog("Lobby Name", skin);
                 lobbyname = new TextField("", skin);
+
+                SelectBox<Object> clanDropdown = null;
+                String dropDownResult = "";
+                if (clanGame) {
+                    Object[] clans = new Object[2];
+                    clans[0] = new Label("clan 1", skin);
+                    clans[1] = new Label("clan 2", skin);
+                    clanDropdown = new SelectBox<Object>(skin);
+                    clanDropdown.setItems(clans);
+
+                    clanDropdown.setSelectedIndex(0);
+                    d.add(clanDropdown);
+
+                    dropDownResult = clanDropdown.getSelected().toString();
+                }
+
                 TextButton btnsubmit = new TextButton("Maken", skin);
                 lobbyname.setSize(150, 30);
                 d.add(lobbyname);
                 d.add(btnsubmit);
+
+                final String dropDownResultFinal = dropDownResult;
                 btnsubmit.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         d.hide();
-                        game.setScreen(new LobbyScreen(game, lobbyname.getText()));
+                        if (clanGame) { 
+                            game.setScreen(new LobbyScreen(game, lobbyname.getText(), dropDownResultFinal));
+                        } else {
+                            game.setScreen(new LobbyScreen(game, lobbyname.getText(), null));
+                        }
                     }
                 });
                 d.show(stage);
@@ -78,13 +105,13 @@ public class LobbyListScreen extends BaseScreen {
         pm1.fill();
 
         // add headers to table
+        scrollTable = new Table(skin);
         scrollTable.add(lb1);
         scrollTable.columnDefaults(0);
         scrollTable.add(lb2);
         scrollTable.columnDefaults(1);
         scrollTable.add(lb3);
         scrollTable.columnDefaults(2);
-        scrollTable.columnDefaults(3);
 
         // set table position
         scrollTable.row();
@@ -98,10 +125,8 @@ public class LobbyListScreen extends BaseScreen {
         table.setSize(stage.getWidth(), stage.getHeight() - btnCreateGame.getHeight());
         table.setColor(com.badlogic.gdx.graphics.Color.BLUE);
 
-
         // get all host from the server and put in the table
         fillHostTable();
-
 
         float x = stage.getWidth() / 2 - table.getWidth() / 2;
         float y = stage.getHeight() - table.getHeight() - btnCreateGame.getHeight() - 20;
@@ -112,86 +137,44 @@ public class LobbyListScreen extends BaseScreen {
     }
 
     private void fillHostTable() {
-        List<Game> hostList = null;
+        List<PacketGetLobbies.GetLobbiesData> hostList = null;
 
-        try {
-            Client client = Client.getInstance(game);
-            hostList = client.getRmi().getLobbies();
-        } catch (RemoteException ex) {
-            Logger.getLogger(LobbyListScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        Client client = Client.getInstance();
+        PacketGetLobbies packet = new PacketGetLobbies(this.clanGame, client.getId());
+        client.send(packet);
+        hostList = packet.getResult();
 
-        for (Game game : hostList) {
-            TextField lb1 = new TextField(game.getName(), skin);
-            lb1.setDisabled(true);
-            TextField lb2 = new TextField(game.getId().toString(), skin);
-            lb2.setDisabled(true);
-            TextField lb3 = new TextField(Integer.toString(game.getClients().size()), skin);
-            lb3.setDisabled(true);
-            TextButton btnJoin = new TextButton("Join", skin);
-            btnJoin.addListener(new ClickListener() {
-                @Override
-                public void clicked(InputEvent event, float x, float y) {
-                    UUID lobId = game.getId();
-                    LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, lobId));
-                }
-            });
+        if (hostList != null && !hostList.isEmpty()) {
+            for (PacketGetLobbies.GetLobbiesData game : hostList) {
+                TextField lb1 = new TextField(game.name, skin);
+                lb1.setDisabled(true);
+                TextField lb2 = new TextField(game.hostName, skin);
+                lb2.setDisabled(true);
+                TextField lb3 = new TextField(Integer.toString(game.membersCount), skin);
+                lb3.setDisabled(true);
+                TextButton btnJoin = new TextButton("Join", skin);
+                btnJoin.addListener(new ClickListener() {
+                    @Override
+                    public void clicked(InputEvent event, float x, float y) {
+//                    PacketJoinLobby packet = new PacketJoinLobby(game.lobbyId);
+//                    Client.getInstance().send(packet);
+                        LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, game.lobbyId));
+                    }
+                });
 
+                btnJoin.setDisabled(true);
 
-            btnJoin.setDisabled(true);
+                scrollTable.add(lb1);
+                scrollTable.columnDefaults(0);
+                scrollTable.add(lb2);
+                scrollTable.columnDefaults(1);
+                scrollTable.add(lb3);
+                scrollTable.columnDefaults(2);
+                scrollTable.add(btnJoin);
+                scrollTable.columnDefaults(3);
 
-            scrollTable.add(lb1);
-            scrollTable.columnDefaults(0);
-            scrollTable.add(lb2);
-            scrollTable.columnDefaults(1);
-            scrollTable.add(lb3);
-            scrollTable.columnDefaults(2);
-            scrollTable.add(btnJoin);
-            scrollTable.columnDefaults(3);
-
-            scrollTable.row();
+                scrollTable.row();
+            }
         }
     }
 }
-
-/**
- * @author Fatih
- */
-class LobbyFunctions {
-    public static List<String[]> getRandomHostList() {
-        // 0 = lobby name
-        // 1 = host name
-        // 2 = clients
-        List<String[]> hostsList = new ArrayList<>();
-
-        String[] host;
-        for (int i = 0; i < 20; i++) {
-            host = new String[3];
-            host[0] = "NewGame";
-            host[1] = "Fatih";
-            host[2] = "1/8";
-            hostsList.add(host);
-        }
-
-        return hostsList;
-    }
-
-    public static List<String[]> getClanHostList() {
-        // 0 = lobby name
-        // 1 = host name
-        // 2 = clients
-        List<String[]> clanList = new ArrayList<>();
-
-        String[] host;
-        for (int i = 0; i < 20; i++) {
-            host = new String[3];
-            host[0] = "NewGame";
-            host[1] = "Fatih";
-            host[2] = "1/8";
-            clanList.add(host);
-        }
-
-        return clanList;
-    }
-}
-

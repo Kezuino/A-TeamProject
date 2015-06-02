@@ -1,69 +1,187 @@
 package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
+import ateamproject.kezuino.com.github.network.packet.PacketManager;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketClientLeft;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.Packet;
-import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-public abstract class Server<TClient extends IClient> implements IServer, IPacketSender {
+public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, AutoCloseable {
 
-    protected Dictionary<UUID, Game> games;
     /**
-     * Thread used for constantly synchronizing all the clients and
-     * automatically dropping inactive ones.
+     * Manager for registering {@link Packet} actions to.
+     */
+    protected PacketManager packets;
+
+    /**
+     * Total time in seconds that are allowed to pass before a {@link IClientInfo} is automatically dropped.
+     */
+    protected double clientTimeout;
+
+    /**
+     * {@link Game Games} that are currently active on this {@link Server}.
+     */
+    protected Dictionary<UUID, Game> games;
+
+
+    /**
+     * Thread for updating the {@link Server} state. Is executed in a while loop with a {@link Thread#sleep(long)} of 10 milliseconds.
+     * Stop the thread by calling {@link #stop()}.
      */
     protected Thread updateThread;
-    protected boolean isUpdating;
-    protected double secondsFromLastUpdate;
-    private Connection connect = null;
 
+    protected boolean isUpdating;
     /**
-     * Gets or sets all {@link IClient clients} currently connected to this
-     * {@link Server}.
+     * Gets or sets all {@link IClientInfo clients} currently connected to this {@link Server}.
      */
     protected Dictionary<UUID, TClient> clients;
 
     public Server() {
         this.games = new Hashtable<>();
         this.clients = new Hashtable<>();
-        this.secondsFromLastUpdate = System.nanoTime();
         this.isUpdating = true;
-        
-        if (!makeConnection()) {
-            System.out.println("Can't make databaseconnection!");
-        }
-    }
-    
-    public boolean makeConnection(){
-          try {
-            // This will load the MySQL driver, each DB has its own driver
-            Class.forName("com.mysql.jdbc.Driver");
+        this.clientTimeout = 30; // Default 30 seconds before client is dropped for all servers.
+        this.packets = new PacketManager();
 
-            // Setup the connection with the DB
-            connect = DriverManager.getConnection("jdbc:mysql://localhost:3306/pactales", "root", "");
-
-            return true;
-        } catch (ClassNotFoundException | SQLException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
-        return false;
+        // Start updating thread.
+        startUpdating();
     }
 
+    /**
+     * Starts running the update loop.
+     */
+    protected void startUpdating() {
+        if (updateThread != null && updateThread.isAlive()) return;
+
+        updateThread = new Thread(() -> {
+            while (!updateThread.isInterrupted()) {
+                update();
+                try {
+                    Thread.sleep(10);
+                } catch (InterruptedException e) {
+                }
+            }
+        });
+        updateThread.start();
+    }
+
+    /**
+     * {@link Server} specific work to do on another thread.
+     */
+    public abstract void update();
+
+    /**
+     * Gets the total time in seconds that are allowed to pass before a {@link IClientInfo} is automatically dropped.
+     *
+     * @return Total time in seconds that are allowed to pass before a {@link IClientInfo} is automatically dropped.
+     */
+    public double getClientTimeout() {
+        return clientTimeout;
+    }
+
+    /**
+     * Sets the total time in seconds that are allowed to pass before a {@link IClientInfo} is automatically dropped.
+     *
+     * @param clientTimeout Total time in seconds that are allowed to pass before a {@link IClientInfo} is automatically dropped.
+     */
+    public void setClientTimeout(double clientTimeout) {
+        this.clientTimeout = clientTimeout;
+    }
+
+    /**
+     * Returns a copy of all the {@link Game games} that are on the server.
+     *
+     * @return A copy of all the {@link Game games} that are on the server.
+     */
     public List<Game> getGames() {
         return Collections.list(games.elements());
     }
 
     /**
-     * Gets all {@link IClient clients} currently connected to this
+     * Removes a {@link Game} from this {@link Server} if it exists and notifies all connected users that the {@link Game} has closed.
+     * Does nothing otherwise.
+     *
+     * @param gameId {@link UUID} of the {@link Game} to removed from the {@link Server}.
+     * @return Removed {@link Game} or null if no {@link Game} could be removed with the {@link UUID}.
+     */
+    public Game removeGame(UUID gameId) {
+        Game game = games.get(gameId);
+        if (game == null) return null;
+
+        // Notify all connected clients that the game is closing.
+        HashSet<UUID> gameClients = game.getClients();
+        send(new PacketKick(PacketKick.KickReasonType.LOBBY, "Lobby closed.", gameClients.toArray(new UUID[gameClients.size()])));
+
+        // Unregister client on game.
+        for (UUID clientId : game.getClients()) {
+            IClientInfo client = getClient(clientId);
+            client.setGame(null);
+        }
+
+        // Remove the game.
+        return games.remove(gameId);
+    }
+
+
+    /**
+     * Removes the {@link TClient} from all references in this {@link Server}.
+     *
+     * @param privateId Private id of the {@link TClient} to remove.
+     * @return Removed {@link TClient}.
+     */
+    public TClient removeClient(UUID privateId) {
+        // Remove client from game.
+        IClientInfo client = getClient(privateId);
+        client.setGame(null);
+
+        // Update/remove game from server.
+        Game lobby = getGameFromClientId(privateId);
+        if (lobby != null) {
+            lobby.getClients().remove(privateId);
+
+            // Close lobby if no more clients or client was host.
+            if (lobby.getClients().size() == 0) {
+                games.remove(lobby.getId());
+            } else if (lobby.getHostId().equals(privateId)) {
+                removeGame(lobby.getId());
+            } else {
+                // Notify other clients that someone left.
+                PacketClientLeft packet = new PacketClientLeft(client.getPublicId(), client.getUsername(), lobby.getClientsAsArray());
+                send(packet);
+            }
+        }
+
+        // Remove client from server.
+        return clients.remove(privateId);
+    }
+
+    /**
+     * Adds a {@link Game} to this {@link Server}.
+     *
+     * @param game {@link Game} to add to this {@link Server}.
+     */
+    public void addGame(Game game) {
+        games.put(game.getId(), game);
+    }
+
+    /**
+     * Gets the {@link Game} assosicated with the given id.
+     *
+     * @param gameId {@link UUID} of the {@link Game} to get.
+     * @return {@link Game} that was found or null.
+     */
+    public Game getGame(UUID gameId) {
+        if (gameId == null) throw new IllegalArgumentException("Parameter gameId must not be null.");
+        return games.get(gameId);
+    }
+
+    /**
+     * Gets all {@link IClientInfo clients} currently connected to this
      * {@link Server}.
      *
-     * @return All {@link IClient clients} currently connected to this
+     * @return All {@link IClientInfo clients} currently connected to this
      * {@link Server}.
      */
     public List<TClient> getClients() {
@@ -71,26 +189,25 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     }
 
     /**
-     * Gets the {@link IClient} based on the private id. Can be null.
+     * Gets the {@link IClientInfo} based on the private id. Can be null.
      *
-     * @param privateId Private id of the {@link IClient}.
-     * @return {@link IClient} based on the private id. Can be null.
+     * @param privateId Private id of the {@link IClientInfo}.
+     * @return {@link IClientInfo} based on the private id. Can be null.
      */
-    public IClient getClient(UUID privateId) {
+    public TClient getClient(UUID privateId) {
         return clients.get(privateId);
     }
 
     /**
-     * Gets the {@link IClient} based on the public id.
+     * Gets the {@link TClient} based on the public id.
      *
-     * @param publicId Public id of the {@link IClient}.
-     * @return {@link IClient} based on the public id.
+     * @param publicId Public id of the {@link IClientInfo}.
+     * @return {@link TClient} based on the public id.
      */
-    public IClient getClientFromPublic(UUID publicId) {
-        //return this.getClients().stream().filter(c -> c.getId().equals(publicId)).findFirst().orElse(null);
-
-        for (IClient client : getClients()) {
-            if (client.getId().equals(publicId)) {
+    public TClient getClientFromPublic(UUID publicId) {
+        // Do not simplify code. Needs to be high-performance.
+        for (TClient client : getClients()) {
+            if (client.getPublicId().equals(publicId)) {
                 return client;
             }
         }
@@ -98,15 +215,36 @@ public abstract class Server<TClient extends IClient> implements IServer, IPacke
     }
 
     /**
-     * Unregisters all the {@link Packet packets} for this domain/process.
+     * Gets the {@link Game} that the {@link TClient} is currently in. Or null if {@link TClient} is not currently in a game / lobby.
+     *
+     * @param sender Private id of the {@link TClient} to find.
+     * @return {@link Game} that the {@link TClient} is currently in. Or null if {@link TClient} is not currently in a game / lobby.
+     */
+    public Game getGameFromClientId(UUID sender) {
+        TClient client = getClient(sender);
+        if (client == null) return null;
+        return client.getGame();
+    }
+
+    /**
+     * Gracefully closes the {@link Server} by stopped all activity by it.
      */
     @Override
-    public void unregisterPackets() {
-        Packet.unregisterAll();
+    public final void close() {
+        if (updateThread != null) {
+            updateThread.interrupt();
+            while (updateThread.isAlive()) {
+                try {
+                    Thread.sleep(20);
+                } catch (InterruptedException e) {
+                }
+            }
+        }
     }
 
     @Override
-    public double getSecondsFromLastPacket() {
-        return (System.nanoTime() - secondsFromLastUpdate) / 1000000000.0;
+    public void stop() {
+        close();
     }
+
 }

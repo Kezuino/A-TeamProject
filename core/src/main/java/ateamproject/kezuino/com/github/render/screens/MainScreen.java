@@ -53,13 +53,12 @@ public class MainScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //game.setScreen(new GameScreen(game));
-                 boolean remoteId = false;
-
+                
                     PacketHighScore packet;
                 try {
                     packet = new PacketHighScore("MBoiz", 30, Client.getInstance(game).getId());
                     Client.getInstance(game).send(packet);
-                   remoteId=  packet.getResult();
+                   packet.getResult();
                 } catch (RemoteException ex) {
                     Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }

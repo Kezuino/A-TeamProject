@@ -1,10 +1,15 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.assets.Assets;
+import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 
 import java.util.Iterator;
 import java.util.Random;
@@ -51,6 +56,12 @@ public class Enemy extends GameObject {
     private float timeToChangePathStart;
 
     /**
+     * Empty constructor needed for reflection instantiation.
+     */
+    public Enemy() {
+    }
+
+    /**
      * Constructs a new {@link Enemy}.
      * The newly constructed {@link Enemy} is not dead.
      * The newly constructed {@link Enemy} is not edible.
@@ -70,6 +81,9 @@ public class Enemy extends GameObject {
         this.edibleTime = 2f;
         this.graphPath = new DefaultGraphPath<>();
         this.drawOnDirection = false;
+
+        Animation pacAnimation = new Animation(Assets.get("textures/enemy.png", Texture.class));
+        this.setAnimation(pacAnimation);
     }
 
     /**

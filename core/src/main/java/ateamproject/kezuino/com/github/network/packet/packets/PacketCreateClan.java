@@ -15,21 +15,15 @@ import java.util.UUID;
  */
 public class PacketCreateClan extends Packet<Boolean> {
 
-    @PacketField(0)
-    protected String emailadres;
 
-    @PacketField(1)
+    @PacketField(0)
     protected String clanName;
 
-    public PacketCreateClan(String emailadres, String clanName, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
-        this.emailadres = emailadres;
+    public PacketCreateClan(UUID sender, String clanName) {
+        super(sender);        
         this.clanName = clanName;
     }
 
-    public String getEmailadres() {
-        return emailadres;
-    }
 
     public String getClanName() {
         return clanName;

@@ -1,36 +1,21 @@
 package ateamproject.kezuino.com.github.network.packet;
 
-import ateamproject.kezuino.com.github.network.IClient;
+import ateamproject.kezuino.com.github.network.IClientInfo;
 
-import java.io.*;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
-@SuppressWarnings("unchecked")
 public abstract class Packet<TResult> {
-    /**
-     * All functions that have a return value are stored here.
-     */
-    protected static HashMap<Class<?>, IPacketFunction> registeredFunctions;
-    /**
-     * All actions that do not have a return value are stored here.
-     */
-    protected static HashMap<Class<?>, IPacketAction> registeredActions;
 
     /**
-     * Cached fields of all the {@link Packet packets} that have been serialized before.
-     */
-    protected static HashMap<Class<?>, List<Field>> orderedPacketFields;
-
-    static {
-        registeredFunctions = new HashMap<>();
-        registeredActions = new HashMap<>();
-        orderedPacketFields = new HashMap<>();
-    }
-
-    /**
-     * Gets or sets the {@link IClient} that issued this {@link Packet}.
+     * Gets or sets the {@link IClientInfo} that issued this {@link Packet}.
      * If null, sender was the current executing context (usually the server).
      */
     protected UUID sender;
@@ -39,7 +24,7 @@ public abstract class Packet<TResult> {
      */
     protected PacketAudience audience;
     /**
-     * Gets or sets the {@link HashSet} of {@link IClient clients} that should receive this {@link Packet}.
+     * Gets or sets the {@link HashSet} of {@link IClientInfo clients} that should receive this {@link Packet}.
      */
     protected HashSet<UUID> receivers;
 
@@ -77,172 +62,6 @@ public abstract class Packet<TResult> {
         }
     }
 
-    /**
-     * Executes the {@link Packet}'s function if it was registered and puts the result in {@link Packet#result}.
-     *
-     * @param packet {@link Packet} to execute.
-     * @param <T>    Any type of {@link Packet}.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends Packet> T execute(T packet) {
-        if (packet == null) throw new IllegalArgumentException("Parameter packet must not be null.");
-        IPacketFunction func = registeredFunctions.get(packet.getClass());
-        if (func == null) {
-            // Try action instead.
-            IPacketAction action = registeredActions.get(packet.getClass());
-            if (action == null) return null;
-            action.action(packet);
-            return null;
-        }
-        // Try function.
-        packet.setResult(func.function(packet));
-        return packet;
-    }
-
-    /**
-     * Registers the {@link Packet}'s class and binds an execution to it.
-     *
-     * @param clazz    {@link Packet} type to bind.
-     * @param function Method to execute when this {@link Packet} is executed.
-     */
-    public static <T extends Packet, TResult> void registerFunc(Class<T> clazz, IPacketFunction<T, TResult> function) {
-        if (registeredFunctions.get(clazz) != null)
-            throw new IllegalStateException(String.format("Packet %s cannot be registered twice.", clazz.getSimpleName()));
-        registeredFunctions.put(clazz, function);
-    }
-
-    /**
-     * Registers the {@link Packet}'s class and binds an execution to it.
-     *
-     * @param clazz  {@link Packet} type to bind.
-     * @param action Method to execute when this {@link Packet} is executed.
-     */
-    public static <T extends Packet> void registerAction(Class<T> clazz, IPacketAction<T> action) {
-        if (registeredActions.get(clazz) != null)
-            throw new IllegalStateException(String.format("Packet %s cannot be registered twice.", clazz.getSimpleName()));
-        registeredActions.put(clazz, action);
-    }
-
-
-    /**
-     * Unregisters all methods that have a binding to a method.
-     */
-    public static void unregisterAll() {
-        if (registeredFunctions != null) registeredFunctions.clear();
-        if (registeredActions != null) registeredActions.clear();
-    }
-
-    /**
-     * Gets all the {@link PacketField fields} in order that they are specified.
-     *
-     * @param clazz Type of {@link Packet} to fetch the {@link PacketField fields} from.
-     * @return All the {@link PacketField fields} in order that they are specified.
-     */
-    private static <TPacket extends Packet> List<Field> getPacketFields(Class<TPacket> clazz) {
-        if (clazz == null) throw new IllegalArgumentException("Parameter packet must not be null.");
-
-        // Return if cached already.
-        List<Field> result = Packet.orderedPacketFields.get(clazz);
-        if (result == null) {
-            result = new ArrayList<>();
-            Packet.orderedPacketFields.put(clazz, result);
-        }
-        if (!result.isEmpty()) return result;
-
-        // Get PacketField annotated fields.
-        Field[] declaredFields = clazz.getDeclaredFields();
-        for (int i = 0; i <declaredFields.length; i++) {
-            if (declaredFields[i].getAnnotation(PacketField.class) != null) {
-                result.add(declaredFields[i]);
-            }
-        }
-
-        // Sort the fields based on order.
-        Collections.sort(result, (f1, f2) -> Byte.compare(f1.getAnnotation(PacketField.class).value(), f2.getAnnotation(PacketField.class).value()));
-
-        return result;
-    }
-
-
-    /**
-     * Deserializes the byte array given by {@code data} and stores it in this {@link Packet}.
-     *
-     * @param data Byte array containg the {@link Packet} information to be deserialized.
-     * @return {@link Packet} filled by the data from the given {@code data} byte array.
-     */
-    public static <T extends Packet> T deserialize(byte[] data) {
-        ByteArrayInputStream bis = new ByteArrayInputStream(data);
-        ObjectInput in = null;
-        Packet result = null;
-
-        try {
-            in = new ObjectInputStream(bis);
-
-            // Build package name.
-            String packageName = Packet.class.getTypeName();
-
-            // Read packet type
-            packageName = packageName.substring(0, packageName.lastIndexOf('.')) + ".packets.Packet" + in.readUTF();
-
-            // Initialize packet.
-            try {
-                result = (T) Class.forName(packageName).getConstructor().newInstance();
-            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException e) {
-                e.printStackTrace();
-            }
-
-            if (result == null) {
-                throw new IllegalStateException("Packet could not be found or casted to the right Packet type.");
-            }
-
-            // Read sender.
-            if (in.readByte() == 1) {
-                result.sender = new UUID(in.readLong(), in.readLong());
-            }
-
-            // Read receivers.
-            short receiverCount = in.readShort();
-            for (int i = 0; i < receiverCount; i++) {
-                result.receivers.add(new UUID(in.readLong(), in.readLong()));
-            }
-
-            // Read all fields in order to byte stream.
-            final ObjectInput finalIn = in;
-            final Packet finalResult = result;
-            for (Field f : getPacketFields(result.getClass())) {
-                try {
-                    f.setAccessible(true);
-                    f.set(finalResult, finalIn.readObject());
-                } catch (IOException | IllegalAccessException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            // Read return value.
-            boolean hasReturn = finalIn.readBoolean();
-            if (hasReturn) {
-                result.setResult(finalIn.readObject());
-            }
-        } catch (IOException | InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                bis.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        return (T) result;
-    }
-
     public TResult getResult() {
         return result;
     }
@@ -256,8 +75,18 @@ public abstract class Packet<TResult> {
      *
      * @return {@link HashSet} of {@link UUID clients} that should receive this {@link Packet}.
      */
-    public HashSet<UUID> getReceivers() {
-        return receivers;
+    public UUID[] getReceivers() {
+        return receivers.toArray(new UUID[receivers.size()]);
+    }
+
+    /**
+     * Sets the receivers of this {@link Packet}.
+     *
+     * @param receivers List of {@link UUID}. Meaning all private id's that should receive this {@link Packet}.
+     */
+    public void setReceivers(UUID[] receivers) {
+        this.receivers.clear();
+        Collections.addAll(this.receivers, receivers);
     }
 
     /**
@@ -270,6 +99,15 @@ public abstract class Packet<TResult> {
      */
     public UUID getSender() {
         return sender;
+    }
+
+    /**
+     * Sets the {@link UUID} that issued this {@link Packet}.
+     *
+     * @param sender {@link UUID} that issued this {@link Packet}.
+     */
+    public void setSender(UUID sender) {
+        this.sender = sender;
     }
 
     /**
@@ -305,7 +143,8 @@ public abstract class Packet<TResult> {
             final ObjectOutput finalOut = out;
 
             // Write packet type.
-            out.writeUTF(this.getClass().getSimpleName().replace("Packet", ""));
+            String packetClassName = this.getClass().getSimpleName();
+            out.writeUTF(packetClassName.substring("Packet".length(), packetClassName.length() - "Packet".length()));
 
             // Write sender.
             if (sender != null) {
@@ -324,7 +163,7 @@ public abstract class Packet<TResult> {
             }
 
             // Write all fields in order to byte stream.
-            getPacketFields(this.getClass()).forEach(f -> {
+            PacketManager.getPacketFields(this.getClass()).forEach(f -> {
                 try {
                     f.setAccessible(true);
                     finalOut.writeObject(f.get(this));
@@ -369,17 +208,17 @@ public abstract class Packet<TResult> {
      */
     public enum PacketAudience {
         /**
-         * All {@link IClient clients} on the server.
+         * All {@link IClientInfo clients} on the server.
          */
         BROADCAST_SERVER,
 
         /**
-         * All {@link IClient} connected to a specific {@link ateamproject.kezuino.com.github.network.Game}.
+         * All {@link IClientInfo} connected to a specific {@link ateamproject.kezuino.com.github.network.Game}.
          */
         BROADCAST,
 
         /**
-         * Specific {@link IClient}.
+         * Specific {@link IClientInfo}.
          */
         TARGET,
 
