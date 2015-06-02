@@ -436,29 +436,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
             System.out.println("Client left: " + p.getUsername());
         });
-                    
-                } catch (RemoteException ex) {
-                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
- 
-        });
-
-        packets.registerAction(PacketClientLeft.class, (p) -> {
-            System.out.println("Client left: " + p.getUsername());
-            
-             if (game.getScreen() instanceof LobbyScreen) {
-                try {
-                    LobbyScreen a = (LobbyScreen)game.getScreen();
-                    // get members
-                    java.util.Map<UUID, String> members = getRmi().getServer().getLobbyMembers(a.getLobbyId());
-                    a.setMembers(members);
-                    
-                } catch (RemoteException ex) {
-                    Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
         
          packets.registerFunc(PacketLobbyMembers.class, packet -> {
                try {
