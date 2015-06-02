@@ -165,7 +165,11 @@ public class GameScreen extends BaseScreen {
         if (getSession().getScore() == null) getSession().setScore(score);
         if (getSession().getMap() == null) throw new IllegalStateException("Map should be loaded before the GameScreen can be started.");
 
-        player = getSession().getPlayer(0);
+        player = getSession().getPlayer(Client.getInstance().getPublicId());
+        if (player == null) {
+            System.out.println("Could not get Pactale object from public id. Check your internet connection.");
+            player = getSession().getPlayer(0);
+        }
 
         // Renderers.
         gameRenderer = addRenderer(new GameRenderer());

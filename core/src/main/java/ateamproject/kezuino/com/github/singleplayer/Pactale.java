@@ -16,6 +16,7 @@ public class Pactale extends GameObject {
      * Empty constructor needed for reflection instantiation.
      */
     public Pactale() {
+        isActive = true;
     }
 
     /**

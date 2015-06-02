@@ -121,7 +121,7 @@ public class GameRenderer implements IRenderer {
         }
 
         // Check if there are any items on the map.
-        if (!this.map.getNodes().stream().anyMatch(Node::hasItem)) {
+        if (this.map.getAllItems().isEmpty()) {
             this.session.complete();
         }
 

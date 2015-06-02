@@ -15,6 +15,7 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public abstract class GameObject implements IRenderable, IPositionable {
 
@@ -66,7 +67,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
      * won't be visible or usuable in the
      * {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
-    private boolean isActive;
+    protected boolean isActive;
     /**
      * {@link Map} that contains this {@link GameObject}.
      */
@@ -463,7 +464,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
         } else if (targetNode == null || targetNode.isWall()) {
             this.direction = direction;
             collisionWithWall(getNode());
-            if(this.animation != null) {
+            if (this.animation != null) {
                 this.animation.resetFrame();
             }
             return;
@@ -513,7 +514,7 @@ public abstract class GameObject implements IRenderable, IPositionable {
             }
         }
 
-        // Check for other GameObject collision
+        // Check for other GameObject collision (excluding items)
         for (GameObject obj : this.map.getGameObjectsOnNode(this.getNode())) {
             if (obj.equals(this)) continue;
 
@@ -536,12 +537,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     @Override
     public void draw(SpriteBatch batch) {
-        // Capture node and texture.
-        Node node = getNode();
-        if (node == null || this.texture == null) {
-            return;
-        }
-
         // Preprocess batch.
         Color oldColor = batch.getColor();
         batch.setColor(this.getColor());
@@ -560,8 +555,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
             this.setTexture(this.animation.getFrame(this.direction));
         }
 
-        batch.draw(this.texture, this.getExactPosition().x, this.getExactPosition().y, this.texture.getRegionHeight() / 2, this.texture.getRegionWidth() / 2, this.texture.getRegionHeight(), this.texture.getRegionWidth(), 1, 1, rotation);
-        
+        batch.draw(this.texture, this.getExactPosition().x, this.getExactPosition().y, this.texture.getRegionHeight() / 2, this.texture
+                .getRegionWidth() / 2, this.texture.getRegionHeight(), this.texture.getRegionWidth(), 1, 1, rotation);
+
         // Reset batch color for other draws.
         batch.setColor(oldColor);
     }

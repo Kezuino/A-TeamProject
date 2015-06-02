@@ -59,6 +59,7 @@ public class Enemy extends GameObject {
      * Empty constructor needed for reflection instantiation.
      */
     public Enemy() {
+        isActive = true;
     }
 
     /**

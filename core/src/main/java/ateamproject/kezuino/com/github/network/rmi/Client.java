@@ -16,6 +16,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -173,12 +174,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             if (data != null) {
                 this.setEmailadres(data.getEmailadress());
                 this.setUsername(data.getUsername());
-                this.setId(data.getClientUuid());
-                System.out.println("Logged in as: " + data.getClientUuid());
+                this.setId(data.getPrivateId());
+                this.setPublicId(data.getPublicId());
+                System.out.println("Logged in as: " + data.getPrivateId());
             } else {
                 this.setEmailadres(null);
                 this.setUsername(null);
                 this.setId(null);
+                this.setPublicId(null);
                 return false;
             }
             return true;
@@ -478,19 +481,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 Pactale pactale = (Pactale) object;
                 pactale.setPlayerIndex(p.getIndex());
                 final GameObject finalObject = object;
-                Gdx.app.postRunnable(() -> {
-                    finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
-                                                                                               .getSimpleName()
-                                                                                               .toLowerCase() + ".png", Texture.class)));
-                });
+                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
+                                                                                                                      .getSimpleName()
+                                                                                                                      .toLowerCase() + ".png", Texture.class))));
             } else if (object instanceof Enemy) {
                 final GameObject finalObject = object;
                 Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
                                                                                                                       .getSimpleName()
                                                                                                                       .toLowerCase() + ".png", Texture.class))));
-            } else if (object instanceof Item) {
-                Item item = (Item) object;
-                item.setItemType(p.getItemType());
             }
 
             session.getMap().addGameObject(object);
@@ -498,6 +496,33 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
             System.out.printf("Loaded (%s): %d/%d%n", object.getClass()
                                                             .getSimpleName(), session.getObjectsLoaded(), session.getObjectsToLoad());
+
+            if (session.getObjectsToLoad() == session.getObjectsLoaded()) {
+                send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.ObjectsLoaded));
+            }
+        });
+
+        packets.registerAction(PacketCreateItem.class, packet -> {
+            GameSession session = BaseScreen.getSession();
+            if (session == null) {
+                System.out.printf("Tried to create object: '%s' but no GameSession was set.%n", "item");
+                return;
+            }
+
+            // Create item.
+            Item item = new Item(packet.getType().toString(), packet.getPosition(), packet.getType());
+            item.setId(packet.getObjId());
+            item.setMap(session.getMap());
+
+            Gdx.app.postRunnable(() -> item.setTexture(new TextureRegion(Assets.get("textures/" + item.getItemType()
+                                                                                                      .name()
+                                                                                                      .toLowerCase() + ".png", Texture.class))));
+            session.getMap().getNode(item.getExactPosition()).setItem(item);
+
+            // Update load status.
+            session.setObjectsLoaded(session.getObjectsLoaded() + 1);
+            System.out.printf("Loaded (%s): %d/%d%n", item.getClass()
+                                                          .getSimpleName(), session.getObjectsLoaded(), session.getObjectsToLoad());
 
             if (session.getObjectsToLoad() == session.getObjectsLoaded()) {
                 send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.ObjectsLoaded));
@@ -547,23 +572,22 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     try {
                         getRmi().getServer()
                                 .createObject(p.getSender(), Pactale.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj
-                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()), obj.getPlayerIndex(), null);
+                                        .getMovementSpeed(), obj.getPlayerIndex() == 0 ? getPublicId() : obj.getId(), Color.argb8888(obj.getColor()), obj.getPlayerIndex());
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
                 });
                 loader.addConsumer(Item.class, obj -> {
                     try {
-                        getRmi().getServer()
-                                .createObject(p.getSender(), Item.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj
-                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()), 0, obj.getItemType());
+                        getRmi().getServer().createItem(p.getSender(), obj.getId(), obj.getItemType(), obj
+                                .getExactPosition());
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
                 });
             } else {
-                // Load everything that's network dependant.
-                excluded = EnumSet.of(MapLoader.MapObjectTypes.ENEMY, MapLoader.MapObjectTypes.PACTALE);
+                // Exclude everything that's network dependant.
+                excluded = EnumSet.of(MapLoader.MapObjectTypes.ENEMY, MapLoader.MapObjectTypes.PACTALE, MapLoader.MapObjectTypes.ITEM);
             }
 
             // Load map (on OpenGL thread).
@@ -605,11 +629,11 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerAction(PacketShootProjectile.class, packet -> {
             try {
-                if (packet.getSender() != null)
+                if (packet.getSender() != null) {
                     getRmi().getServer()
                             .shootProjectile(packet.getSender(), packet.getPosition(), packet.getDirection(), packet.getSpeed(), packet
                                     .getId());
-                else if (BaseScreen.getSession() != null && BaseScreen.getSession().getMap() != null) {
+                } else if (BaseScreen.getSession() != null && BaseScreen.getSession().getMap() != null) {
                     Pactale player = BaseScreen.getSession().getPlayer(packet.getSender());
                     Projectile projectile = new Projectile(packet.getPosition(), player, packet.getSpeed(), packet.getDirection(), player
                             .getColor());

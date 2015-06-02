@@ -8,17 +8,22 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-public class Item extends GameObject implements IRenderable, IPositionable {
+import java.util.UUID;
+
+public class Item implements IRenderable, IPositionable {
 
     private Vector2 exactPosition;
     private String name;
     private ItemType type;
     private Map map;
+    private TextureRegion texture;
+    private UUID id;
 
     /**
      * Empty constructor needed for reflection instantiation.
      */
     public Item() {
+
     }
 
     /**
@@ -32,7 +37,6 @@ public class Item extends GameObject implements IRenderable, IPositionable {
         this.name = name;
         this.type = type;
         this.exactPosition = exactPosition.cpy();
-        this.setColor(Color.WHITE);
     }
 
     /**
@@ -114,7 +118,7 @@ public class Item extends GameObject implements IRenderable, IPositionable {
     public void setItemType(ItemType type) {
         if (type == null) return;
         name = type.toString();
-        if (this.type == null || this.type.equals(type)) return;
+        if (this.type != null || type.equals(this.type)) return;
         this.type = type;
     }
 
@@ -126,7 +130,6 @@ public class Item extends GameObject implements IRenderable, IPositionable {
      * @param target Target standing on the node with the item
      */
     public void activate(GameObject target) {
-        // TODO - implement Item.activate
         switch (this.type) {
             case BigObject:
                 this.getMap()
@@ -200,5 +203,13 @@ public class Item extends GameObject implements IRenderable, IPositionable {
                 ", exactPosition=" + exactPosition +
                 ", type=" + type +
                 '}';
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }

@@ -7,6 +7,7 @@ import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
+import ateamproject.kezuino.com.github.singleplayer.Pactale;
 import ateamproject.kezuino.com.github.utility.io.Database;
 
 import java.rmi.AlreadyBoundException;
@@ -17,7 +18,9 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -193,9 +196,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketGetClans.class, (p) -> getClient(p.getSender()).getClans());
 
-        packets.registerAction(PacketReloadClans.class, (p) -> {
-            getClient(p.getSender()).setClans(clanFunctions.fillTable2(getClient(p.getSender()).getUsername()));
-        });
+        packets.registerAction(PacketReloadClans.class, (p) -> getClient(p.getSender()).setClans(clanFunctions.fillTable2(getClient(p.getSender()).getUsername())));
 
         packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
 
@@ -251,7 +252,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 client.setClans(clanFunctions.fillTable2(client.getUsername()));
 
                 // Tell client what its id is.
-                return new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId());
+                return new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId(), client.getPublicId());
             }
 
             System.out.println(" .. login credentials not valid.");
@@ -520,6 +521,17 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerAction(PacketCreateGameObject.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
+
+            // Replace Pactale UUID with the public id of the connected client (needed for sync with movement).
+            if (packet.getTypeName().equalsIgnoreCase(Pactale.class.getSimpleName())) {
+                packet.setId(getClient(game.getClientsAsArray()[packet.getIndex()]).getPublicId());
+            }
+
+            game.getLoadQueue().add(packet);
+        });
+
+        packets.registerAction(PacketCreateItem.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
             game.getLoadQueue().add(packet);
         });
 
@@ -593,16 +605,29 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 // Unload all queued createObject packets to all connected clients of the lobby.
                 while (!game.getLoadQueue().isEmpty()) {
                     // Remove one packet from queue.
-                    PacketCreateGameObject packetCreate = game.getLoadQueue().remove();
+                    Packet p = game.getLoadQueue().remove();
 
-                    // Send it to all receivers.
-                    for (IProtocolClient receiver : receivers) {
-                        try {
-                            receiver.createObject(null, packetCreate.getTypeName(), packetCreate.getPosition(), packetCreate
-                                    .getDirection(), packetCreate
-                                    .getSpeed(), packetCreate.getId(), packetCreate.getColor(), packetCreate.getIndex(), packetCreate.getItemType());
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
+                    if (p instanceof PacketCreateGameObject) {
+                        PacketCreateGameObject pObject = (PacketCreateGameObject) p;
+                        // Send it to all receivers.
+                        for (IProtocolClient receiver : receivers) {
+                            try {
+                                receiver.createObject(null, pObject.getTypeName(), pObject.getPosition(), pObject
+                                        .getDirection(), pObject
+                                        .getSpeed(), pObject.getId(), pObject.getColor(), pObject.getIndex());
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else if (p instanceof PacketCreateItem) {
+                        PacketCreateItem pItem = (PacketCreateItem) p;
+                        // Send it to all receivers.
+                        for (IProtocolClient receiver : receivers) {
+                            try {
+                                receiver.createItem(null, pItem.getObjId(), pItem.getType(), pItem.getPosition());
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -619,7 +644,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             for (IProtocolClient receiver : receivers) {
                 try {
-                    receiver.shootProjectile(null, packet.getPosition(), packet.getDirection(), packet.getSpeed(), packet.getId());
+                    receiver.shootProjectile(null, packet.getPosition(), packet.getDirection(), packet.getSpeed(), packet
+                            .getId());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
