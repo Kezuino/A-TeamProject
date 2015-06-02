@@ -428,8 +428,16 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     e.printStackTrace();
                 }
             } else {
-                // Request came from server.. show game screen.
-                Gdx.app.postRunnable(() -> game.setScreen(new GameScreen(game)));
+                if (p.isPaused()) {
+                    // Request came from server.. show game screen.
+                    Gdx.app.postRunnable(() -> {
+                        BaseScreen.getSession().pause();
+                        game.setScreen(new GameScreen(game));
+                    });
+                } else {
+                    // Request came from server.. show game screen.
+                    Gdx.app.postRunnable(() -> BaseScreen.getSession().resume());
+                }
             }
         });
 
@@ -497,13 +505,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 // Load everything and synchronize with server.
                 excluded = EnumSet.noneOf(MapLoader.MapObjectTypes.class);
                 loader.addConsumer(Enemy.class, obj -> {
-                    try {
-                        getRmi().getServer()
-                                .createObject(p.getSender(), Enemy.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj
-                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()));
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
-                    }
+                    // TODO: Enable after sync is done for enemies.
+//                    try {
+//                        getRmi().getServer()
+//                                .createObject(p.getSender(), Enemy.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj
+//                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()));
+//                    } catch (RemoteException e) {
+//                        e.printStackTrace();
+//                    }
                 });
                 loader.addConsumer(Pactale.class, obj -> {
                     try {

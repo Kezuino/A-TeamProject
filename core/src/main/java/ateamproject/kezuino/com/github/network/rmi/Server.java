@@ -17,9 +17,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -212,13 +210,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 while (resultSet.next()) {
                     clans.add(resultSet.getString("clanname"));
                 }
-                
+
                 getClient(p.getSender()).setClans(clans);
-                
+
             } catch (SQLException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
-            
+
         });
 
         packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
@@ -544,8 +542,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerAction(PacketCreateGameObject.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             game.getLoadQueue().add(packet);
-
-            System.out.println("Added to queue: " + packet);
         });
 
         packets.registerAction(PacketSetLoadStatus.class, packet -> {
@@ -563,11 +559,30 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 // Launch the game (everyone is done loading).
                 game.getClients().stream().map(id -> getClient(id).getRmi()).forEach(rmi -> {
                     try {
-                        rmi.launchGame(null);
+                        game.setInGame(true);
+                        rmi.launchGame(true);
                     } catch (RemoteException e) {
                         e.printStackTrace();
                     }
                 });
+
+                // Set game to run unpaused.
+                Timer timer = new Timer(true);
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        game.getClients().stream().map(id -> getClient(id).getRmi()).forEach(rmi -> {
+                            try {
+                                rmi.launchGame(false);
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            } finally {
+                                timer.cancel();
+                            }
+                        });
+                    }
+                }, 5);
+
             } else if (game.getClients().stream().map(this::getClient).allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded || info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
                 // Send all packets that were queued from the host to all the other clients (so, excluding the host).
                 int objectsToSend = game.getLoadQueue().size();

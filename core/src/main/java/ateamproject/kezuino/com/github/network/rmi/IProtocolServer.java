@@ -88,4 +88,13 @@ public interface IProtocolServer extends IProtocol {
     void setLoadStatus(UUID sender, PacketSetLoadStatus.LoadStatus status) throws RemoteException;
 
     void setLoadStatus(UUID sender, PacketSetLoadStatus.LoadStatus status, int progress, int maxProgress) throws RemoteException;
+
+    /**
+     * Searches the {@link ateamproject.kezuino.com.github.network.Game} list for the {@link ateamproject.kezuino.com.github.network.Game} that the {@link UUID sender} is in.
+     * If no {@link ateamproject.kezuino.com.github.network.Game} was found, the {@link ateamproject.kezuino.com.github.network.Game} will not be started.
+     *
+     * @param sender {@link UUID} that sended this message.
+     * @throws RemoteException If RMI fails to connect.
+     */
+    void launchGame(UUID sender) throws RemoteException;
 }

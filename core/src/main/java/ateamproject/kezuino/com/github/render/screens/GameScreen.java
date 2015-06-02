@@ -275,13 +275,13 @@ public class GameScreen extends BaseScreen {
     @Override
     public void resume() {
         // TODO: If multiplayer (not host): Set the state of the client to unpause. If all clients are unpaused the game can resume as a whole. The host can always force a resume.
-        getSession().resume();
+        //getSession().resume();
     }
 
     @Override
     public void pause() {
         // TODO: If multiplayer: Request pausing to server when it's enabled for this game.
-        getSession().pause();
+        //getSession().pause();
     }
 
     @Override
