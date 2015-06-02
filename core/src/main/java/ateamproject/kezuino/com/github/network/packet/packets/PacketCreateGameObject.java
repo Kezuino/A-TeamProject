@@ -29,8 +29,6 @@ public class PacketCreateGameObject extends Packet {
     protected int color;
     @PacketField(6)
     protected int index;
-    @PacketField(7)
-    protected ItemType type;
 
     public PacketCreateGameObject() {
     }
@@ -47,14 +45,6 @@ public class PacketCreateGameObject extends Packet {
         this.speed = speed;
         this.color = color;
         this.id = id;
-    }
-
-    public ItemType getItemType() {
-        return type;
-    }
-
-    public void setItemType(ItemType type) {
-        this.type = type;
     }
 
     public int getIndex() {
@@ -87,6 +77,10 @@ public class PacketCreateGameObject extends Packet {
 
     public Direction getDirection() {
         return direction;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }
 

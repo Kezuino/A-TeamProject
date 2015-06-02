@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.network;
 
+import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateGameObject;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 
@@ -17,14 +18,14 @@ public class Game {
 
     protected UUID id;
     protected String name;
-    protected HashSet<UUID> clients;
+    protected LinkedHashSet<UUID> clients;
     /**
      * First UUID is the voter. second UUID is the person that received the vote.
      */
     protected ArrayList<UUID[]> votes;
     protected UUID hostId;
     protected boolean inGame;
-    protected Queue<PacketCreateGameObject> loadQueue;
+    protected Queue<Packet> loadQueue;
     protected String map;
     /**
      * The name of the clan who did create this game. If no clan did create it, it should be null.
@@ -45,11 +46,11 @@ public class Game {
 
         // Add host to clients list
         this.hostId = host;
-        this.clients = new HashSet<>();
+        this.clients = new LinkedHashSet<>();
         this.clients.add(host);
     }
 
-    public Queue<PacketCreateGameObject> getLoadQueue() {
+    public Queue<Packet> getLoadQueue() {
         return loadQueue;
     }
 
@@ -85,7 +86,7 @@ public class Game {
      *
      * @return All {@link IClientInfo clients} that are currently in this game / lobby.
      */
-    public HashSet<UUID> getClients() {
+    public LinkedHashSet<UUID> getClients() {
         return clients;
     }
 

@@ -18,6 +18,7 @@ public class Projectile extends GameObject {
      * Empty constructor needed for reflection instantiation.
      */
     public Projectile() {
+        isActive = true;
     }
 
     /**

@@ -1,8 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.pathfinding.AStar;
-import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import ateamproject.kezuino.com.github.utility.game.Nodes;
 import com.badlogic.gdx.maps.tiled.TiledMap;
@@ -11,8 +9,8 @@ import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Map {
 
@@ -79,7 +77,8 @@ public class Map {
      * @return MapLoader Information that was loaded from the file.
      */
     public static Map load(GameSession session, String mapName) {
-        if (mapName == null || mapName.isEmpty()) throw new IllegalArgumentException("Parameter mapName must not be null or empty.");
+        if (mapName == null || mapName.isEmpty())
+            throw new IllegalArgumentException("Parameter mapName must not be null or empty.");
 
         MapLoader loader = new MapLoader(session, mapName);
         loader.load();
@@ -88,12 +87,14 @@ public class Map {
 
     /**
      * Gets the {@link MapLoader} associated with the .TMX file.
+     *
      * @param session {@link GameSession} that hosts this {@link Map}.
      * @param mapName Name of the file that has the {@link Map} data.
      * @return MapLoader Information that was loaded from the file.
      */
     public static MapLoader getLoader(GameSession session, String mapName) {
-        if (mapName == null || mapName.isEmpty()) throw new IllegalArgumentException("Parameter mapName must not be null or empty.");
+        if (mapName == null || mapName.isEmpty())
+            throw new IllegalArgumentException("Parameter mapName must not be null or empty.");
 
         MapLoader loader = new MapLoader(session, mapName);
         return loader;
@@ -310,6 +311,7 @@ public class Map {
                 result.add(item);
             }
         }
+
         return result;
     }
 }

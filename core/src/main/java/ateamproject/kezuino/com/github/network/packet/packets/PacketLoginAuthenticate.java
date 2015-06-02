@@ -2,10 +2,8 @@ package ateamproject.kezuino.com.github.network.packet.packets;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketField;
-import java.io.Serializable;
-import java.util.Dictionary;
-import java.util.Hashtable;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 public class PacketLoginAuthenticate extends Packet<PacketLoginAuthenticate.ReturnData> {
@@ -47,12 +45,18 @@ public class PacketLoginAuthenticate extends Packet<PacketLoginAuthenticate.Retu
 
         protected String username;
         protected String emailadress;
-        protected UUID clientUuid;
+        protected UUID privateId;
+        protected UUID publicId;
 
-        public ReturnData(String username, String emailadress, UUID clientUuid) {
+        public ReturnData(String username, String emailadress, UUID privateId, UUID publicId) {
             this.username = username;
             this.emailadress = emailadress;
-            this.clientUuid = clientUuid;
+            this.privateId = privateId;
+            this.publicId = publicId;
+        }
+
+        public UUID getPublicId() {
+            return publicId;
         }
 
         public String getUsername() {
@@ -71,12 +75,12 @@ public class PacketLoginAuthenticate extends Packet<PacketLoginAuthenticate.Retu
             this.emailadress = emailadress;
         }
 
-        public UUID getClientUuid() {
-            return clientUuid;
+        public UUID getPrivateId() {
+            return privateId;
         }
 
-        public void setClientUuid(UUID clientUuid) {
-            this.clientUuid = clientUuid;
+        public void setPrivateId(UUID privateId) {
+            this.privateId = privateId;
         }
 
     }
