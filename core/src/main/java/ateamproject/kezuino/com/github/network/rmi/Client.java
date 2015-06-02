@@ -180,7 +180,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 this.setUsername(data.getUsername());
                 this.setId(data.getPrivateId());
                 this.setPublicId(data.getPublicId());
-                System.out.println("Logged in as: " + data.getPrivateId());
+                System.out.printf("Logged in as: (Private: %s), (Public: %s)%n", data.getPrivateId(), data.getPublicId());
             } else {
                 this.setEmailadres(null);
                 this.setUsername(null);
@@ -665,20 +665,16 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         });
 
         packets.registerAction(PacketShootProjectile.class, packet -> {
-            try {
-                if (packet.getSender() != null) {
-                    getRmi().getServer()
-                            .shootProjectile(packet.getSender(), packet.getPosition(), packet.getDirection(), packet.getSpeed(), packet
-                                    .getId());
-                } else if (BaseScreen.getSession() != null && BaseScreen.getSession().getMap() != null) {
-                    Pactale player = BaseScreen.getSession().getPlayer(packet.getSender());
-                    Projectile projectile = new Projectile(packet.getPosition(), player, packet.getSpeed(), packet.getDirection(), player
-                            .getColor());
-                    projectile.setId(packet.getId());
-                    BaseScreen.getSession().getMap().addGameObject(projectile);
+            // If client sended it..send this private id to server.
+            if (packet.getSender() != null && packet.getSender().equals(getId())) {
+                try {
+                    getRmi().getServer().shootProjectile(packet.getSender());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
-            } catch (RemoteException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            } else {
+                // Server sended this.
+                BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
             }
         });
     }

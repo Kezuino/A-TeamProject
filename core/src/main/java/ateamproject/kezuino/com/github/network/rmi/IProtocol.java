@@ -18,13 +18,13 @@ import java.util.UUID;
  * @author Kez and Jules
  */
 public interface IProtocol extends Remote {
-    void gameObjectSetDirection(UUID sender, UUID objectId) throws RemoteException;
+    void playerSetDirection(UUID sender, UUID objectId) throws RemoteException;
 
-    void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException;
+    void playerSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException;
+
+    void shootProjectile(UUID sender) throws RemoteException;
 
     void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException;
 
     void createItem(UUID sender, UUID itemId, ItemType type, Vector2 position) throws RemoteException;
-
-    void shootProjectile(UUID sender,Vector2 position, Direction direction, float speed, UUID objId) throws RemoteException;
 }

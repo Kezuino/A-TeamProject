@@ -6,7 +6,6 @@
 package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateGameObject;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 
 import java.util.*;
@@ -33,7 +32,7 @@ public class Game {
     protected String clanName;
     private int mapObjectCount;
 
-    public Game(String name,String clanName, UUID host) {
+    public Game(String name, String clanName, UUID host) {
         // Generate UUID and give lobby a name
         this.id = UUID.randomUUID();
         this.name = name;
@@ -90,8 +89,14 @@ public class Game {
         return clients;
     }
 
+    /**
+     * This array is a copy. Do not add to this array!
+     *
+     * @return A unmodifiable list.
+     */
     public UUID[] getClientsAsArray() {
-        return clients.toArray(new UUID[clients.size()]);
+        ArrayList<UUID> uuids = new ArrayList<>(getClients());
+        return uuids.toArray(new UUID[uuids.size()]);
     }
 
     /**
@@ -135,16 +140,16 @@ public class Game {
     public void setMap(String map) {
         this.map = map;
     }
-    
-    public String getClanName(){
-        return this.clanName;
-    }
 
-    public void setMapObjectCount(int mapObjectCount) {
-        this.mapObjectCount = mapObjectCount;
+    public String getClanName() {
+        return this.clanName;
     }
 
     public int getMapObjectCount() {
         return mapObjectCount;
+    }
+
+    public void setMapObjectCount(int mapObjectCount) {
+        this.mapObjectCount = mapObjectCount;
     }
 }

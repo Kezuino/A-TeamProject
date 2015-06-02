@@ -227,12 +227,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void gameObjectSetDirection(UUID sender, UUID objectId) throws RemoteException {
+    public void playerSetDirection(UUID sender, UUID objectId) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException {
+    public void playerSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -263,8 +263,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void shootProjectile(UUID sender, Vector2 position, Direction direction, float speed, UUID objId) throws RemoteException {
-        PacketShootProjectile packet = new PacketShootProjectile(position, direction, speed, objId, sender);
+    public void shootProjectile(UUID sender) throws RemoteException {
+        PacketShootProjectile packet = new PacketShootProjectile(sender);
         server.send(packet);
     }
 

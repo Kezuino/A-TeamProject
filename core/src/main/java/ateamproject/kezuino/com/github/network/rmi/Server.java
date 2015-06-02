@@ -18,11 +18,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -173,7 +169,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 ArrayList<String> clans = getClient(packet.getSender()).getClans();
                 if (!clans.isEmpty()) {
                     for (String clan : clans) {
-                        for (Game game : getGames()) {
+                        for (Game game : getGamesAsList()) {
                             if (game.getClanName().equals(clan)) {
                                 result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
                                         game.getId(),
@@ -184,7 +180,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
                 }
             } else {
-                for (Game game : getGames()) {
+                for (Game game : getGamesAsList()) {
                     if (game.getClanName() == null) {
                         result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
                                 game.getId(),
@@ -209,7 +205,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketGetClans.class, (p) -> getClient(p.getSender()).getClans());
 
-        packets.registerAction(PacketReloadClans.class, (p) -> getClient(p.getSender()).setClans(clanFunctions.fillTable2(getClient(p.getSender()).getUsername())));
+        packets.registerAction(PacketReloadClans.class, (p) -> getClient(p.getSender()).setClans(clanFunctions.fillTable2(getClient(p
+                .getSender()).getUsername())));
 
         packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
 
@@ -265,7 +262,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 client.setClans(clanFunctions.fillTable2(client.getUsername()));
 
                 // Tell client what its id is.
-                return new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId(), client.getPublicId());
+                return new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId(), client
+                        .getPublicId());
             }
 
             System.out.println(" .. login credentials not valid.");
@@ -393,7 +391,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             if (lobby == null) {
                 return null;
             }
-            
+
             // Add new client to game.
             lobby.getClients().add(packet.getSender());
             IClientInfo client = getClient(packet.getSender());
@@ -418,19 +416,19 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             return data;
         });
-        
+
         packets.registerFunc(PacketLobbyMembers.class, packet -> {
             // return all current members in the lobby
-            
+
             Map<UUID, String> curMembers = new HashMap<>();
-            
+
             for (UUID lobby : games.get(packet.getLobbyId()).getClients()) {
                 IClientInfo client = getClient(lobby);
                 curMembers.put(lobby, client.getUsername());
-            }      
+            }
             return curMembers;
         });
-        
+
 
         packets.registerFunc(PacketGetKickInformation.class, packet -> {
             ArrayList<String> peoples = new ArrayList<>();
@@ -533,7 +531,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
 
             // Set the loading states of everyone to empty and notify everyone to start loading the map.
-            for (UUID uuid : game.getClientsAsArray()) {
+            for (UUID uuid : game.getClients()) {
                 ClientInfo client = getClient(uuid);
                 client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
 
@@ -548,7 +546,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerAction(PacketCreateGameObject.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
 
-            // Replace Pactale UUID with the public id of the connected client (needed for sync with movement).
+            // This packet is only called for the connected clients excluding the host. Public ids will be shared here.
             if (packet.getTypeName().equalsIgnoreCase(Pactale.class.getSimpleName())) {
                 packet.setId(getClient(game.getClientsAsArray()[packet.getIndex()]).getPublicId());
             }
@@ -572,6 +570,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                         .getSender()));
                 return;
             }
+
+            System.out.printf("Sender (public): %s. New status: %s%n", getClient(packet.getSender()).getPublicId(), packet
+                    .getStatus());
 
             if (game.getClients()
                     .stream()
@@ -608,7 +609,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             } else if (game.getClients()
                            .stream()
                            .map(this::getClient)
-                           .allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded || info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
+                           .filter(info -> !info.getPrivateId().equals(game.getHostId()))
+                           .allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded)) {
                 // Send all packets that were queued from the host to all the other clients (so, excluding the host).
                 int objectsToSend = game.getLoadQueue().size();
 
@@ -664,14 +666,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             Game game = getGameFromClientId(packet.getSender());
             IProtocolClient[] receivers = game.getClients()
                                               .stream()
-                                              .filter(c -> !c.equals(game.getHostId()))
+                                              .filter(c -> !c.equals(packet.getSender()))
                                               .map(id -> getClient(id).getRmi())
                                               .toArray(IProtocolClient[]::new);
 
             for (IProtocolClient receiver : receivers) {
                 try {
-                    receiver.shootProjectile(null, packet.getPosition(), packet.getDirection(), packet.getSpeed(), packet
-                            .getId());
+                    receiver.shootProjectile(getClient(packet.getSender()).getPublicId());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

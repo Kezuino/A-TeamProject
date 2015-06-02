@@ -1,12 +1,15 @@
 package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
+import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketManager;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketClientLeft;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.Packet;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.UUID;
 
 public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, AutoCloseable {
 
@@ -23,7 +26,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
     /**
      * {@link Game Games} that are currently active on this {@link Server}.
      */
-    protected Dictionary<UUID, Game> games;
+    protected LinkedHashMap<UUID, Game> games;
 
 
     /**
@@ -36,11 +39,11 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
     /**
      * Gets or sets all {@link IClientInfo clients} currently connected to this {@link Server}.
      */
-    protected Dictionary<UUID, TClient> clients;
+    protected LinkedHashMap<UUID, TClient> clients;
 
     public Server() {
-        this.games = new Hashtable<>();
-        this.clients = new Hashtable<>();
+        this.games = new LinkedHashMap<>();
+        this.clients = new LinkedHashMap<>();
         this.isUpdating = true;
         this.clientTimeout = 30; // Default 30 seconds before client is dropped for all servers.
         this.packets = new PacketManager();
@@ -95,8 +98,17 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      *
      * @return A copy of all the {@link Game games} that are on the server.
      */
-    public List<Game> getGames() {
-        return Collections.list(games.elements());
+    public LinkedHashMap<UUID, Game> getGames() {
+        return games;
+    }
+
+    /**
+     * Do not modify this list! It's a copy.
+     *
+     * @return
+     */
+    public ArrayList<Game> getGamesAsList() {
+        return new ArrayList<>(games.values());
     }
 
     /**
@@ -111,8 +123,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         if (game == null) return null;
 
         // Notify all connected clients that the game is closing.
-        HashSet<UUID> gameClients = game.getClients();
-        send(new PacketKick(PacketKick.KickReasonType.LOBBY, "Lobby closed.", gameClients.toArray(new UUID[gameClients.size()])));
+        send(new PacketKick(PacketKick.KickReasonType.LOBBY, "Lobby closed.", game.getClientsAsArray()));
 
         // Unregister client on game.
         for (UUID clientId : game.getClients()) {
@@ -185,7 +196,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * {@link Server}.
      */
     public List<TClient> getClients() {
-        return Collections.list(clients.elements());
+        return new ArrayList<>(clients.values());
     }
 
     /**

@@ -82,12 +82,12 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
 
     @Override
-    public void gameObjectSetDirection(UUID sender, UUID objectId) throws RemoteException {
+    public void playerSetDirection(UUID sender, UUID objectId) throws RemoteException {
         throw new UnsupportedOperationException();
     }
 
     @Override
-    public void gameObjectSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException {
+    public void playerSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException {
         throw new UnsupportedOperationException();
     }
 
@@ -105,8 +105,8 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void shootProjectile(UUID sender, Vector2 position, Direction direction, float speed, UUID objId) throws RemoteException {
-        PacketShootProjectile packet = new PacketShootProjectile(position, direction, speed, objId, sender, null);
+    public void shootProjectile(UUID sender) throws RemoteException {
+        PacketShootProjectile packet = new PacketShootProjectile(sender);
         client.send(packet);
     }
 }
