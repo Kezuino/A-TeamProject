@@ -110,6 +110,7 @@ public class MapLoader {
         list.add(consumer);
     }
 
+    @SuppressWarnings("unchecked")
     protected <T> void runConsumers(Class<?> type, T obj) {
         if (!consumers.containsKey(type)) return;
         for (Consumer consumer : consumers.get(type)) {
@@ -171,7 +172,6 @@ public class MapLoader {
                         map.addGameObject(pactale);
 
                         runConsumers(MapObjectTypes.PACTALE.getType(), pactale);
-                        System.out.printf("Index: %s, limit: %s %n", playerIndex, playerLimit);
                     }
                 }
             }

@@ -5,6 +5,7 @@ import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.debug.renderers.DebugMovement;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
+import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.singleplayer.*;
 import ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage;
 import ateamproject.kezuino.com.github.utility.graphics.DrawHelper;
@@ -24,8 +25,8 @@ public class GameRenderer implements IRenderer {
     private final GameSession session;
     private final SpriteBatch batch;
 
-    public GameRenderer(GameSession session) {
-        this.session = session;
+    public GameRenderer() {
+        this.session = BaseScreen.getSession();
         this.map = this.session.getMap();
 
         // Camera.
@@ -115,9 +116,9 @@ public class GameRenderer implements IRenderer {
                 .generateNewScore(this.map.getAllGameObjects()); // Will calculate/decrease score once in a period.
 
         // Check if here are any pactales on the map.
-        if (!this.map.getAllGameObjects().stream().anyMatch(go -> go instanceof Pactale)) {
-            this.session.gameOver();
-        }
+//        if (!this.map.getAllGameObjects().stream().anyMatch(go -> go instanceof Pactale)) {
+//            this.session.gameOver();
+//        }
 
         // Check if there are any items on the map.
         if (!this.map.getNodes().stream().anyMatch(Node::hasItem)) {

@@ -17,9 +17,7 @@ import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -541,6 +539,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     .stream()
                     .map(this::getClient)
                     .allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
+
                 // Launch the game (everyone is done loading).
                 game.getClients().stream().map(id -> getClient(id).getRmi()).forEach(rmi -> {
                     try {
@@ -551,7 +550,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
                 });
 
-                // TODO: Fix pause before play starts.
                 // Set game to run unpaused.
 //                Timer timer = new Timer(true);
 //                timer.schedule(new TimerTask() {
@@ -576,6 +574,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 // Send all packets that were queued from the host to all the other clients (so, excluding the host).
                 int objectsToSend = game.getLoadQueue().size();
 
+                // Get all connected clients (excluding the host).
                 IProtocolClient[] receivers = game.getClients()
                                                   .stream()
                                                   .filter(c -> !c.equals(game.getHostId()))
@@ -601,7 +600,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                         try {
                             receiver.createObject(null, packetCreate.getTypeName(), packetCreate.getPosition(), packetCreate
                                     .getDirection(), packetCreate
-                                    .getSpeed(), packetCreate.getId(), packetCreate.getColor(), packetCreate.getIndex());
+                                    .getSpeed(), packetCreate.getId(), packetCreate.getColor(), packetCreate.getIndex(), packetCreate.getItemType());
                         } catch (RemoteException e) {
                             e.printStackTrace();
                         }

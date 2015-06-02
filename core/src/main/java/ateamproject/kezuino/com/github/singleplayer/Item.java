@@ -108,18 +108,21 @@ public class Item extends GameObject implements IRenderable, IPositionable {
     }
 
     /**
-     * sets the item type of the object
+     * Sets the {@link ItemType} of the {@link Item}. If no {@link #name} was set, the default name will be a friendly name based on this {@code type}.
      *
-     * @param type
+     * @param type {@link ItemType} to set the new type to.
      */
     public void setItemType(ItemType type) {
-        if (this.type.equals(type)) return;
+        if (type == null) return;
+        name = type.toString();
+        if (this.type == null || this.type.equals(type)) return;
         this.type = type;
     }
 
     /**
      * The target who picks up this item activates the effect this item is
      * carrying
+     *
      *
      * @param target Target standing on the node with the item
      */

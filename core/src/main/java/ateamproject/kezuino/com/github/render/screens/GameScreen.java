@@ -53,10 +53,6 @@ public class GameScreen extends BaseScreen {
     private Dialog playerMenu;
 
     public GameScreen(Game game) {
-        this(game, null);
-    }
-
-    public GameScreen(Game game, Score score) {
         super(game);
 
         clearOnRenderColor = Color.BLACK;
@@ -69,15 +65,19 @@ public class GameScreen extends BaseScreen {
             public boolean keyDown(int keycode) {
                 switch (keycode) {
                     case Input.Keys.W:
+                        if (getSession().getState() == GameState.Paused) break;
                         player.setDirection(Direction.Up);
                         break;
                     case Input.Keys.S:
+                        if (getSession().getState() == GameState.Paused) break;
                         player.setDirection(Direction.Down);
                         break;
                     case Input.Keys.A:
+                        if (getSession().getState() == GameState.Paused) break;
                         player.setDirection(Direction.Left);
                         break;
                     case Input.Keys.D:
+                        if (getSession().getState() == GameState.Paused) break;
                         player.setDirection(Direction.Right);
                         break;
                     case Input.Keys.SPACE:
@@ -158,14 +158,17 @@ public class GameScreen extends BaseScreen {
     }
 
     public void start(Score score) {
-        setSession(new GameSession());
+        if (getSession() == null) {
+            System.out.println("Resetted session on GameScreen.start");
+            setSession(new GameSession());
+        }
         if (getSession().getScore() == null) getSession().setScore(score);
-        if (getSession().getMap() == null) getSession().setMap(Map.load(getSession(), "2"));
+        if (getSession().getMap() == null) throw new IllegalStateException("Map should be loaded before the GameScreen can be started.");
 
         player = getSession().getPlayer(0);
 
         // Renderers.
-        gameRenderer = addRenderer(new GameRenderer(getSession()));
+        gameRenderer = addRenderer(new GameRenderer());
         addRenderer(new GameUIRenderer(getSession().getMap()));
     }
 
@@ -181,7 +184,7 @@ public class GameScreen extends BaseScreen {
 
             case Completed:
                 Actor btnContinue = new TextButton("Doorgaan", skin);
-                Actor lblEndGameText = new Label("Your score was:", skin);
+                Actor lblEndGameText = new Label("Je score is:", skin);
                 Actor lblScore = new Label(Integer.toString(getSession().getScore().valueOf()), skin);
                 btnContinue.addListener(new ClickListener() {
                     @Override
