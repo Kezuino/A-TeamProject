@@ -10,9 +10,11 @@ import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.render.screens.GameScreen;
 import ateamproject.kezuino.com.github.render.screens.MainScreen;
 import ateamproject.kezuino.com.github.singleplayer.*;
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -570,6 +572,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     }
                     BaseScreen.getSession().setObjectsToLoad(packet.getProgress());
                     break;
+            }
+        });
+        
+        packets.registerAction(PacketShootProjectile.class, packet -> {
+            try {
+                getRmi().getServer().shootProjectile(packet.getSender(), packet.getPosition(), packet.getDirection(), packet.getSpeed());
+            } catch (RemoteException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }

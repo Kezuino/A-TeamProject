@@ -7,7 +7,9 @@ import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import ateamproject.kezuino.com.github.utility.io.Database;
+import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
@@ -597,6 +599,18 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
                 }
             }
+        });
+        
+        packets.registerAction(PacketShootProjectile.class, packet -> {
+             Game game = getGameFromClientId(packet.getSender());
+             IProtocolClient[] receivers = game.getClients().stream().filter(c -> !c.equals(game.getHostId())).map(id -> getClient(id).getRmi()).toArray(IProtocolClient[]::new);
+             for (IProtocolClient receiver : receivers) {
+                        try {
+                            receiver.shootProjectile(packet.getSender(), packet.getPosition(), packet.getDirection(), packet.getSpeed());
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
         });
     }
 

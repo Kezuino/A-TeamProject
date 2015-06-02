@@ -134,14 +134,14 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         server.send(packet);
         return packet.getResult();
     }
-    
+
     @Override
     public ArrayList<String> getClans(UUID Sender) throws RemoteException {
         PacketGetClans packet = new PacketGetClans(Sender);
         server.send(packet);
         return packet.getResult();
     }
-    
+
     @Override
     public void setClans(UUID Sender) throws RemoteException {
         PacketReloadClans packet = new PacketReloadClans(Sender);
@@ -149,8 +149,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean setUsername(String name, String emailaddress,UUID sender) throws RemoteException {
-        PacketSetUsername packet = new PacketSetUsername(name, emailaddress,sender);
+    public boolean setUsername(String name, String emailaddress, UUID sender) throws RemoteException {
+        PacketSetUsername packet = new PacketSetUsername(name, emailaddress, sender);
         server.send(packet);
         return packet.getResult();
     }
@@ -239,6 +239,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     @Override
     public void setKickInformation(UUID getPersonToVoteFor) throws RemoteException {
         PacketSetKickInformation packet = new PacketSetKickInformation(getPersonToVoteFor);
+        server.send(packet);
+    }
+
+    @Override
+    public void shootProjectile(UUID sender, Vector2 position, Direction direction, float speed) throws RemoteException {
+        PacketShootProjectile packet = new PacketShootProjectile(position, direction, speed, sender);
         server.send(packet);
     }
 }

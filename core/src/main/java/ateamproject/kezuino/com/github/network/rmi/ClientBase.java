@@ -90,4 +90,10 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, color, sender);
         client.send(packet);
     }
+
+    @Override
+    public void shootProjectile(UUID sender,Vector2 position, Direction direction, float speed) throws RemoteException {
+        PacketShootProjectile packet = new PacketShootProjectile(position, direction,  speed);
+        client.send(packet);
+    }
 }

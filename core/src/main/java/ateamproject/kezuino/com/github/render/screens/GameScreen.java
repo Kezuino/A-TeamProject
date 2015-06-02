@@ -8,6 +8,7 @@ package ateamproject.kezuino.com.github.render.screens;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetKickInformation;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketSetKickInformation;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketShootProjectile;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
@@ -22,6 +23,7 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
@@ -82,7 +84,8 @@ public class GameScreen extends BaseScreen {
                         break;
                     case Input.Keys.SPACE:
                         if (getSession().getState() != GameState.Paused) {
-                            player.shootProjectile();
+                            Projectile proj = player.shootProjectile();
+                            Client.getInstance().send(new PacketShootProjectile(proj.getExactPosition(), proj.getDirection(), proj.getMovementSpeed()));
                         }
                         break;
                     case Input.Keys.H:

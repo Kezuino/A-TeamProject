@@ -88,7 +88,7 @@ public class Pactale extends GameObject {
      * If this {@link Pactale} is active, will shoot a portal in the direction
      * that this {@link Pactale} currently is heading.
      */
-    public void shootProjectile() {
+    public Projectile shootProjectile() {
         if (this.getActive()) {
             // create projectile
             Projectile proj = new Projectile(this.getExactPosition(), this, this.getMovementSpeed() * 3, this.getDirection(), this
@@ -98,7 +98,9 @@ public class Pactale extends GameObject {
 
             // check if next node has collision
             proj.moveAdjacent(direction);
+            return proj;
         }
+        return null;
     }
 
     @Override
