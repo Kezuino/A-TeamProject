@@ -11,19 +11,21 @@ public class PacketShootProjectile extends Packet<Boolean> {
     @PacketField(0)
     protected Vector2 position;
     @PacketField(1)
-    protected  Direction direction;
+    protected Direction direction;
     @PacketField(2)
     protected float speed;
+    @PacketField(3)
+    protected UUID id;
 
     public PacketShootProjectile() {
     }
 
-    public PacketShootProjectile(Vector2 position, Direction direction, float speed, UUID... senderAndReceivers) {
+    public PacketShootProjectile(Vector2 position, Direction direction, float speed, UUID id, UUID... senderAndReceivers) {
         super(senderAndReceivers);
         this.position = position;
         this.direction = direction;
         this.speed = speed;
-        this.sender = sender;
+        this.id = id;
     }
 
     public Vector2 getPosition() {
@@ -33,8 +35,12 @@ public class PacketShootProjectile extends Packet<Boolean> {
     public Direction getDirection() {
         return direction;
     }
-    
+
     public float getSpeed() {
         return speed;
+    }
+
+    public UUID getId() {
+        return id;
     }
 }

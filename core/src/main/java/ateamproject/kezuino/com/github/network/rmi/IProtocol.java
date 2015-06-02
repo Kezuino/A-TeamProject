@@ -23,5 +23,5 @@ public interface IProtocol extends Remote {
 
     void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException;
     
-    void shootProjectile(UUID sender,Vector2 position, Direction direction, float speed) throws RemoteException;
+    void shootProjectile(UUID sender,Vector2 position, Direction direction, float speed, UUID objId) throws RemoteException;
 }

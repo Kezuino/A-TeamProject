@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class GameSession {
 
@@ -23,6 +24,7 @@ public class GameSession {
      * Whether this game is synchronizing with a server.
      */
     private boolean isMultiplayer;
+
     /**
      * Creates a new @see GameSession with the default skin.
      */
@@ -101,22 +103,22 @@ public class GameSession {
 
     /**
      * Sets a new {@link Map} for this {@link GameSession}. Connected clients
-     * should be synced here if the current computer is the host.
-     *
-     * @param squareSize X and Y dimension of the {@link Map}.
-     */
-    public void setMap(int squareSize) {
-        setMap(new Map(this, squareSize));
-    }
-
-    /**
-     * Sets a new {@link Map} for this {@link GameSession}. Connected clients
      * should be synced here if current computer is the host.
      *
      * @param map {@link Map} to change to.
      */
     public void setMap(Map map) {
         this.map = map;
+    }
+
+    /**
+     * Sets a new {@link Map} for this {@link GameSession}. Connected clients
+     * should be synced here if the current computer is the host.
+     *
+     * @param squareSize X and Y dimension of the {@link Map}.
+     */
+    public void setMap(int squareSize) {
+        setMap(new Map(this, squareSize));
     }
 
     public boolean isPlayerMenuShowing() {
@@ -166,6 +168,7 @@ public class GameSession {
      * @param playerIndex
      */
     public Pactale getPlayer(int playerIndex) {
+        if (this.map == null) return null;
         return this.map.getAllGameObjects()
                        .stream()
                        .filter(gameObject -> gameObject instanceof Pactale)
@@ -173,6 +176,33 @@ public class GameSession {
                        .filter((Pactale pactale) -> pactale.getPlayerIndex() == playerIndex)
                        .findFirst()
                        .orElse(null);
+    }
+
+    /**
+     * Returns a {@link Pactale} if found with the specific {@code id} or null.
+     *
+     * @param id {@link UUID} to find the {@link Pactale} on.
+     * @return {@link Pactale} matching the given {@code id}.
+     */
+    public Pactale getPlayer(UUID id) {
+        if (this.map == null) return null;
+        return this.map.getAllGameObjects()
+                       .stream()
+                       .filter(obj -> obj instanceof Pactale)
+                       .map(obj -> (Pactale) obj)
+                       .filter(p -> p.getId().equals(id))
+                       .findFirst()
+                       .orElse(null);
+    }
+
+    /**
+     * Returns the {@link GameObject} found on this {@link Map} for the given {@code id} or null.
+     *
+     * @param id {@link UUID} to find the {@link GameObject} on.
+     * @return {@link GameObject} matching the given {@code id}.
+     */
+    public GameObject findObject(UUID id) {
+        return this.map.getAllGameObjects().stream().filter(obj -> obj.getId().equals(id)).findFirst().orElse(null);
     }
 
     /**

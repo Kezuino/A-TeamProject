@@ -244,8 +244,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void shootProjectile(UUID sender, Vector2 position, Direction direction, float speed) throws RemoteException {
-        PacketShootProjectile packet = new PacketShootProjectile(position, direction, speed, sender);
+    public void shootProjectile(UUID sender, Vector2 position, Direction direction, float speed, UUID objId) throws RemoteException {
+        PacketShootProjectile packet = new PacketShootProjectile(position, direction, speed, objId, sender);
         server.send(packet);
     }
 }

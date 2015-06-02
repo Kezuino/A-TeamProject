@@ -431,13 +431,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 }
             } else {
                 if (p.isPaused()) {
-                    // Request came from server.. show game screen.
+                    // Request came from server..
                     Gdx.app.postRunnable(() -> {
                         BaseScreen.getSession().pause();
                         game.setScreen(new GameScreen(game));
+                        ((GameScreen)game.getScreen()).start();
                     });
                 } else {
-                    // Request came from server.. show game screen.
+                    // Request came from server.. resume game.
                     Gdx.app.postRunnable(() -> BaseScreen.getSession().resume());
                 }
             }
@@ -583,7 +584,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         
         packets.registerAction(PacketShootProjectile.class, packet -> {
             try {
-                getRmi().getServer().shootProjectile(packet.getSender(), packet.getPosition(), packet.getDirection(), packet.getSpeed());
+                if (packet.getSender() != null)
+                    getRmi().getServer().shootProjectile(packet.getSender(), packet.getPosition(), packet.getDirection(), packet.getSpeed(), packet.getId());
+                else if (BaseScreen.getSession() != null && BaseScreen.getSession().getMap() != null) {
+                    Pactale player = BaseScreen.getSession().getPlayer(packet.getSender());
+                    Projectile projectile = new Projectile(packet.getPosition(), player, packet.getSpeed(), packet.getDirection(), player.getColor());
+                    projectile.setId(packet.getId());
+                    BaseScreen.getSession().getMap().addGameObject(projectile);
+                }
             } catch (RemoteException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }

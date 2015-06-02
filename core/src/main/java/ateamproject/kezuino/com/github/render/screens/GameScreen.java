@@ -63,8 +63,6 @@ public class GameScreen extends BaseScreen {
         Assets.create();
         backgroundMusic = Assets.getMusicStream("action.mp3");
 
-        start(score);
-
         // Gameplay controls handling:
         gameInputAdapter = new InputAdapter() {
             @Override
@@ -85,7 +83,7 @@ public class GameScreen extends BaseScreen {
                     case Input.Keys.SPACE:
                         if (getSession().getState() != GameState.Paused) {
                             Projectile proj = player.shootProjectile();
-                            Client.getInstance().send(new PacketShootProjectile(proj.getExactPosition(), proj.getDirection(), proj.getMovementSpeed()));
+                            Client.getInstance().send(new PacketShootProjectile(proj.getExactPosition(), proj.getDirection(), proj.getMovementSpeed(), proj.getId()));
                         }
                         break;
                     case Input.Keys.H:
@@ -155,10 +153,14 @@ public class GameScreen extends BaseScreen {
         pauseMenu.add(bExit);
     }
 
+    public void start() {
+        start(null);
+    }
+
     public void start(Score score) {
         setSession(new GameSession());
-        getSession().setScore(score);
-        getSession().setMap(Map.load(getSession(), "2"));
+        if (getSession().getScore() == null) getSession().setScore(score);
+        if (getSession().getMap() == null) getSession().setMap(Map.load(getSession(), "2"));
 
         player = getSession().getPlayer(0);
 

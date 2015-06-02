@@ -8,6 +8,7 @@ package ateamproject.kezuino.com.github.network;
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketManager;
+import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import com.badlogic.gdx.Game;
 
 import java.util.HashMap;

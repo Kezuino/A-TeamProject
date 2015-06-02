@@ -93,8 +93,8 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void shootProjectile(UUID sender,Vector2 position, Direction direction, float speed) throws RemoteException {
-        PacketShootProjectile packet = new PacketShootProjectile(position, direction,  speed);
+    public void shootProjectile(UUID sender, Vector2 position, Direction direction, float speed, UUID objId) throws RemoteException {
+        PacketShootProjectile packet = new PacketShootProjectile(position, direction, speed, objId, sender, null);
         client.send(packet);
     }
 }

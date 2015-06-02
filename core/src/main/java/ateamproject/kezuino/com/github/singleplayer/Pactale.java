@@ -5,11 +5,9 @@ import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
+
+import java.util.UUID;
 
 public class Pactale extends GameObject {
     private int playerIndex;
@@ -53,6 +51,10 @@ public class Pactale extends GameObject {
         return this.playerIndex;
     }
 
+    public void setPlayerIndex(int playerIndex) {
+        this.playerIndex = playerIndex;
+    }
+
     public Portal getPortal() {
         return this.portal;
     }
@@ -93,6 +95,7 @@ public class Pactale extends GameObject {
             // create projectile
             Projectile proj = new Projectile(this.getExactPosition(), this, this.getMovementSpeed() * 3, this.getDirection(), this
                     .getColor());
+            proj.setId();
             getMap().addGameObject(proj);
             Assets.playSound("portal_shot.mp3");
 
@@ -145,9 +148,5 @@ public class Pactale extends GameObject {
         if (this.portal == null) return;
         this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).removePortal(portal.getDirection());
         this.portal = null;
-    }
-
-    public void setPlayerIndex(int playerIndex) {
-        this.playerIndex = playerIndex;
     }
 }
