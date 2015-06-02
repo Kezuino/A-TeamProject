@@ -5,8 +5,8 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketLogout;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
@@ -21,23 +21,14 @@ import java.util.logging.Logger;
  * @author David
  */
 public class MainScreen extends BaseScreen {
-
     public MainScreen(Game game) {
         super(game);
-
-        TextButton tbFastSinglePlayerGame = new TextButton("setScreen(new GameScreen(game)", skin);
-        tbFastSinglePlayerGame.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game));
-            }
-        });
 
         TextButton tbSearchGame = new TextButton("Spel zoeken", skin);
         tbSearchGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyListScreen(game, false));
+                game.setScreen(new GameScreen(game));
             }
         });
 
@@ -62,10 +53,15 @@ public class MainScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //game.setScreen(new GameScreen(game));
-
-                PacketHighScore packet;
-                packet = new PacketHighScore("MBoiz", 30, Client.getInstance().getId());
-                Client.getInstance().send(packet);
+                
+                    PacketHighScore packet;
+                try {
+                    packet = new PacketHighScore("MBoiz", 30, Client.getInstance(game).getId());
+                    Client.getInstance(game).send(packet);
+                   packet.getResult();
+                } catch (RemoteException ex) {
+                    Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
 
@@ -81,8 +77,6 @@ public class MainScreen extends BaseScreen {
         tbLogout.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                PacketLogout packet = new PacketLogout();
-                Client.getInstance().send(packet);
                 game.setScreen(new LoginScreen(game));
             }
         });
@@ -94,9 +88,6 @@ public class MainScreen extends BaseScreen {
                 game.setScreen(new ClanManagementScreen(game));
             }
         });
-        
-          
-        
 
         tbChangeLook.setSize(300, 40);
         tbClanGame.setSize(300, 40);
@@ -105,7 +96,6 @@ public class MainScreen extends BaseScreen {
         tbOptions.setSize(300, 40);
         tbSearchGame.setSize(300, 40);
         tbClanManagement.setSize(300, 40);
-        tbFastSinglePlayerGame.setSize(300, 40);
 
         float xOfSearchGameButton = stage.getWidth() / 2 - tbSearchGame.getWidth() / 2;
         float yOfSearchGameButton = stage.getHeight() - 50;
@@ -117,9 +107,6 @@ public class MainScreen extends BaseScreen {
         tbOptions.setPosition(xOfSearchGameButton, yOfSearchGameButton - 200);
         tbClanManagement.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
         tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 300);
-        tbFastSinglePlayerGame.setPosition(xOfSearchGameButton, yOfSearchGameButton - 350);
-        
-        
 
         stage.addActor(tbSearchGame);
         stage.addActor(tbClanGame);
@@ -128,7 +115,6 @@ public class MainScreen extends BaseScreen {
         stage.addActor(tbOptions);
         stage.addActor(tbClanManagement);
         stage.addActor(tbLogout);
-        stage.addActor(tbFastSinglePlayerGame);
 
         backgroundMusic = Assets.getMusicStream("menu.mp3");
     }
