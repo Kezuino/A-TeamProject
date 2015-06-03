@@ -80,17 +80,6 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         client.send(packet);
     }
 
-
-    @Override
-    public void playerSetDirection(UUID sender, UUID objectId) throws RemoteException {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void playerSetPosition(UUID sender, UUID objectId, Vector2 position) throws RemoteException {
-        throw new UnsupportedOperationException();
-    }
-
     @Override
     public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException {
         PacketCreateGameObject packet = new PacketCreateGameObject(type, position, direction, speed, newObjectId, color, sender);
@@ -101,6 +90,18 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     @Override
     public void createItem(UUID sender, UUID itemId, ItemType type, Vector2 position) {
         PacketCreateItem packet = new PacketCreateItem(itemId, type, position);
+        client.send(packet);
+    }
+
+    @Override
+    public void playerSetDirection(UUID sender, Direction direction) throws RemoteException {
+        PacketPlayerSetDirection packet = new PacketPlayerSetDirection(direction, sender);
+        client.send(packet);
+    }
+
+    @Override
+    public void playerSetPosition(UUID sender, Vector2 position) throws RemoteException {
+        PacketPlayerSetPosition packet = new PacketPlayerSetPosition(position, sender);
         client.send(packet);
     }
 

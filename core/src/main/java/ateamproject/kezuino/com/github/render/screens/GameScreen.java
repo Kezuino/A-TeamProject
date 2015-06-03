@@ -5,10 +5,7 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.network.packet.packets.PacketGetKickInformation;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketSetKickInformation;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketShootProjectile;
+import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
@@ -67,18 +64,22 @@ public class GameScreen extends BaseScreen {
                     case Input.Keys.W:
                         if (getSession().getState() == GameState.Paused) break;
                         player.setDirection(Direction.Up);
+                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Up));
                         break;
                     case Input.Keys.S:
                         if (getSession().getState() == GameState.Paused) break;
                         player.setDirection(Direction.Down);
+                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Down));
                         break;
                     case Input.Keys.A:
                         if (getSession().getState() == GameState.Paused) break;
                         player.setDirection(Direction.Left);
+                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Left));
                         break;
                     case Input.Keys.D:
                         if (getSession().getState() == GameState.Paused) break;
                         player.setDirection(Direction.Right);
+                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Right));
                         break;
                     case Input.Keys.SPACE:
                         if (getSession().getState() != GameState.Paused) {

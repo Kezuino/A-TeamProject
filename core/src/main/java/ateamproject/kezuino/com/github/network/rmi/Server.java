@@ -679,12 +679,56 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
         });
 
+        packets.registerAction(PacketPlayerSetDirection.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) {
+                System.out.println("Could not set direction for client: " + packet.getSender());
+                return;
+            }
+
+            IProtocolClient[] receivers = game.getClients()
+                                              .stream()
+                                              .filter(c -> !c.equals(packet.getSender()))
+                                              .map(id -> getClient(id).getRmi())
+                                              .toArray(IProtocolClient[]::new);
+
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.playerSetDirection(getClient(packet.getSender()).getPublicId(), packet.getDirection());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        packets.registerAction(PacketPlayerSetPosition.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) {
+                System.out.println("Could not set position for client: " + packet.getSender());
+                return;
+            }
+
+            IProtocolClient[] receivers = game.getClients()
+                                              .stream()
+                                              .filter(c -> !c.equals(packet.getSender()))
+                                              .map(id -> getClient(id).getRmi())
+                                              .toArray(IProtocolClient[]::new);
+
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.playerSetPosition(getClient(packet.getSender()).getPublicId(), packet.getPosition());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         packets.registerFunc(PacketGetGameClients.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {
                 System.out.println("Game was not found for the sender.");
             }
-            List<PacketGetGameClients.Data> result = new ArrayList<PacketGetGameClients.Data>();
+            List<PacketGetGameClients.Data> result = new ArrayList<>();
             int num = 0;
             for (UUID uuid : game.getClients()) {
                 result.add(new PacketGetGameClients.Data(num++, getClient(uuid).getPublicId(), game.getHostId().equals(uuid)));

@@ -5,13 +5,8 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
-import ateamproject.kezuino.com.github.network.IClientInfo;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
-import ateamproject.kezuino.com.github.render.screens.BaseScreen;
-import ateamproject.kezuino.com.github.render.screens.GameScreen;
-import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
-import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
-import ateamproject.kezuino.com.github.render.screens.MainScreen;
+import ateamproject.kezuino.com.github.render.screens.*;
 import ateamproject.kezuino.com.github.singleplayer.*;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Animation;
@@ -30,9 +25,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -112,10 +105,18 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     while (!Thread.currentThread().isInterrupted()) {
                         while (isUpdating) {
                             if (getId() != null) {
-                                rmi.getServer().heartbeat(getId());
+                                // Update position constantly when in-game.
+                                if (BaseScreen.getSession() != null && game.getScreen() instanceof GameScreen) {
+                                    rmi.getServer()
+                                       .playerSetPosition(getId(), BaseScreen.getSession()
+                                                                             .getPlayer(getPublicId())
+                                                                             .getExactPosition());
+                                } else {
+                                    rmi.getServer().heartbeat(getId());
+                                }
                             }
                             try {
-                                Thread.sleep(5000);
+                                Thread.sleep(3000);
                             } catch (InterruptedException e) {
                                 e.printStackTrace();
                                 break;
@@ -229,10 +230,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
             return null;
         });
-        
+
         packets.registerAction(PacketLobbiesChanged.class, packet -> {
-            if(game.getScreen() instanceof LobbyListScreen) {
-                LobbyListScreen screen = (LobbyListScreen)game.getScreen();
+            if (game.getScreen() instanceof LobbyListScreen) {
+                LobbyListScreen screen = (LobbyListScreen) game.getScreen();
                 screen.fillHostTable();
             }
         });
@@ -433,32 +434,32 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         });
 
         packets.registerAction(PacketClientJoined.class, p -> {
-            if(game.getScreen() instanceof LobbyScreen) {
-                LobbyScreen t = (LobbyScreen)game.getScreen();
+            if (game.getScreen() instanceof LobbyScreen) {
+                LobbyScreen t = (LobbyScreen) game.getScreen();
                 t.addMember(p.getJoinenId(), p.getUsername());
             }
-            
+
             System.out.println("Client joined: " + p.getUsername());
         });
 
         packets.registerAction(PacketClientLeft.class, p -> {
-            if(game.getScreen() instanceof LobbyScreen) {
-                LobbyScreen t = (LobbyScreen)game.getScreen();
+            if (game.getScreen() instanceof LobbyScreen) {
+                LobbyScreen t = (LobbyScreen) game.getScreen();
                 t.removeMember(p.getClientThatLeft());
             }
 
             System.out.println("Client left: " + p.getUsername());
         });
-        
-         packets.registerFunc(PacketLobbyMembers.class, packet -> {
-               try {
+
+        packets.registerFunc(PacketLobbyMembers.class, packet -> {
+            try {
                 // return all current members in the lobby
                 return getRmi().getServer().getLobbyMembers(packet.getLobbyId());
-                
+
             } catch (RemoteException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
-          return null;
+            return null;
         });
 
         packets.registerAction(PacketLaunchGame.class, p -> {
@@ -476,8 +477,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                         // Sync public ids for pactales for host only (other clients should already have the ids synced).
                         try {
                             List<PacketGetGameClients.Data> data = getRmi().getServer()
-                                                                                  .getGameClients(Client.getInstance()
-                                                                                                        .getId());
+                                                                           .getGameClients(Client.getInstance()
+                                                                                                 .getId());
                             for (PacketGetGameClients.Data d : data) {
                                 BaseScreen.getSession().getPlayer(d.getIndex()).setId(d.getPublicId());
                             }
@@ -687,6 +688,32 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             } else {
                 // Server sended this.
                 BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
+            }
+        });
+
+        packets.registerAction(PacketPlayerSetDirection.class, packet -> {
+            if (packet.getSender() != null && packet.getSender().equals(getId())) {
+                try {
+                    getRmi().getServer().playerSetDirection(packet.getSender(), packet.getDirection());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                // Server sended this.
+                BaseScreen.getSession().getPlayer(packet.getSender()).setDirection(packet.getDirection());
+            }
+        });
+
+        packets.registerAction(PacketPlayerSetPosition.class, packet -> {
+            if (packet.getSender() != null && packet.getSender().equals(getId())) {
+                try {
+                    getRmi().getServer().playerSetPosition(packet.getSender(), packet.getPosition());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                // Server sended this.
+                BaseScreen.getSession().getPlayer(packet.getSender()).setExactPosition(packet.getPosition());
             }
         });
     }
