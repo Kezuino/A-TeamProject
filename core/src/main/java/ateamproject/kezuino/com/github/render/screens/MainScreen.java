@@ -5,18 +5,23 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketGetClans;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import java.util.ArrayList;
 
 /**
  * @author David
  */
 public class MainScreen extends BaseScreen {
+
     public MainScreen(Game game) {
         super(game);
 
@@ -32,7 +37,27 @@ public class MainScreen extends BaseScreen {
         tbClanGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new LobbyListScreen(game, true));
+                Client client = Client.getInstance();
+                PacketGetClans packet = new PacketGetClans();
+
+                client.send(packet);
+                ArrayList<String> listclans = packet.getResult();
+
+                if (listclans.isEmpty()) {
+                    Dialog d = new Dialog("error", skin);
+                    d.add("Gebruiker zit niet in een clan.");
+                    TextButton bExit = new TextButton("Oke", skin);
+                    bExit.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                            d.hide();
+                        }
+                    });
+                    d.add(bExit);
+                    d.show(stage);
+                } else {
+                    game.setScreen(new LobbyListScreen(game, true));
+                }
             }
         });
 

@@ -59,19 +59,18 @@ public class LobbyListScreen extends BaseScreen {
                 if (clanGame) {
                     Client client = Client.getInstance();
                     PacketGetClans packet = new PacketGetClans();
-                    
+
                     client.send(packet);
                     ArrayList<String> listclans = packet.getResult();
-                    
-                    
+
                     Object[] arrayClans = new Object[listclans.size()];
                     for (int i = 0; i < listclans.size(); i++) {
-                        
-                        arrayClans[i] =listclans.get(i);
-                        
+
+                        arrayClans[i] = listclans.get(i);
+
                     }
                     clanDropdown = new SelectBox<Object>(skin);
-                    
+
                     clanDropdown.setItems(arrayClans);
 
                     clanDropdown.setSelectedIndex(0);
@@ -90,7 +89,7 @@ public class LobbyListScreen extends BaseScreen {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         d.hide();
-                        if (clanGame) { 
+                        if (clanGame) {
                             game.setScreen(new LobbyScreen(game, lobbyname.getText(), dropDownResultFinal));
                         } else {
                             game.setScreen(new LobbyScreen(game, lobbyname.getText(), null));
@@ -142,7 +141,7 @@ public class LobbyListScreen extends BaseScreen {
         lb2.setDisabled(true);
         TextField lb3 = new TextField("Deelnemers", skin);
         lb3.setDisabled(true);
-        
+
         // add headers to table
         scrollTable.add(lb1);
         scrollTable.columnDefaults(0);
@@ -151,7 +150,7 @@ public class LobbyListScreen extends BaseScreen {
         scrollTable.add(lb3);
         scrollTable.columnDefaults(2);
         scrollTable.row();
-        
+
         List<PacketGetLobbies.GetLobbiesData> hostList = null;
 
         Client client = Client.getInstance();
