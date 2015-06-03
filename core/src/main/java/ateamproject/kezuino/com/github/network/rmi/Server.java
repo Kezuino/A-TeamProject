@@ -610,7 +610,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                            .stream()
                            .map(this::getClient)
                            .filter(info -> !info.getPrivateId().equals(game.getHostId()))
-                           .allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded)) {
+                           .allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded) && getClient(game.getHostId()).getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded) {
                 // Send all packets that were queued from the host to all the other clients (so, excluding the host).
                 int objectsToSend = game.getLoadQueue().size();
 
