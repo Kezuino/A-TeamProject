@@ -36,9 +36,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     private static ateamproject.kezuino.com.github.network.rmi.Client instance;
     protected ClientBase rmi;
+    protected Timer updateTimer;
 
     protected Client() {
         super(null);
+
+        updateTimer = new Timer();
+        updateTimer.start();
 
         System.setProperty("pactales.client.servername", "localhost");
         System.setProperty("pactales.client.serverobject", "server");
@@ -51,6 +55,9 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     protected Client(Game game) {
         super(game);
+
+        updateTimer = new Timer();
+        updateTimer.start();
 
         System.setProperty("pactales.client.servername", "localhost");
         System.setProperty("pactales.client.serverobject", "server");
@@ -96,6 +103,25 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
             this.rmi.setServer((IProtocolServer) Naming.lookup(String.format("//%s/%s", rmiHost, rmiObject)));
 
+            updateTimer = new Timer();
+            updateTimer.scheduleTask(new Timer.Task() {
+                @Override
+                public void run() {
+                    // Update position constantly when in-game.
+                    if (BaseScreen.getSession() != null && game.getScreen() instanceof GameScreen) {
+                        try {
+                            rmi.getServer()
+                                    .playerSetPosition(getId(), BaseScreen.getSession()
+                                            .getPlayer(getPublicId())
+                                            .getExactPosition());
+                        } catch (Exception ex) {
+                            System.out.println("Error: Cannot set position, possibly not in game or offline.");
+                        }
+                    }
+                }
+            }, 0, 1);
+            updateTimer.start();
+
             // Start updating.
             if (updateThread != null) {
                 updateThread.interrupt();
@@ -105,15 +131,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     while (!Thread.currentThread().isInterrupted()) {
                         while (isUpdating) {
                             if (getId() != null) {
-                                // Update position constantly when in-game.
-                                if (BaseScreen.getSession() != null && game.getScreen() instanceof GameScreen) {
-                                    rmi.getServer()
-                                       .playerSetPosition(getId(), BaseScreen.getSession()
-                                                                             .getPlayer(getPublicId())
-                                                                             .getExactPosition());
-                                } else {
-                                    rmi.getServer().heartbeat(getId());
-                                }
+                                // Tell the server that we are still alive.
+                                rmi.getServer().heartbeat(getId());
                             }
                             try {
                                 Thread.sleep(3000);
@@ -138,6 +157,9 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     @Override
     public void stop() {
+        updateTimer.stop();
+        updateTimer.clear();
+
         try {
             this.rmi.getServer()
                     .kickClient(this.getId(), this.getId(), PacketKick.KickReasonType.QUIT, "Client disconnected.");
@@ -216,7 +238,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().createLobby(p.getSender(), p.getLobbyname(), p.getClanname());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
             return null;
         });
@@ -226,7 +248,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().getLobbies(p.getSender(), p.getIsClanGame());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
             return null;
         });
@@ -243,7 +265,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().getClans(p.getSender());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return null;
@@ -255,7 +277,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().getClans(p.getSender());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return null;
@@ -266,7 +288,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().joinLobby(p.getLobbyId(), p.getSender());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
             return null;
         });
@@ -276,7 +298,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().leaveLobby(p.getSender());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
             return false;
         });
@@ -286,7 +308,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().loginCreateUser(p.getSender(), p.getUsername(), p.getEmail());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -297,7 +319,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().doesUserExists(p.getEmail());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -308,7 +330,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().getKickInformation(p.getSender());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -319,7 +341,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().createClan(p.getSender(), p.getClanName());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -330,7 +352,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().clanFillTable(p.getEmailadres());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -341,7 +363,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().getEmail(p.getSender());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -352,7 +374,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().clanGetInvitation(p.getSender(), p.getClanName());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -363,7 +385,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().getManagement(p.getSender(), p.getClanName());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -374,7 +396,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().getPeople(p.getClanName());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -385,7 +407,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().getUsername(p.getEmailadres());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -394,10 +416,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         packets.registerFunc(PacketHandleInvitation.class, (p) -> {
             try {
                 return getRmi().getServer()
-                               .handleInvitation(p.getInvite(), p.getClanName(), p.getEmailadres(), p.getNameOfInvitee());
+                        .handleInvitation(p.getInvite(), p.getClanName(), p.getEmailadres(), p.getNameOfInvitee());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -408,7 +430,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().handleManagement(p.getManage(), p.getClanName(), p.getEmailadres());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -419,7 +441,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return getRmi().getServer().setUsername(p.getName(), p.getEmailaddress(), p.getSender());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                      .log(Level.SEVERE, null, ex);
+                        .log(Level.SEVERE, null, ex);
             }
 
             return false;
@@ -477,8 +499,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                         // Sync public ids for pactales for host only (other clients should already have the ids synced).
                         try {
                             List<PacketGetGameClients.Data> data = getRmi().getServer()
-                                                                           .getGameClients(Client.getInstance()
-                                                                                                 .getId());
+                                    .getGameClients(Client.getInstance()
+                                            .getId());
                             for (PacketGetGameClients.Data d : data) {
                                 BaseScreen.getSession().getPlayer(d.getIndex()).setId(d.getPublicId());
                             }
@@ -508,7 +530,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 String className = GameObject.class.getName();
                 className = className.substring(0, className.lastIndexOf('.'));
                 object = (GameObject) Class.forName(className + '.' + p.getTypeName())
-                                           .newInstance();
+                        .newInstance();
             } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
@@ -530,20 +552,20 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 pactale.setPlayerIndex(p.getIndex());
                 final GameObject finalObject = object;
                 Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
-                                                                                                                      .getSimpleName()
-                                                                                                                      .toLowerCase() + ".png", Texture.class))));
+                        .getSimpleName()
+                        .toLowerCase() + ".png", Texture.class))));
             } else if (object instanceof Enemy) {
                 final GameObject finalObject = object;
                 Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
-                                                                                                                      .getSimpleName()
-                                                                                                                      .toLowerCase() + ".png", Texture.class))));
+                        .getSimpleName()
+                        .toLowerCase() + ".png", Texture.class))));
             }
 
             session.getMap().addGameObject(object);
             session.setObjectsLoaded(session.getObjectsLoaded() + 1);
 
             System.out.printf("Loaded (%s): %d/%d%n", object.getClass()
-                                                            .getSimpleName(), session.getObjectsLoaded(), session.getObjectsToLoad());
+                    .getSimpleName(), session.getObjectsLoaded(), session.getObjectsToLoad());
 
             if (session.getObjectsToLoad() == session.getObjectsLoaded()) {
                 send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.ObjectsLoaded));
@@ -563,14 +585,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             item.setMap(session.getMap());
 
             Gdx.app.postRunnable(() -> item.setTexture(new TextureRegion(Assets.get("textures/" + item.getItemType()
-                                                                                                      .name()
-                                                                                                      .toLowerCase() + ".png", Texture.class))));
+                    .name()
+                    .toLowerCase() + ".png", Texture.class))));
             session.getMap().getNode(item.getExactPosition()).setItem(item);
 
             // Update load status.
             session.setObjectsLoaded(session.getObjectsLoaded() + 1);
             System.out.printf("Loaded (%s): %d/%d%n", item.getClass()
-                                                          .getSimpleName(), session.getObjectsLoaded(), session.getObjectsToLoad());
+                    .getSimpleName(), session.getObjectsLoaded(), session.getObjectsToLoad());
 
             if (session.getObjectsToLoad() == session.getObjectsLoaded()) {
                 send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.ObjectsLoaded));
