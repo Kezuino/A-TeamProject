@@ -159,7 +159,7 @@ public class ClanFunctions {
             }
 
             resultSet = Database.getInstance()
-                    .query("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?", emailaddress, clanName);
+                    .query("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?", getAccountIdFromEmail(emailaddress), getClanIdFromName(clanName));
             resultSet.next();
             int accepted = resultSet.getInt("Accepted");
 
@@ -171,9 +171,7 @@ public class ClanFunctions {
         } catch (SQLException ex) {
             Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("Null bij invitation word returned");
-        return InvitationType.ACCEPT;
-        //return null;
+        return null;
     }
 
     /**
@@ -194,7 +192,7 @@ public class ClanFunctions {
             }
 
             resultSet = Database.getInstance()
-                    .query("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?", clanName, emailaddress);
+                    .query("SELECT Accepted FROM clan_account WHERE AccountId = ? AND ClanId = ?", getAccountIdFromEmail(emailaddress), getClanIdFromName(clanName));
             resultSet.next();
             int accepted = resultSet.getInt("Accepted");
 
@@ -206,9 +204,7 @@ public class ClanFunctions {
         } catch (SQLException ex) {
             Logger.getLogger(ClanFunctions.class.getName()).log(Level.SEVERE, null, ex);
         }
-        System.out.println("Er word nu ll returned bij clanfunctions");
-        return ManagementType.LEAVE;
-        //return null;
+        return null;
     }
 
     /**
@@ -223,7 +219,7 @@ public class ClanFunctions {
 
         try {
             resultSet = Database.getInstance()
-                    .query("SELECT COUNT(*) AS amount FROM clan_account WHERE ClanId = ?", clanName);
+                    .query("SELECT COUNT(*) AS amount FROM clan_account WHERE ClanId = ? AND Accepted = 1", getClanIdFromName(clanName));
             resultSet.next();
             int amountOfPlayers = resultSet.getInt("amount");
 
@@ -251,7 +247,7 @@ public class ClanFunctions {
         if (invite.equals(InvitationType.ACCEPT)) {
 
             Database.getInstance()
-                    .update("UPDATE clan_account SET Accepted = 1 WHERE AccountId = ? AND ClanId = ?", emailAddress, clanName);
+                    .update("UPDATE clan_account SET Accepted = 1 WHERE AccountId = ? AND ClanId = ?", getAccountIdFromEmail(emailAddress), getClanIdFromName(clanName));
             return true;
         } else if (invite.equals(InvitationType.INVITE)) {
             PreparedStatement preparedStatement;
@@ -265,12 +261,12 @@ public class ClanFunctions {
 
                 if (!userIsInOrInvitedInClan(nameOfEmailInvitee, clanName)) {
                     return Database.getInstance()
-                            .update("UPDATE INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)", getAccountIdFromEmail(getEmail(username)), getClanIdFromName(clanName)) > 0;
+                            .update("INSERT INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)", getAccountIdFromEmail(nameOfEmailInvitee), getClanIdFromName(clanName)) > 0;
                 }
             } else {
                 if (!userIsInOrInvitedInClan(nameOfEmailInvitee, clanName)) {
                     return Database.getInstance()
-                            .update("UPDATE INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)", getAccountIdFromEmail(emailAddress), getClanIdFromName(clanName)) > 0;
+                            .update("INSERT INTO clan_account(AccountId,ClanId,Accepted) VALUES(?,?,0)", getAccountIdFromEmail(getEmail(nameOfEmailInvitee)), getClanIdFromName(clanName)) > 0;
                 }
             }
         }
@@ -290,13 +286,12 @@ public class ClanFunctions {
      * false.
      */
     public boolean handleManagement(ManagementType managementType, String clanName, String emailaddress) {
-        int clanIdFromName = getClanIdFromName(clanName);
         if (managementType.equals(ManagementType.REJECT) || managementType.equals(ManagementType.LEAVE)) {
             return Database.getInstance()
-                    .update("DELETE FROM clan_account WHERE AccountId = ? AND ClanId = ?", getAccountIdFromEmail(emailaddress), clanIdFromName) > 0;
+                    .update("DELETE FROM clan_account WHERE AccountId = ? AND ClanId = ?", getAccountIdFromEmail(emailaddress), getClanIdFromName(clanName)) > 0;
         } else if (managementType.equals(ManagementType.REMOVE)) {
-            Database.getInstance().update("DELETE FROM clan_account WHERE ClanId = ?", clanIdFromName);
-            Database.getInstance().update("DELETE FROM clan WHERE Id = ?", clanIdFromName);
+            Database.getInstance().update("DELETE FROM clan_account WHERE ClanId = ?", getClanIdFromName(clanName));
+            Database.getInstance().update("DELETE FROM clan WHERE Id = ?", getClanIdFromName(clanName));
             return true;
         }
 
