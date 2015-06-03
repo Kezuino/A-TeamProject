@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.singleplayer.Map;
+import com.badlogic.gdx.graphics.Color;
 
 import java.util.*;
 
@@ -14,6 +15,17 @@ import java.util.*;
  * Holds information about a hosted lobby/game. Used by the {@link INetworkComponent} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.
  */
 public class Game {
+
+    public static final Color[] SELECTABLE_COLORS = new Color[] {
+            Color.RED,
+            Color.BLUE,
+            Color.ORANGE,
+            Color.PINK,
+            Color.GREEN,
+            Color.PURPLE,
+            Color.TEAL,
+            Color.NAVY
+    };
 
     protected UUID id;
     protected String name;

@@ -67,7 +67,7 @@ public class Projectile extends GameObject {
     protected boolean collisionWithWall(Node node) {
         Node NextNode = getMap().getAdjacentNode(node, this.direction);
         if (NextNode.isWall() && this.getActive()) {
-            new Portal(owner, node, this.direction.reverse());
+            Portal portal = new Portal(owner, node, this.direction.reverse());
             Assets.playSound("portal_hit.mp3");
             this.setInactive();
             return true;
