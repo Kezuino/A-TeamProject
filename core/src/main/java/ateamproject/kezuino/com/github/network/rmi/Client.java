@@ -44,7 +44,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         updateTimer = new Timer();
         updateTimer.start();
 
-        System.setProperty("pactales.client.servername", "localhost");
+        System.setProperty("pactales.client.servername", "192.168.1.101");
         System.setProperty("pactales.client.serverobject", "server");
         try {
             rmi = new ClientBase(this);
@@ -59,7 +59,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         updateTimer = new Timer();
         updateTimer.start();
 
-        System.setProperty("pactales.client.servername", "localhost");
+        System.setProperty("pactales.client.servername", "192.168.1.101");
         System.setProperty("pactales.client.serverobject", "server");
         try {
             rmi = new ClientBase(this);
