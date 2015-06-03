@@ -10,8 +10,14 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, AutoCloseable {
+    /**
+     * Service for executing code on multiple threads.
+     */
+    protected ExecutorService executor;
 
     /**
      * Manager for registering {@link Packet} actions to.
@@ -47,6 +53,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         this.isUpdating = true;
         this.clientTimeout = 30; // Default 30 seconds before client is dropped for all servers.
         this.packets = new PacketManager();
+        this.executor = Executors.newCachedThreadPool();
 
         // Start updating thread.
         startUpdating();
@@ -242,6 +249,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      */
     @Override
     public final void close() {
+        if (executor != null) executor.shutdown();
         if (updateThread != null) {
             updateThread.interrupt();
             while (updateThread.isAlive()) {

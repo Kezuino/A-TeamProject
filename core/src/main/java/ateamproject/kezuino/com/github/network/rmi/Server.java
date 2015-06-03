@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 import ateamproject.kezuino.com.github.singleplayer.Pactale;
 import ateamproject.kezuino.com.github.utility.io.Database;
+import com.badlogic.gdx.graphics.Color;
 
 import java.rmi.AlreadyBoundException;
 import java.rmi.NoSuchObjectException;
@@ -637,9 +638,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                         // Send it to all receivers.
                         for (IProtocolClient receiver : receivers) {
                             try {
-                                receiver.createObject(null, pObject.getTypeName(), pObject.getPosition(), pObject
-                                        .getDirection(), pObject
-                                        .getSpeed(), pObject.getId(), pObject.getColor(), pObject.getIndex());
+                                if (pObject.getTypeName().equalsIgnoreCase("pactale")) {
+                                    receiver.createObject(null, pObject.getTypeName(), pObject.getPosition(), pObject
+                                            .getDirection(), pObject
+                                            .getSpeed(), pObject.getId(), Color.rgba8888(Game.SELECTABLE_COLORS[pObject.getIndex()]), pObject.getIndex());
+                                } else {
+                                    receiver.createObject(null, pObject.getTypeName(), pObject.getPosition(), pObject
+                                            .getDirection(), pObject
+                                            .getSpeed(), pObject.getId(), pObject.getColor(), pObject.getIndex());
+                                }
                             } catch (RemoteException e) {
                                 e.printStackTrace();
                             }
@@ -711,13 +718,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                                               .map(id -> getClient(id).getRmi())
                                               .toArray(IProtocolClient[]::new);
 
-            for (IProtocolClient receiver : receivers) {
-                try {
-                    receiver.playerSetPosition(getClient(packet.getSender()).getPublicId(), packet.getPosition());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+            executor.submit(() -> {
+                for (IProtocolClient receiver : receivers) {
+                    try {
+                        receiver.playerSetPosition(getClient(packet.getSender()).getPublicId(), packet.getPosition());
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 }
-            }
+            });
         });
 
         packets.registerFunc(PacketGetGameClients.class, packet -> {

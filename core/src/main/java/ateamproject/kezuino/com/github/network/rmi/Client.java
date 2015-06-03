@@ -494,13 +494,16 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 if (p.isPaused()) {
                     // Request came from server..
                     Gdx.app.postRunnable(() -> {
-                        // Sync public ids for pactales for host only (other clients should already have the ids synced).
+                        // Sync data of pactales already send to connected clients with host.
                         try {
                             List<PacketGetGameClients.Data> data = getRmi().getServer()
                                     .getGameClients(Client.getInstance()
                                             .getId());
                             for (PacketGetGameClients.Data d : data) {
-                                BaseScreen.getSession().getPlayer(d.getIndex()).setId(d.getPublicId());
+                                Pactale player = BaseScreen.getSession().getPlayer(d.getIndex());
+
+                                player.setId(d.getPublicId());
+                                player.setColor(ateamproject.kezuino.com.github.network.Game.SELECTABLE_COLORS[player.getPlayerIndex()]);
                             }
                         } catch (RemoteException e) {
                             e.printStackTrace();

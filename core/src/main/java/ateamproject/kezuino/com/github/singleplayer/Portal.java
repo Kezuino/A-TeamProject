@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.render.IRenderable;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import ateamproject.kezuino.com.github.utility.game.IPositionable;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
@@ -15,16 +16,13 @@ public class Portal implements IRenderable, IPositionable {
     private Pactale owner;
     private Direction direction;
     private TextureRegion texture;
-    
-    public Direction getDirection() {
-        return direction;
-    }
+    private Color color;
 
     /**
      * Initializes a {@link Portal} from a specific {@link Pactale owner} on a {@link Direction side} of a {@link Node}.
      *
      * @param owner     That caused this {@link Portal} to be created.
-     * @param position      That contains the {@link Portal} on a side.
+     * @param position  That contains the {@link Portal} on a side.
      * @param direction Side on the {@link Node} that this {@link Portal} should appear on.
      */
     public Portal(Pactale owner, Node position, Direction direction) {
@@ -34,7 +32,20 @@ public class Portal implements IRenderable, IPositionable {
         this.owner = owner;
         this.node = position;
         this.direction = direction;
+        this.color = owner.getColor();
         owner.addPortal(this);
+    }
+
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
+    public Direction getDirection() {
+        return direction;
     }
 
     @Override
@@ -75,9 +86,15 @@ public class Portal implements IRenderable, IPositionable {
         if (texture == null) {
             this.setTexture(new TextureRegion(Assets.get("textures/portal.png", Texture.class)));
         }
+
+        Color oldColor = batch.getColor();
+        batch.setColor(getColor());
+
         float xOffset = (32 - texture.getRegionWidth()) / 2f;
         float yOffset = (32 - texture.getRegionHeight()) / 2f;
         float rotation = this.getDirection().getRotation();
-        batch.draw(texture, this.node.getX()* 32 + xOffset, this.node.getY() * 32 + yOffset, texture.getRegionWidth() / 2, texture.getRegionHeight() / 2, texture.getRegionWidth(), texture.getRegionHeight(), 1, 1, rotation, false);
+        batch.draw(texture, this.node.getX() * 32 + xOffset, this.node.getY() * 32 + yOffset, texture.getRegionWidth() / 2, texture.getRegionHeight() / 2, texture.getRegionWidth(), texture.getRegionHeight(), 1, 1, rotation, false);
+
+        batch.setColor(oldColor);
     }
 }
