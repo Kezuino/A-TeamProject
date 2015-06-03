@@ -212,12 +212,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(getClient(packet.getSender()).getUsername()));
 
-        packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(getClient(packet.getSender())
-                .getEmailAddress(), packet
-                .getClanName()));
+        packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation( packet.getClanName(),getClient(packet.getSender()).getEmailAddress()));
 
-        packets.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(),
-                getClient(packet.getSender()).getEmailAddress()));
+        packets.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(),getClient(packet.getSender()).getEmailAddress()));
 
         packets.registerFunc(PacketGetPeople.class, (packet) -> clanFunctions.getPeople(packet.getClanName()));
 
