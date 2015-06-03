@@ -5,13 +5,17 @@ import ateamproject.kezuino.com.github.network.rmi.Client;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
-import java.rmi.RemoteException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.net.Inet4Address;
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 
 public class DesktopLauncher {
 
     public static void main(String[] arg) {
+        System.setProperty("java.rmi.server.hostname", getLocalIP());
+ 
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.foregroundFPS = 60;
         cfg.backgroundFPS = 30;
@@ -36,5 +40,33 @@ public class DesktopLauncher {
         cfg.fullscreen = false;
         cfg.forceExit = true;
         cfg.vSyncEnabled = false;
+    }
+    
+    public static String getLocalIP() {
+        String ipAddress = null;
+        Enumeration<NetworkInterface> net = null;
+        try {
+            net = NetworkInterface.getNetworkInterfaces();
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
+
+        while(net.hasMoreElements()){
+            NetworkInterface element = net.nextElement();
+            Enumeration<InetAddress> addresses = element.getInetAddresses();
+            while (addresses.hasMoreElements()){
+                InetAddress ip = addresses.nextElement();
+                if (ip instanceof Inet4Address){
+
+                    if (ip.isSiteLocalAddress()){
+
+                        ipAddress = ip.getHostAddress();
+                    }
+
+                }
+
+            }
+        }
+        return ipAddress;       
     }
 }
