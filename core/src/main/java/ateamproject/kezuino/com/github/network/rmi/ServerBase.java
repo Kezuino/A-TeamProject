@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
@@ -192,6 +191,13 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public void launchGame(UUID sender) throws RemoteException {
         PacketLaunchGame packet = new PacketLaunchGame(false, sender);
         server.send(packet);
+    }
+
+    @Override
+    public List<PacketGetGameClients.Data> getGameClients(UUID sender) throws RemoteException {
+        PacketGetGameClients packet = new PacketGetGameClients(sender);
+        server.send(packet);
+        return packet.getResult();
     }
 
     @Override

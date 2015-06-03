@@ -31,6 +31,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -472,7 +473,18 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 if (p.isPaused()) {
                     // Request came from server..
                     Gdx.app.postRunnable(() -> {
-                        //BaseScreen.getSession().pause();
+                        // Sync public ids for pactales for host only (other clients should already have the ids synced).
+                        try {
+                            List<PacketGetGameClients.Data> data = getRmi().getServer()
+                                                                                  .getGameClients(Client.getInstance()
+                                                                                                        .getId());
+                            for (PacketGetGameClients.Data d : data) {
+                                BaseScreen.getSession().getPlayer(d.getIndex()).setId(d.getPublicId());
+                            }
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+
                         game.setScreen(new GameScreen(game));
                         ((GameScreen) game.getScreen()).start();
                     });

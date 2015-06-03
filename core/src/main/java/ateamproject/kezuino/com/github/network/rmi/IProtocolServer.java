@@ -99,4 +99,6 @@ public interface IProtocolServer extends IProtocol {
      * @throws RemoteException If RMI fails to connect.
      */
     void launchGame(UUID sender) throws RemoteException;
+
+    List<PacketGetGameClients.Data> getGameClients(UUID sender) throws RemoteException;
 }

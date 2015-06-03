@@ -678,6 +678,19 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             }
         });
+
+        packets.registerFunc(PacketGetGameClients.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) {
+                System.out.println("Game was not found for the sender.");
+            }
+            List<PacketGetGameClients.Data> result = new ArrayList<PacketGetGameClients.Data>();
+            int num = 0;
+            for (UUID uuid : game.getClients()) {
+                result.add(new PacketGetGameClients.Data(num++, getClient(uuid).getPublicId(), game.getHostId().equals(uuid)));
+            }
+            return result;
+        });
     }
 
     @Override
