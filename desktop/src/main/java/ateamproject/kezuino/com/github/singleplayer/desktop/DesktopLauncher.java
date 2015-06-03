@@ -67,7 +67,6 @@ public class DesktopLauncher {
 
             }
         }
-        System.out.println(ipAddress);
         return ipAddress;       
     }
 }
