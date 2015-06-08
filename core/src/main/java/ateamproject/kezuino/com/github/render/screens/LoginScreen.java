@@ -69,6 +69,7 @@ public class LoginScreen extends BaseScreen {
                                             }.show(stage);
                                         } else {
                                             d.hide();
+                                            Client.getInstance().setUsername(f.getText());
                                             game.setScreen(new MainScreen(game));
                                         }
                                     }
