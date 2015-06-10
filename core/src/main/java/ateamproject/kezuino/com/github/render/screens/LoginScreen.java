@@ -29,9 +29,9 @@ public class LoginScreen extends BaseScreen {
     public LoginScreen(Game game) {
         super(game);
 
-        TextField txtUsername = new TextField("", skin);
+        TextField txtUsername = new TextField("pactales1@gmail.com", skin);
 
-        TextField txtPassword = new TextField("", skin);
+        TextField txtPassword = new TextField("pactales!", skin);
         txtPassword.setPasswordCharacter('*');
         txtPassword.setPasswordMode(true);
 
@@ -69,6 +69,7 @@ public class LoginScreen extends BaseScreen {
                                             }.show(stage);
                                         } else {
                                             d.hide();
+                                            Client.getInstance().setUsername(f.getText());
                                             game.setScreen(new MainScreen(game));
                                         }
                                     }

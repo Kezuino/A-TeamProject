@@ -44,7 +44,7 @@ public class DesktopLauncher {
     
     public static String getLocalIP() {
         String ipAddress = null;
-        Enumeration<NetworkInterface> net = null;
+        Enumeration<NetworkInterface> net;
         try {
             net = NetworkInterface.getNetworkInterfaces();
         } catch (SocketException e) {
@@ -54,20 +54,16 @@ public class DesktopLauncher {
         while(net.hasMoreElements()){
             NetworkInterface element = net.nextElement();
             Enumeration<InetAddress> addresses = element.getInetAddresses();
+
             while (addresses.hasMoreElements()){
                 InetAddress ip = addresses.nextElement();
                 if (ip instanceof Inet4Address){
-
                     if (ip.isSiteLocalAddress()){
-
                         ipAddress = ip.getHostAddress();
                     }
-
                 }
-
             }
         }
-        System.out.println(ipAddress);
-        return ipAddress;       
+        return ipAddress == null ? "localhost" : ipAddress;
     }
 }
