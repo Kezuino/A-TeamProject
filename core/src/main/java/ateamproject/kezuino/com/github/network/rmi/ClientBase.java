@@ -21,7 +21,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     private transient Client client;
     private transient IProtocolServer server;
 
-    protected ClientBase(Client client) throws RemoteException{
+    protected ClientBase(Client client) throws RemoteException {
         this.client = client;
     }
 
@@ -62,7 +62,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         packet.setResult(data);
         client.send(packet);
     }
-    
+
     @Override
     public void lobbiesChanged() throws RemoteException {
         client.send(new PacketLobbiesChanged());
@@ -90,6 +90,18 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     @Override
     public void createItem(UUID sender, UUID itemId, ItemType type, Vector2 position) {
         PacketCreateItem packet = new PacketCreateItem(itemId, type, position);
+        client.send(packet);
+    }
+
+    @Override
+    public void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException {
+        if (position == null && followTarget == null)
+            throw new IllegalArgumentException("Either position or followTarget must not be null.");
+        PacketBalloonMessage packet;
+        if (followTarget != null)
+            packet = new PacketBalloonMessage(typeName, followTarget, null);
+        else
+            packet = new PacketBalloonMessage(typeName, position, null);
         client.send(packet);
     }
 

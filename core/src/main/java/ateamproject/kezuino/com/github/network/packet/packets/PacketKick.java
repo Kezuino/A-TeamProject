@@ -16,6 +16,7 @@ public class PacketKick extends Packet<Boolean> {
      */
     @PacketField(0)
     protected String reason;
+
     /**
      * Gets or sets the {@link ateamproject.kezuino.com.github.network.packet.packets.PacketKick.KickReasonType} to indicate where the kick occurred.
      */

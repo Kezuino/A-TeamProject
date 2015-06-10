@@ -192,7 +192,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
             return result;
         }));
-        
+
         packets.registerAction(PacketLobbiesChanged.class, packet -> {
             for (UUID id : packet.getReceivers()) {
                 ClientInfo client = getClient(id);
@@ -213,9 +213,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(getClient(packet.getSender()).getUsername()));
 
-        packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation( packet.getClanName(),getClient(packet.getSender()).getEmailAddress()));
+        packets.registerFunc(PacketGetInvitation.class, (packet) -> clanFunctions.getInvitation(packet.getClanName(), getClient(packet.getSender()).getEmailAddress()));
 
-        packets.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(),getClient(packet.getSender()).getEmailAddress()));
+        packets.registerFunc(PacketGetManagement.class, (packet) -> clanFunctions.getManagement(packet.getClanName(), getClient(packet.getSender()).getEmailAddress()));
 
         packets.registerFunc(PacketGetPeople.class, (packet) -> clanFunctions.getPeople(packet.getClanName()));
 
@@ -248,7 +248,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
                 // Get username from database.
                 try (ResultSet set = Database.getInstance()
-                                             .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
+                        .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
                     if (set.isBeforeFirst()) {
                         set.next();
                         client.setUsername(set.getString(1));
@@ -276,15 +276,15 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerFunc(PacketHighScore.class, (packet) -> {
             try {
                 ResultSet resultSet = Database.getInstance()
-                                              .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
-                                                      .getClanName());
+                        .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
+                                .getClanName());
                 resultSet.next();
                 int id = resultSet.getInt("Score");
 
                 if (id < packet.getScore()) {
                     return Database.getInstance()
-                                   .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
-                                           .getScore(), packet.getClanName()) > -1;
+                            .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
+                                    .getScore(), packet.getClanName()) > -1;
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
@@ -299,7 +299,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             try {
                 resultSet = Database.getInstance()
-                                    .query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
+                        .query("SELECT COUNT(*) as amount FROM account WHERE Name = ?", packet.getUsername());
                 resultSet.next();
                 count = resultSet.getInt("amount");
 
@@ -307,8 +307,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     System.out.println("Following user does already exists: " + packet.getUsername());
                 } else {
                     int result = Database.getInstance()
-                                         .update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet
-                                                 .getEmail());
+                            .update("INSERT INTO account(Name,Email) VALUES(?,?)", packet.getUsername(), packet
+                                    .getEmail());
                     if (result > 0) {
                         System.out.println("Adding following user to database: " + packet.getUsername());
                         getClient(packet.getSender()).setUsername(packet.getUsername());
@@ -331,7 +331,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             try {
                 resultSet = Database.getInstance()
-                                    .query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
+                        .query("SELECT COUNT(*) as amount FROM account WHERE Email = ?", packet.getEmail());
                 resultSet.next();
                 count = resultSet.getInt("amount");
             } catch (SQLException ex) {
@@ -408,8 +408,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             // Notify other users that someone joined the lobby (excluding itself).
             PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername());
             p.setReceivers(lobby.getClients()
-                                .stream()
-                                .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
+                    .stream()
+                    .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
             send(p);
 
             return data;
@@ -435,7 +435,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 boolean hasVotedForCurrentPerson = false;
                 int amountOfVotesForCurrentPerson = 0;
                 int amountOfVotesNeededForKick = (int) Math.ceil(getGameFromClientId(packet.getSender()).getClients()
-                                                                                                        .size() / 2);
+                        .size() / 2);
 
                 for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
                     if (voteCombination[0] == packet.getSender() && voteCombination[1] == personId) {
@@ -474,7 +474,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             if (!hasVotedForSpecificPerson) {
                 getGameFromClientId(packet.getSender()).getVotes()
-                                                       .add(new UUID[]{packet.getSender(), packet.getPersonToVoteFor()});
+                        .add(new UUID[]{packet.getSender(), packet.getPersonToVoteFor()});
             }
         });
 
@@ -569,7 +569,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 return;
             }
 
-            System.out.printf("Sender (public): %s. New status: %s%n", getClient(packet.getSender()).getPublicId(), packet
+            System.out.printf("Sender: (public: %s) (private: %s). New status: %s%n", client.getPublicId(), client.getPrivateId(), packet
                     .getStatus());
 
             if (game.getClients()
@@ -587,37 +587,20 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
                 });
 
-                // Set game to run unpaused.
-//                Timer timer = new Timer(true);
-//                timer.schedule(new TimerTask() {
-//                    @Override
-//                    public void run() {
-//                        game.getClients().stream().map(id -> getClient(id).getRmi()).forEach(rmi -> {
-//                            try {
-//                                rmi.launchGame(false);
-//                            } catch (RemoteException e) {
-//                                e.printStackTrace();
-//                            } finally {
-//                                timer.cancel();
-//                            }
-//                        });
-//                    }
-//                }, 3);
-
             } else if (game.getClients()
-                           .stream()
-                           .map(this::getClient)
-                           .filter(info -> !info.getPrivateId().equals(game.getHostId()))
-                           .allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded) && getClient(game.getHostId()).getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded) {
+                    .stream()
+                    .map(this::getClient)
+                    .filter(info -> !info.getPrivateId().equals(game.getHostId()))
+                    .allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded) && getClient(game.getHostId()).getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded) {
                 // Send all packets that were queued from the host to all the other clients (so, excluding the host).
                 int objectsToSend = game.getLoadQueue().size();
 
                 // Get all connected clients (excluding the host).
                 IProtocolClient[] receivers = game.getClients()
-                                                  .stream()
-                                                  .filter(c -> !c.equals(game.getHostId()))
-                                                  .map(id -> getClient(id).getRmi())
-                                                  .toArray(IProtocolClient[]::new);
+                        .stream()
+                        .filter(c -> !c.equals(game.getHostId()))
+                        .map(id -> getClient(id).getRmi())
+                        .toArray(IProtocolClient[]::new);
 
                 // Tell clients that they should announce when they reached the right amount of objects created.
                 for (IProtocolClient receiver : receivers) {
@@ -669,10 +652,10 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerAction(PacketShootProjectile.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             IProtocolClient[] receivers = game.getClients()
-                                              .stream()
-                                              .filter(c -> !c.equals(packet.getSender()))
-                                              .map(id -> getClient(id).getRmi())
-                                              .toArray(IProtocolClient[]::new);
+                    .stream()
+                    .filter(c -> !c.equals(packet.getSender()))
+                    .map(id -> getClient(id).getRmi())
+                    .toArray(IProtocolClient[]::new);
 
             for (IProtocolClient receiver : receivers) {
                 try {
@@ -691,10 +674,10 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
 
             IProtocolClient[] receivers = game.getClients()
-                                              .stream()
-                                              .filter(c -> !c.equals(packet.getSender()))
-                                              .map(id -> getClient(id).getRmi())
-                                              .toArray(IProtocolClient[]::new);
+                    .stream()
+                    .filter(c -> !c.equals(packet.getSender()))
+                    .map(id -> getClient(id).getRmi())
+                    .toArray(IProtocolClient[]::new);
 
             for (IProtocolClient receiver : receivers) {
                 try {
@@ -713,10 +696,10 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
 
             IProtocolClient[] receivers = game.getClients()
-                                              .stream()
-                                              .filter(c -> !c.equals(packet.getSender()))
-                                              .map(id -> getClient(id).getRmi())
-                                              .toArray(IProtocolClient[]::new);
+                    .stream()
+                    .filter(c -> !c.equals(packet.getSender()))
+                    .map(id -> getClient(id).getRmi())
+                    .toArray(IProtocolClient[]::new);
 
             executor.submit(() -> {
                 for (IProtocolClient receiver : receivers) {
@@ -733,6 +716,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {
                 System.out.println("Game was not found for the sender.");
+                return null;
             }
             List<PacketGetGameClients.Data> result = new ArrayList<>();
             int num = 0;
@@ -740,6 +724,30 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 result.add(new PacketGetGameClients.Data(num++, getClient(uuid).getPublicId(), game.getHostId().equals(uuid)));
             }
             return result;
+        });
+
+        packets.registerAction(PacketBalloonMessage.class, packet -> {
+            if (packet.getSender() == null) throw new IllegalStateException("Sender must not be null.");
+
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) {
+                System.out.println("Game was not found for sender.");
+                return;
+            }
+
+            IProtocolClient[] receivers = game.getClients()
+                    .stream()
+                    .filter(c -> !c.equals(packet.getSender()))
+                    .map(id -> getClient(id).getRmi())
+                    .toArray(IProtocolClient[]::new);
+
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.balloonMessage(null, packet.getTypeName(), packet.getPosition(), packet.getFollowTarget());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
         });
     }
 

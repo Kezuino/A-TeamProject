@@ -91,6 +91,7 @@ public class GameScreen extends BaseScreen {
                         BalloonMessage.getBalloonMessage(BalloonHelpMe.class)
                                 .setFollowObject(player)
                                 .addBalloonMessage();
+                        Client.getInstance().send(new PacketBalloonMessage("HelpMe", player.getId()));
                         break;
                     case Input.Keys.F1:
                         DebugRenderManager.toggle();

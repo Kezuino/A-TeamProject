@@ -246,6 +246,14 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
+    public void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException {
+        if (followTarget != null)
+            server.send(new PacketBalloonMessage(typeName, followTarget, sender));
+        else
+            server.send(new PacketBalloonMessage(typeName, position, sender));
+    }
+
+    @Override
     public ArrayList<String> getKickInformation(UUID sender) throws RemoteException {
         PacketGetKickInformation packet = new PacketGetKickInformation(sender);
         server.send(packet);

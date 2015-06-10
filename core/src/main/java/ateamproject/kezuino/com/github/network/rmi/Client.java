@@ -10,6 +10,8 @@ import ateamproject.kezuino.com.github.render.screens.*;
 import ateamproject.kezuino.com.github.singleplayer.*;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Animation;
+import ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage;
+import ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessageClassLoader;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
@@ -737,6 +739,27 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             } else {
                 // Server sended this.
                 BaseScreen.getSession().getPlayer(packet.getSender()).setExactPosition(packet.getPosition());
+            }
+        });
+
+        packets.registerAction(PacketBalloonMessage.class, packet -> {
+            if (packet.getSender() != null && packet.getSender().equals(getId())) {
+                try {
+                    getRmi().getServer().balloonMessage(packet.getSender(), packet.getTypeName(), packet.getPosition(), packet.getFollowTarget());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    BalloonMessage message = ((BalloonMessage) Class.forName(packet.getTypeName(), true, BalloonMessageClassLoader.getInstance()).newInstance());
+                    if (packet.getFollowTarget() != null)
+                        message.setFollowObject(BaseScreen.getSession().findObject(packet.getFollowTarget()));
+                    else
+                        message.setPosition(packet.getPosition());
+                    message.addBalloonMessage();
+                } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
