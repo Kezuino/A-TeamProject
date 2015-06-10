@@ -169,6 +169,6 @@ public class Game {
     
     public void nextLevel(){
         level++;
-        System.out.println(level + " is gestart");
+        System.out.printf("Level: %d has started.", level);
     }
 }

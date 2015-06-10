@@ -77,6 +77,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
     @Override
     public void launchGame(boolean paused) throws RemoteException {
+        // Null, null is needed so this client doesn't automatically assign itself as sender (see Packet.send).
         PacketLaunchGame packet = new PacketLaunchGame(paused, null, null);
         client.send(packet);
     }
@@ -99,10 +100,12 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         if (position == null && followTarget == null)
             throw new IllegalArgumentException("Either position or followTarget must not be null.");
         PacketBalloonMessage packet;
+
+        // Null, null is needed so this client doesn't automatically assign itself as sender (see Packet.send).
         if (followTarget != null)
-            packet = new PacketBalloonMessage(typeName, followTarget, null);
+            packet = new PacketBalloonMessage(typeName, followTarget, null, null);
         else
-            packet = new PacketBalloonMessage(typeName, position, null);
+            packet = new PacketBalloonMessage(typeName, position, null, null);
         client.send(packet);
     }
 
