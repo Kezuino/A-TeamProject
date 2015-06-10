@@ -193,11 +193,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return result;
         }));
         
-        packets.registerAction(PacketLobbiesChanged.class, packet -> {
+        packets.registerAction(PacketScreenUpdate.class, packet -> {
             for (UUID id : packet.getReceivers()) {
                 ClientInfo client = getClient(id);
                 try {
-                    client.getRmi().lobbiesChanged();
+                    client.getRmi().screenRefresh(packet.getScreenClass());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

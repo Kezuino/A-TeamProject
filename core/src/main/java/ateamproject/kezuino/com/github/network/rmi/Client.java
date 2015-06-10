@@ -44,7 +44,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         updateTimer = new Timer();
         updateTimer.start();
 
-        System.setProperty("pactales.client.servername", "192.168.1.101");
+        System.setProperty("pactales.client.servername", "localhost");
         System.setProperty("pactales.client.serverobject", "server");
         try {
             rmi = new ClientBase(this);
@@ -59,7 +59,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         updateTimer = new Timer();
         updateTimer.start();
 
-        System.setProperty("pactales.client.servername", "192.168.1.101");
+        System.setProperty("pactales.client.servername", "localhost");
         System.setProperty("pactales.client.serverobject", "server");
         try {
             rmi = new ClientBase(this);
@@ -253,10 +253,17 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             return null;
         });
 
-        packets.registerAction(PacketLobbiesChanged.class, packet -> {
+        /*packets.registerAction(PacketLobbiesChanged.class, packet -> {
             if (game.getScreen() instanceof LobbyListScreen) {
                 LobbyListScreen screen = (LobbyListScreen) game.getScreen();
                 screen.fillHostTable();
+            }
+        });*/
+        
+        packets.registerAction(PacketScreenUpdate.class, packet -> {
+            if (game.getScreen().getClass() == packet.getScreenClass()) {
+                RefreshableScreen screen = (RefreshableScreen)game.getScreen();
+                screen.refresh();
             }
         });
 

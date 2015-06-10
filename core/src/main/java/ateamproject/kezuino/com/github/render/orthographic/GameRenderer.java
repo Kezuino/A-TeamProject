@@ -14,6 +14,8 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
+import java.util.ArrayList;
+import java.util.List;
 
 import java.util.stream.Collectors;
 
@@ -89,7 +91,9 @@ public class GameRenderer implements IRenderer {
         }
 
         // Render dynamic objects.
-        for (GameObject obj : this.map.getAllGameObjects()) {
+        List<GameObject> objects = new ArrayList<>(this.map.getAllGameObjects());
+
+        for (GameObject obj : objects) {
             if (this.session.getState().equals(GameState.Running)) {
                 obj.update();
             }
