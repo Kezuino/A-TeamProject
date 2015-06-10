@@ -253,10 +253,17 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             return null;
         });
 
-        packets.registerAction(PacketLobbiesChanged.class, packet -> {
+        /*packets.registerAction(PacketLobbiesChanged.class, packet -> {
             if (game.getScreen() instanceof LobbyListScreen) {
                 LobbyListScreen screen = (LobbyListScreen) game.getScreen();
                 screen.fillHostTable();
+            }
+        });*/
+        
+        packets.registerAction(PacketScreenUpdate.class, packet -> {
+            if (game.getScreen().getClass() == packet.getScreenClass()) {
+                RefreshableScreen screen = (RefreshableScreen)game.getScreen();
+                screen.refresh();
             }
         });
 

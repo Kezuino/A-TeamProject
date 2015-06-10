@@ -6,6 +6,7 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
+import ateamproject.kezuino.com.github.render.screens.RefreshableScreen;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
@@ -62,10 +63,10 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         packet.setResult(data);
         client.send(packet);
     }
-    
+
     @Override
-    public void lobbiesChanged() throws RemoteException {
-        client.send(new PacketLobbiesChanged());
+    public void screenRefresh(Class<?> refreshableScreen) throws RemoteException {
+        client.send(new PacketScreenUpdate(refreshableScreen));
     }
 
     @Override

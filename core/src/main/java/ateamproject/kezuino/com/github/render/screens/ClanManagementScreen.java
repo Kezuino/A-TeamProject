@@ -26,7 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 /**
  * @author Jip
  */
-public class ClanManagementScreen extends BaseScreen {
+public class ClanManagementScreen extends BaseScreen implements RefreshableScreen {
 
     private final Table scrollTable;
     private TextField tfClannaam;
@@ -70,7 +70,6 @@ public class ClanManagementScreen extends BaseScreen {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
                                 d.hide();
-                                refreshScreen();
                             }
                         });
                         d.add(bExit);
@@ -83,7 +82,6 @@ public class ClanManagementScreen extends BaseScreen {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
                                 d.hide();
-                                refreshScreen();
                             }
                         });
                         d.add(bExit);
@@ -111,7 +109,6 @@ public class ClanManagementScreen extends BaseScreen {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
                                 d.hide();
-                                refreshScreen();
                             }
                         });
                         d.add(bExit);
@@ -124,7 +121,6 @@ public class ClanManagementScreen extends BaseScreen {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
                                 d.hide();
-                                refreshScreen();
                             }
                         });
                         d.add(bExit);
@@ -285,7 +281,6 @@ public class ClanManagementScreen extends BaseScreen {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
                             d.hide();
-                            refreshScreen();
                         }
                     });
                     d.add(bExit);
@@ -301,7 +296,6 @@ public class ClanManagementScreen extends BaseScreen {
                             @Override
                             public void clicked(InputEvent event, float x, float y) {
                                 d.hide();
-                                refreshScreen();
                             }
                         });
                         d.add(bExit);
@@ -331,7 +325,6 @@ public class ClanManagementScreen extends BaseScreen {
                         PacketHandleManagement packetHandleManagement = new PacketHandleManagement(iManage, lb1.getText(), emailaddress);
                         client.send(packetHandleManagement);
                         if (packetHandleManagement.getResult()) {
-                            refreshScreen();//make sure that the changes will be reflected
                             Dialog d = new Dialog("succes", skin);
                             d.add("Actie succesvol uitgevoerd");
                             TextButton bExit = new TextButton("Oke", skin);
@@ -339,7 +332,6 @@ public class ClanManagementScreen extends BaseScreen {
                                 @Override
                                 public void clicked(InputEvent event, float x, float y) {
                                     d.hide();
-                                    refreshScreen();
                                 }
                             });
                             d.add(bExit);
@@ -352,7 +344,6 @@ public class ClanManagementScreen extends BaseScreen {
                                 @Override
                                 public void clicked(InputEvent event, float x, float y) {
                                     d.hide();
-                                    refreshScreen();
                                 }
                             });
                             d.add(bExit);
@@ -378,5 +369,10 @@ public class ClanManagementScreen extends BaseScreen {
         scrollTable.columnDefaults(
                 3);
         scrollTable.row();
+    }
+    
+    @Override
+    public void refresh() {
+        this.refreshScreen();
     }
 }

@@ -20,7 +20,7 @@ import java.util.List;
 /**
  * @author Fatih
  */
-public class LobbyListScreen extends BaseScreen {
+public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
 
     private Table scrollTable;
     TextField lobbyname;
@@ -190,5 +190,10 @@ public class LobbyListScreen extends BaseScreen {
                 scrollTable.row();
             }
         }
+    }
+
+    @Override
+    public void refresh() {
+        this.fillHostTable();
     }
 }

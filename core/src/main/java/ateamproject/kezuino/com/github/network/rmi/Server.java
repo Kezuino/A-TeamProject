@@ -208,11 +208,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return result;
         }));
 
-        packets.registerAction(PacketLobbiesChanged.class, packet -> {
+        packets.registerAction(PacketScreenUpdate.class, packet -> {
             for (UUID id : packet.getReceivers()) {
                 ClientInfo client = getClient(id);
                 try {
-                    client.getRmi().lobbiesChanged();
+                    client.getRmi().screenRefresh(packet.getScreenClass());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -543,7 +543,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 System.out.println("Cannot launch game. The game was not found.");
                 return;
             }
-
+            //Level word +1, standaard is 0 dus eerst dat gelaunched word zal level 1 worden.
+            game.nextLevel();
             // Set the loading states of everyone to empty and notify everyone to start loading the map.
             for (UUID uuid : game.getClients()) {
                 ClientInfo client = getClient(uuid);
