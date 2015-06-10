@@ -527,7 +527,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 System.out.println("Cannot launch game. The game was not found.");
                 return;
             }
-
+            //Level word +1, standaard is 0 dus eerst dat gelaunched word zal level 1 worden.
+            game.nextLevel();
             // Set the loading states of everyone to empty and notify everyone to start loading the map.
             for (UUID uuid : game.getClients()) {
                 ClientInfo client = getClient(uuid);
