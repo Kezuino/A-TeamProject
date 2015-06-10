@@ -447,7 +447,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerAction(PacketSetKickInformation.class, packet -> {
             try {
-                getRmi().getServer().setKickInformation(packet.getPersonToVoteFor());
+                getRmi().getServer().setKickInformation(packet.getSender(),packet.getPersonToVoteFor());
             } catch (RemoteException e) {
                 e.printStackTrace();
             }

@@ -49,7 +49,7 @@ public class Game {
         this.id = UUID.randomUUID();
         this.name = name;
         this.clanName = clanName;
-        this.votes = new ArrayList<>();
+        this.votes = new ArrayList<>();//[0]voter,[1]person to kick
         this.loadQueue = new ArrayDeque<>();
 
         // Ingame is set to true if game is started, if started dont show on lobbylist.
