@@ -16,6 +16,9 @@ import java.util.UUID;
  */
 public class PacketGetKickInformation extends Packet<ArrayList<String>> {
 
+    public PacketGetKickInformation() {
+    }
+    
     public PacketGetKickInformation(UUID... senderAndReceivers) {
         super(senderAndReceivers);
     }

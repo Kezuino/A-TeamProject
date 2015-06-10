@@ -125,6 +125,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                         e.printStackTrace();
                     }
                 }
+                //TODO delete associated game?
+
             } else {
                 // Drop sender.
                 try {
@@ -132,6 +134,19 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
+
+                Game currentGame = getGameFromClientId(packet.getSender());//get game
+                currentGame.getClients().remove(packet.getSender());//remove sender form clients
+                ArrayList<UUID[]> allVotes = currentGame.getVotes();
+                for (UUID[] voteCollection : allVotes) {
+                    if (voteCollection[0].equals(packet.getSender())) {
+                        allVotes.remove(voteCollection);//remove votes placed by sender
+                    }
+                    if (voteCollection[1].equals(packet.getSender())) {
+                        allVotes.remove(voteCollection);//remove votes placed on sender
+                    }
+                }
+                //TODO remove pactale from each client
             }
 
             return false;
@@ -193,11 +208,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return result;
         }));
 
-        packets.registerAction(PacketLobbiesChanged.class, packet -> {
+        packets.registerAction(PacketScreenUpdate.class, packet -> {
             for (UUID id : packet.getReceivers()) {
                 ClientInfo client = getClient(id);
                 try {
-                    client.getRmi().lobbiesChanged();
+                    client.getRmi().screenRefresh(packet.getScreenClass());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -427,35 +442,36 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             return curMembers;
         });
 
-
         packets.registerFunc(PacketGetKickInformation.class, packet -> {
             ArrayList<String> peoples = new ArrayList<>();
-
+            System.out.println("sender:" + packet.getSender().toString());
             for (UUID personId : getGameFromClientId(packet.getSender()).getClients()) {//for all clients in this game
-                boolean hasVotedForCurrentPerson = false;
-                int amountOfVotesForCurrentPerson = 0;
-                int amountOfVotesNeededForKick = (int) Math.ceil(getGameFromClientId(packet.getSender()).getClients()
-                        .size() / 2);
+                if (!personId.equals(packet.getSender())) {//if not sender
+                    boolean hasVotedForCurrentPerson = false;
+                    int amountOfVotesForCurrentPerson = 0;
+                    int amountOfVotesNeededForKick = (int) Math.ceil((float) getGameFromClientId(packet.getSender()).getClients()
+                            .size() / 2);
 
-                for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
-                    if (voteCombination[0] == packet.getSender() && voteCombination[1] == personId) {
-                        hasVotedForCurrentPerson = true;
-                        break;
+                    for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
+                        if (voteCombination[0].equals(packet.getSender()) && voteCombination[1].equals(personId)) {
+                            hasVotedForCurrentPerson = true;
+                            break;
+                        }
                     }
-                }
 
-                for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
-                    if (voteCombination[1] == personId) {
-                        amountOfVotesForCurrentPerson++;
+                    for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
+                        if (voteCombination[1].equals(personId)) {
+                            amountOfVotesForCurrentPerson++;
+                        }
                     }
-                }
 
-                if (amountOfVotesForCurrentPerson >= amountOfVotesNeededForKick) {
-                    PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Kick due votes", personId);
-                    Client.getInstance().send(packetKick);
-                } else {
-                    peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String
-                            .valueOf(hasVotedForCurrentPerson + " " + personId));
+                    if (amountOfVotesForCurrentPerson >= amountOfVotesNeededForKick) {
+                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Votekicked", personId);
+                        this.send(packetKick);
+                    } else {
+                        peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String
+                                .valueOf(hasVotedForCurrentPerson + " " + personId));
+                    }
                 }
             }
 
@@ -527,7 +543,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 System.out.println("Cannot launch game. The game was not found.");
                 return;
             }
-
+            //Level word +1, standaard is 0 dus eerst dat gelaunched word zal level 1 worden.
+            game.nextLevel();
             // Set the loading states of everyone to empty and notify everyone to start loading the map.
             for (UUID uuid : game.getClients()) {
                 ClientInfo client = getClient(uuid);

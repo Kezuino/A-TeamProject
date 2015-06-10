@@ -43,17 +43,19 @@ public class Game {
      */
     protected String clanName;
     private int mapObjectCount;
+    private int level;
 
     public Game(String name, String clanName, UUID host) {
         // Generate UUID and give lobby a name
         this.id = UUID.randomUUID();
         this.name = name;
         this.clanName = clanName;
-        this.votes = new ArrayList<>();
+        this.votes = new ArrayList<>();//[0]voter,[1]person to kick
         this.loadQueue = new ArrayDeque<>();
 
         // Ingame is set to true if game is started, if started dont show on lobbylist.
         this.inGame = false;
+        this.level = 0;
 
         // Add host to clients list
         this.hostId = host;
@@ -163,5 +165,10 @@ public class Game {
 
     public void setMapObjectCount(int mapObjectCount) {
         this.mapObjectCount = mapObjectCount;
+    }
+    
+    public void nextLevel(){
+        level++;
+        System.out.println(level + " is gestart");
     }
 }

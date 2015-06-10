@@ -36,7 +36,6 @@ import java.util.UUID;
 import java.util.ArrayList;
 import java.util.UUID;
 
-
 /**
  * @author Anton
  */
@@ -62,22 +61,30 @@ public class GameScreen extends BaseScreen {
             public boolean keyDown(int keycode) {
                 switch (keycode) {
                     case Input.Keys.W:
-                        if (getSession().getState() == GameState.Paused) break;
+                        if (getSession().getState() == GameState.Paused) {
+                            break;
+                        }
                         player.setDirection(Direction.Up);
                         Client.getInstance().send(new PacketPlayerSetDirection(Direction.Up));
                         break;
                     case Input.Keys.S:
-                        if (getSession().getState() == GameState.Paused) break;
+                        if (getSession().getState() == GameState.Paused) {
+                            break;
+                        }
                         player.setDirection(Direction.Down);
                         Client.getInstance().send(new PacketPlayerSetDirection(Direction.Down));
                         break;
                     case Input.Keys.A:
-                        if (getSession().getState() == GameState.Paused) break;
+                        if (getSession().getState() == GameState.Paused) {
+                            break;
+                        }
                         player.setDirection(Direction.Left);
                         Client.getInstance().send(new PacketPlayerSetDirection(Direction.Left));
                         break;
                     case Input.Keys.D:
-                        if (getSession().getState() == GameState.Paused) break;
+                        if (getSession().getState() == GameState.Paused) {
+                            break;
+                        }
                         player.setDirection(Direction.Right);
                         Client.getInstance().send(new PacketPlayerSetDirection(Direction.Right));
                         break;
@@ -164,8 +171,12 @@ public class GameScreen extends BaseScreen {
             System.out.println("Resetted session on GameScreen.start");
             setSession(new GameSession());
         }
-        if (getSession().getScore() == null) getSession().setScore(score);
-        if (getSession().getMap() == null) throw new IllegalStateException("Map should be loaded before the GameScreen can be started.");
+        if (getSession().getScore() == null) {
+            getSession().setScore(score);
+        }
+        if (getSession().getMap() == null) {
+            throw new IllegalStateException("Map should be loaded before the GameScreen can be started.");
+        }
 
         player = getSession().getPlayer(Client.getInstance().getPublicId());
         if (player == null) {
@@ -248,8 +259,7 @@ public class GameScreen extends BaseScreen {
             String[] peopleResult = person.split(" ");
 
             TextButton bKick = new TextButton("Kick", skin);
-            TextButton bContinue = new TextButton("Doorgaan", skin);
-            bContinue.addListener(new ClickListener() {
+            bKick.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
                     PacketSetKickInformation packetKick = new PacketSetKickInformation(UUID.fromString(peopleResult[4]));
@@ -257,11 +267,11 @@ public class GameScreen extends BaseScreen {
 
                     PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();
                     Client.getInstance().send(packetKickInfo);
+                    people.clear();
                     people.addAll(packetKickInfo.getResult());
                     playerMenu.hide();
-                    showPlayersView();
                 }
-            }); 
+            });
 
             scrollTable.add(peopleResult[0]);
             scrollTable.columnDefaults(0);

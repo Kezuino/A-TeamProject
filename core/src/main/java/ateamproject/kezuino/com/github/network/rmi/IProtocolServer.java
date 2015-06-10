@@ -73,7 +73,7 @@ public interface IProtocolServer extends IProtocol {
 
     String getUsername(String emailaddress) throws RemoteException;
 
-    void setKickInformation(UUID getPersonToVoteFor) throws RemoteException;
+    void setKickInformation(UUID sender,UUID getPersonToVoteFor) throws RemoteException;
 
     String getEmail(UUID Sender) throws RemoteException;
 

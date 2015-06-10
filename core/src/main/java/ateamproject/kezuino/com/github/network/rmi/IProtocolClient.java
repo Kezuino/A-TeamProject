@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLobbySetDetails;
+import ateamproject.kezuino.com.github.render.screens.RefreshableScreen;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import com.badlogic.gdx.Game;
 
@@ -43,7 +44,7 @@ public interface IProtocolClient extends IProtocol {
      */
     void clientLeft(UUID clientThatLeft, String username) throws RemoteException;
     
-    void lobbiesChanged()throws RemoteException;
+    void screenRefresh(Class<?> refreshableScreen) throws RemoteException;
 
     /**
      * Notifies the {@link IProtocolClient} that is should start loading a map.

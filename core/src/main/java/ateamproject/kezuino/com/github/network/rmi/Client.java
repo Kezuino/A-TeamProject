@@ -255,10 +255,17 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             return null;
         });
 
-        packets.registerAction(PacketLobbiesChanged.class, packet -> {
+        /*packets.registerAction(PacketLobbiesChanged.class, packet -> {
             if (game.getScreen() instanceof LobbyListScreen) {
                 LobbyListScreen screen = (LobbyListScreen) game.getScreen();
                 screen.fillHostTable();
+            }
+        });*/
+        
+        packets.registerAction(PacketScreenUpdate.class, packet -> {
+            if (game.getScreen().getClass() == packet.getScreenClass()) {
+                RefreshableScreen screen = (RefreshableScreen)game.getScreen();
+                screen.refresh();
             }
         });
 
@@ -449,7 +456,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerAction(PacketSetKickInformation.class, packet -> {
             try {
-                getRmi().getServer().setKickInformation(packet.getPersonToVoteFor());
+                getRmi().getServer().setKickInformation(packet.getSender(),packet.getPersonToVoteFor());
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
