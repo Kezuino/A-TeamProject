@@ -94,6 +94,12 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketCreateItem packet = new PacketCreateItem(itemId, type, position);
         client.send(packet);
     }
+    
+    @Override
+    public void removeItem(UUID sender, UUID itemId) {
+        PacketRemoveItem packet = new PacketRemoveItem(itemId, sender);
+        client.send(packet);
+    }
 
     @Override
     public void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException {

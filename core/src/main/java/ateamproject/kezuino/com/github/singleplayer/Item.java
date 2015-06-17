@@ -208,6 +208,10 @@ public class Item implements IRenderable, IPositionable {
     public UUID getId() {
         return id;
     }
+    
+    public void setId() {
+        this.id = UUID.randomUUID();
+    }
 
     public void setId(UUID id) {
         this.id = id;

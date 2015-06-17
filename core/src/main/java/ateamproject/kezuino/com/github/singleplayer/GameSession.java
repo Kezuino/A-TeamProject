@@ -204,6 +204,17 @@ public class GameSession {
     public GameObject findObject(UUID id) {
         return this.map.getAllGameObjects().stream().filter(obj -> obj.getId().equals(id)).findFirst().orElse(null);
     }
+    
+    /**
+     * Return the {@link Item} found on this {@link Map} by the given {@code id}.
+     * Will return null if none found.
+     * 
+     * @param id {@link UUID} to search for an {@link Item}.
+     * @return {@link Item} matching the given {@code id}.
+     */
+    public Item findItem(UUID id) {
+        return this.map.getAllItems().stream().filter(item -> item.getId().equals(id)).findFirst().orElse(null);
+    }
 
     /**
      * Sets a new {@link Map} for this {@link GameSession}. Connected clients

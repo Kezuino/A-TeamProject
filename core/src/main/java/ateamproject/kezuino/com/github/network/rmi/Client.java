@@ -774,5 +774,22 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 });
             }
         });
+        
+        packets.registerAction(PacketRemoveItem.class, packet -> {
+            if(packet.getSender() != null && packet.getSender().equals(getId())) {
+                try {
+                    getRmi().getServer().removeItem(packet.getSender(), packet.getId());
+                } catch (RemoteException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                Item foundItem;
+                
+                if((foundItem = BaseScreen.getSession().findItem(packet.getId())) != null) {
+                    foundItem.getNode().removeItem();
+                    System.out.printf("Succesfully removed item with id %s", foundItem.getId());
+                }
+            }
+        });
     }
 }

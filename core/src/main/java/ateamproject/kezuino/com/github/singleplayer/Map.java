@@ -306,9 +306,8 @@ public class Map {
     public List<Item> getAllItems() {
         List<Item> result = new ArrayList<>();
         for (Node node : nodes) {
-            Item item = node.getItem();
-            if (item != null) {
-                result.add(item);
+            if(node.hasItem()) {
+                result.add(node.getItem());
             }
         }
 

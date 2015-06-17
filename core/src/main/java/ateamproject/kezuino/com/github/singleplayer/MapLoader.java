@@ -143,6 +143,7 @@ public class MapLoader {
                     Item item = new Item(curPos, itemType);
                     item.setMap(map);
                     item.setTexture(obj.getTextureRegion());
+                    item.setId();
                     posNode.setItem(item);
 
                     runConsumers(MapObjectTypes.ITEM.getType(), item);
