@@ -238,7 +238,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * @param sender Private id of the {@link TClient} to find.
      * @return {@link Game} that the {@link TClient} is currently in. Or null if {@link TClient} is not currently in a game / lobby.
      */
-    public Game getGameFromClientId(UUID sender) {
+    public synchronized Game getGameFromClientId(UUID sender) {
         TClient client = getClient(sender);
         if (client == null) return null;
         return client.getGame();

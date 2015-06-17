@@ -10,6 +10,7 @@ import ateamproject.kezuino.com.github.singleplayer.Map;
 import com.badlogic.gdx.graphics.Color;
 
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Holds information about a hosted lobby/game. Used by the {@link INetworkComponent} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.
@@ -29,11 +30,11 @@ public class Game {
 
     protected UUID id;
     protected String name;
-    protected LinkedHashSet<UUID> clients;
+    protected CopyOnWriteArrayList<UUID> clients;
     /**
      * First UUID is the voter. second UUID is the person that received the vote.
      */
-    protected ArrayList<UUID[]> votes;
+    protected CopyOnWriteArrayList<UUID[]> votes;
     protected UUID hostId;
     protected boolean inGame;
     protected Queue<Packet> loadQueue;
@@ -50,7 +51,7 @@ public class Game {
         this.id = UUID.randomUUID();
         this.name = name;
         this.clanName = clanName;
-        this.votes = new ArrayList<>();//[0]voter,[1]person to kick
+        this.votes = new CopyOnWriteArrayList<>();//[0]voter,[1]person to kick
         this.loadQueue = new ArrayDeque<>();
 
         // Ingame is set to true if game is started, if started dont show on lobbylist.
@@ -59,7 +60,7 @@ public class Game {
 
         // Add host to clients list
         this.hostId = host;
-        this.clients = new LinkedHashSet<>();
+        this.clients = new CopyOnWriteArrayList<>();
         this.clients.add(host);
     }
 
@@ -99,7 +100,7 @@ public class Game {
      *
      * @return All {@link IClientInfo clients} that are currently in this game / lobby.
      */
-    public LinkedHashSet<UUID> getClients() {
+    public CopyOnWriteArrayList<UUID> getClients() {
         return clients;
     }
 
@@ -133,7 +134,7 @@ public class Game {
         return hostId;
     }
 
-    public ArrayList<UUID[]> getVotes() {
+    public CopyOnWriteArrayList<UUID[]> getVotes() {
         return votes;
     }
 

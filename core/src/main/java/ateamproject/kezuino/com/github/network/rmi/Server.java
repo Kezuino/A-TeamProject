@@ -20,6 +20,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -137,7 +138,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
                 Game currentGame = getGameFromClientId(packet.getSender());//get game
                 currentGame.getClients().remove(packet.getSender());//remove sender form clients
-                ArrayList<UUID[]> allVotes = currentGame.getVotes();
+                CopyOnWriteArrayList<UUID[]> allVotes = currentGame.getVotes();
                 for (UUID[] voteCollection : allVotes) {
                     if (voteCollection[0].equals(packet.getSender())) {
                         allVotes.remove(voteCollection);//remove votes placed by sender
@@ -213,6 +214,17 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 ClientInfo client = getClient(id);
                 try {
                     client.getRmi().screenRefresh(packet.getScreenClass());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        packets.registerAction(PacketKickPopupRefresh.class, packet -> {
+            for (UUID id : packet.getReceivers()) {
+                ClientInfo client = getClient(id);
+                try {
+                    client.getRmi().kickPopupRefresh();
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -446,7 +458,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             ArrayList<String> peoples = new ArrayList<>();
             System.out.println("sender:" + packet.getSender().toString());
             for (UUID personId : getGameFromClientId(packet.getSender()).getClients()) {//for all clients in this game
-                if (!personId.equals(packet.getSender())) {//if not sender
+                if (!personId.equals(packet.getSender())&& !getGameFromClientId(packet.getSender()).getClients().get(0).equals(personId)) {//if not sender and if not host == true
                     boolean hasVotedForCurrentPerson = false;
                     int amountOfVotesForCurrentPerson = 0;
                     int amountOfVotesNeededForKick = (int) Math.ceil((float) getGameFromClientId(packet.getSender()).getClients()
@@ -466,8 +478,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
 
                     if (amountOfVotesForCurrentPerson >= amountOfVotesNeededForKick) {
-                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Votekicked", personId);
-                        this.send(packetKick);
+                        this.removeClient(personId);
+                        //PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Votekicked", personId);
+                        //this.send(packetKick);
                     } else {
                         peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String
                                 .valueOf(hasVotedForCurrentPerson + " " + personId));
@@ -744,7 +757,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketBalloonMessage.class, packet -> {
-            if (packet.getSender() == null) throw new IllegalStateException("Sender must not be null.");
+            if (packet.getSender() == null) {
+                throw new IllegalStateException("Sender must not be null.");
+            }
 
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {

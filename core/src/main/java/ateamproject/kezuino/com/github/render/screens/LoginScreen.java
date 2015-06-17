@@ -12,6 +12,7 @@ import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
@@ -25,6 +26,8 @@ import java.util.logging.Logger;
  * @author David
  */
 public class LoginScreen extends BaseScreen {
+
+    public Dialog player;
 
     public LoginScreen(Game game) {
         super(game);
@@ -77,9 +80,8 @@ public class LoginScreen extends BaseScreen {
                             });
                             d.add(bExit);
                             d.show(stage);
-                        }
-                        else{
-                             game.setScreen(new MainScreen(game));
+                        } else {
+                            game.setScreen(new MainScreen(game));
                         }
                     } else {
                         Dialog d = new Dialog("error", skin);
@@ -107,18 +109,6 @@ public class LoginScreen extends BaseScreen {
             }
         });
 
-        // delete this //
-        TextButton btntestlogin = new TextButton("no auth login", skin);
-        btntestlogin.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainScreen(game));
-            }
-        });
-        btntestlogin.setSize(300, 40);
-        btntestlogin.setPosition(stage.getWidth() / 2 - btntestlogin.getWidth() / 2, 100);
-        btntestlogin.setVisible(false);
-
         txtUsername.setSize(300, 40);
         txtPassword.setSize(300, 40);
         txtPassword.setPasswordMode(true);
@@ -129,7 +119,6 @@ public class LoginScreen extends BaseScreen {
         txtPassword.setPosition(stage.getWidth() / 2 - txtPassword.getWidth() / 2, 250);
 
         stage.addActor(btnLogin);
-        stage.addActor(btntestlogin); // << delete this
         stage.addActor(txtUsername);
         stage.addActor(txtPassword);
 

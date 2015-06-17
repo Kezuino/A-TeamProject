@@ -52,7 +52,7 @@ public class Database {
             connection = DriverManager.getConnection(connectionString, username, password);
             return true;
         } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, "IS THE DATABASE ONLINE? "+ex);
         } catch (SQLException e) {
             e.printStackTrace();
         }

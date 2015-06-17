@@ -45,7 +45,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public UUID createLobby(UUID sender, String lobbyName, String clanname) throws RemoteException {
         PacketCreateLobby packet = new PacketCreateLobby(lobbyName, clanname, sender);
         server.send(packet);
-        
+
         PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
         return packet.getResult();
@@ -62,7 +62,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException {
         PacketJoinLobby packet = new PacketJoinLobby(sender, lobbyId);
         server.send(packet);
-        
+
         PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
         return packet.getResult();
@@ -72,7 +72,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public boolean leaveLobby(UUID sender) throws RemoteException {
         PacketLeaveLobby packet = new PacketLeaveLobby(sender);
         server.send(packet);
-        
+
         PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
         return packet.getResult();
@@ -96,10 +96,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public boolean createClan(UUID sender, String clanName) throws RemoteException {
         PacketCreateClan packet = new PacketCreateClan(sender, clanName);
         server.send(packet);
-        
+
         PacketScreenUpdate tmp = new PacketScreenUpdate(ClanManagementScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
-        
+
         return packet.getResult();
     }
 
@@ -128,10 +128,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public boolean handleInvitation(InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException {
         PacketHandleInvitation packet = new PacketHandleInvitation(invite, clanName, emailAddress, nameOfInvitee);
         server.send(packet);
-        
+
         PacketScreenUpdate tmp = new PacketScreenUpdate(ClanManagementScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
-        
+
         return packet.getResult();
     }
 
@@ -139,10 +139,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public boolean handleManagement(ManagementType manage, String clanName, String emailaddress) throws RemoteException {
         PacketHandleManagement packet = new PacketHandleManagement(manage, clanName, emailaddress);
         server.send(packet);
-        
+
         PacketScreenUpdate tmp = new PacketScreenUpdate(ClanManagementScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
-        
+
         return packet.getResult();
     }
 
@@ -260,10 +260,11 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
     @Override
     public void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException {
-        if (followTarget != null)
+        if (followTarget != null) {
             server.send(new PacketBalloonMessage(typeName, followTarget, sender));
-        else
+        } else {
             server.send(new PacketBalloonMessage(typeName, position, sender));
+        }
     }
 
     @Override
@@ -274,9 +275,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void setKickInformation(UUID sender,UUID getPersonToVoteFor) throws RemoteException {
-        PacketSetKickInformation packet = new PacketSetKickInformation(getPersonToVoteFor,sender);
+    public void setKickInformation(UUID sender, UUID getPersonToVoteFor) throws RemoteException {
+        PacketSetKickInformation packet = new PacketSetKickInformation(getPersonToVoteFor, sender);
         server.send(packet);
+
+        PacketKickPopupRefresh tmp = new PacketKickPopupRefresh(this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
+        server.send(tmp);
     }
 
     @Override

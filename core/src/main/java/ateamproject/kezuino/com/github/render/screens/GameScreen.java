@@ -23,6 +23,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -240,9 +241,18 @@ public class GameScreen extends BaseScreen {
         getSession().showPauseMenu();
     }
 
+    public void refreshPlayersView() {
+        if (getSession().isPlayerMenuShowing()) {
+            this.playerMenu.remove();
+            showPlayersView();
+        } else {
+            hidePlayersView();
+        }
+    }
+
     public void showPlayersView() {
         //Create player menu.
-        playerMenu = new Dialog("Menu", skin) {
+        this.playerMenu = new Dialog("Menu", skin) {
             {
                 button("Oke");
             }
@@ -269,7 +279,6 @@ public class GameScreen extends BaseScreen {
                     Client.getInstance().send(packetKickInfo);
                     people.clear();
                     people.addAll(packetKickInfo.getResult());
-                    playerMenu.hide();
                 }
             });
 
@@ -281,8 +290,10 @@ public class GameScreen extends BaseScreen {
             scrollTable.columnDefaults(2);
             scrollTable.row();
 
-            if (peopleResult[3].equals("0")) {
+            if (peopleResult[3].equals("true")) {
                 bKick.setDisabled(true);
+                bKick.setTouchable(Touchable.disabled);
+                bKick.setColor(255, 0, 0, 100);
             }
         }
 

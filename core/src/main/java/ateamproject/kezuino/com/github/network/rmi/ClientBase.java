@@ -19,6 +19,7 @@ import java.util.UUID;
  * @author Kez and Jules
  */
 public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
+
     private transient Client client;
     private transient IProtocolServer server;
 
@@ -33,7 +34,6 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     public void setServer(IProtocolServer server) {
         this.server = server;
     }
-
 
     @Override
     public boolean drop(PacketKick.KickReasonType kick, String reason) throws RemoteException {
@@ -70,6 +70,11 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
+    public void kickPopupRefresh() throws RemoteException {
+        client.send(new PacketKickPopupRefresh());
+    }
+
+    @Override
     public void requestCompleted(String requestId, int progress) throws RemoteException {
         PacketRequestCompleted packet = new PacketRequestCompleted(requestId, progress);
         client.send(packet);
@@ -97,15 +102,17 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
     @Override
     public void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException {
-        if (position == null && followTarget == null)
+        if (position == null && followTarget == null) {
             throw new IllegalArgumentException("Either position or followTarget must not be null.");
+        }
         PacketBalloonMessage packet;
 
         // Null, null is needed so this client doesn't automatically assign itself as sender (see Packet.send).
-        if (followTarget != null)
+        if (followTarget != null) {
             packet = new PacketBalloonMessage(typeName, followTarget, null, null);
-        else
+        } else {
             packet = new PacketBalloonMessage(typeName, position, null, null);
+        }
         client.send(packet);
     }
 
