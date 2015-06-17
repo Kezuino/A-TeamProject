@@ -54,7 +54,7 @@ public interface IProtocolClient extends IProtocol {
      * @param playerLimit Amount of players that should be loaded for this {@link Map}.
      * @throws RemoteException
      */
-    void loadGame(String mapName, boolean isMaster, int playerLimit) throws RemoteException;
+    void loadGame(String mapName, boolean isMaster, int playerLimit, int level) throws RemoteException;
 
 
     /**

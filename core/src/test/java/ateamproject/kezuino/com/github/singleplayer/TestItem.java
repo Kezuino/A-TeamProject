@@ -24,7 +24,7 @@ public class TestItem {
 
     @Before
     public void setup() {
-        GameSession session = new GameSession();
+        GameSession session = new GameSession(1);
         session.setMap(10);
         map = session.getMap();
         node = new Node(map, 1, 1);

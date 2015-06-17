@@ -171,4 +171,8 @@ public class Game {
         level++;
         System.out.printf("Level: %d has started.", level);
     }
+    
+    public int getLevel(){
+        return this.level;
+    }
 }

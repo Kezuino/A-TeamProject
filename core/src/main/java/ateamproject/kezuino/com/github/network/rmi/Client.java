@@ -629,9 +629,9 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerAction(PacketLoadGame.class, p -> {
             // Set this session as the new main session.
-            GameSession session = new GameSession();
+            GameSession session = new GameSession(p.getLevel());
             BaseScreen.setSession(session);
-            MapLoader loader = Map.getLoader(session, p.getMap());
+            MapLoader loader = Map.getLoader(session, p.getMap(),p.getLevel());
 
             EnumSet<MapLoader.MapObjectTypes> excluded = null;
             if (p.isMaster()) {

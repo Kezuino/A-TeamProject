@@ -25,7 +25,7 @@ public class TestPactale {
 
     @Before
     public void setUp() throws Exception {
-        session = new GameSession();
+        session = new GameSession(1);
         session.setMap(3);
         map = session.getMap();
         pactale = new Pactale(new Vector2(1, 1), 25, .5f, Direction.Down, Color.WHITE);

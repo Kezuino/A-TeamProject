@@ -23,7 +23,7 @@ public class TestProjectile {
 
     @Before
     public void setUp() throws Exception {
-        session = new GameSession();
+        session = new GameSession(1);
         session.setMap(new Map(session, 3));
         map = session.getMap();
     }
