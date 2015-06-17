@@ -791,5 +791,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 }
             }
         });
+        
+        packets.registerAction(PacketPickUpItem.class, packet -> {
+            try {
+                getRmi().getServer().PickUpItem(packet.getSender(), packet.getItem());
+            } catch (RemoteException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 }

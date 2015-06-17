@@ -132,4 +132,10 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketShootProjectile packet = new PacketShootProjectile(sender);
         client.send(packet);
     }
+
+    @Override
+    public void PickUpItem(UUID sender, UUID item) throws RemoteException {
+       PacketPickUpItem packet = new PacketPickUpItem(item);
+        client.send(packet);
+    }
 }
