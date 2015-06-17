@@ -788,6 +788,18 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             }
         });
+        
+        packets.registerAction(PacketPickUpItem.class, packet -> {
+             Game game = getGameFromClientId(packet.getSender());
+             IProtocolClient[] receivers = game.getClients().stream().filter(c -> !c.equals(game.getHostId())).map(id -> getClient(id).getRmi()).toArray(IProtocolClient[]::new);
+             for (IProtocolClient receiver : receivers) {
+                        try {
+                            receiver.PickUpItem(packet.getSender(), packet.getItem());
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
+        });
     }
 
     @Override

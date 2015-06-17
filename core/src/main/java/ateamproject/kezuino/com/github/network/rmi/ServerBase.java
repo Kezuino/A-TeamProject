@@ -309,4 +309,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         server.send(packet);
         return packet.getResult();
     }
+
+    @Override
+    public void PickUpItem(UUID sender, UUID item) throws RemoteException {
+        PacketPickUpItem packet = new PacketPickUpItem(item);
+        server.send(packet);
+    }
 }
