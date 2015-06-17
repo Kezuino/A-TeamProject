@@ -53,8 +53,8 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void loadGame(String mapName, boolean isMaster, int playerLimit) throws RemoteException {
-        client.send(new PacketLoadGame(mapName, isMaster, playerLimit));
+    public void loadGame(String mapName, boolean isMaster, int playerLimit, int level) throws RemoteException {
+        client.send(new PacketLoadGame(mapName, isMaster, playerLimit, level));
     }
 
     @Override
@@ -99,6 +99,12 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketCreateItem packet = new PacketCreateItem(itemId, type, position);
         client.send(packet);
     }
+    
+    @Override
+    public void removeItem(UUID sender, UUID itemId) {
+        PacketRemoveItem packet = new PacketRemoveItem(itemId, sender);
+        client.send(packet);
+    }
 
     @Override
     public void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException {
@@ -131,6 +137,12 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     @Override
     public void shootProjectile(UUID sender) throws RemoteException {
         PacketShootProjectile packet = new PacketShootProjectile(sender);
+        client.send(packet);
+    }
+
+    @Override
+    public void PickUpItem(UUID sender, UUID item) throws RemoteException {
+       PacketPickUpItem packet = new PacketPickUpItem(item);
         client.send(packet);
     }
 }

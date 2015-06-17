@@ -638,23 +638,22 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerAction(PacketLoadGame.class, p -> {
             // Set this session as the new main session.
-            GameSession session = new GameSession();
+            GameSession session = new GameSession(p.getLevel());
             BaseScreen.setSession(session);
-            MapLoader loader = Map.getLoader(session, p.getMap());
+            MapLoader loader = Map.getLoader(session, p.getMap(),p.getLevel());
 
             EnumSet<MapLoader.MapObjectTypes> excluded = null;
             if (p.isMaster()) {
                 // Load everything and synchronize with server.
                 excluded = EnumSet.noneOf(MapLoader.MapObjectTypes.class);
                 loader.addConsumer(Enemy.class, obj -> {
-                    // TODO: Enable after sync is done for enemies.
-//                    try {
-//                        getRmi().getServer()
-//                                .createObject(p.getSender(), Enemy.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj
-//                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()), 0, null);
-//                    } catch (RemoteException e) {
-//                        e.printStackTrace();
-//                    }
+                    try {
+                        getRmi().getServer()
+                                .createObject(p.getSender(), Enemy.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj
+                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()), 0);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 });
                 loader.addConsumer(Pactale.class, obj -> {
                     if (obj.getPlayerIndex() == 0) {
@@ -784,6 +783,31 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                         e.printStackTrace();
                     }
                 });
+            }
+        });
+        
+        packets.registerAction(PacketRemoveItem.class, packet -> {
+            if(packet.getSender() != null && packet.getSender().equals(getId())) {
+                try {
+                    getRmi().getServer().removeItem(packet.getSender(), packet.getId());
+                } catch (RemoteException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                Item foundItem;
+                
+                if((foundItem = BaseScreen.getSession().findItem(packet.getId())) != null) {
+                    foundItem.getNode().removeItem();
+                    System.out.printf("Succesfully removed item with id %s", foundItem.getId());
+                }
+            }
+        });
+        
+        packets.registerAction(PacketPickUpItem.class, packet -> {
+            try {
+                getRmi().getServer().PickUpItem(packet.getSender(), packet.getItem());
+            } catch (RemoteException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }

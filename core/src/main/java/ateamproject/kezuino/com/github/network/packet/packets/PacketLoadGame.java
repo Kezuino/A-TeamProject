@@ -22,6 +22,8 @@ public class PacketLoadGame extends Packet {
     protected boolean master;
     @PacketField(2)
     protected int playerLimit;
+    @PacketField(3)
+    protected int level;
 
     public PacketLoadGame() {
     }
@@ -36,9 +38,10 @@ public class PacketLoadGame extends Packet {
         this.master = master;
     }
 
-    public PacketLoadGame(String mapName, boolean master, int playerLimit, UUID... senderAndReceivers) {
+    public PacketLoadGame(String mapName, boolean master, int playerLimit, int level,UUID... senderAndReceivers) {
         this(mapName, master);
         this.playerLimit = playerLimit;
+        this.level = level;
     }
 
     public int getPlayerLimit() {
@@ -58,5 +61,9 @@ public class PacketLoadGame extends Packet {
 
     public boolean isMaster() {
         return master;
+    }
+    
+    public int getLevel(){
+        return level;
     }
 }

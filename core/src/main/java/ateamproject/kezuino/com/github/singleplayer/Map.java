@@ -74,13 +74,14 @@ public class Map {
      *
      * @param session {@link GameSession} that hosts this {@link Map}.
      * @param mapName Name of the file that has the {@link Map} data.
+     * @param level Level for which the maploader should load
      * @return MapLoader Information that was loaded from the file.
      */
-    public static Map load(GameSession session, String mapName) {
+    public static Map load(GameSession session, String mapName, int level) {
         if (mapName == null || mapName.isEmpty())
             throw new IllegalArgumentException("Parameter mapName must not be null or empty.");
 
-        MapLoader loader = new MapLoader(session, mapName);
+        MapLoader loader = new MapLoader(session, mapName, level);
         loader.load();
         return loader.getMap();
     }
@@ -90,13 +91,14 @@ public class Map {
      *
      * @param session {@link GameSession} that hosts this {@link Map}.
      * @param mapName Name of the file that has the {@link Map} data.
+     * @param level Level for which the maploader should load
      * @return MapLoader Information that was loaded from the file.
      */
-    public static MapLoader getLoader(GameSession session, String mapName) {
+    public static MapLoader getLoader(GameSession session, String mapName, int level) {
         if (mapName == null || mapName.isEmpty())
             throw new IllegalArgumentException("Parameter mapName must not be null or empty.");
 
-        MapLoader loader = new MapLoader(session, mapName);
+        MapLoader loader = new MapLoader(session, mapName,level);
         return loader;
     }
 
@@ -306,9 +308,8 @@ public class Map {
     public List<Item> getAllItems() {
         List<Item> result = new ArrayList<>();
         for (Node node : nodes) {
-            Item item = node.getItem();
-            if (item != null) {
-                result.add(item);
+            if(node.hasItem()) {
+                result.add(node.getItem());
             }
         }
 

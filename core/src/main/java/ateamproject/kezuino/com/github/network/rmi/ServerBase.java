@@ -257,6 +257,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketCreateItem packet = new PacketCreateItem(itemId, type, position, sender);
         server.send(packet);
     }
+    
+    @Override
+    public void removeItem(UUID sender, UUID itemId) throws RemoteException {
+        PacketRemoveItem packet = new PacketRemoveItem(itemId, sender);
+        server.send(packet);
+    }
 
     @Override
     public void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException {
@@ -306,5 +312,11 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketLobbyMembers packet = new PacketLobbyMembers(Lobbyid);
         server.send(packet);
         return packet.getResult();
+    }
+
+    @Override
+    public void PickUpItem(UUID sender, UUID item) throws RemoteException {
+        PacketPickUpItem packet = new PacketPickUpItem(item);
+        server.send(packet);
     }
 }

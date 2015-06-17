@@ -7,7 +7,6 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketLobbySetDetails;
-import ateamproject.kezuino.com.github.render.screens.RefreshableScreen;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import com.badlogic.gdx.Game;
 
@@ -65,7 +64,7 @@ public interface IProtocolClient extends IProtocol {
      * {@link Map}.
      * @throws RemoteException
      */
-    void loadGame(String mapName, boolean isMaster, int playerLimit) throws RemoteException;
+    void loadGame(String mapName, boolean isMaster, int playerLimit, int level) throws RemoteException;
 
     /**
      * Updates the information displayed in the lobby.

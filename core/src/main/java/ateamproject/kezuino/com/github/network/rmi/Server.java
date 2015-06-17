@@ -556,15 +556,16 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 System.out.println("Cannot launch game. The game was not found.");
                 return;
             }
-            //Level word +1, standaard is 0 dus eerst dat gelaunched word zal level 1 worden.
+            //Level is 0 by default, after every launch +1.
             game.nextLevel();
+            System.out.println(game.getLevel());
             // Set the loading states of everyone to empty and notify everyone to start loading the map.
             for (UUID uuid : game.getClients()) {
                 ClientInfo client = getClient(uuid);
                 client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
 
                 try {
-                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size());
+                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size(), game.getLevel());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -585,6 +586,28 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerAction(PacketCreateItem.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             game.getLoadQueue().add(packet);
+        });
+        
+        packets.registerAction(PacketRemoveItem.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) {
+                System.out.println("Could not remove item with unique id: " + packet.getId());
+                return;
+            }
+
+            IProtocolClient[] receivers = game.getClients()
+                    .stream()
+                    .filter(c -> !c.equals(packet.getSender()))
+                    .map(id -> getClient(id).getRmi())
+                    .toArray(IProtocolClient[]::new);
+
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.removeItem(packet.getSender(), packet.getId());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
         });
 
         packets.registerAction(PacketSetLoadStatus.class, packet -> {
@@ -780,6 +803,18 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
             }
+        });
+        
+        packets.registerAction(PacketPickUpItem.class, packet -> {
+             Game game = getGameFromClientId(packet.getSender());
+             IProtocolClient[] receivers = game.getClients().stream().filter(c -> !c.equals(game.getHostId())).map(id -> getClient(id).getRmi()).toArray(IProtocolClient[]::new);
+             for (IProtocolClient receiver : receivers) {
+                        try {
+                            receiver.PickUpItem(packet.getSender(), packet.getItem());
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+                    }
         });
     }
 

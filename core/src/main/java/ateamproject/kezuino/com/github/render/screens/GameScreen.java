@@ -20,7 +20,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
@@ -31,8 +30,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import java.util.ArrayList;
-import java.util.UUID;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -170,7 +167,7 @@ public class GameScreen extends BaseScreen {
     public void start(Score score) {
         if (getSession() == null) {
             System.out.println("Resetted session on GameScreen.start");
-            setSession(new GameSession());
+            setSession(new GameSession(1));
         }
         if (getSession().getScore() == null) {
             getSession().setScore(score);
@@ -211,6 +208,7 @@ public class GameScreen extends BaseScreen {
                         lblEndGameText.remove();
                         lblScore.remove();
                         start(getSession().getScore());
+                        Client.getInstance().send(new PacketLaunchGame());                        
                     }
                 });
 

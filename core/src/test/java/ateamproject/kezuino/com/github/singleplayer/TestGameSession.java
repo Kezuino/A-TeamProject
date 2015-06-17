@@ -25,7 +25,7 @@ public class TestGameSession {
 
     @Before
     public void setUp() {
-        this.testSession = new GameSession();
+        this.testSession = new GameSession(1);
         this.testSession.setMap(4);
         this.testPactale = new Pactale(Vector2.Zero, 3, 0.1f, Direction.Left, Color.WHITE);
         this.testSession.getMap().addGameObject(testPactale);

@@ -24,16 +24,18 @@ public class GameSession {
      * Whether this game is synchronizing with a server.
      */
     private boolean isMultiplayer;
+    private int level;
 
     /**
      * Creates a new @see GameSession with the default skin.
      */
-    public GameSession() {
+    public GameSession(int level) {
         this.showingPlayerMenu = false;
         this.showingPauseMenu = false;
         startTime = new Date();
         this.score = new Score(this);
         this.state = GameState.Running;
+        this.level = level;
     }
 
     public int getObjectsToLoad() {
@@ -204,6 +206,17 @@ public class GameSession {
     public GameObject findObject(UUID id) {
         return this.map.getAllGameObjects().stream().filter(obj -> obj.getId().equals(id)).findFirst().orElse(null);
     }
+    
+    /**
+     * Return the {@link Item} found on this {@link Map} by the given {@code id}.
+     * Will return null if none found.
+     * 
+     * @param id {@link UUID} to search for an {@link Item}.
+     * @return {@link Item} matching the given {@code id}.
+     */
+    public Item findItem(UUID id) {
+        return this.map.getAllItems().stream().filter(item -> item.getId().equals(id)).findFirst().orElse(null);
+    }
 
     /**
      * Sets a new {@link Map} for this {@link GameSession}. Connected clients
@@ -214,5 +227,13 @@ public class GameSession {
      */
     public void setMap(int width, int height) {
         setMap(new Map(this, width, height));
+    }
+    
+    /**
+     *Return the level of the GameSession object 
+     * @return int level
+     */
+    public int getLevel(){
+        return level;
     }
 }

@@ -26,6 +26,10 @@ public interface IProtocol extends Remote {
     void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException;
 
     void createItem(UUID sender, UUID itemId, ItemType type, Vector2 position) throws RemoteException;
+    
+    void removeItem(UUID sender, UUID itemId) throws RemoteException;
 
     void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException;
+    
+    void PickUpItem(UUID sender,UUID item) throws RemoteException;
 }

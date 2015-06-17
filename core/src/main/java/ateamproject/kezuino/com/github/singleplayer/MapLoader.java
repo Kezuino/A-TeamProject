@@ -28,8 +28,9 @@ public class MapLoader {
     protected EnumSet<MapObjectTypes> typesToLoad;
     protected HashMap<Class, List<Consumer>> consumers;
     protected int playerLimit;
+    protected int level;
 
-    public MapLoader(GameSession session, String mapName) {
+    public MapLoader(GameSession session, String mapName, int level) {
         if (session == null) throw new IllegalArgumentException("Parameter session must not be null.");
         if (mapName == null || mapName.isEmpty())
             throw new IllegalArgumentException("Parameter mapName must not be null or empty.");
@@ -42,6 +43,7 @@ public class MapLoader {
         this.mapName = mapName;
         this.consumers = new HashMap<>();
         this.typesToLoad = EnumSet.allOf(MapObjectTypes.class);
+        this.level = level;
     }
 
     public EnumSet<MapObjectTypes> getTypesToLoad() {
@@ -143,6 +145,7 @@ public class MapLoader {
                     Item item = new Item(curPos, itemType);
                     item.setMap(map);
                     item.setTexture(obj.getTextureRegion());
+                    item.setId();
                     posNode.setItem(item);
 
                     runConsumers(MapObjectTypes.ITEM.getType(), item);
@@ -150,11 +153,12 @@ public class MapLoader {
                         .getKey())) {
                     // Create enemy.
                     Enemy enemy = new Enemy(null, curPos, 2.5f, Direction.Down);
-
+                    //float newSpeed = enemy.getMovementSpeed();
+                    //enemy.setMovementSpeed(newSpeed);
                     enemy.setTexture(obj.getTextureRegion());
                     enemy.setMap(map);
                     enemy.setId();
-                    //map.addGameObject(enemy);
+                    map.addGameObject(enemy);
 
                     runConsumers(MapObjectTypes.ENEMY.getType(), enemy);
                 } else if (getTypesToLoad().contains(MapObjectTypes.PACTALE) && objTileProps.containsKey(MapObjectTypes.PACTALE
