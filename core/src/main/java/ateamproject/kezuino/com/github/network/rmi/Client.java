@@ -638,14 +638,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 // Load everything and synchronize with server.
                 excluded = EnumSet.noneOf(MapLoader.MapObjectTypes.class);
                 loader.addConsumer(Enemy.class, obj -> {
-                    // TODO: Enable after sync is done for enemies.
-//                    try {
-//                        getRmi().getServer()
-//                                .createObject(p.getSender(), Enemy.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj
-//                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()), 0, null);
-//                    } catch (RemoteException e) {
-//                        e.printStackTrace();
-//                    }
+                    try {
+                        getRmi().getServer()
+                                .createObject(p.getSender(), Enemy.class.getSimpleName(), obj.getExactPosition(), obj.getDirection(), obj
+                                        .getMovementSpeed(), obj.getId(), Color.argb8888(obj.getColor()), 0);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
                 });
                 loader.addConsumer(Pactale.class, obj -> {
                     if (obj.getPlayerIndex() == 0) obj.setId(getPublicId());

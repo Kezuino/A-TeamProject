@@ -8,11 +8,14 @@ import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.Iterator;
 import java.util.Random;
 
 public class Enemy extends GameObject {
+
+    public static Random random = new Random();
 
     /**
      * If true, {@link Enemy} is currently dead and doesn't participate in the game until respawned.
@@ -174,7 +177,7 @@ public class Enemy extends GameObject {
     @Override
     public void update() {
         if (this.edible) {
-            float secondsFromStart = (System.nanoTime() - this.edibleStartTime) / 1000000000.0f;
+            float secondsFromStart = (TimeUtils.nanoTime() - this.edibleStartTime) / 1000000000.0f;
 
             if (secondsFromStart >= this.edibleTime) {
                 this.edible = false;
@@ -183,7 +186,6 @@ public class Enemy extends GameObject {
         }
 
         // Set first Pactale as target.
-
         this.objectToFollow = this.getMap()
                                   .getAllGameObjects()
                                   .stream()
@@ -200,9 +202,8 @@ public class Enemy extends GameObject {
                                     .getPathfinder()
                                     .searchNodePath(this.getNode(), this.objectToFollow.getNode());
 
-                    Random rand = new Random();
-                    this.timeToChangePath = rand.nextFloat() * (.5f - 2f) + .5f;
-                    this.timeToChangePathStart = System.nanoTime();
+                    this.timeToChangePath = random.nextFloat() * (.5f - 2f) + .5f;
+                    this.timeToChangePathStart = TimeUtils.nanoTime();
                 }
             }
 
