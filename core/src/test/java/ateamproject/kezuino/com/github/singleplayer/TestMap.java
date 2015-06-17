@@ -13,7 +13,7 @@ public class TestMap {
 
     @Before
     public void setUp() throws Exception {
-        GameSession session = new GameSession(1);
+        GameSession session = new GameSession();
         session.setMap(20);
         map = session.getMap();
 

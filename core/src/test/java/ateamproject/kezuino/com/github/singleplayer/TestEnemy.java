@@ -25,7 +25,7 @@ public class TestEnemy {
 
     @Before
     public void setUp() {
-        session = new GameSession(1);
+        session = new GameSession();
         session.setMap(20);
         map = session.getMap();
         spawn = map.getNode(19, 19);
