@@ -15,7 +15,7 @@ public class TestAStar {
 
     @Before
     public void setUp() throws Exception {
-        session = new GameSession(1);
+        session = new GameSession();
         map = new Map(session, 20);
         map.getNode(3, 10).setWallForced(true);
         aStar = new AStar(map);
