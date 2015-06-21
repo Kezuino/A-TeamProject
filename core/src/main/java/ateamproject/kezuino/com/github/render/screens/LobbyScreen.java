@@ -16,12 +16,12 @@ import java.util.*;
  * @author Fatih
  */
 public class LobbyScreen extends BaseScreen {
+
     private Client client;
     private String lobbyName;
     private String clanName;
     private UUID lobbyId;
 
-   
     private Map<UUID, String> members = new HashMap<>();
 
     private boolean isHost;
@@ -36,7 +36,7 @@ public class LobbyScreen extends BaseScreen {
         this.client = Client.getInstance();
         this.clanName = clanName;
 
-        PacketCreateLobby p = new PacketCreateLobby(this.lobbyName,this.clanName);
+        PacketCreateLobby p = new PacketCreateLobby(this.lobbyName, this.clanName);
         client.send(p);
         this.lobbyId = p.getResult();
 
@@ -65,10 +65,10 @@ public class LobbyScreen extends BaseScreen {
 
         PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
         this.lobbyName = lob.getLobbyName();
-                
-         PacketLobbyMembers p = new PacketLobbyMembers(this.lobbyId, client.getId());
-         client.send(p);
-         
+
+        PacketLobbyMembers p = new PacketLobbyMembers(this.lobbyId, client.getId());
+        client.send(p);
+
         this.members = p.getResult();
 
         createGui();
@@ -114,7 +114,7 @@ public class LobbyScreen extends BaseScreen {
         scrollTable.add(memberNameHeader);
         scrollTable.columnDefaults(0);
         scrollTable.row();
-        
+
         // Run game button.
         TextButton btnRunGame = new TextButton(isHost ? "Spel starten" : "Ready", skin);
         btnRunGame.addListener(new ClickListener() {
@@ -154,69 +154,83 @@ public class LobbyScreen extends BaseScreen {
         table.setPosition(x, y);
         this.stage.addActor(table);
     }
-    
-     public UUID getLobbyId() {
+
+    public UUID getLobbyId() {
         return lobbyId;
     }
-    
-    private void reloadMembers()
-    {
-        scrollTable.clear();
-         TextField memberNameHeader = new TextField("Member name", skin);
-        scrollTable.add(memberNameHeader);
-        scrollTable.row();
-        
-       
-        if (this.members != null) {
-            for (String membername : members.values()) {
-                TextField lblmember = new TextField(membername, skin);
-                lblmember.setDisabled(true);
 
+    private void reloadMembers() {
+        scrollTable.clear();
+        TextField memberNameHeader = new TextField("Member name", skin);
+        scrollTable.add(memberNameHeader);
+        scrollTable.add();
+        scrollTable.row();
+
+        if (this.members != null) {
+            for (Map.Entry<UUID, String> member : members.entrySet()) {
+
+                TextField lblmember = new TextField(member.getValue(), skin);
                 scrollTable.add(lblmember);
+                // if member is host
+                if (isHost && !member.getKey().equals(client.getPublicId())) {
+
+                    TextButton btnKick = new TextButton("Kick", skin);
+                    btnKick.addListener(new ClickListener() {
+                        @Override
+                        public void clicked(InputEvent event, float x, float y) {
+                        PacketKickFromLobby packet = new PacketKickFromLobby(lobbyId,member.getKey());
+                        Client.getInstance().send(packet);
+                        }
+                    });
+                    scrollTable.add(btnKick);
+                }
+
+                
                 scrollTable.row();
             }
         }
     }
-    
-    public void setMembers(Map<UUID, String> members)
-    {
+
+    public void setMembers(Map<UUID, String> members) {
         this.members = members;
         reloadMembers();
     }
-    
+
     public void addMember(UUID client, String username) {
         this.members.put(client, username);
-        
+
         this.updateMembers();
     }
-    
+
     public void removeMember(UUID client) {
         UUID i = this.members.keySet().stream().filter(uuid -> uuid.equals(client)).findFirst().orElse(null);
-        
-        if(i != null) {
+
+        if (i != null) {
             this.members.remove(i);
 
             this.updateMembers();
         }
     }
-    
+
     private void updateMembers() {
-        scrollTable.clear();
+        reloadMembers();
+        /*
+         scrollTable.clear();
 
-        TextField memberNameHeader = new TextField("Member name", skin);
-        memberNameHeader.setDisabled(true);
+         TextField memberNameHeader = new TextField("Member name", skin);
+         memberNameHeader.setDisabled(true);
 
-        scrollTable.add(memberNameHeader);
-        scrollTable.row();
+         scrollTable.add(memberNameHeader);
+         scrollTable.row();
         
-        if (this.members != null) {
-            for (String membername : members.values()) {
-                TextField lblmember = new TextField(membername, skin);
-                lblmember.setDisabled(true);
+         if (this.members != null) {
+         for (String membername : members.values()) {
+         TextField lblmember = new TextField(membername, skin);
+         lblmember.setDisabled(true);
 
-                scrollTable.add(lblmember);
-                scrollTable.row();
-            }
-        }           
+         scrollTable.add(lblmember);
+         scrollTable.row();
+         }
+         }        */
     }
 }

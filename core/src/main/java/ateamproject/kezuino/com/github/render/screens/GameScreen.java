@@ -22,6 +22,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -166,7 +167,7 @@ public class GameScreen extends BaseScreen {
     public void start(Score score) {
         if (getSession() == null) {
             System.out.println("Resetted session on GameScreen.start");
-            setSession(new GameSession());
+            setSession(new GameSession(1));
         }
         if (getSession().getScore() == null) {
             getSession().setScore(score);
@@ -207,6 +208,7 @@ public class GameScreen extends BaseScreen {
                         lblEndGameText.remove();
                         lblScore.remove();
                         start(getSession().getScore());
+                        Client.getInstance().send(new PacketLaunchGame());                        
                     }
                 });
 
@@ -237,9 +239,18 @@ public class GameScreen extends BaseScreen {
         getSession().showPauseMenu();
     }
 
+    public void refreshPlayersView() {
+        if (getSession().isPlayerMenuShowing()) {
+            this.playerMenu.remove();
+            showPlayersView();
+        } else {
+            hidePlayersView();
+        }
+    }
+
     public void showPlayersView() {
         //Create player menu.
-        playerMenu = new Dialog("Menu", skin) {
+        this.playerMenu = new Dialog("Menu", skin) {
             {
                 button("Oke");
             }
@@ -266,7 +277,6 @@ public class GameScreen extends BaseScreen {
                     Client.getInstance().send(packetKickInfo);
                     people.clear();
                     people.addAll(packetKickInfo.getResult());
-                    playerMenu.hide();
                 }
             });
 
@@ -278,8 +288,10 @@ public class GameScreen extends BaseScreen {
             scrollTable.columnDefaults(2);
             scrollTable.row();
 
-            if (peopleResult[3].equals("0")) {
+            if (peopleResult[3].equals("true")) {
                 bKick.setDisabled(true);
+                bKick.setTouchable(Touchable.disabled);
+                bKick.setColor(255, 0, 0, 100);
             }
         }
 
