@@ -6,7 +6,6 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
-import ateamproject.kezuino.com.github.render.screens.RefreshableScreen;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
@@ -53,8 +52,8 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void loadGame(String mapName, boolean isMaster, int playerLimit) throws RemoteException {
-        client.send(new PacketLoadGame(mapName, isMaster, playerLimit));
+    public void loadGame(String mapName, boolean isMaster, int playerLimit, int level) throws RemoteException {
+        client.send(new PacketLoadGame(mapName, isMaster, playerLimit, level));
     }
 
     @Override
@@ -68,6 +67,11 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     public void screenRefresh(Class<?> refreshableScreen) throws RemoteException {
         client.send(new PacketScreenUpdate(refreshableScreen));
     }
+    
+    @Override
+    public void kickPopupRefresh() throws RemoteException {
+        client.send(new PacketKickPopupRefresh());
+    }
 
     @Override
     public void requestCompleted(String requestId, int progress) throws RemoteException {
@@ -79,6 +83,13 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     public void launchGame(boolean paused) throws RemoteException {
         // Null, null is needed so this client doesn't automatically assign itself as sender (see Packet.send).
         PacketLaunchGame packet = new PacketLaunchGame(paused, null, null);
+        client.send(packet);
+    }
+    
+    @Override
+    public void launchRetryGame(boolean paused) throws RemoteException {
+        // Null, null is needed so this client doesn't automatically assign itself as sender (see Packet.send).
+        PacketLaunchRetryGame packet = new PacketLaunchRetryGame(paused, null, null);
         client.send(packet);
     }
 
@@ -103,15 +114,17 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
     @Override
     public void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException {
-        if (position == null && followTarget == null)
+        if (position == null && followTarget == null) {
             throw new IllegalArgumentException("Either position or followTarget must not be null.");
+        }
         PacketBalloonMessage packet;
 
         // Null, null is needed so this client doesn't automatically assign itself as sender (see Packet.send).
-        if (followTarget != null)
+        if (followTarget != null) {
             packet = new PacketBalloonMessage(typeName, followTarget, null, null);
-        else
+        } else {
             packet = new PacketBalloonMessage(typeName, position, null, null);
+        }
         client.send(packet);
     }
 

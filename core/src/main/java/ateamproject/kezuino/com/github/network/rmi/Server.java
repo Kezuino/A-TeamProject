@@ -20,6 +20,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -137,7 +138,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
                 Game currentGame = getGameFromClientId(packet.getSender());//get game
                 currentGame.getClients().remove(packet.getSender());//remove sender form clients
-                ArrayList<UUID[]> allVotes = currentGame.getVotes();
+                CopyOnWriteArrayList<UUID[]> allVotes = currentGame.getVotes();
                 for (UUID[] voteCollection : allVotes) {
                     if (voteCollection[0].equals(packet.getSender())) {
                         allVotes.remove(voteCollection);//remove votes placed by sender
@@ -150,6 +151,31 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
 
             return false;
+        });
+        
+         packets.registerFunc(PacketKickFromLobby.class, (p) -> {
+           
+            try {
+                Game lobby = getGame(p.getLobbyId());
+                if (lobby == null) {
+                    return null;
+                }
+               
+                // remove client from lobby members list
+               lobby.getClients().remove(getClientFromPublic(p.getMember()).getPrivateId());
+
+               // send packet to the client for message
+                getClientFromPublic(p.getMember()).getRmi().drop(PacketKick.KickReasonType.LOBBY, "You were kicked by the host!");
+                
+                
+                // update all clients > member list
+                // todo
+                
+            } catch (RemoteException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return true;
+            
         });
 
         packets.registerAction(PacketClientJoined.class, packet -> {
@@ -213,6 +239,17 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 ClientInfo client = getClient(id);
                 try {
                     client.getRmi().screenRefresh(packet.getScreenClass());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        
+        packets.registerAction(PacketKickPopupRefresh.class, packet -> {
+            for (UUID id : packet.getReceivers()) {
+                ClientInfo client = getClient(id);
+                try {
+                    client.getRmi().kickPopupRefresh();
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -551,7 +588,27 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
 
                 try {
-                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size());
+                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size(), game.getLevel());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        
+        packets.registerAction(PacketLaunchRetryGame.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) {
+                System.out.println("Cannot launch game. The game was not found.");
+                return;
+            }
+            //Level of this game should remain the same because it is a retry.
+            // Set the loading states of everyone to empty and notify everyone to start loading the map.
+            for (UUID uuid : game.getClients()) {
+                ClientInfo client = getClient(uuid);
+                client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
+
+                try {
+                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size(), game.getLevel());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -767,7 +824,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketBalloonMessage.class, packet -> {
-            if (packet.getSender() == null) throw new IllegalStateException("Sender must not be null.");
+            if (packet.getSender() == null) {
+                throw new IllegalStateException("Sender must not be null.");
+            }
 
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {
