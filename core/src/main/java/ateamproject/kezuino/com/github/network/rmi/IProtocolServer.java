@@ -37,6 +37,9 @@ public interface IProtocolServer extends IProtocol {
     PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException;
 
     boolean leaveLobby(UUID sender) throws RemoteException;
+    
+    boolean kickClientFromLobby(UUID lobbyid, UUID member) throws RemoteException;
+            
 
     /**
      * Kicks the {@link IClientInfo} from any lobby it is currently in.

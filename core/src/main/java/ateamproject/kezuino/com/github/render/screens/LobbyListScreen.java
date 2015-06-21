@@ -51,8 +51,8 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
         btnCreateGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Dialog d = new Dialog("Lobby Name", skin);
                 
+                Dialog d = new Dialog("Lobby Name", skin);
                 lobbyname = new TextField("", skin);
 
                 SelectBox<Object> clanDropdown = null;
