@@ -530,6 +530,43 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 }
             }
         });
+        
+        packets.registerAction(PacketLaunchRetryGame.class, p -> {
+            if (p.getSender() != null) {
+                // Request came from client..
+                try {
+                    rmi.getServer().launchRetryGame(p.getSender());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                if (p.isPaused()) {
+                    // Request came from server..
+                    Gdx.app.postRunnable(() -> {
+                        // Sync data of pactales already send to connected clients with host.
+                        try {
+                            List<PacketGetGameClients.Data> data = getRmi().getServer()
+                                    .getGameClients(Client.getInstance()
+                                            .getId());
+                            for (PacketGetGameClients.Data d : data) {
+                                Pactale player = BaseScreen.getSession().getPlayer(d.getIndex());
+
+                                player.setId(d.getPublicId());
+                                player.setColor(ateamproject.kezuino.com.github.network.Game.SELECTABLE_COLORS[player.getPlayerIndex()]);
+                            }
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+
+                        game.setScreen(new GameScreen(game));
+                        ((GameScreen) game.getScreen()).start();
+                    });
+                } else {
+                    // Request came from server.. resume game.
+                    Gdx.app.postRunnable(() -> BaseScreen.getSession().resume());
+                }
+            }
+        });
 
         packets.registerAction(PacketCreateGameObject.class, p -> {
             GameSession session = BaseScreen.getSession();

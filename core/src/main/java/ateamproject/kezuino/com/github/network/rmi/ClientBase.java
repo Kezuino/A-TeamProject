@@ -86,6 +86,13 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketLaunchGame packet = new PacketLaunchGame(paused, null, null);
         client.send(packet);
     }
+    
+    @Override
+    public void launchRetryGame(boolean paused) throws RemoteException {
+        // Null, null is needed so this client doesn't automatically assign itself as sender (see Packet.send).
+        PacketLaunchRetryGame packet = new PacketLaunchRetryGame(paused, null, null);
+        client.send(packet);
+    }
 
     @Override
     public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException {

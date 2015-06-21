@@ -205,6 +205,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketLaunchGame packet = new PacketLaunchGame(false, sender);
         server.send(packet);
     }
+    
+    @Override
+    public void launchRetryGame(UUID sender) throws RemoteException {
+        PacketLaunchRetryGame packet = new PacketLaunchRetryGame(false, sender);
+        server.send(packet);
+    }
 
     @Override
     public List<PacketGetGameClients.Data> getGameClients(UUID sender) throws RemoteException {

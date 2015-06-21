@@ -99,6 +99,15 @@ public interface IProtocolServer extends IProtocol {
      * @throws RemoteException If RMI fails to connect.
      */
     void launchGame(UUID sender) throws RemoteException;
+    
+        /**
+     * Searches the {@link ateamproject.kezuino.com.github.network.Game} list for the {@link ateamproject.kezuino.com.github.network.Game} that the {@link UUID sender} is in.
+     * If no {@link ateamproject.kezuino.com.github.network.Game} was found, the {@link ateamproject.kezuino.com.github.network.Game} will not be started.
+     *
+     * @param sender {@link UUID} that sended this message.
+     * @throws RemoteException If RMI fails to connect.
+     */
+    void launchRetryGame(UUID sender) throws RemoteException;
 
     List<PacketGetGameClients.Data> getGameClients(UUID sender) throws RemoteException;
 }
