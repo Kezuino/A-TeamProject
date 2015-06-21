@@ -96,8 +96,8 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
     
     @Override
-    public void removeItem(UUID sender, UUID itemId) {
-        PacketRemoveItem packet = new PacketRemoveItem(itemId, sender);
+    public void removeItem(UUID sender, UUID itemId, ItemType itemType) {
+        PacketRemoveItem packet = new PacketRemoveItem(itemId, itemType, sender);
         client.send(packet);
     }
 

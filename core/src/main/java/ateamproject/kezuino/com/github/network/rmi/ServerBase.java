@@ -259,8 +259,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
     
     @Override
-    public void removeItem(UUID sender, UUID itemId) throws RemoteException {
-        PacketRemoveItem packet = new PacketRemoveItem(itemId, sender);
+    public void removeItem(UUID sender, UUID itemId, ItemType itemType) throws RemoteException {
+        PacketRemoveItem packet = new PacketRemoveItem(itemId, itemType, sender);
         server.send(packet);
     }
 

@@ -778,14 +778,15 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         packets.registerAction(PacketRemoveItem.class, packet -> {
             if(packet.getSender() != null && packet.getSender().equals(getId())) {
                 try {
-                    getRmi().getServer().removeItem(packet.getSender(), packet.getId());
+                    getRmi().getServer().removeItem(packet.getSender(), packet.getItemId(), packet.getItemType());
                 } catch (RemoteException ex) {
                     ex.printStackTrace();
                 }
             } else {
                 Item foundItem;
                 
-                if((foundItem = BaseScreen.getSession().findItem(packet.getId())) != null) {
+                if((foundItem = BaseScreen.getSession().findItem(packet.getItemId())) != null) {
+                    foundItem.activate(BaseScreen.getSession().getPlayer(packet.getSender()));
                     foundItem.getNode().removeItem();
                     System.out.printf("Succesfully removed item with id %s", foundItem.getId());
                 }

@@ -577,19 +577,20 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerAction(PacketRemoveItem.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {
-                System.out.println("Could not remove item with unique id: " + packet.getId());
+                System.out.println("Could not remove item with unique id: " + packet.getItemId());
                 return;
             }
 
+            game.getScore().increase(packet.getItemType().getScore());
             IProtocolClient[] receivers = game.getClients()
                     .stream()
                     .filter(c -> !c.equals(packet.getSender()))
                     .map(id -> getClient(id).getRmi())
                     .toArray(IProtocolClient[]::new);
-
+            
             for (IProtocolClient receiver : receivers) {
                 try {
-                    receiver.removeItem(packet.getSender(), packet.getId());
+                    receiver.removeItem(packet.getSender(), packet.getItemId(), packet.getItemType());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

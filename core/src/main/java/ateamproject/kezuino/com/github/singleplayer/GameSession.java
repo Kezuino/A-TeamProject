@@ -32,7 +32,7 @@ public class GameSession {
         this.showingPlayerMenu = false;
         this.showingPauseMenu = false;
         startTime = new Date();
-        this.score = new Score(this);
+        this.score = new Score();
         this.state = GameState.Running;
     }
 
@@ -157,7 +157,7 @@ public class GameSession {
 
     public void setScore(Score score) {
         if (score != null) {
-            this.score = new Score(this, score.valueOf());
+            this.score = new Score(score.valueOf());
         }
     }
 
