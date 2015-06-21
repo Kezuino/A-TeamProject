@@ -5,6 +5,9 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLaunchGame;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketLaunchRetryGame;
+import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.singleplayer.Score;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 
@@ -35,8 +38,9 @@ public class GameOverScreen extends BaseScreen {
         });
         btnRetry.addListener(new ClickListener() {
             @Override
-            public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new GameScreen(game));
+            public void clicked(InputEvent event, float x, float y) {                
+                Client.getInstance().send(new PacketLaunchRetryGame());    
+                //game.setScreen(new GameScreen(game));
             }
         });
 
