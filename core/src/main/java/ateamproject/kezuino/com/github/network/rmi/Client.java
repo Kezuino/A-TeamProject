@@ -302,6 +302,16 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
             return null;
         });
+        
+         packets.registerFunc(PacketKickFromLobby.class, (p) -> {
+            try {
+                return getRmi().getServer().kickClientFromLobby(p.getLobbyId(),p.getMember());
+            } catch (RemoteException ex) {
+                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
+                        .log(Level.SEVERE, null, ex);
+            }
+            return null;
+        });
 
         packets.registerFunc(PacketLeaveLobby.class, (p) -> {
             try {
@@ -499,6 +509,43 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 // Request came from client..
                 try {
                     rmi.getServer().launchGame(p.getSender());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                if (p.isPaused()) {
+                    // Request came from server..
+                    Gdx.app.postRunnable(() -> {
+                        // Sync data of pactales already send to connected clients with host.
+                        try {
+                            List<PacketGetGameClients.Data> data = getRmi().getServer()
+                                    .getGameClients(Client.getInstance()
+                                            .getId());
+                            for (PacketGetGameClients.Data d : data) {
+                                Pactale player = BaseScreen.getSession().getPlayer(d.getIndex());
+
+                                player.setId(d.getPublicId());
+                                player.setColor(ateamproject.kezuino.com.github.network.Game.SELECTABLE_COLORS[player.getPlayerIndex()]);
+                            }
+                        } catch (RemoteException e) {
+                            e.printStackTrace();
+                        }
+
+                        game.setScreen(new GameScreen(game));
+                        ((GameScreen) game.getScreen()).start();
+                    });
+                } else {
+                    // Request came from server.. resume game.
+                    Gdx.app.postRunnable(() -> BaseScreen.getSession().resume());
+                }
+            }
+        });
+        
+        packets.registerAction(PacketLaunchRetryGame.class, p -> {
+            if (p.getSender() != null) {
+                // Request came from client..
+                try {
+                    rmi.getServer().launchRetryGame(p.getSender());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -789,14 +836,15 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         packets.registerAction(PacketRemoveItem.class, packet -> {
             if(packet.getSender() != null && packet.getSender().equals(getId())) {
                 try {
-                    getRmi().getServer().removeItem(packet.getSender(), packet.getId());
+                    getRmi().getServer().removeItem(packet.getSender(), packet.getItemId(), packet.getItemType());
                 } catch (RemoteException ex) {
                     ex.printStackTrace();
                 }
             } else {
                 Item foundItem;
                 
-                if((foundItem = BaseScreen.getSession().findItem(packet.getId())) != null) {
+                if((foundItem = BaseScreen.getSession().findItem(packet.getItemId())) != null) {
+                    foundItem.activate(BaseScreen.getSession().getPlayer(packet.getSender()));
                     foundItem.getNode().removeItem();
                     System.out.printf("Succesfully removed item with id %s", foundItem.getId());
                 }

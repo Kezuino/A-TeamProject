@@ -6,7 +6,6 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
-import ateamproject.kezuino.com.github.render.screens.RefreshableScreen;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
@@ -19,7 +18,6 @@ import java.util.UUID;
  * @author Kez and Jules
  */
 public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
-
     private transient Client client;
     private transient IProtocolServer server;
 
@@ -34,6 +32,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     public void setServer(IProtocolServer server) {
         this.server = server;
     }
+
 
     @Override
     public boolean drop(PacketKick.KickReasonType kick, String reason) throws RemoteException {
@@ -68,7 +67,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     public void screenRefresh(Class<?> refreshableScreen) throws RemoteException {
         client.send(new PacketScreenUpdate(refreshableScreen));
     }
-
+    
     @Override
     public void kickPopupRefresh() throws RemoteException {
         client.send(new PacketKickPopupRefresh());
@@ -86,6 +85,13 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketLaunchGame packet = new PacketLaunchGame(paused, null, null);
         client.send(packet);
     }
+    
+    @Override
+    public void launchRetryGame(boolean paused) throws RemoteException {
+        // Null, null is needed so this client doesn't automatically assign itself as sender (see Packet.send).
+        PacketLaunchRetryGame packet = new PacketLaunchRetryGame(paused, null, null);
+        client.send(packet);
+    }
 
     @Override
     public void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException {
@@ -101,8 +107,8 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
     
     @Override
-    public void removeItem(UUID sender, UUID itemId) {
-        PacketRemoveItem packet = new PacketRemoveItem(itemId, sender);
+    public void removeItem(UUID sender, UUID itemId, ItemType itemType) {
+        PacketRemoveItem packet = new PacketRemoveItem(itemId, itemType, sender);
         client.send(packet);
     }
 

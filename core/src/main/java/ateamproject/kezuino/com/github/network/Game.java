@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.singleplayer.Map;
+import ateamproject.kezuino.com.github.singleplayer.Score;
 import com.badlogic.gdx.graphics.Color;
 
 import java.util.*;
@@ -45,12 +46,14 @@ public class Game {
     protected String clanName;
     private int mapObjectCount;
     private int level;
+    private Score score;
 
     public Game(String name, String clanName, UUID host) {
         // Generate UUID and give lobby a name
         this.id = UUID.randomUUID();
         this.name = name;
         this.clanName = clanName;
+        this.score = new Score();
         this.votes = new CopyOnWriteArrayList<>();//[0]voter,[1]person to kick
         this.loadQueue = new ArrayDeque<>();
 
@@ -175,5 +178,9 @@ public class Game {
     
     public int getLevel(){
         return this.level;
+    }
+    
+    public Score getScore() {
+        return this.score;
     }
 }

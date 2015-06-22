@@ -152,6 +152,31 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             return false;
         });
+        
+         packets.registerFunc(PacketKickFromLobby.class, (p) -> {
+           
+            try {
+                Game lobby = getGame(p.getLobbyId());
+                if (lobby == null) {
+                    return null;
+                }
+               
+                // remove client from lobby members list
+               lobby.getClients().remove(getClientFromPublic(p.getMember()).getPrivateId());
+
+               // send packet to the client for message
+                getClientFromPublic(p.getMember()).getRmi().drop(PacketKick.KickReasonType.LOBBY, "You were kicked by the host!");
+                
+                
+                // update all clients > member list
+                // todo
+                
+            } catch (RemoteException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return true;
+            
+        });
 
         packets.registerAction(PacketClientJoined.class, packet -> {
             for (UUID id : packet.getReceivers()) {
@@ -219,7 +244,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             }
         });
-
+        
         packets.registerAction(PacketKickPopupRefresh.class, packet -> {
             for (UUID id : packet.getReceivers()) {
                 ClientInfo client = getClient(id);
@@ -458,7 +483,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             ArrayList<String> peoples = new ArrayList<>();
             System.out.println("sender:" + packet.getSender().toString());
             for (UUID personId : getGameFromClientId(packet.getSender()).getClients()) {//for all clients in this game
-                if (!personId.equals(packet.getSender())&& !getGameFromClientId(packet.getSender()).getClients().get(0).equals(personId)) {//if not sender and if not host == true
+                if (!personId.equals(packet.getSender())) {//if not sender
                     boolean hasVotedForCurrentPerson = false;
                     int amountOfVotesForCurrentPerson = 0;
                     int amountOfVotesNeededForKick = (int) Math.ceil((float) getGameFromClientId(packet.getSender()).getClients()
@@ -478,9 +503,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
 
                     if (amountOfVotesForCurrentPerson >= amountOfVotesNeededForKick) {
-                        this.removeClient(personId);
-                        //PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Votekicked", personId);
-                        //this.send(packetKick);
+                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Votekicked", personId);
+                        this.send(packetKick);
                     } else {
                         peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String
                                 .valueOf(hasVotedForCurrentPerson + " " + personId));
@@ -556,9 +580,28 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 System.out.println("Cannot launch game. The game was not found.");
                 return;
             }
-            //Level is 0 by default, after every launch +1.
+            //Level word +1, standaard is 0 dus eerst dat gelaunched word zal level 1 worden.
             game.nextLevel();
-            System.out.println(game.getLevel());
+            // Set the loading states of everyone to empty and notify everyone to start loading the map.
+            for (UUID uuid : game.getClients()) {
+                ClientInfo client = getClient(uuid);
+                client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
+
+                try {
+                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size(), game.getLevel());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        
+        packets.registerAction(PacketLaunchRetryGame.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) {
+                System.out.println("Cannot launch game. The game was not found.");
+                return;
+            }
+            //Level of this game should remain the same because it is a retry.
             // Set the loading states of everyone to empty and notify everyone to start loading the map.
             for (UUID uuid : game.getClients()) {
                 ClientInfo client = getClient(uuid);
@@ -591,19 +634,20 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerAction(PacketRemoveItem.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {
-                System.out.println("Could not remove item with unique id: " + packet.getId());
+                System.out.println("Could not remove item with unique id: " + packet.getItemId());
                 return;
             }
 
+            game.getScore().increase(packet.getItemType().getScore());
             IProtocolClient[] receivers = game.getClients()
                     .stream()
                     .filter(c -> !c.equals(packet.getSender()))
                     .map(id -> getClient(id).getRmi())
                     .toArray(IProtocolClient[]::new);
-
+            
             for (IProtocolClient receiver : receivers) {
                 try {
-                    receiver.removeItem(packet.getSender(), packet.getId());
+                    receiver.removeItem(packet.getSender(), packet.getItemId(), packet.getItemType());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

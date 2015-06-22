@@ -48,11 +48,11 @@ public abstract class BaseScreen implements Screen {
         inputs = new InputMultiplexer();
         stage = new Stage();
         clearOnRender = true;
-        clearOnRenderColor = Color.BLACK;
+        clearOnRenderColor = Color.valueOf("ffffcc");
 
         // Bootstrap game objects.
         this.game = game;
-
+        
         // Bootstrap skin.
         skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
        

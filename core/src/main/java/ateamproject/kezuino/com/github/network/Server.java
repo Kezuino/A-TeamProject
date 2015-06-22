@@ -51,7 +51,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         this.games = new LinkedHashMap<>();
         this.clients = new LinkedHashMap<>();
         this.isUpdating = true;
-        this.clientTimeout = 30; // Default 30 seconds before client is dropped for all servers.
+        this.clientTimeout = 10; // Default 10 seconds before client is dropped for all servers.
         this.packets = new PacketManager();
         this.executor = Executors.newCachedThreadPool();
 
@@ -152,7 +152,6 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
     public TClient removeClient(UUID privateId) {
         // Remove client from game.
         IClientInfo client = getClient(privateId);
-        client.setGame(null);
 
         // Update/remove game from server.
         Game lobby = getGameFromClientId(privateId);
@@ -170,6 +169,9 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
                 send(packet);
             }
         }
+
+        // Disassociate game from client.
+        client.setGame(null);
 
         // Remove client from server.
         return clients.remove(privateId);

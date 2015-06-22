@@ -7,6 +7,7 @@ import ateamproject.kezuino.com.github.render.debug.renderers.DebugMovement;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.singleplayer.*;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage;
 import ateamproject.kezuino.com.github.utility.graphics.DrawHelper;
 import com.badlogic.gdx.Gdx;

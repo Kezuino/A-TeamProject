@@ -45,7 +45,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public UUID createLobby(UUID sender, String lobbyName, String clanname) throws RemoteException {
         PacketCreateLobby packet = new PacketCreateLobby(lobbyName, clanname, sender);
         server.send(packet);
-
+        
         PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
         return packet.getResult();
@@ -62,7 +62,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException {
         PacketJoinLobby packet = new PacketJoinLobby(sender, lobbyId);
         server.send(packet);
-
+        
         PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
         return packet.getResult();
@@ -72,9 +72,19 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public boolean leaveLobby(UUID sender) throws RemoteException {
         PacketLeaveLobby packet = new PacketLeaveLobby(sender);
         server.send(packet);
-
+        
         PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
+        return packet.getResult();
+    }
+
+    @Override
+    public boolean kickClientFromLobby(UUID lobbyid, UUID member) throws RemoteException {
+        PacketKickFromLobby packet = new PacketKickFromLobby(lobbyid, member);
+        server.send(packet);
+        
+        //PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
+        //server.send(tmp);
         return packet.getResult();
     }
 
@@ -96,10 +106,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public boolean createClan(UUID sender, String clanName) throws RemoteException {
         PacketCreateClan packet = new PacketCreateClan(sender, clanName);
         server.send(packet);
-
+        
         PacketScreenUpdate tmp = new PacketScreenUpdate(ClanManagementScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
-
+        
         return packet.getResult();
     }
 
@@ -128,10 +138,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public boolean handleInvitation(InvitationType invite, String clanName, String emailAddress, String nameOfInvitee) throws RemoteException {
         PacketHandleInvitation packet = new PacketHandleInvitation(invite, clanName, emailAddress, nameOfInvitee);
         server.send(packet);
-
+        
         PacketScreenUpdate tmp = new PacketScreenUpdate(ClanManagementScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
-
+        
         return packet.getResult();
     }
 
@@ -139,10 +149,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public boolean handleManagement(ManagementType manage, String clanName, String emailaddress) throws RemoteException {
         PacketHandleManagement packet = new PacketHandleManagement(manage, clanName, emailaddress);
         server.send(packet);
-
+        
         PacketScreenUpdate tmp = new PacketScreenUpdate(ClanManagementScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
-
+        
         return packet.getResult();
     }
 
@@ -205,6 +215,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketLaunchGame packet = new PacketLaunchGame(false, sender);
         server.send(packet);
     }
+    
+    @Override
+    public void launchRetryGame(UUID sender) throws RemoteException {
+        PacketLaunchRetryGame packet = new PacketLaunchRetryGame(false, sender);
+        server.send(packet);
+    }
 
     @Override
     public List<PacketGetGameClients.Data> getGameClients(UUID sender) throws RemoteException {
@@ -259,18 +275,17 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
     
     @Override
-    public void removeItem(UUID sender, UUID itemId) throws RemoteException {
-        PacketRemoveItem packet = new PacketRemoveItem(itemId, sender);
+    public void removeItem(UUID sender, UUID itemId, ItemType itemType) throws RemoteException {
+        PacketRemoveItem packet = new PacketRemoveItem(itemId, itemType, sender);
         server.send(packet);
     }
 
     @Override
     public void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException {
-        if (followTarget != null) {
+        if (followTarget != null)
             server.send(new PacketBalloonMessage(typeName, followTarget, sender));
-        } else {
+        else
             server.send(new PacketBalloonMessage(typeName, position, sender));
-        }
     }
 
     @Override

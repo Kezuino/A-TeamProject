@@ -38,7 +38,7 @@ public class PacketLoadGame extends Packet {
         this.master = master;
     }
 
-    public PacketLoadGame(String mapName, boolean master, int playerLimit, int level,UUID... senderAndReceivers) {
+    public PacketLoadGame(String mapName, boolean master, int playerLimit, int level, UUID... senderAndReceivers) {
         this(mapName, master);
         this.playerLimit = playerLimit;
         this.level = level;

@@ -4,8 +4,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class Score {
-
-    private final GameSession gameSession;
     private final long startTime = System.currentTimeMillis();
     /**
      * The maximal amount of score that will be decremented.
@@ -26,14 +24,13 @@ public class Score {
      *
      * @param session The {@link GameSession} of this score.
      */
-    public Score(GameSession session) {
+    public Score() {
         this.score = 5000;
-        this.gameSession = session;
         this.maxScoreManipulation = this.score;
     }
     
-    public Score(GameSession session, int score) {
-        this(session);
+    public Score(int score) {
+        this();
         this.score += score;
     }
 
@@ -44,15 +41,6 @@ public class Score {
      */
     public int valueOf() {
         return this.score;
-    }
-
-    /**
-     * Gets the current set {@link GameSession} to this {@link Score}.
-     *
-     * @return The set {@link GameSession} to this {@link Score}.
-     */
-    public GameSession getGameSession() {
-        return this.gameSession;
     }
 
     /**
@@ -91,16 +79,14 @@ public class Score {
      */
     public void generateNewScore(List<GameObject> gameObjects) {
         if (System.currentTimeMillis() - startTime > nextScoreUpdate && currentScoreManipulation < maxScoreManipulation) {//make sure that the score wont be decremented beyond its initial starting value
-            if(this.gameSession.getState().equals(GameState.Running)) {
-                int scoreToDecrement = gameObjects.stream()
-                                                  .filter(go -> go instanceof Pactale)
-                                                  .collect(Collectors.counting())
-                                                  .intValue() * 60;
+            int scoreToDecrement = gameObjects.stream()
+                                              .filter(go -> go instanceof Pactale)
+                                              .collect(Collectors.counting())
+                                              .intValue() * 60;
 
-                this.decrease(scoreToDecrement);
-                this.currentScoreManipulation += scoreToDecrement;
-            }
-            nextScoreUpdate = nextScoreUpdate + 1000;
+            this.decrease(scoreToDecrement);
+            this.currentScoreManipulation += scoreToDecrement;
         }
+        nextScoreUpdate = nextScoreUpdate + 1000;
     }
 }
