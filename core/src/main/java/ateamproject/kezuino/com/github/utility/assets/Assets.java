@@ -10,8 +10,6 @@ import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
-import com.badlogic.gdx.graphics.g2d.Sprite;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
@@ -21,7 +19,7 @@ public class Assets {
     public static final String AUDIO_SOUND_DIR = "audio/sound/";
     public static final String AUDIO_MUSIC_DIR = "audio/music/";
     public static final String FONTS_DIR = "fonts/";
-    public static final String SKINS_DIR ="skins/";
+    public static final String SKINS_DIR = "skins/";
 
     public static AssetManager manager;
     private static HashMap<String, Music> musicInstances;
@@ -31,7 +29,7 @@ public class Assets {
         musicInstances = new HashMap<>();
 
         // Add loaders to the ContentManager.
-        manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));        
+        manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));
     }
 
     /**
@@ -56,11 +54,11 @@ public class Assets {
      */
     private static void load() {
         // Textures (only load those that aren't loaded by the TmxMapLoader).
-        // Gameplay objects.
         manager.load("textures/projectile.png", Texture.class);
         manager.load("textures/portal.png", Texture.class);
         manager.load("textures/pactale.png", Texture.class);
         manager.load("textures/enemy.png", Texture.class);
+
         // Particle effects.
         manager.load("textures/particles/projectile", ParticleEffect.class);
 
@@ -71,7 +69,7 @@ public class Assets {
         manager.load(AUDIO_SOUND_DIR + "enemy_eat.mp3", Sound.class);
 
         // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
-        
+
         //Skins
         //manager.load(SKINS_DIR + "pacskin.json",FileHandle.class);
 
@@ -118,6 +116,12 @@ public class Assets {
         return get("textures/balloons/" + name + ".png", Texture.class);
     }
 
+    /**
+     * Retrieves the {@link ParticleEffect} by the given {@code name}. Automatically loads the {@link ParticleEffect} if it hasn't been loaded yet.
+     *
+     * @param name Name of the {@link ParticleEffect} file to search for.
+     * @return {@link ParticleEffect} that was loaded from the file.
+     */
     public static ParticleEffect getParticleEffect(String name) {
         return get("textures/particles/" + name, ParticleEffect.class);
     }
