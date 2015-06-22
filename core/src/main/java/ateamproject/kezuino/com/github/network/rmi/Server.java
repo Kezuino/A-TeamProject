@@ -152,30 +152,30 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             return false;
         });
-        
-         packets.registerFunc(PacketKickFromLobby.class, (p) -> {
-           
+
+        packets.registerFunc(PacketKickFromLobby.class, (p) -> {
+
             try {
                 Game lobby = getGame(p.getLobbyId());
                 if (lobby == null) {
                     return null;
                 }
-               
-                // remove client from lobby members list
-               lobby.getClients().remove(getClientFromPublic(p.getMember()).getPrivateId());
 
-               // send packet to the client for message
+                // remove client from lobby members list
+                lobby.getClients().remove(getClientFromPublic(p.getMember()).getPrivateId());
+
+                // send packet to the client for message
                 getClientFromPublic(p.getMember()).getRmi().drop(PacketKick.KickReasonType.LOBBY, "You were kicked by the host!");
-                
-                
+
+
                 // update all clients > member list
                 // todo
-                
+
             } catch (RemoteException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
             return true;
-            
+
         });
 
         packets.registerAction(PacketClientJoined.class, packet -> {
@@ -244,7 +244,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             }
         });
-        
+
         packets.registerAction(PacketKickPopupRefresh.class, packet -> {
             for (UUID id : packet.getReceivers()) {
                 ClientInfo client = getClient(id);
@@ -594,7 +594,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             }
         });
-        
+
         packets.registerAction(PacketLaunchRetryGame.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {
@@ -630,7 +630,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             Game game = getGameFromClientId(packet.getSender());
             game.getLoadQueue().add(packet);
         });
-        
+
         packets.registerAction(PacketRemoveItem.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {
@@ -644,7 +644,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     .filter(c -> !c.equals(packet.getSender()))
                     .map(id -> getClient(id).getRmi())
                     .toArray(IProtocolClient[]::new);
-            
+
             for (IProtocolClient receiver : receivers) {
                 try {
                     receiver.removeItem(packet.getSender(), packet.getItemId(), packet.getItemType());
@@ -848,17 +848,17 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             }
         });
-        
+
         packets.registerAction(PacketPickUpItem.class, packet -> {
-             Game game = getGameFromClientId(packet.getSender());
-             IProtocolClient[] receivers = game.getClients().stream().filter(c -> !c.equals(game.getHostId())).map(id -> getClient(id).getRmi()).toArray(IProtocolClient[]::new);
-             for (IProtocolClient receiver : receivers) {
-                        try {
-                            receiver.PickUpItem(packet.getSender(), packet.getItem());
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    }
+            Game game = getGameFromClientId(packet.getSender());
+            IProtocolClient[] receivers = game.getClients().stream().filter(c -> !c.equals(game.getHostId())).map(id -> getClient(id).getRmi()).toArray(IProtocolClient[]::new);
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.PickUpItem(packet.getSender(), packet.getItem());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
         });
     }
 

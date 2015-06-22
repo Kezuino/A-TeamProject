@@ -13,7 +13,7 @@ import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, AutoCloseable {
+public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender {
     /**
      * Service for executing code on multiple threads.
      */
