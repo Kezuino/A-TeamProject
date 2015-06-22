@@ -4,15 +4,16 @@ import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 public class Projectile extends GameObject {
-    /*
-     Field created for the {@link Pactale} this {@link Projectile}
-     origined from.
+    /**
+     * Field created for the {@link Pactale} this {@link Projectile}
+     * origined from.
      */
-    private Pactale owner;
+    protected Pactale owner;
 
     /**
      * Empty constructor needed for reflection instantiation.
@@ -35,8 +36,9 @@ public class Projectile extends GameObject {
         super(exactPosition, movementSpeed, direction, color);
         this.owner = owner;
         this.drawOnDirection = true;
-        
+
         this.setTexture(new TextureRegion(Assets.get("textures/projectile.png", Texture.class)));
+        this.setParticleEffectName("projectile");
     }
 
     /**

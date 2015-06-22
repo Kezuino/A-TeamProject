@@ -9,6 +9,8 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
@@ -54,10 +56,13 @@ public class Assets {
      */
     private static void load() {
         // Textures (only load those that aren't loaded by the TmxMapLoader).
+        // Gameplay objects.
         manager.load("textures/projectile.png", Texture.class);
         manager.load("textures/portal.png", Texture.class);
         manager.load("textures/pactale.png", Texture.class);
         manager.load("textures/enemy.png", Texture.class);
+        // Particle effects.
+        manager.load("textures/particles/projectile", ParticleEffect.class);
 
         // Sounds (Only short clips that are mainly used for interaction/action effects).
         manager.load(AUDIO_SOUND_DIR + "defeat.wav", Sound.class);
@@ -91,6 +96,30 @@ public class Assets {
             manager.finishLoading();
         }
         return manager.get(asset, type);
+    }
+
+    /**
+     * Returns the {@link BitmapFont} that was loaded in the {@link AssetManager} with the given name.
+     *
+     * @param asset Name of the {@link BitmapFont} to get.
+     * @return {@link BitmapFont} if it was found. Or null.
+     */
+    public static BitmapFont getFont(String asset) {
+        return get(FONTS_DIR + asset, BitmapFont.class);
+    }
+
+    /**
+     * Loads the {@link Texture} for the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
+     *
+     * @param name Name of the {@link Texture} to load in the assets.
+     * @return {@link Texture} that was loaded by the name of the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
+     */
+    public static Texture getBalloon(String name) {
+        return get("textures/balloons/" + name + ".png", Texture.class);
+    }
+
+    public static ParticleEffect getParticleEffect(String name) {
+        return get("textures/particles/" + name, ParticleEffect.class);
     }
 
     /**
@@ -183,25 +212,5 @@ public class Assets {
      */
     public static void dispose() {
         manager.dispose();
-    }
-
-    /**
-     * Returns the {@link BitmapFont} that was loaded in the {@link AssetManager} with the given name.
-     *
-     * @param asset Name of the {@link BitmapFont} to get.
-     * @return {@link BitmapFont} if it was found. Or null.
-     */
-    public static BitmapFont getFont(String asset) {
-        return get(FONTS_DIR + asset, BitmapFont.class);
-    }
-
-    /**
-     * Loads the {@link Texture} for the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
-     *
-     * @param name Name of the {@link Texture} to load in the assets.
-     * @return {@link Texture} that was loaded by the name of the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
-     */
-    public static Texture getBalloon(String name) {
-        return get("textures/balloons/" + name + ".png", Texture.class);
     }
 }
