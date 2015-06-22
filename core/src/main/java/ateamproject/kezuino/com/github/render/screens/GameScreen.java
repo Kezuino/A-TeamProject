@@ -10,6 +10,7 @@ import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameUIRenderer;
+import static ateamproject.kezuino.com.github.render.screens.BaseScreen.getSession;
 import ateamproject.kezuino.com.github.singleplayer.*;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Direction;
@@ -25,6 +26,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -33,6 +35,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Anton
@@ -106,11 +110,7 @@ public class GameScreen extends BaseScreen {
                         break;
                     case Input.Keys.TAB:
                         if (!getSession().isPauseMenuShowing()) {
-                            if (getSession().isPlayerMenuShowing()) {
-                                hidePlayersView();
-                            } else {
-                                showPlayersView();
-                            }
+                            showPlayersView();
                         }
                         break;
                     case Input.Keys.ESCAPE:
@@ -141,6 +141,8 @@ public class GameScreen extends BaseScreen {
                 MoveToAction action = Actions.action(MoveToAction.class);
                 action.setPosition(stage.getWidth() / 2 - pauseMenu.getWidth() / 2, stage.getHeight() + pauseMenu.getHeight());
                 action.setDuration(0.1f);
+                getSession().setPauseMenuShowing(false);
+
                 pauseMenu.hide(action);
             }
         });
@@ -158,6 +160,10 @@ public class GameScreen extends BaseScreen {
         });
 
         pauseMenu.add(bExit);
+
+        //Create player menu.
+        this.playerMenu = new Dialog("Menu", skin) {
+        };
     }
 
     public void start() {
@@ -208,7 +214,7 @@ public class GameScreen extends BaseScreen {
                         lblEndGameText.remove();
                         lblScore.remove();
                         start(getSession().getScore());
-                        Client.getInstance().send(new PacketLaunchGame());                        
+                        Client.getInstance().send(new PacketLaunchGame());
                     }
                 });
 
@@ -241,20 +247,23 @@ public class GameScreen extends BaseScreen {
 
     public void refreshPlayersView() {
         if (getSession().isPlayerMenuShowing()) {
-            this.playerMenu.remove();
             showPlayersView();
-        } else {
-            hidePlayersView();
         }
     }
 
     public void showPlayersView() {
-        //Create player menu.
-        this.playerMenu = new Dialog("Menu", skin) {
-            {
-                button("Oke");
+        this.playerMenu.clear();
+
+        TextButton btExit = new TextButton("Oke", skin);
+        btExit.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                getSession().setPlayerMenuShowing(false);
+                playerMenu.hide();
             }
-        };
+        });
+        
+        this.playerMenu.add(btExit);
 
         Table scrollTable = new Table(skin);
 
@@ -297,11 +306,7 @@ public class GameScreen extends BaseScreen {
 
         playerMenu.add(scrollTable);
 
-        playerMenu.show(stage);
-        getSession().showPlayerMenu();
-    }
-
-    public void hidePlayersView() {
+        this.playerMenu.show(stage);
         getSession().showPlayerMenu();
     }
 

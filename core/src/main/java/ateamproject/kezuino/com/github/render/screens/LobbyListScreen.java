@@ -89,10 +89,12 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         d.hide();
-                        if (clanGame) {
-                            game.setScreen(new LobbyScreen(game, lobbyname.getText(), dropDownResultFinal));
-                        } else {
-                            game.setScreen(new LobbyScreen(game, lobbyname.getText(), null));
+                        if (!lobbyname.getText().equals("")) {
+                            if (clanGame) {
+                                game.setScreen(new LobbyScreen(game, lobbyname.getText(), dropDownResultFinal));
+                            } else {
+                                game.setScreen(new LobbyScreen(game, lobbyname.getText(), null));
+                            }
                         }
                     }
                 });
