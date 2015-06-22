@@ -110,11 +110,6 @@ public abstract class Client implements INetworkComponent, IPacketSender {
      */
     public abstract void start();
 
-    /**
-     * Stops the {@link IClientInfo} from listening and sending to {@link INetworkComponent}.
-     */
-    public abstract void stop();
-
     public void setUsername(String Username) {
         this.Username = Username;
     }

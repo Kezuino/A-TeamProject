@@ -43,7 +43,7 @@ public class ClanFunctionTest {
          * searched for.
          * @return the String array which contains all the clan names.
          */
-        List<String> result = clanFunctions.fillTable("jip.vandevijfeike@gmail.com");
+        List<String> result = clanFunctions.getClansByEmailAddress("jip.vandevijfeike@gmail.com");
         assertEquals("MBoiz", result.get(0));
 
     }

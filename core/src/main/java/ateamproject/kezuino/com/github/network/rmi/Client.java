@@ -157,7 +157,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     }
 
     @Override
-    public void stop() {
+    public void close() throws Exception {
         updateTimer.stop();
         updateTimer.clear();
 
@@ -246,7 +246,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerFunc(PacketGetLobbies.class, (p) -> {
             try {
-                return getRmi().getServer().getLobbies(p.getSender(), p.getIsClanGame());
+                return getRmi().getServer().getLobbies(p.getSender(), p.isClanGame());
             } catch (RemoteException ex) {
                 Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
                         .log(Level.SEVERE, null, ex);
