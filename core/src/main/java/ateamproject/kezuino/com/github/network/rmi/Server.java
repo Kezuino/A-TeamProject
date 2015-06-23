@@ -135,26 +135,28 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     ClientInfo clientFromPublic = getClientFromPublic(client);
                     clientFromPublic.getGame().removeClient(clientFromPublic.getPrivateId());
                 }
+
+                if (packet.getReasonType().equals(PacketKick.KickReasonType.QUIT)) {
+                    this.getClients().remove(this.getClient(peopleToGetKicked.get(0)));
+                }
             } else {
                 try {
                     // Notify receivers that they have been dropped by the server.
                     for (UUID uuid : packet.getReceivers()) {
                         ClientInfo client = getClient(uuid);
-                        if (client == null) continue;
+                        if (client == null) {
+                            continue;
+                        }
                         client.getRmi().drop(packet.getReasonType(), packet.getReason());
                     }
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
             }
-            
-            if (packet.getReasonType().equals(PacketKick.KickReasonType.QUIT)) {
-                this.getClients().remove(this.getClient(peopleToGetKicked.get(0)));
-            }
 
             return true;
         });
-        
+
         packets.registerAction(PacketClientJoined.class, packet -> {
             for (UUID id : packet.getReceivers()) {
                 ClientInfo client = getClient(id);
@@ -197,7 +199,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             } else {
                 for (Game game : getGamesAsList()) {
-                    if (game.getClanName() == null&& !game.isInGame()) {
+                    if (game.getClanName() == null && !game.isInGame()) {
                         result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
                                 game.getId(),
                                 game.getClients().size(),
