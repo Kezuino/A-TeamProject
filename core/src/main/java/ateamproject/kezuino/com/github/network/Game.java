@@ -11,11 +11,9 @@ import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.singleplayer.Score;
 import com.badlogic.gdx.graphics.Color;
 
-import java.util.ArrayDeque;
-import java.util.ArrayList;
-import java.util.Queue;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 /**
  * Holds information about a hosted lobby/game. Used by the {@link INetworkComponent} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.
@@ -115,12 +113,12 @@ public class Game {
     }
 
     /**
-     * This array is a copy. Do not add to this array!
+     * This array is a copy of {@link #getClients()}. Do not add to this array!
      *
      * @return A unmodifiable list.
      */
     public UUID[] getClientsAsArray() {
-        ArrayList<UUID> uuids = new ArrayList<>(getClients());
+        List<UUID> uuids = new ArrayList<>(getClients());
         return uuids.toArray(new UUID[uuids.size()]);
     }
 
@@ -178,12 +176,12 @@ public class Game {
         this.mapObjectCount = mapObjectCount;
     }
 
-    public void setLevel(int level) {
-        this.level = level;
-    }
-
     public int getLevel() {
         return this.level;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public Score getScore() {

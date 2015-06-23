@@ -11,6 +11,8 @@ public class PacketLaunchGame extends Packet {
     protected int level;
 
     public PacketLaunchGame() {
+        this.paused = false;
+        this.level = -1;
     }
 
     public PacketLaunchGame(boolean paused, UUID... senderAndReceivers) {

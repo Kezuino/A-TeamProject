@@ -74,7 +74,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         try {
             registerPackets();
 
-            System.out.println(Registry.REGISTRY_PORT);
             Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
             registry.bind("server", rmi);
 
@@ -82,7 +81,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             Logger.getLogger(ServerBase.class.getName()).log(Level.SEVERE, ex.getMessage());
         }
 
-        System.out.println("Server started");
+        System.out.printf("Server started on port: %d%n", Registry.REGISTRY_PORT);
     }
 
     @Override
@@ -399,16 +398,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 // Remove everyone from the lobby.
                 removeGame(lobby.getId());
             } else {
-                ClientInfo client = getClient(packet.getSender());
-                client.setGame(null);
-
-                // Remove the requesting client only.
-                lobby.getClients().remove(packet.getSender());
-
-                // Notify other connected clients of the game that someone left.
-                PacketClientLeft p = new PacketClientLeft(client.getPublicId(), client.getUsername());
-                p.setReceivers(lobby.getClientsAsArray());
-                send(p);
+                lobby.removeClient(packet.getSender());
             }
             return true;
         });
@@ -559,7 +549,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
 
             // Increase level.
-            game.setLevel(packet.getLevel());
+            game.setLevel(packet.getLevel() == -1 ? 1 : packet.getLevel());
 
             // Set the loading states of everyone to empty and notify everyone to start loading the map.
             for (UUID uuid : game.getClients()) {

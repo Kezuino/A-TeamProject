@@ -6,12 +6,10 @@ import ateamproject.kezuino.com.github.network.packet.PacketManager;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketClientLeft;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Stream;
 
 public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender {
     /**
@@ -130,7 +128,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         if (game == null) return null;
 
         // Notify all connected clients that the game is closing.
-        send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby closed.", game.getClientsAsArray()));
+        send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby closed.", Stream.concat(Stream.of(new UUID[] { null }), game.getClients().stream().filter(c -> !c.equals(game.getHostId()))).toArray(UUID[]::new)));
 
         // Unregister client on game.
         for (UUID clientId : game.getClients()) {
