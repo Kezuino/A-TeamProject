@@ -11,6 +11,8 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketLoginUserExi
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.Gdx2DPixmap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -38,74 +40,91 @@ public class LoginScreen extends BaseScreen {
         txtPassword.setPasswordCharacter('*');
         txtPassword.setPasswordMode(true);
 
-        TextButton btnLogin = new TextButton("Login", skin);
+        TextButton btnLogin = new TextButton("Inloggen", skin);
 
         btnLogin.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                try {
-                    PacketLoginAuthenticate packet = new PacketLoginAuthenticate(txtUsername.getText(), txtPassword.getText());
-                    Client.getInstance().send(packet);
+                btnLogin.setTouchable(Touchable.disabled);//dissable button touch
+                btnLogin.setText("Laden");
+                Thread loginThread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            PacketLoginAuthenticate packet = new PacketLoginAuthenticate(txtUsername.getText(), txtPassword.getText());
+                            Client.getInstance().send(packet);
 
-                    if (Client.getInstance().getId() != null) {//if login did succeed
-                        PacketLoginUserExists packetUserExists = new PacketLoginUserExists(txtUsername.getText());
-                        Client.getInstance().send(packetUserExists);
-                        if (!packetUserExists.getResult()) {//if user not exists
-                            Dialog d = new Dialog("Geen gebruiker gevonden", skin);
-                            d.add("Gebruikersnaam:");
-                            TextField f = new TextField("", skin);
-                            d.add(f);
-                            TextButton bExit = new TextButton("Oke", skin);
-                            bExit.addListener(new ClickListener() {
+                            Gdx.app.postRunnable(new Runnable() {
                                 @Override
-                                public void clicked(InputEvent event, float x, float y) {
-                                    if (!f.getText().equals("")) {
-                                        PacketLoginCreateNewUser packet;
-                                        packet = new PacketLoginCreateNewUser(f.getText(), txtUsername.getText());
-                                        Client.getInstance().send(packet);
-                                        if (!packet.getResult()) {
-                                            new Dialog("Error", skin) {
-                                                {
-                                                    text("De naam bestaat al.");
-                                                    button("Oke");
+                                public void run() {
+
+                                    if (Client.getInstance().getId() != null) {//if login did succeed
+                                        PacketLoginUserExists packetUserExists = new PacketLoginUserExists(txtUsername.getText());
+                                        Client.getInstance().send(packetUserExists);
+                                        if (!packetUserExists.getResult()) {//if user not exists
+                                            Dialog d = new Dialog("Geen gebruiker gevonden", skin);
+                                            d.add("Gebruikersnaam:");
+                                            TextField f = new TextField("", skin);
+                                            d.add(f);
+                                            TextButton bExit = new TextButton("Oke", skin);
+                                            bExit.addListener(new ClickListener() {
+                                                @Override
+                                                public void clicked(InputEvent event, float x, float y) {
+                                                    if (!f.getText().equals("")) {
+                                                        PacketLoginCreateNewUser packet;
+                                                        packet = new PacketLoginCreateNewUser(f.getText(), txtUsername.getText());
+                                                        Client.getInstance().send(packet);
+                                                        if (!packet.getResult()) {
+                                                            new Dialog("Error", skin) {
+                                                                {
+                                                                    text("De naam bestaat al.");
+                                                                    button("Oke");
+                                                                }
+                                                            }.show(stage);
+                                                        } else {
+                                                            d.hide();
+                                                            Client.getInstance().setUsername(f.getText());
+                                                            game.setScreen(new MainScreen(game));
+                                                        }
+                                                    }
                                                 }
-                                            }.show(stage);
+                                            });
+                                            d.add(bExit);
+                                            d.show(stage);
                                         } else {
-                                            d.hide();
-                                            Client.getInstance().setUsername(f.getText());
                                             game.setScreen(new MainScreen(game));
                                         }
+                                    } else {
+                                        Dialog d = new Dialog("error", skin);
+                                        d.add("Inloggegevens niet correct.");
+                                        TextButton bExit = new TextButton("Oke", skin);
+                                        bExit.addListener(new ClickListener() {
+                                            @Override
+                                            public void clicked(InputEvent event, float x, float y) {
+                                                d.hide();
+                                            }
+                                        });
+                                        d.add(bExit);
+                                        d.show(stage);
                                     }
+                                    btnLogin.setText("Inloggen");
+                                    btnLogin.setTouchable(Touchable.enabled);//enable button touch
                                 }
                             });
-                            d.add(bExit);
-                            d.show(stage);
-                        } else {
-                            game.setScreen(new MainScreen(game));
-                        }
-                    } else {
-                        Dialog d = new Dialog("error", skin);
-                        d.add("Inloggegevens niet correct.");
-                        TextButton bExit = new TextButton("Oke", skin);
-                        bExit.addListener(new ClickListener() {
-                            @Override
-                            public void clicked(InputEvent event, float x, float y) {
-                                d.hide();
-                            }
-                        });
-                        d.add(bExit);
-                        d.show(stage);
-                    }
-                } catch (NullPointerException e) {
-                    Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, e);
+                        } catch (NullPointerException e) {
+                            Logger.getLogger(LoginScreen.class.getName()).log(Level.SEVERE, null, e);
 
-                    new Dialog("Error", skin) {
-                        {
-                            text("De server is niet online.");
-                            button("Oke");
+                            new Dialog("Error", skin) {
+                                {
+                                    text("De server is niet online.");
+                                    button("Oke");
+                                }
+                            }.show(stage);
                         }
-                    }.show(stage);
-                }
+
+                    }
+                });
+                loginThread.start();
             }
         });
 

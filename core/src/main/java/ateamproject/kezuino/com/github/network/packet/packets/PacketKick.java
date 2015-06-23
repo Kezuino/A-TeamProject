@@ -70,9 +70,6 @@ public class PacketKick extends Packet<Boolean> {
             case GAME:
                 message += "Kicked from game";
                 break;
-            case LOBBY:
-                message += "Kicked from lobby";
-                break;
             case QUIT:
                 message += "Kicked from server";
                 break;
@@ -87,8 +84,7 @@ public class PacketKick extends Packet<Boolean> {
     }
 
     public enum KickReasonType implements Serializable {
-        GAME,
-        LOBBY,
-        QUIT
+        GAME,//when playing or in a lobby
+        QUIT//when the client closes the program or logs out
     }
 }

@@ -150,6 +150,10 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     this.getGames().remove(currentGame);//remove game if there are no clients
                 }
             }
+            
+            if (packet.getReasonType().equals(PacketKick.KickReasonType.QUIT)) {
+                this.getClients().remove(this.getClient(peopleToGetKicked.get(0)));
+            }
 
             return false;
         });

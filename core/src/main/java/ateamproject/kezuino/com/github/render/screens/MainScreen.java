@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetClans;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
@@ -93,6 +94,8 @@ public class MainScreen extends BaseScreen {
         tbLogout.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
+                PacketKick packet = new PacketKick(PacketKick.KickReasonType.QUIT, Client.getInstance().getId());
+                Client.getInstance().send(packet);
                 game.setScreen(new LoginScreen(game));
             }
         });
