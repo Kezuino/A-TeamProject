@@ -6,11 +6,15 @@
 package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.singleplayer.Score;
 import com.badlogic.gdx.graphics.Color;
 
-import java.util.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Queue;
+import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -18,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class Game {
 
-    public static final Color[] SELECTABLE_COLORS = new Color[] {
+    public static final Color[] SELECTABLE_COLORS = new Color[]{
             Color.RED,
             Color.BLUE,
             Color.ORANGE,
@@ -44,11 +48,14 @@ public class Game {
      * The name of the clan who did create this game. If no clan did create it, it should be null.
      */
     protected String clanName;
+    protected Server server;
     private int mapObjectCount;
     private int level;
     private Score score;
 
-    public Game(String name, String clanName, UUID host) {
+    public Game(Server server, String name, String clanName, UUID host) {
+        this.server = server;
+
         // Generate UUID and give lobby a name
         this.id = UUID.randomUUID();
         this.name = name;
@@ -170,17 +177,49 @@ public class Game {
     public void setMapObjectCount(int mapObjectCount) {
         this.mapObjectCount = mapObjectCount;
     }
-    
-    public void nextLevel(){
+
+    public void nextLevel() {
         level++;
         System.out.printf("Level: %d has started.", level);
     }
-    
-    public int getLevel(){
+
+    public int getLevel() {
         return this.level;
     }
-    
+
     public Score getScore() {
         return this.score;
+    }
+
+    /**
+     * Removes the client from the given private {@link UUID id}.
+     *
+     * @param id Private {@link UUID id} of the client.
+     * @return If true, the client was removed.
+     */
+    public boolean removeClient(UUID id) {
+        if (id == null) return false;
+        IClientInfo client = server.getClient(id);
+        if (client == null) return false;
+
+        // Destroy game and client relation.
+        client.setGame(null);
+        getClients().remove(id);
+
+        // Remove votes that are open.
+        CopyOnWriteArrayList<UUID[]> allVotes = getVotes();
+        for (UUID[] voteCollection : allVotes) {
+            if (voteCollection[0].equals(client) || voteCollection[1].equals(client)) {
+                allVotes.remove(voteCollection);//remove votes placed by sender
+            }
+        }
+
+        // Notify removed client that it should leave.
+        server.send(new PacketKick(PacketKick.KickReasonType.GAME, "Kicked from lobby.", null, id));
+
+        if (getClients().isEmpty()) {
+            server.removeGame(getId());
+        }
+        return true;
     }
 }

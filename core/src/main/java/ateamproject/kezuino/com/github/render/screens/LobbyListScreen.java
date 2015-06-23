@@ -7,15 +7,15 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetClans;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.rmi.Client;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import java.util.ArrayList;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,8 +23,8 @@ import java.util.List;
  */
 public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
 
-    private Table scrollTable;
     TextField lobbyname;
+    private Table scrollTable;
     private boolean clanGame;
 
     public LobbyListScreen(com.badlogic.gdx.Game game, boolean clanGame) {
@@ -51,7 +51,7 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
         btnCreateGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                
+
                 Dialog d = new Dialog("Lobby Name", skin);
                 lobbyname = new TextField("", skin);
 
@@ -82,7 +82,7 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
 
                 TextButton btnsubmit = new TextButton("Maken", skin);
                 lobbyname.setSize(150, 30);
-                
+
                 d.add(lobbyname);
                 d.add(btnsubmit);
 
@@ -174,8 +174,8 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
                 btnJoin.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-//                    PacketJoinLobby packet = new PacketJoinLobby(game.lobbyId);
-//                    Client.getInstance().send(packet);
+                        PacketJoinLobby packet = new PacketJoinLobby(game.lobbyId);
+                        Client.getInstance().send(packet);
                         LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, game.lobbyId));
                     }
                 });

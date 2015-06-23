@@ -36,7 +36,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
     @Override
     public boolean drop(PacketKick.KickReasonType kick, String reason) throws RemoteException {
-        PacketKick packet = new PacketKick(kick, reason);
+        PacketKick packet = new PacketKick(kick, reason, null, null);
         this.client.send(packet);
         return packet.getResult();
     }

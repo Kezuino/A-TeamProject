@@ -193,7 +193,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return true;
             } else {
                 try {
-                    this.rmi.getServer().kickClient(packet.getSender(), this.getPublicId(), packet.getReasonType(), packet.getReason());
+                    this.rmi.getServer().kickClient(packet.getSender(), packet.getReceivers()[0], packet.getReasonType(), packet.getReason());
                 } catch (RemoteException ex) {
                     Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -263,14 +263,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             return null;
         });
 
-        /*packets.registerAction(PacketLobbiesChanged.class, packet -> {
-         if (game.getScreen() instanceof LobbyListScreen) {
-         LobbyListScreen screen = (LobbyListScreen) game.getScreen();
-         screen.fillHostTable();
-         }
-         });*/
         packets.registerAction(PacketScreenUpdate.class, packet -> {
-            if (game.getScreen().getClass() == packet.getScreenClass()) {
+            if (game.getScreen().getClass().equals(packet.getScreenClass())) {
                 RefreshableScreen screen = (RefreshableScreen) game.getScreen();
                 screen.refresh();
             }
@@ -845,7 +839,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 if ((foundItem = BaseScreen.getSession().findItem(packet.getItemId())) != null) {
                     foundItem.activate(BaseScreen.getSession().getPlayer(packet.getSender()));
                     foundItem.getNode().removeItem();
-                    System.out.printf("Succesfully removed item with id %s", foundItem.getId());
+                    System.out.printf("Succesfully removed item with id %s%n", foundItem.getId());
                 }
             }
         });
