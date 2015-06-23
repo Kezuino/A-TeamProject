@@ -178,9 +178,8 @@ public class Game {
         this.mapObjectCount = mapObjectCount;
     }
 
-    public void nextLevel() {
-        level++;
-        System.out.printf("Level: %d has started.", level);
+    public void setLevel(int level) {
+        this.level = level;
     }
 
     public int getLevel() {

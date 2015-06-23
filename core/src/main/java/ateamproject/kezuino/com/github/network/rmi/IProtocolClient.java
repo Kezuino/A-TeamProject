@@ -91,12 +91,4 @@ public interface IProtocolClient extends IProtocol {
      * @throws RemoteException If the RMI connection failed.
      */
     void launchGame(boolean paused) throws RemoteException;
-    
-       /**
-     * Launches the {@link Game}. Can be started on pause.
-     *
-     * @param paused If true, {@link Game} will be paused on start.
-     * @throws RemoteException If the RMI connection failed.
-     */
-    void launchRetryGame(boolean paused) throws RemoteException;
 }

@@ -154,6 +154,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             }
 
+                this.getClients().remove(this.getClient(packet.getSender()));
             return true;
         });
 
@@ -556,28 +557,10 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 System.out.println("Cannot launch game. The game was not found.");
                 return;
             }
-            //Level word +1, standaard is 0 dus eerst dat gelaunched word zal level 1 worden.
-            game.nextLevel();
-            // Set the loading states of everyone to empty and notify everyone to start loading the map.
-            for (UUID uuid : game.getClients()) {
-                ClientInfo client = getClient(uuid);
-                client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
 
-                try {
-                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size(), game.getLevel());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
+            // Increase level.
+            game.setLevel(packet.getLevel());
 
-        packets.registerAction(PacketLaunchRetryGame.class, packet -> {
-            Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
-                System.out.println("Cannot launch game. The game was not found.");
-                return;
-            }
-            //Level of this game should remain the same because it is a retry.
             // Set the loading states of everyone to empty and notify everyone to start loading the map.
             for (UUID uuid : game.getClients()) {
                 ClientInfo client = getClient(uuid);
