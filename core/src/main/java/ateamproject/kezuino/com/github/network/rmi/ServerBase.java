@@ -79,16 +79,6 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean kickClientFromLobby(UUID lobbyid, UUID member) throws RemoteException {
-        PacketKickFromLobby packet = new PacketKickFromLobby(lobbyid, member);
-        server.send(packet);
-        
-        //PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
-        //server.send(tmp);
-        return packet.getResult();
-    }
-
-    @Override
     public boolean kickClient(UUID sender, UUID target, PacketKick.KickReasonType reasonType, String message) throws RemoteException {
         PacketKick packet = new PacketKick(reasonType, message, sender, target);
         server.send(packet);

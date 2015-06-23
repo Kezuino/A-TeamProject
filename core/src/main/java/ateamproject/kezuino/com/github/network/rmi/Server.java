@@ -124,7 +124,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 for (UUID receiver : packet.getReceivers()) {
                     peopleToGetKicked.add(receiver);
                 }
-                peopleToGetKicked.add(packet.getSender());
             } else {
                 //collect sender
                 peopleToGetKicked.add(packet.getSender());
@@ -154,30 +153,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             return false;
         });
-
-        packets.registerFunc(PacketKickFromLobby.class, (p) -> {
-
-            try {
-                Game lobby = getGame(p.getLobbyId());
-                if (lobby == null) {
-                    return null;
-                }
-
-                // remove client from lobby members list
-                lobby.getClients().remove(getClientFromPublic(p.getMember()).getPrivateId());
-
-                // send packet to the client for message
-                getClientFromPublic(p.getMember()).getRmi().drop(PacketKick.KickReasonType.LOBBY, "You were kicked by the host!");
-
-                // update all clients > member list
-                // todo
-            } catch (RemoteException ex) {
-                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            return true;
-
-        });
-
+        
         packets.registerAction(PacketClientJoined.class, packet -> {
             for (UUID id : packet.getReceivers()) {
                 ClientInfo client = getClient(id);

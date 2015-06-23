@@ -158,7 +158,7 @@ public class MapLoader {
                     enemy.setTexture(obj.getTextureRegion());
                     enemy.setMap(map);
                     enemy.setId();
-                    map.addGameObject(enemy);
+                    //map.addGameObject(enemy);
 
                     runConsumers(MapObjectTypes.ENEMY.getType(), enemy);
                 } else if (getTypesToLoad().contains(MapObjectTypes.PACTALE) && objTileProps.containsKey(MapObjectTypes.PACTALE

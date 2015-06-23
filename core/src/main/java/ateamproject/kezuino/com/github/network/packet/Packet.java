@@ -57,7 +57,7 @@ public abstract class Packet<TResult> {
 
         if (senderAndReceivers.length > 0) sender = senderAndReceivers[0];
         if (senderAndReceivers.length > 1) {
-            Arrays.copyOfRange(senderAndReceivers, 1, senderAndReceivers.length - 1);
+            senderAndReceivers = Arrays.copyOfRange(senderAndReceivers, 1, senderAndReceivers.length - 1);
             receivers.addAll(Arrays.asList(senderAndReceivers));
         }
     }
