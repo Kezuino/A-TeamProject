@@ -149,7 +149,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
             
             if (packet.getReasonType().equals(PacketKick.KickReasonType.QUIT)) {
-                this.getClients().remove(this.getClient(peopleToGetKicked.get(0)));
+                this.getClients().remove(this.getClient(packet.getSender()));
             }
 
             return true;
