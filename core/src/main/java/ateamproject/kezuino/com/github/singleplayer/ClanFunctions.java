@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.utility.io.Database;
+import com.badlogic.gdx.Gdx;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,7 +27,7 @@ public class ClanFunctions {
 
     private ClanFunctions() {
         if (!Database.getInstance().open()) {
-            System.out.println("Database could not be accessed.");
+            Gdx.app.error("DATABASE", "Database could not be accessed.");
         }
     }
 

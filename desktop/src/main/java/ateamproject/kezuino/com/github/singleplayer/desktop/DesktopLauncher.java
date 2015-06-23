@@ -2,6 +2,8 @@ package ateamproject.kezuino.com.github.singleplayer.desktop;
 
 import ateamproject.kezuino.com.github.PactaleGame;
 import ateamproject.kezuino.com.github.network.rmi.Client;
+import com.badlogic.gdx.Application;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 
@@ -15,7 +17,7 @@ public class DesktopLauncher {
 
     public static void main(String[] arg) {
         System.setProperty("java.rmi.server.hostname", getLocalIP());
- 
+
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.foregroundFPS = 60;
         cfg.backgroundFPS = 30;
@@ -30,6 +32,8 @@ public class DesktopLauncher {
         Client client = Client.getInstance();
         client.setGame(game);
         client.start();
+
+        Gdx.app.setLogLevel(Application.LOG_DEBUG);
     }
 
     public static void frameRateTest(LwjglApplicationConfiguration cfg) {

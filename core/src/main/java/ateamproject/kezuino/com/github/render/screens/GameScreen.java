@@ -17,6 +17,7 @@ import ateamproject.kezuino.com.github.utility.game.Direction;
 import ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage;
 import ateamproject.kezuino.com.github.utility.game.balloons.messages.BalloonHelpMe;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
@@ -172,7 +173,7 @@ public class GameScreen extends BaseScreen {
 
     public void start(Score score) {
         if (getSession() == null) {
-            System.out.println("Resetted session on GameScreen.start");
+            Gdx.app.debug("GAMESESSION", "Resetting static GameSession.");
             setSession(new GameSession(1));
         }
         if (getSession().getScore() == null) {
@@ -184,7 +185,7 @@ public class GameScreen extends BaseScreen {
 
         player = getSession().getPlayer(Client.getInstance().getPublicId());
         if (player == null) {
-            System.out.println("Could not get Pactale object from public id. Check your internet connection.");
+            Gdx.app.log("GAMESESSION", "Could not get Pactale object from public id. Check your internet connection.");
             player = getSession().getPlayer(0);
         }
 

@@ -206,7 +206,7 @@ public class Assets {
 
         ShaderProgram shader = new ShaderProgram(vertexFile.readString(), fragmentFile.readString());
         if (!shader.isCompiled()) {
-            System.out.println(shader.getLog());
+            Gdx.app.error("SHADER", shader.getLog());
         }
         return shader;
     }
