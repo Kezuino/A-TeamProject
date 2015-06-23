@@ -1,6 +1,6 @@
 package ateamproject.kezuino.com.github.network;
 
-public interface INetworkComponent {
+public interface INetworkComponent extends AutoCloseable {
     /**
      * Starts the {@link INetworkComponent} to receiving network traffic.
      */
@@ -9,5 +9,11 @@ public interface INetworkComponent {
     /**
      * Stops the {@link INetworkComponent} from receiving network traffic.
      */
-    void stop();
+    default void stop() {
+        try {
+            close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

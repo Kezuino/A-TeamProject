@@ -54,6 +54,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     @Override
     public void update() {
+        // Handle heartbeat messages.
         for (IClientInfo c : getClients()) {
             if (c.getSecondsInactive() >= clientTimeout) {
                 removeClient(c.getPrivateId());
@@ -199,15 +200,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
         });
 
-        packets.registerFunc(PacketCreateClan.class, (packet) -> {
-            System.out.print("Create clan packet received");
-            return clanFunctions.createClan(packet.getClanName(), getClient(packet.getSender()).getEmailAddress());
-        });
+        packets.registerFunc(PacketCreateClan.class, (packet) -> clanFunctions.createClan(packet.getClanName(), getClient(packet.getSender()).getEmailAddress()));
 
         packets.registerFunc(PacketGetLobbies.class, (packet -> {
             List<PacketGetLobbies.GetLobbiesData> result = new ArrayList<>();
-            if (packet.getIsClanGame()) {
-                ArrayList<String> clans = getClient(packet.getSender()).getClans();
+            if (packet.isClanGame()) {
+                List<String> clans = getClient(packet.getSender()).getClans();
                 if (!clans.isEmpty()) {
                     for (String clan : clans) {
                         for (Game game : getGamesAsList()) {
@@ -257,10 +255,10 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketGetClans.class, (p) -> getClient(p.getSender()).getClans());
 
-        packets.registerAction(PacketReloadClans.class, (p) -> getClient(p.getSender()).setClans(clanFunctions.fillTable2(getClient(p
+        packets.registerAction(PacketReloadClans.class, (p) -> getClient(p.getSender()).setClans(clanFunctions.getClansByUserName(getClient(p
                 .getSender()).getUsername())));
 
-        packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
+        packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.getClansByEmailAddress(packet.getEmailadres()));
 
         packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(getClient(packet.getSender()).getUsername()));
 
@@ -308,7 +306,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
                 // fill clans
-                client.setClans(clanFunctions.fillTable2(client.getUsername()));
+                client.setClans(clanFunctions.getClansByUserName(client.getUsername()));
 
                 // Tell client what its id is.
                 return new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId(), client
