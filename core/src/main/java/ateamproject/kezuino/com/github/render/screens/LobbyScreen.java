@@ -15,7 +15,7 @@ import java.util.*;
 /**
  * @author Fatih
  */
-public class LobbyScreen extends BaseScreen {
+public class LobbyScreen extends BaseScreen implements RefreshableScreen{
 
     private Client client;
     private String lobbyName;
@@ -231,5 +231,10 @@ public class LobbyScreen extends BaseScreen {
          scrollTable.row();
          }
          }        */
+    }
+
+    @Override
+    public void refresh() {
+        reloadMembers();
     }
 }

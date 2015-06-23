@@ -5,6 +5,7 @@ import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
+import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
@@ -82,6 +83,10 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     public boolean kickClient(UUID sender, UUID target, PacketKick.KickReasonType reasonType, String message) throws RemoteException {
         PacketKick packet = new PacketKick(reasonType, message, sender, target);
         server.send(packet);
+        
+        PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
+        server.send(tmp);
+        
         return packet.getResult();
     }
 
