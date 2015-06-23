@@ -27,6 +27,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -193,7 +194,9 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return true;
             } else {
                 try {
-                    this.rmi.getServer().kickClient(packet.getSender(), packet.getReceivers()[0], packet.getReasonType(), packet.getReason());
+                    for (UUID receiver : packet.getReceivers()) {
+                        this.rmi.getServer().kickClient(packet.getSender(), receiver, packet.getReasonType(), packet.getReason());
+                    }
                 } catch (RemoteException ex) {
                     Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -501,7 +504,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             if (p.getSender() != null) {
                 // Request came from client..
                 try {
-                    rmi.getServer().launchGame(p.getSender());
+                    rmi.getServer().launchGame(p.getSender(), p.getLevel());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -511,46 +514,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     Gdx.app.postRunnable(() -> {
                         // Sync data of pactales already send to connected clients with host.
                         try {
-                            List<PacketGetGameClients.Data> data = getRmi().getServer()
-                                    .getGameClients(Client.getInstance()
-                                            .getId());
-                            for (PacketGetGameClients.Data d : data) {
-                                Pactale player = BaseScreen.getSession().getPlayer(d.getIndex());
+                            List<PacketGetGameClients.Data> data = getRmi().getServer().getGameClients(Client.getInstance().getId());
 
-                                player.setId(d.getPublicId());
-                                player.setColor(ateamproject.kezuino.com.github.network.Game.SELECTABLE_COLORS[player.getPlayerIndex()]);
-                            }
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-
-                        game.setScreen(new GameScreen(game));
-                        ((GameScreen) game.getScreen()).start();
-                    });
-                } else {
-                    // Request came from server.. resume game.
-                    Gdx.app.postRunnable(() -> BaseScreen.getSession().resume());
-                }
-            }
-        });
-
-        packets.registerAction(PacketLaunchRetryGame.class, p -> {
-            if (p.getSender() != null) {
-                // Request came from client..
-                try {
-                    rmi.getServer().launchRetryGame(p.getSender());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                if (p.isPaused()) {
-                    // Request came from server..
-                    Gdx.app.postRunnable(() -> {
-                        // Sync data of pactales already send to connected clients with host.
-                        try {
-                            List<PacketGetGameClients.Data> data = getRmi().getServer()
-                                    .getGameClients(Client.getInstance()
-                                            .getId());
                             for (PacketGetGameClients.Data d : data) {
                                 Pactale player = BaseScreen.getSession().getPlayer(d.getIndex());
 
