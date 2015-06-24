@@ -165,8 +165,8 @@ public class MapLoader {
                     enemy.setId();
 
                     // TODO: Enable enemies when sync works.
-                    //map.addGameObject(enemy);
-                    //runConsumers(MapObjectTypes.ENEMY.getType(), enemy);
+                    map.addGameObject(enemy);
+                    runConsumers(MapObjectTypes.ENEMY.getType(), enemy);
                 } else if (getTypesToLoad().contains(MapObjectTypes.PACTALE) && objTileProps.containsKey(MapObjectTypes.PACTALE
                         .getKey())) {
                     // Get playerIndex from object properties.
