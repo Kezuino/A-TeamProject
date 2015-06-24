@@ -2,6 +2,7 @@ package ateamproject.kezuino.com.github.singleplayer.desktop;
 
 import ateamproject.kezuino.com.github.PactaleGame;
 import ateamproject.kezuino.com.github.network.rmi.Client;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
@@ -15,6 +16,7 @@ import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,17 +24,6 @@ import java.util.logging.Logger;
 public class DesktopLauncher {
 
     public static void main(String[] arg) {
-        
-        try {
-            PrintStream out;
-            out = new PrintStream(new FileOutputStream("out.txt"));
-            System.setOut(out);
-            System.setErr(out);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(DesktopLauncher.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        
-        
         System.setProperty("java.rmi.server.hostname", getLocalIP());
 
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();

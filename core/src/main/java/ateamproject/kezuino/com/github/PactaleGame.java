@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 public class PactaleGame extends Game {
 
     @Override
-    public void create() {     
+    public void create() {
         Assets.create();
         this.setScreen(new LoginScreen(this));
     }

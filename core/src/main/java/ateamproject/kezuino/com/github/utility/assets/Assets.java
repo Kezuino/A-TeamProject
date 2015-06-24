@@ -22,10 +22,9 @@ import java.util.logging.Logger;
 
 public class Assets {
 
-    public static final String AUDIO_SOUND_DIR = "/audio/sound/";
-    public static final String AUDIO_MUSIC_DIR = "/audio/music/";
-    public static final String FONTS_DIR = "/fonts/";
-    public static final String SKINS_DIR = "/skins/";
+    public static final String AUDIO_SOUND_DIR = "audio/sound/";
+    public static final String AUDIO_MUSIC_DIR = "audio/music/";
+    public static final String FONTS_DIR = "fonts/";
 
     private static String skin;
     public static AssetManager manager;
@@ -41,7 +40,7 @@ public class Assets {
 
     public static String getSkinPath(String... args) {
         if (Assets.skin == null) {
-            return Paths.get(Gdx.files.getLocalStoragePath(), args).toString();
+            return String.join("/", args).replace("\\", "/");
         } else {
             try {
                 return Paths.get(Paths.get(new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent(), skin).toString(), args).toString().replace("\\", "/");
@@ -95,8 +94,7 @@ public class Assets {
         manager.load(getSkinPath(AUDIO_SOUND_DIR, "enemy_eat.mp3"), Sound.class);
 
         // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
-        //Skins
-        //manager.load(SKINS_DIR + "pacskin.json",FileHandle.class);
+
         // Wait for assets to load.
         manager.finishLoading();
     }
@@ -111,15 +109,15 @@ public class Assets {
         if (asset == null || asset.isEmpty()) {
             throw new IllegalArgumentException("Parameter asset must not be null or empty.");
         }
-        FileHandle file = Gdx.files.internal(asset);
+        FileHandle file = new FileHandle(new File(getSkinPath(asset)));
         if (!file.exists()) {
             throw new NullPointerException(String.format("Asset '%s' could not be found.", asset));
         }
         if (manager == null) {
             return null;
         }
-        if (!manager.isLoaded(asset, type)) {
-            manager.load(asset, type);
+        if (!manager.isLoaded(getSkinPath(asset), type)) {
+            manager.load(getSkinPath(asset), type);
             manager.finishLoading();
         }
         return manager.get(asset, type);
@@ -162,7 +160,7 @@ public class Assets {
      * @return {@link Texture} that was loaded by the name of the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
      */
     public static Texture getBalloon(String name) {
-        return get(getSkinPath("textures/balloons", name + ".png"), Texture.class);
+        return get("textures/balloons" + name + ".png", Texture.class);
     }
 
     /**
