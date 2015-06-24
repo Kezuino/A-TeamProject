@@ -7,17 +7,17 @@ package ateamproject.kezuino.com.github.network.packet.packets;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketField;
+import java.util.Map;
 import java.util.UUID;
 
 /**
  *
- * @author Fatih
+ * @author Sven
  */
-public class PacketLeaveLobby extends Packet<Boolean> {
-    public PacketLeaveLobby() {
-    }
+public class PacketGetHighscores extends Packet<Map<String, Integer>> {
 
-    public PacketLeaveLobby(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+
+    public PacketGetHighscores(UUID sender) {
+        super(sender);       
     }
 }

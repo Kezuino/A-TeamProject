@@ -78,7 +78,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 // Quit lobby
-                PacketLeaveLobby packet = new PacketLeaveLobby();
+                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME,Client.getInstance().getPublicId());
                 client.send(packet);
                 boolean succeeded = packet.getResult();
                 if (succeeded) {

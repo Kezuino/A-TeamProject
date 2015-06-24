@@ -39,6 +39,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     private static ateamproject.kezuino.com.github.network.rmi.Client instance;
     protected ClientBase rmi;
     protected Timer updateTimer;
+    private String skin = "Skin1";
 
     protected Client() {
         super(null);
@@ -91,6 +92,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     public ClientBase getRmi() {
         return rmi;
+    }
+    
+    public void setSkin(String skin) {
+        this.skin = skin;
+    }
+    
+    public String getSkin() {
+        return this.skin;
     }
 
     @Override
@@ -194,8 +203,12 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return true;
             } else {
                 try {
-                    for (UUID receiver : packet.getReceivers()) {
-                        this.rmi.getServer().kickClient(packet.getSender(), receiver, packet.getReasonType(), packet.getReason());
+                    if (packet.getReceivers().length > 0) {
+                        for (UUID receiver : packet.getReceivers()) {
+                            this.rmi.getServer().kickClient(packet.getSender(), receiver, packet.getReasonType(), packet.getReason());
+                        }
+                    } else {
+                        this.rmi.getServer().kickClient(packet.getSender(), packet.getSender(), packet.getReasonType(), packet.getReason());
                     }
                 } catch (RemoteException ex) {
                     Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -307,16 +320,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                         .log(Level.SEVERE, null, ex);
             }
             return null;
-        });
-
-        packets.registerFunc(PacketLeaveLobby.class, (p) -> {
-            try {
-                return getRmi().getServer().leaveLobby(p.getSender());
-            } catch (RemoteException ex) {
-                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                        .log(Level.SEVERE, null, ex);
-            }
-            return false;
         });
 
         packets.registerFunc(PacketLoginCreateNewUser.class, (p) -> {
@@ -555,6 +558,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 throw new IllegalStateException(String.format("Cannot create GameObject of type: '%s'", p.getTypeName()));
             }
             object.setId(p.getId());
+            object.setStartingPosition(p.getPosition());
             object.setDirection(p.getDirection());
             object.setExactPosition(p.getPosition());
             object.setMap(session.getMap());
@@ -568,12 +572,12 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 Pactale pactale = (Pactale) object;
                 pactale.setPlayerIndex(p.getIndex());
                 final GameObject finalObject = object;
-                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
+                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(true, Assets.getTexture(finalObject.getClass()
                         .getSimpleName()
                         .toLowerCase() + ".png", Texture.class))));
             } else if (object instanceof Enemy) {
                 final GameObject finalObject = object;
-                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
+                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get( finalObject.getClass()
                         .getSimpleName()
                         .toLowerCase() + ".png", Texture.class))));
             }
@@ -601,7 +605,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             item.setId(packet.getObjId());
             item.setMap(session.getMap());
 
-            Gdx.app.postRunnable(() -> item.setTexture(new TextureRegion(Assets.get("textures/" + item.getItemType()
+            Gdx.app.postRunnable(() -> item.setTexture(new TextureRegion(Assets.getTexture(item.getItemType()
                     .name()
                     .toLowerCase() + ".png", Texture.class))));
             session.getMap().getNode(item.getExactPosition()).setItem(item);
@@ -730,8 +734,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     e.printStackTrace();
                 }
             } else {
-                // Server sended this.
-                BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
+                if (BaseScreen.getSession().getPlayer(packet.getSender())!=null){                    
+                    // Server sended this.
+                    BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
+                }
             }
         });
 
@@ -744,7 +750,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 }
             } else {
                 // Server sended this.
-                BaseScreen.getSession().getPlayer(packet.getSender()).setDirection(packet.getDirection());
+                Pactale player = BaseScreen.getSession().getPlayer(packet.getSender());
+                if (player != null) player.setDirection(packet.getDirection());
             }
         });
 
@@ -826,5 +833,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 }
             }            
         });
+
+//        packets.registerAction(PacketGetHighscores.class, packet -> {
+//            try {
+//                getRmi().getServer().PickUpItem(packet.getSender(), packet.getItem());
+//            } catch (RemoteException ex) {
+//                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        });
     }
 }

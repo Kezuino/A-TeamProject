@@ -58,7 +58,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         // Handle heartbeat messages.
         for (IClientInfo c : getClients()) {
             if (c.getSecondsInactive() >= clientTimeout) {
-                removeClient(c.getPrivateId());
+                PacketKick pKick = new PacketKick(PacketKick.KickReasonType.QUIT, c.getPrivateId());
+                this.send(pKick);
                 System.out.printf("Client %s timed out.%n", c.getPrivateId().toString());
             }
         }
@@ -110,14 +111,16 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
      */
     @Override
     public void send(Packet packet) {
-        if (packets == null) return;
+        if (packets == null) {
+            return;
+        }
         packets.execute(packet);
     }
 
     @Override
     public void registerPackets() {
         packets.registerFunc(PacketKick.class, (packet) -> {
-            if (packet.getSender() != null) {
+            if (packet.getSender() != null) {//dont go in if, if both are null
                 // All public ids to remove from game.
                 List<UUID> peopleToGetKicked = new ArrayList<>();
 
@@ -126,34 +129,45 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                         peopleToGetKicked.add(receiver);
                     }
                 } else {
-                    peopleToGetKicked.add(getClient(packet.getSender()).getPublicId());
+                    peopleToGetKicked.add(packet.getSender());
                 }
 
                 // Remove all the clients from the game that received this packet.
                 for (UUID client : peopleToGetKicked) {
-                    ClientInfo clientFromPublic = getClientFromPublic(client);
-                    clientFromPublic.getGame().removeClient(clientFromPublic.getPrivateId());
+                    ClientInfo clientI = getClientFromPublic(client);
+                    if (clientI == null) {
+                        clientI = getClient(client);
+                    }
+                    
+                    if (clientI.getGame() != null) {
+                        clientI.getGame().removeClient(clientI.getPrivateId());
+                    }
                 }
 
                 if (packet.getReasonType().equals(PacketKick.KickReasonType.QUIT)) {
-                    this.getClients().remove(this.getClient(peopleToGetKicked.get(0)));
+                    this.removeClient(packet.getSender());
+                    System.out.println("Client " + packet.getSender() + " removed from server");
                 }
-            } else {
+            } else {//if loopback from server
+                ClientInfo client = null;
                 try {
                     // Notify receivers that they have been dropped by the server.
                     for (UUID uuid : packet.getReceivers()) {
-                        ClientInfo client = getClient(uuid);
+                        client = getClient(uuid);
                         if (client == null) {
                             continue;
                         }
                         client.getRmi().drop(packet.getReasonType(), packet.getReason());
+
                     }
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    if (client != null) {
+                        System.out.println("Tried sending kick to " + client.getPublicId() + " but failed");
+                    } else {
+                        e.printStackTrace();
+                    }
                 }
             }
-
-            this.getClients().remove(this.getClient(packet.getSender()));
             return true;
         });
 
@@ -297,7 +311,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketLogout.class, packet -> {
-            removeClient(packet.getSender());
+            PacketKick pKick = new PacketKick(PacketKick.KickReasonType.QUIT, packet.getSender());
+            this.send(pKick);
             System.out.printf("Client %s logged out.%n", packet.getSender());
         });
 
@@ -386,21 +401,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             System.out.println("Lobby: " + newGame.getName() + " - id " + newGame.getId() + " CREATED !");
             return newGame.getId();
-        });
-
-        packets.registerFunc(PacketLeaveLobby.class, packet -> {
-            Game lobby = getGameFromClientId(packet.getSender());
-            if (lobby == null) {
-                return false;
-            }
-
-            if (packet.getSender().equals(lobby.getHostId())) {
-                // Remove everyone from the lobby.
-                removeGame(lobby.getId());
-            } else {
-                lobby.removeClient(packet.getSender());
-            }
-            return true;
         });
 
         packets.registerFunc(PacketJoinLobby.class, packet -> {
@@ -824,7 +824,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     @Override
     public void unregisterPackets() {
-        if (packets == null) return;
+        if (packets == null) {
+            return;
+        }
         packets.unregisterAll();
     }
 }

@@ -2,16 +2,24 @@ package ateamproject.kezuino.com.github.singleplayer.desktop;
 
 import ateamproject.kezuino.com.github.PactaleGame;
 import ateamproject.kezuino.com.github.network.rmi.Client;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.nio.file.Paths;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DesktopLauncher {
 

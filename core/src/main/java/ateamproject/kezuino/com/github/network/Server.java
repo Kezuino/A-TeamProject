@@ -146,41 +146,6 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         return games.remove(gameId);
     }
 
-
-    /**
-     * Removes the {@link TClient} from all references in this {@link Server}.
-     *
-     * @param privateId Private id of the {@link TClient} to remove.
-     * @return Removed {@link TClient}.
-     */
-    public TClient removeClient(UUID privateId) {
-        // Remove client from game.
-        IClientInfo client = getClient(privateId);
-
-        // Update/remove game from server.
-        Game lobby = getGameFromClientId(privateId);
-        if (lobby != null) {
-            lobby.getClients().remove(privateId);
-
-            // Close lobby if no more clients or client was host.
-            if (lobby.getClients().size() == 0) {
-                games.remove(lobby.getId());
-            } else if (lobby.getHostId().equals(privateId)) {
-                removeGame(lobby.getId());
-            } else {
-                // Notify other clients that someone left.
-                PacketClientLeft packet = new PacketClientLeft(client.getPublicId(), client.getUsername(), lobby.getClientsAsArray());
-                send(packet);
-            }
-        }
-
-        // Disassociate game from client.
-        client.setGame(null);
-
-        // Remove client from server.
-        return clients.remove(privateId);
-    }
-
     /**
      * Adds a {@link Game} to this {@link Server}.
      *
@@ -210,6 +175,10 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      */
     public List<TClient> getClients() {
         return new ArrayList<>(clients.values());
+    }
+    
+    public void removeClient(UUID privateId){
+        this.clients.remove(privateId);
     }
 
     /**

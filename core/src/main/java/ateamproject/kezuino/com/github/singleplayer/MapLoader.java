@@ -1,8 +1,11 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.assets.Assets;
+import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
@@ -160,13 +163,13 @@ public class MapLoader {
                     } 
                     // Create enemy.
                     Enemy enemy = new Enemy(null, curPos, movementSpeed, Direction.Down);
-                    enemy.setTexture(obj.getTextureRegion());
+                    enemy.setAnimation(new Animation(true, Assets.getTexture("enemy.png", Texture.class)));
                     enemy.setMap(map);
                     enemy.setId();
 
                     // TODO: Enable enemies when sync works.
-                    //map.addGameObject(enemy);
-                    //runConsumers(MapObjectTypes.ENEMY.getType(), enemy);
+                    map.addGameObject(enemy);
+                    runConsumers(MapObjectTypes.ENEMY.getType(), enemy);
                 } else if (getTypesToLoad().contains(MapObjectTypes.PACTALE) && objTileProps.containsKey(MapObjectTypes.PACTALE
                         .getKey())) {
                     // Get playerIndex from object properties.
@@ -176,8 +179,8 @@ public class MapLoader {
                     }
                     if (playerLimit <= 0 || playerIndex + 1 <= playerLimit) {
                         // Create pactale.
-                        Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
-                        pactale.setTexture(obj.getTextureRegion());
+                        Pactale pactale = new Pactale(playerIndex, curPos, 1, 3f, Direction.Down, Color.WHITE);
+                        pactale.setAnimation(new Animation(true, Assets.getTexture("pactale.png", Texture.class)));
                         pactale.setId();
                         map.addGameObject(pactale);
 
