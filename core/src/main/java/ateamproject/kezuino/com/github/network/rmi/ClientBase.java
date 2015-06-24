@@ -12,6 +12,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -143,5 +144,12 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     public void PickUpItem(UUID sender, UUID item) throws RemoteException {
        PacketPickUpItem packet = new PacketPickUpItem(item);
         client.send(packet);
+    }
+
+    @Override
+    public Map<String, Integer> getHighscores(UUID sender) throws RemoteException {
+        PacketGetHighscores packet = new PacketGetHighscores(sender);
+        client.send(packet);
+        return packet.getResult();
     }
 }

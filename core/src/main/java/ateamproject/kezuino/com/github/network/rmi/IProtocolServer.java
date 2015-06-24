@@ -13,6 +13,7 @@ import ateamproject.kezuino.com.github.network.packet.packets.*;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -26,6 +27,8 @@ public interface IProtocolServer extends IProtocol {
 
     boolean loginCreateUser(UUID sender, String username, String email) throws RemoteException;
 
+    Map<String, Integer> getHighscores(UUID sender) throws RemoteException;
+    
     void heartbeat(UUID client) throws RemoteException;
 
     UUID createLobby(UUID sender, String LobbyName, String clan) throws RemoteException;

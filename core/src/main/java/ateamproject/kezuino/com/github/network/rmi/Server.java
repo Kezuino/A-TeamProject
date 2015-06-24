@@ -137,7 +137,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     if (clientI == null) {
                         clientI = getClient(client);
                     }
-                    
+
                     if (clientI.getGame() != null) {
                         clientI.getGame().removeClient(clientI.getPrivateId());
                     }
@@ -812,6 +812,21 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
             }
+        });
+
+        packets.registerFunc(PacketGetHighscores.class, packet -> {
+            Map<String, Integer> highscores = new HashMap<>();
+            
+            ResultSet result = Database.getInstance().query("SELECT Name,Score FROM clan ORDER BY Score LIMIT 10");
+            
+            try {
+                while (result.next()) {
+                    highscores.put(result.getString(0),result.getInt(1));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return highscores;
         });
     }
 

@@ -811,12 +811,12 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
         });
 
-//        packets.registerAction(PacketGetHighscores.class, packet -> {
-//            try {
-//                getRmi().getServer().PickUpItem(packet.getSender(), packet.getItem());
-//            } catch (RemoteException ex) {
-//                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        });
+        packets.registerAction(PacketGetHighscores.class, packet -> {
+            try {
+                getRmi().getServer().getHighscores(packet.getSender());
+            } catch (RemoteException ex) {
+                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
     }
 }
