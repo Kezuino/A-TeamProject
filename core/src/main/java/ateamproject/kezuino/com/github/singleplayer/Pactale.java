@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketRemoveItem;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Animation;
@@ -38,9 +39,6 @@ public class Pactale extends GameObject {
         this.lives = lives;
         this.playerIndex = -1;
         this.drawOnDirection = false;
-
-        Animation pacAnimation = new Animation(true, Assets.get("textures/pactale.png", Texture.class));
-        this.setAnimation(pacAnimation);
     }
 
     public Pactale(int playerIndex, Vector2 exactPosition, int lives, float movementSpeed, Direction walkingDirection, Color color) {
@@ -81,7 +79,7 @@ public class Pactale extends GameObject {
 
         this.isMoving = false;
         this.lives--;
-        if (this.lives == 0) {
+        if (this.lives <= 0) {
             Assets.playSound("defeat.wav");
             this.setInactive();
         }
@@ -109,13 +107,20 @@ public class Pactale extends GameObject {
 
     @Override
     protected boolean collisionWithGameObject(GameObject object) {
+        /*if(!this.getId().equals(Client.getInstance().getPublicId())) {
+            return false;
+        }*/
+        
         if (object instanceof Enemy) {
             Enemy e = (Enemy) object;
 
             if (!e.isEdible()) {
                 this.hurt();
                 this.setNodePosition(this.getStartingPosition().x / 32, this.getStartingPosition().y / 32);
-                this.getMap().getSession().getScore().decrease(100);
+
+                PacketScoreChanged packet = new PacketScoreChanged(100, PacketScoreChanged.ManipulationType.DECREASE, Client.getInstance().getId());
+                Client.getInstance().send(packet);
+                
                 Assets.playSound("enemy_eat.mp3");
             }
             return true;
@@ -128,6 +133,7 @@ public class Pactale extends GameObject {
         //item.activate(this);
         if(this.getId().equals(Client.getInstance().getPublicId())) {
             Client.getInstance().send(new PacketRemoveItem(item.getId(), item.getItemType(), Client.getInstance().getId()));
+            item.activate(this);
             item.getNode().removeItem();
         }
         return true;

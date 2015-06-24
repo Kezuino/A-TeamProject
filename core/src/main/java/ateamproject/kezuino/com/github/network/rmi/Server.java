@@ -8,6 +8,7 @@ import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 import ateamproject.kezuino.com.github.singleplayer.Pactale;
+import ateamproject.kezuino.com.github.singleplayer.Score;
 import ateamproject.kezuino.com.github.utility.io.Database;
 import com.badlogic.gdx.graphics.Color;
 
@@ -587,20 +588,38 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
             //Calculate the score based on the level of the game. For every level above 1, add 5% more score.
             int score = packet.getItemType().getScore();
-            if (game.getLevel() != 1) {
-                double factor = Math.pow(1.05, game.getLevel() - 1);
-                score *= factor;
+            if (game.getLevel() != 1){
+                double factor = Math.pow(1.05, game.getLevel()-1);
+                score *=factor;
+            } 
+               
+            for (UUID receiver : game.getClients()) {
+                try {
+                    if(!receiver.equals(packet.getSender())) {
+                        getClient(receiver).getRmi().removeItem(packet.getSender(), packet.getItemId(), packet.getItemType());
+                    }
+                    getClient(receiver).getRmi().changeScore(null, PacketScoreChanged.ManipulationType.INCREASE, score);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
             }
-            game.getScore().increase(score);
+        });
+        
+        packets.registerAction(PacketScoreChanged.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) {
+                System.out.println("Could not change score since game is not active");
+                return;
+            }
+
             IProtocolClient[] receivers = game.getClients()
                     .stream()
-                    .filter(c -> !c.equals(packet.getSender()))
                     .map(id -> getClient(id).getRmi())
                     .toArray(IProtocolClient[]::new);
 
             for (IProtocolClient receiver : receivers) {
                 try {
-                    receiver.removeItem(packet.getSender(), packet.getItemId(), packet.getItemType());
+                    receiver.changeScore(null, packet.getManipulationType(), packet.getChange());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -801,17 +820,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             }
         });
-
-        packets.registerAction(PacketPickUpItem.class, packet -> {
-            Game game = getGameFromClientId(packet.getSender());
-            IProtocolClient[] receivers = game.getClients().stream().filter(c -> !c.equals(game.getHostId())).map(id -> getClient(id).getRmi()).toArray(IProtocolClient[]::new);
-            for (IProtocolClient receiver : receivers) {
-                try {
-                    receiver.PickUpItem(packet.getSender(), packet.getItem());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
         });
 
         packets.registerFunc(PacketGetHighscores.class, packet -> {
@@ -827,7 +835,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
             return highscores;
-        });
     }
 
     @Override

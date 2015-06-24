@@ -49,7 +49,6 @@ public class Game {
     protected Server server;
     private int mapObjectCount;
     private int level;
-    private Score score;
 
     public Game(Server server, String name, String clanName, UUID host) {
         this.server = server;
@@ -58,7 +57,6 @@ public class Game {
         this.id = UUID.randomUUID();
         this.name = name;
         this.clanName = clanName;
-        this.score = new Score();
         this.votes = new CopyOnWriteArrayList<>();//[0]voter,[1]person to kick
         this.loadQueue = new ArrayDeque<>();
 
@@ -184,12 +182,8 @@ public class Game {
         this.level = level;
     }
 
-    public Score getScore() {
-        return this.score;
-    }
-
     /**
-     * Removes the client from the game where he is in with the given private client {@link UUID id}.
+     * Removes the client from the given private {@link UUID id}.
      *
      * @param id Private {@link UUID id} of the client.
      * @return If true, the client was removed.
@@ -212,10 +206,10 @@ public class Game {
         }
 
         // Notify removed client that it should leave.
-        server.send(new PacketKick(PacketKick.KickReasonType.GAME, "Gekickt.", null, id));
+        server.send(new PacketKick(PacketKick.KickReasonType.GAME, "Gekickt van de lobby.", null, id));
 
-        if (this.getHostId().equals(id)) {
-            server.removeGame(this.getId());
+        if (getClients().isEmpty()) {
+            server.removeGame(getId());
         }
         return true;
     }

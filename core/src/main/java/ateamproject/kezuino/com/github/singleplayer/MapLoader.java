@@ -1,8 +1,11 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.utility.assets.Assets;
+import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapProperties;
@@ -12,7 +15,6 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
-import java.math.BigDecimal;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -140,9 +142,9 @@ public class MapLoader {
                     // Create item.
                     String itemTypeName = objTileProps.get("item", String.class);
                     ItemType itemType = Arrays.stream(ItemType.values())
-                                              .filter(e -> e.name().equalsIgnoreCase(itemTypeName))
-                                              .findAny()
-                                              .orElse(null);
+                            .filter(e -> e.name().equalsIgnoreCase(itemTypeName))
+                            .findAny()
+                            .orElse(null);
                     Item item = new Item(curPos, itemType);
                     item.setMap(map);
                     item.setTexture(obj.getTextureRegion());
@@ -154,13 +156,13 @@ public class MapLoader {
                         .getKey())) {
                     //Create new enemy movement speed if level is not 1, add 3% for every level.
                     float movementSpeed = 2.5f;
-                    if (level!=1){
-                        double factor = Math.pow(1.05, level-1);
-                        movementSpeed *=factor;
-                    } 
+                    if (level != 1) {
+                        double factor = Math.pow(1.05, level - 1);
+                        movementSpeed *= factor;
+                    }
                     // Create enemy.
                     Enemy enemy = new Enemy(null, curPos, movementSpeed, Direction.Down);
-                    enemy.setTexture(obj.getTextureRegion());
+                    enemy.setAnimation(new Animation(Assets.getTexture("enemy.png", Texture.class)));
                     enemy.setMap(map);
                     enemy.setId();
 
@@ -176,8 +178,8 @@ public class MapLoader {
                     }
                     if (playerLimit <= 0 || playerIndex + 1 <= playerLimit) {
                         // Create pactale.
-                        Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
-                        pactale.setTexture(obj.getTextureRegion());
+                        Pactale pactale = new Pactale(playerIndex, curPos, 1, 3f, Direction.Down, Color.WHITE);
+                        pactale.setAnimation(new Animation(true, Assets.getTexture("pactale.png", Texture.class)));
                         pactale.setId();
                         map.addGameObject(pactale);
 

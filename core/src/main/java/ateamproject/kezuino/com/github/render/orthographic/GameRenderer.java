@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.render.orthographic;
 
+import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
@@ -116,9 +117,12 @@ public class GameRenderer implements IRenderer {
             batch.end();
         }
 
-        this.map.getSession()
-                .getScore()
-                .generateNewScore(this.map.getAllGameObjects()); // Will calculate/decrease score once in a period.
+        //Will calculate/decrease score if this is the host of the game
+        if(Client.getInstance().isHost()) {
+            this.map.getSession()
+                    .getScore()
+                    .generateNewScore(this.map.getAllGameObjects());
+        }
 
         // Check if here are any pactales on the map.
         if (!this.map.getAllGameObjects().stream().anyMatch(go -> go instanceof Pactale)) {

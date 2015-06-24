@@ -105,6 +105,12 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketRemoveItem packet = new PacketRemoveItem(itemId, itemType, sender);
         client.send(packet);
     }
+    
+    @Override
+    public void changeScore(UUID sender, PacketScoreChanged.ManipulationType manipulationType, int change) throws RemoteException {
+        PacketScoreChanged packet = new PacketScoreChanged(change, manipulationType, sender, null);
+        client.send(packet);
+    }
 
     @Override
     public void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException {
@@ -139,11 +145,6 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketShootProjectile packet = new PacketShootProjectile(sender);
         client.send(packet);
     }
-
-    @Override
-    public void PickUpItem(UUID sender, UUID item) throws RemoteException {
-       PacketPickUpItem packet = new PacketPickUpItem(item);
-        client.send(packet);
     }
 
     @Override
@@ -151,5 +152,4 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketGetHighscores packet = new PacketGetHighscores(sender);
         client.send(packet);
         return packet.getResult();
-    }
 }

@@ -37,7 +37,7 @@ public class Projectile extends GameObject {
         this.owner = owner;
         this.drawOnDirection = true;
 
-        this.setTexture(new TextureRegion(Assets.get("textures/projectile.png", Texture.class)));
+        this.setTexture(new TextureRegion(Assets.getTexture("projectile.png", Texture.class)));
         this.setParticleEffectName("projectile");
     }
 

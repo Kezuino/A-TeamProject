@@ -39,6 +39,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     private static ateamproject.kezuino.com.github.network.rmi.Client instance;
     protected ClientBase rmi;
     protected Timer updateTimer;
+    private String skin = "Skin1";
 
     protected Client() {
         super(null);
@@ -91,6 +92,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     public ClientBase getRmi() {
         return rmi;
+    }
+
+    public String getSkin() {
+        return this.skin;
+    }
+
+    public void setSkin(String skin) {
+        this.skin = skin;
     }
 
     @Override
@@ -563,12 +572,12 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 Pactale pactale = (Pactale) object;
                 pactale.setPlayerIndex(p.getIndex());
                 final GameObject finalObject = object;
-                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
+                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(true, Assets.getTexture(finalObject.getClass()
                         .getSimpleName()
                         .toLowerCase() + ".png", Texture.class))));
             } else if (object instanceof Enemy) {
                 final GameObject finalObject = object;
-                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
+                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.getTexture(finalObject.getClass()
                         .getSimpleName()
                         .toLowerCase() + ".png", Texture.class))));
             }
@@ -596,7 +605,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             item.setId(packet.getObjId());
             item.setMap(session.getMap());
 
-            Gdx.app.postRunnable(() -> item.setTexture(new TextureRegion(Assets.get("textures/" + item.getItemType()
+            Gdx.app.postRunnable(() -> item.setTexture(new TextureRegion(Assets.getTexture(item.getItemType()
                     .name()
                     .toLowerCase() + ".png", Texture.class))));
             session.getMap().getNode(item.getExactPosition()).setItem(item);
@@ -725,8 +734,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     e.printStackTrace();
                 }
             } else {
-                // Server sended this.
-                BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
+                if (BaseScreen.getSession().getPlayer(packet.getSender()) != null) {
+                    // Server sended this.
+                    BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
+                }
             }
         });
 
@@ -798,17 +809,29 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 if ((foundItem = BaseScreen.getSession().findItem(packet.getItemId())) != null) {
                     foundItem.activate(BaseScreen.getSession().getPlayer(packet.getSender()));
                     foundItem.getNode().removeItem();
-                    System.out.printf("Succesfully removed item with id %s%n", foundItem.getId());
                 }
             }
         });
+        
+        packets.registerAction(PacketScoreChanged.class, packet -> {
+            if (packet.getSender() != null && packet.getSender().equals(getId())) {
+                try {
+                    getRmi().getServer().changeScore(packet.getSender(), packet.getManipulationType(), packet.getChange());
+                } catch (RemoteException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                Score currentScore = BaseScreen.getSession().getScore();
 
-        packets.registerAction(PacketPickUpItem.class, packet -> {
-            try {
-                getRmi().getServer().PickUpItem(packet.getSender(), packet.getItem());
-            } catch (RemoteException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                switch(packet.getManipulationType()) {
+                    case DECREASE:
+                        currentScore.decrease(packet.getChange());
+                        break;
+                    case INCREASE:
+                        currentScore.increase(packet.getChange());
+                        break;
+                }
+            }            
         });
 
         packets.registerAction(PacketGetHighscores.class, packet -> {
