@@ -469,7 +469,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
 
                     if (amountOfVotesForCurrentPerson >= amountOfVotesNeededForKick) {
-                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Votekicked", personId);
+                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Uitgestemd", personId);
                         this.send(packetKick);
                     } else {
                         peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String

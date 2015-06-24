@@ -74,21 +74,9 @@ public class MainScreen extends BaseScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 //game.setScreen(new GameScreen(game));
-
-                PacketHighScore packet;
-                packet = new PacketHighScore("MBoiz", 100, Client.getInstance().getId());
-                Client.getInstance().send(packet);
-                packet.getResult();
             }
         });
 
-        TextButton tbOptions = new TextButton("Opties", skin);
-        tbOptions.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                //game.setScreen(new GameScreen(game));
-            }
-        });
 
         TextButton tbLogout = new TextButton("Uitloggen", skin);
         tbLogout.addListener(new ClickListener() {
@@ -112,7 +100,6 @@ public class MainScreen extends BaseScreen {
         tbClanGame.setSize(300, 40);
         tbHighscores.setSize(300, 40);
         tbLogout.setSize(300, 40);
-        tbOptions.setSize(300, 40);
         tbSearchGame.setSize(300, 40);
         tbClanManagement.setSize(300, 40);
 
@@ -123,15 +110,13 @@ public class MainScreen extends BaseScreen {
         tbClanGame.setPosition(xOfSearchGameButton, yOfSearchGameButton - 50);
         tbHighscores.setPosition(xOfSearchGameButton, yOfSearchGameButton - 100);
         tbChangeLook.setPosition(xOfSearchGameButton, yOfSearchGameButton - 150);
-        tbOptions.setPosition(xOfSearchGameButton, yOfSearchGameButton - 200);
-        tbClanManagement.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
-        tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 300);
+        tbClanManagement.setPosition(xOfSearchGameButton, yOfSearchGameButton - 200);
+        tbLogout.setPosition(xOfSearchGameButton, yOfSearchGameButton - 250);
 
         stage.addActor(tbSearchGame);
         stage.addActor(tbClanGame);
         stage.addActor(tbHighscores);
         stage.addActor(tbChangeLook);
-        stage.addActor(tbOptions);
         stage.addActor(tbClanManagement);
         stage.addActor(tbLogout);
 

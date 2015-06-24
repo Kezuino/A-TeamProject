@@ -134,7 +134,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         if (game == null) return null;
 
         // Notify all connected clients that the game is closing.
-        send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby closed.", Stream.concat(Stream.of(new UUID[]{null}), game.getClients().stream().filter(c -> !c.equals(game.getHostId()))).toArray(UUID[]::new)));
+        send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby is gesloten.", Stream.concat(Stream.of(new UUID[]{null}), game.getClients().stream().filter(c -> !c.equals(game.getHostId()))).toArray(UUID[]::new)));
 
         // Unregister client on game.
         for (UUID clientId : game.getClients()) {

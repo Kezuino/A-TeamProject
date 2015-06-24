@@ -153,7 +153,7 @@ public class GameScreen extends BaseScreen {
         bExit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Client disconnected.");
+                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Client afgesloten.");
                 Client.getInstance().send(packet);
 
                 game.setScreen(new MainScreen(game));

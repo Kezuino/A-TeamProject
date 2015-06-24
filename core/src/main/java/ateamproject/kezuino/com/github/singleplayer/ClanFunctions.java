@@ -27,7 +27,7 @@ public class ClanFunctions {
 
     private ClanFunctions() {
         if (!Database.getInstance().open()) {
-            Gdx.app.error("DATABASE", "Database could not be accessed.");
+            System.out.println("DATABASE NOT ONLINE!");
         }
     }
 

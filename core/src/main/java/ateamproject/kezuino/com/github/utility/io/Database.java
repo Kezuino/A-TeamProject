@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class Database {
+
     private static Database instance = new Database("jdbc:mysql://localhost:3306/pactales", "root", "");
     /**
      * {@link Connection} used for executing queries on the database.
@@ -38,10 +39,13 @@ public class Database {
     /**
      * Opens the connection if it's not open already.
      *
-     * @return True if connection was opened (or is already open). False otherwise.
+     * @return True if connection was opened (or is already open). False
+     * otherwise.
      */
     public boolean open() {
-        if (isOpen()) return true;
+        if (isOpen()) {
+            return true;
+        }
 
         // Create / reopen connection.
         try {
@@ -51,12 +55,9 @@ public class Database {
             // Setup the connection with the DB
             connection = DriverManager.getConnection(connectionString, username, password);
             return true;
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, "IS THE DATABASE ONLINE? "+ex);
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException ex) {
+            return false;
         }
-        return false;
     }
 
     /**
@@ -66,7 +67,9 @@ public class Database {
      */
     public boolean isOpen() {
         try {
-            if (connection != null && !connection.isClosed()) return true;
+            if (connection != null && !connection.isClosed()) {
+                return true;
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -74,10 +77,12 @@ public class Database {
     }
 
     /**
-     * Executes the {@code query} on the database and gets the {@link ResultSet result}.
+     * Executes the {@code query} on the database and gets the
+     * {@link ResultSet result}.
      *
      * @param query Query command to run on the database.
-     * @param parms Parameters to prepare with the command to counter SQL Injection and increase performance.
+     * @param parms Parameters to prepare with the command to counter SQL
+     * Injection and increase performance.
      * @return Executed {@link ResultSet} to get results from.
      */
     public ResultSet query(String query, Object... parms) {
@@ -98,10 +103,12 @@ public class Database {
     }
 
     /**
-     * Executes the {@code query} on the database and gets the amount of rows modified. If failed, returns -1.
+     * Executes the {@code query} on the database and gets the amount of rows
+     * modified. If failed, returns -1.
      *
      * @param query Query command to run on the database.
-     * @param parms Parameters to prepare with the command to counter SQL Injection and increase performance.
+     * @param parms Parameters to prepare with the command to counter SQL
+     * Injection and increase performance.
      * @return Amount of rows modified or -1 if query failed.
      */
     public int update(String query, Object... parms) {

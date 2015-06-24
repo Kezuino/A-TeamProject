@@ -178,7 +178,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
                     btnKick.addListener(new ClickListener() {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
-                            PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Kicked by host", Client.getInstance().getId(), member.getKey());
+                            PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Gekickt door de beheerder", Client.getInstance().getId(), member.getKey());
                             Client.getInstance().send(packet);
                         }
                     });
