@@ -10,6 +10,7 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -73,12 +74,15 @@ public class MainScreen extends BaseScreen {
         tbChangeLook.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //game.setScreen(new GameScreen(game));
-
-                PacketHighScore packet;
-                packet = new PacketHighScore("MBoiz", 100, Client.getInstance().getId());
-                Client.getInstance().send(packet);
-                packet.getResult();
+                //game.setScreen(new GameScreen(game));   
+                Client.getInstance().setSkin("Skin2");
+               game.setScreen(new SkinSelectScreen(game));
+                  
+                
+//                PacketHighScore packet;
+//                packet = new PacketHighScore("MBoiz", 100, Client.getInstance().getId());
+//                Client.getInstance().send(packet);
+//                packet.getResult();
             }
         });
 

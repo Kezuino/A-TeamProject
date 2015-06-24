@@ -4,16 +4,33 @@ import ateamproject.kezuino.com.github.PactaleGame;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DesktopLauncher {
 
     public static void main(String[] arg) {
+        
+        try {
+            PrintStream out;
+            out = new PrintStream(new FileOutputStream("out.txt"));
+            System.setOut(out);
+            System.setErr(out);
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(DesktopLauncher.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+        
         System.setProperty("java.rmi.server.hostname", getLocalIP());
  
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();

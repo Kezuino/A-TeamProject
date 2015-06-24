@@ -1,0 +1,23 @@
+Client starting...
+Client started.
+Exception in thread "LWJGL Application" com.badlogic.gdx.utils.GdxRuntimeException: com.badlogic.gdx.utils.GdxRuntimeException: File not found: C:\Users\David\Documents\GitHub\A-TeamProject\core\src\assets\libs\Skin1\fonts\opensans.ttf (Internal)
+	at com.badlogic.gdx.assets.AssetManager.handleTaskError(AssetManager.java:540)
+	at com.badlogic.gdx.assets.AssetManager.update(AssetManager.java:356)
+	at com.badlogic.gdx.assets.AssetManager.finishLoading(AssetManager.java:377)
+	at ateamproject.kezuino.com.github.utility.assets.Assets.load(Assets.java:95)
+	at ateamproject.kezuino.com.github.utility.assets.Assets.create(Assets.java:64)
+	at ateamproject.kezuino.com.github.PactaleGame.create(PactaleGame.java:11)
+	at com.badlogic.gdx.backends.lwjgl.LwjglApplication.mainLoop(LwjglApplication.java:143)
+	at com.badlogic.gdx.backends.lwjgl.LwjglApplication$1.run(LwjglApplication.java:120)
+Caused by: com.badlogic.gdx.utils.GdxRuntimeException: File not found: C:\Users\David\Documents\GitHub\A-TeamProject\core\src\assets\libs\Skin1\fonts\opensans.ttf (Internal)
+	at com.badlogic.gdx.files.FileHandle.read(FileHandle.java:136)
+	at com.badlogic.gdx.files.FileHandle.readBytes(FileHandle.java:222)
+	at com.badlogic.gdx.graphics.g2d.freetype.FreeType$Library.newFace(FreeType.java:69)
+	at com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator.<init>(FreeTypeFontGenerator.java:106)
+	at ateamproject.kezuino.com.github.utility.assets.FreeTypeFontLoader.load(FreeTypeFontLoader.java:22)
+	at ateamproject.kezuino.com.github.utility.assets.FreeTypeFontLoader.load(FreeTypeFontLoader.java:14)
+	at com.badlogic.gdx.assets.AssetLoadingTask.handleSyncLoader(AssetLoadingTask.java:100)
+	at com.badlogic.gdx.assets.AssetLoadingTask.update(AssetLoadingTask.java:87)
+	at com.badlogic.gdx.assets.AssetManager.updateTask(AssetManager.java:477)
+	at com.badlogic.gdx.assets.AssetManager.update(AssetManager.java:354)
+	... 6 more

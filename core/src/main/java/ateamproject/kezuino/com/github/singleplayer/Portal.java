@@ -84,7 +84,7 @@ public class Portal implements IRenderable, IPositionable {
     @Override
     public void draw(SpriteBatch batch) {
         if (texture == null) {
-            this.setTexture(new TextureRegion(Assets.get("textures/portal.png", Texture.class)));
+            this.setTexture(new TextureRegion(Assets.getTexture("portal.png", Texture.class)));
         }
 
         Color oldColor = batch.getColor();

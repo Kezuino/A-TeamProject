@@ -38,9 +38,6 @@ public class Pactale extends GameObject {
         this.lives = lives;
         this.playerIndex = -1;
         this.drawOnDirection = false;
-
-        Animation pacAnimation = new Animation(true, Assets.get("textures/pactale.png", Texture.class));
-        this.setAnimation(pacAnimation);
     }
 
     public Pactale(int playerIndex, Vector2 exactPosition, int lives, float movementSpeed, Direction walkingDirection, Color color) {

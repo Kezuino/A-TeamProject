@@ -49,7 +49,7 @@ public class GameScreen extends BaseScreen {
         super(game);
 
         clearOnRenderColor = Color.BLACK;
-        Assets.create();
+
         backgroundMusic = Assets.getMusicStream("action.mp3");
 
         // Gameplay controls handling:

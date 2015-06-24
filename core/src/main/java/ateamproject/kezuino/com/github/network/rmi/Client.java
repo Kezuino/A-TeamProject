@@ -38,6 +38,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     private static ateamproject.kezuino.com.github.network.rmi.Client instance;
     protected ClientBase rmi;
     protected Timer updateTimer;
+    private String skin = "Skin1";
 
     protected Client() {
         super(null);
@@ -90,6 +91,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     public ClientBase getRmi() {
         return rmi;
+    }
+    
+    public void setSkin(String skin) {
+        this.skin = skin;
+    }
+    
+    public String getSkin() {
+        return this.skin;
     }
 
     @Override
@@ -560,12 +569,12 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 Pactale pactale = (Pactale) object;
                 pactale.setPlayerIndex(p.getIndex());
                 final GameObject finalObject = object;
-                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
+                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(true, Assets.getTexture(finalObject.getClass()
                                                                                                                       .getSimpleName()
                                                                                                                       .toLowerCase() + ".png", Texture.class))));
             } else if (object instanceof Enemy) {
                 final GameObject finalObject = object;
-                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get("textures/" + finalObject.getClass()
+                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get( finalObject.getClass()
                                                                                                                       .getSimpleName()
                                                                                                                       .toLowerCase() + ".png", Texture.class))));
             }
@@ -593,7 +602,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             item.setId(packet.getObjId());
             item.setMap(session.getMap());
 
-            Gdx.app.postRunnable(() -> item.setTexture(new TextureRegion(Assets.get("textures/" + item.getItemType()
+            Gdx.app.postRunnable(() -> item.setTexture(new TextureRegion(Assets.getTexture(item.getItemType()
                                                                                                       .name()
                                                                                                       .toLowerCase() + ".png", Texture.class))));
             session.getMap().getNode(item.getExactPosition()).setItem(item);
