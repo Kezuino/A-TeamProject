@@ -198,9 +198,15 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         // Render Game and UI.
         super.render(delta);
+        
+        //If player has 0 lives he is GameOVer
+        /*if (player.getLives()==0){
+            getSession().gameOver();
+        }*/
 
         switch (getSession().getState()) {
             case GameOver:
+                //getSession().end();
                 game.setScreen(new GameOverScreen(game, getSession().getScore()));
                 break;
 

@@ -725,8 +725,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     e.printStackTrace();
                 }
             } else {
-                // Server sended this.
-                BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
+                if (BaseScreen.getSession().getPlayer(packet.getSender())!=null){                    
+                    // Server sended this.
+                    BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
+                }
             }
         });
 
