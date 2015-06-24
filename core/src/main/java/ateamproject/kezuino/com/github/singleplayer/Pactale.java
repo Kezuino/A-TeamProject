@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketRemoveItem;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Animation;
@@ -106,13 +107,20 @@ public class Pactale extends GameObject {
 
     @Override
     protected boolean collisionWithGameObject(GameObject object) {
+        /*if(!this.getId().equals(Client.getInstance().getPublicId())) {
+            return false;
+        }*/
+        
         if (object instanceof Enemy) {
             Enemy e = (Enemy) object;
 
             if (!e.isEdible()) {
                 this.hurt();
                 this.setNodePosition(this.getStartingPosition().x / 32, this.getStartingPosition().y / 32);
-                this.getMap().getSession().getScore().decrease(100);
+
+                PacketScoreChanged packet = new PacketScoreChanged(100, PacketScoreChanged.ManipulationType.DECREASE, Client.getInstance().getId());
+                Client.getInstance().send(packet);
+                
                 Assets.playSound("enemy_eat.mp3");
             }
             return true;

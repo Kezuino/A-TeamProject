@@ -1,5 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
+import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
@@ -161,11 +163,13 @@ public class Enemy extends GameObject {
 
     @Override
     protected boolean collisionWithGameObject(GameObject object) {
-        if (object instanceof Pactale) {
+        if (object instanceof Pactale  && object.getId().equals(Client.getInstance().getPublicId())) {
             if (this.isEdible()) {
                 this.isMoving = false;
                 this.setNodePosition(this.getStartingPosition());
-                this.getMap().getSession().getScore().increase(300);
+                
+                PacketScoreChanged packet = new PacketScoreChanged(300, PacketScoreChanged.ManipulationType.INCREASE, Client.getInstance().getId());
+                Client.getInstance().send(packet);
             }
             return true;
         }
