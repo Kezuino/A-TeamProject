@@ -29,6 +29,7 @@ public abstract class Client implements INetworkComponent, IPacketSender {
     protected PacketManager packets;
     protected String Username;
     protected String emailadres;
+    private boolean isHost;
 
     public Client(com.badlogic.gdx.Game game) {
         this.game = game;
@@ -123,5 +124,13 @@ public abstract class Client implements INetworkComponent, IPacketSender {
 
     public String getEmailadres() {
         return emailadres;
+    }
+
+    public boolean isHost() {
+        return isHost;
+    }
+
+    public void setHost(boolean isHost) {
+        this.isHost = isHost;
     }
 }

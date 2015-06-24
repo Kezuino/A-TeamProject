@@ -476,8 +476,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 LobbyScreen t = (LobbyScreen) game.getScreen();
                 t.addMember(p.getJoinenId(), p.getUsername());
             }
-
-            System.out.println("Client joined: " + p.getUsername());
         });
 
         packets.registerAction(PacketClientLeft.class, p -> {

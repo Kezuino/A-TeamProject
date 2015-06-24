@@ -34,6 +34,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
         this.lobbyName = lobbyname;
         this.isHost = true;
         this.client = Client.getInstance();
+        this.client.setHost(true);
         this.clanName = clanName;
 
         PacketCreateLobby p = new PacketCreateLobby(this.lobbyName, this.clanName);
@@ -56,6 +57,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
         super(game);
         this.lobbyId = lobbyId;
         this.isHost = false;
+        this.client.setHost(false);
 
         client = Client.getInstance();
 
@@ -198,7 +200,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
     public void addMember(UUID client, String username) {
         this.members.put(client, username);
 
-        this.updateMembers();
+        this.reloadMembers();
     }
 
     public void removeMember(UUID client) {
@@ -206,35 +208,18 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
 
         if (i != null) {
             this.members.remove(i);
-
-            this.updateMembers();
+            this.reloadMembers();
         }
-    }
-
-    private void updateMembers() {
-        reloadMembers();
-        /*
-         scrollTable.clear();
-
-         TextField memberNameHeader = new TextField("Member name", skin);
-         memberNameHeader.setDisabled(true);
-
-         scrollTable.add(memberNameHeader);
-         scrollTable.row();
-        
-         if (this.members != null) {
-         for (String membername : members.values()) {
-         TextField lblmember = new TextField(membername, skin);
-         lblmember.setDisabled(true);
-
-         scrollTable.add(lblmember);
-         scrollTable.row();
-         }
-         }        */
     }
 
     @Override
     public void refresh() {
         reloadMembers();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        this.client.setHost(false);
     }
 }
