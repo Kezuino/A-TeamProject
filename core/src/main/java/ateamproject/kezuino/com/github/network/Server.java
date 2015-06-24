@@ -1,17 +1,22 @@
 package ateamproject.kezuino.com.github.network;
 
+import ateamproject.kezuino.com.github.admin.inputs.Command;
+import ateamproject.kezuino.com.github.admin.inputs.Console;
+import ateamproject.kezuino.com.github.admin.inputs.IAdministrable;
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketManager;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketClientLeft;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.*;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.stream.Stream;
 
-public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender {
+public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, IAdministrable<Server> {
     /**
      * Service for executing code on multiple threads.
      */
@@ -31,21 +36,25 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * {@link Game Games} that are currently active on this {@link Server}.
      */
     protected LinkedHashMap<UUID, Game> games;
-
-
+    /**
+     * {@link Console} used for administration of this {@link Server}.
+     */
+    protected Console<Server> console;
     /**
      * Thread for updating the {@link Server} state. Is executed in a while loop with a {@link Thread#sleep(long)} of 10 milliseconds.
      * Stop the thread by calling {@link #stop()}.
      */
-    protected Thread updateThread;
-
     protected boolean isUpdating;
+    protected boolean isRunning;
     /**
      * Gets or sets all {@link IClientInfo clients} currently connected to this {@link Server}.
      */
     protected LinkedHashMap<UUID, TClient> clients;
+    private Scanner input;
+    private PrintStream output;
 
     public Server() {
+        this.isRunning = true;
         this.games = new LinkedHashMap<>();
         this.clients = new LinkedHashMap<>();
         this.isUpdating = true;
@@ -61,18 +70,15 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * Starts running the update loop.
      */
     protected void startUpdating() {
-        if (updateThread != null && updateThread.isAlive()) return;
-
-        updateThread = new Thread(() -> {
-            while (!updateThread.isInterrupted()) {
+        executor.submit(() -> {
+            while (!executor.isShutdown()) {
                 update();
                 try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
                 }
             }
         });
-        updateThread.start();
     }
 
     /**
@@ -128,7 +134,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         if (game == null) return null;
 
         // Notify all connected clients that the game is closing.
-        send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby closed.", Stream.concat(Stream.of(new UUID[] { null }), game.getClients().stream().filter(c -> !c.equals(game.getHostId()))).toArray(UUID[]::new)));
+        send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby closed.", Stream.concat(Stream.of(new UUID[]{null}), game.getClients().stream().filter(c -> !c.equals(game.getHostId()))).toArray(UUID[]::new)));
 
         // Unregister client on game.
         for (UUID clientId : game.getClients()) {
@@ -249,15 +255,10 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      */
     @Override
     public final void close() {
-        if (executor != null) executor.shutdown();
-        if (updateThread != null) {
-            updateThread.interrupt();
-            while (updateThread.isAlive()) {
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                }
-            }
+        this.isRunning = false;
+        if (console != null) console.close();
+        if (executor != null) {
+            executor.shutdownNow();
         }
     }
 
@@ -266,4 +267,48 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         close();
     }
 
+    public Scanner getInput() {
+        return input;
+    }
+
+    @Override
+    public void setInput(InputStream input) {
+        if (this.input != null) this.input.close();
+        this.input = new Scanner(input);
+    }
+
+    public PrintStream getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(OutputStream out) {
+        if (this.output != null) this.output.close();
+        this.output = new PrintStream(out);
+    }
+
+    @Override
+    public Console<Server> createConsole(InputStream in, OutputStream out) {
+        if (this.console != null) this.console.close();
+
+        IAdministrable.super.createConsole(in, out);
+        Console<Server> console = new Console<>(this, in, out);
+        this.console = console;
+
+        // Register default commands.
+        console.registerCommand(new Command<>("exit", new String[0]), (sender, cmd) -> {
+            sender.stop();
+            return true;
+        });
+
+        console.registerCommand(new Command<>("help", new String[0]), (sender, cmd) -> {
+            console.getOut().println("Available commands: ");
+            for (String s : console.getCommands()) {
+                console.getOut().println('\t' + s);
+            }
+            return true;
+        });
+
+        return console;
+    }
 }

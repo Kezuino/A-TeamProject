@@ -20,7 +20,6 @@ import java.rmi.server.UnicastRemoteObject;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -28,10 +27,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     private static Server instance;
     protected ServerBase rmi;
-    private ClanFunctions clanFunctions = ClanFunctions.getInstance();
+    private ClanFunctions clanFunctions;
 
     public Server() throws RemoteException {
         super();
+        clanFunctions = ClanFunctions.getInstance();
         rmi = new ServerBase(this);
     }
 
@@ -88,19 +88,17 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
     public void stop() {
         super.stop();
 
+        send(new PacketKick(PacketKick.KickReasonType.QUIT, "Server stopped"));
+
+        unregisterPackets();
+
+        // Unexport server from RMI.
         try {
-            send(new PacketKick(PacketKick.KickReasonType.QUIT, "Server stopped"));
-
-            unregisterPackets();
-
             UnicastRemoteObject.unexportObject(rmi, true);
-
-            System.out.println("Server stopped");
-        } catch (NoSuchObjectException ex) {
-            System.out.println(ex.getMessage());
-
-            Logger.getLogger(ServerBase.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchObjectException ignored) {
         }
+
+        System.out.println("Server stopped.");
     }
 
     /**
@@ -111,6 +109,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
      */
     @Override
     public void send(Packet packet) {
+        if (packets == null) return;
         packets.execute(packet);
     }
 
@@ -153,7 +152,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             }
 
-                this.getClients().remove(this.getClient(packet.getSender()));
+            this.getClients().remove(this.getClient(packet.getSender()));
             return true;
         });
 
@@ -813,6 +812,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     @Override
     public void unregisterPackets() {
+        if (packets == null) return;
         packets.unregisterAll();
     }
 }
