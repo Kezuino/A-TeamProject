@@ -40,10 +40,14 @@ public class Assets {
     }
 
     public static String getSkinPath(String... args) {
-        try {
-            return Paths.get(Paths.get(new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent(), skin).toString(), args).toString().replace("\\", "/");
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(Assets.class.getName()).log(Level.SEVERE, null, ex);
+        if (Assets.skin == null) {
+            return Paths.get(Gdx.files.getLocalStoragePath(), args).toString();
+        } else {
+            try {
+                return Paths.get(Paths.get(new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent(), skin).toString(), args).toString().replace("\\", "/");
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(Assets.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         return null;
     }
@@ -67,7 +71,7 @@ public class Assets {
      * Loads all the fonts used throughout the {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
     private static void loadFonts() {
-        manager.load(getSkinPath("fonts","opensans.ttf"), BitmapFont.class);
+        manager.load(getSkinPath("fonts", "opensans.ttf"), BitmapFont.class);
     }
 
     /**
@@ -76,22 +80,21 @@ public class Assets {
     private static void load() {
 
         // Textures (only load those that aren't loaded by the TmxMapLoader).
-        manager.load(getSkinPath("textures","projectile.png"), Texture.class);
-        manager.load(getSkinPath("textures","portal.png"), Texture.class);
-        manager.load(getSkinPath("textures","pactale.png"), Texture.class);
-        manager.load(getSkinPath("textures","enemy.png"), Texture.class);
+        manager.load(getSkinPath("textures", "projectile.png"), Texture.class);
+        manager.load(getSkinPath("textures", "portal.png"), Texture.class);
+        manager.load(getSkinPath("textures", "pactale.png"), Texture.class);
+        manager.load(getSkinPath("textures", "enemy.png"), Texture.class);
 
         // Particle effects.
         manager.load("textures/particles/projectile", ParticleEffect.class);
 
         // Sounds (Only short clips that are mainly used for interaction/action effects).
-        manager.load(getSkinPath(AUDIO_SOUND_DIR , "defeat.wav"), Sound.class);
-        manager.load(getSkinPath(AUDIO_SOUND_DIR , "portal_shot.mp3"), Sound.class);
-        manager.load(getSkinPath(AUDIO_SOUND_DIR , "portal_hit.mp3"), Sound.class);
-        manager.load(getSkinPath(AUDIO_SOUND_DIR , "enemy_eat.mp3"), Sound.class);
+        manager.load(getSkinPath(AUDIO_SOUND_DIR, "defeat.wav"), Sound.class);
+        manager.load(getSkinPath(AUDIO_SOUND_DIR, "portal_shot.mp3"), Sound.class);
+        manager.load(getSkinPath(AUDIO_SOUND_DIR, "portal_hit.mp3"), Sound.class);
+        manager.load(getSkinPath(AUDIO_SOUND_DIR, "enemy_eat.mp3"), Sound.class);
 
         // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
-
         //Skins
         //manager.load(SKINS_DIR + "pacskin.json",FileHandle.class);
         // Wait for assets to load.
@@ -126,7 +129,7 @@ public class Assets {
         if (asset == null || asset.isEmpty()) {
             throw new IllegalArgumentException("Parameter asset must not be null or empty.");
         }
-        
+
         FileHandle file = new FileHandle(getSkinPath("textures", asset));
         if (!file.exists()) {
             throw new NullPointerException(String.format("Asset texture '%s' could not be found.", asset));
@@ -139,7 +142,7 @@ public class Assets {
             manager.load(getSkinPath("textures", asset), type);
             manager.finishLoading();
         }
-        return manager.get( getSkinPath("textures", asset), type);
+        return manager.get(getSkinPath("textures", asset), type);
     }
 
     /**
@@ -159,7 +162,7 @@ public class Assets {
      * @return {@link Texture} that was loaded by the name of the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
      */
     public static Texture getBalloon(String name) {
-        return get(getSkinPath("textures/balloons", name +".png"), Texture.class);
+        return get(getSkinPath("textures/balloons", name + ".png"), Texture.class);
     }
 
     /**
@@ -179,7 +182,7 @@ public class Assets {
      * @return {@link Sound} from the assets folder and plays it.
      */
     public static Sound playSound(String asset) {
-        Sound sound = Assets.get(getSkinPath(AUDIO_SOUND_DIR , asset), Sound.class);
+        Sound sound = Assets.get(getSkinPath(AUDIO_SOUND_DIR, asset), Sound.class);
         if (sound != null) {
             sound.play();
         }
@@ -193,7 +196,7 @@ public class Assets {
      * @return {@link Sound} from the assets folder and loops it.
      */
     public static Sound loopSound(String asset) {
-        Sound sound = Assets.get(getSkinPath(AUDIO_SOUND_DIR , asset), Sound.class);
+        Sound sound = Assets.get(getSkinPath(AUDIO_SOUND_DIR, asset), Sound.class);
         if (sound != null) {
             sound.loop();
         }
@@ -210,7 +213,7 @@ public class Assets {
         if (fileName == null || fileName.isEmpty()) {
             return null;
         }
-        String asset =   getSkinPath(AUDIO_MUSIC_DIR , fileName);
+        String asset = getSkinPath(AUDIO_MUSIC_DIR, fileName);
 
         Music music;
 
@@ -244,7 +247,7 @@ public class Assets {
     public static ShaderProgram getShaderProgram(String shaderName) {
         ShaderProgram.pedantic = false;
         String assetName = FilenameUtils.getFileNameWithoutExtension(shaderName);
-        FileHandle vertexFile = new FileHandle((getSkinPath("shaders/vertex" , assetName + ".vsh")));
+        FileHandle vertexFile = new FileHandle((getSkinPath("shaders/vertex", assetName + ".vsh")));
         FileHandle fragmentFile = new FileHandle((getSkinPath("shaders/fragment", assetName + ".fsh")));
         if (!vertexFile.exists() || !fragmentFile.exists()) {
             throw new GdxRuntimeException("Couldn't find shader files.");
@@ -264,11 +267,10 @@ public class Assets {
         manager.dispose();
     }
 
-
     public static void unload() {
-        manager.unload(getSkinPath("textures","projectile.png"));
-        manager.unload(getSkinPath("textures","portal.png"));
-        manager.unload(getSkinPath("textures","pactale.png"));
-        manager.unload(getSkinPath("textures","enemy.png"));
+        manager.unload(getSkinPath("textures", "projectile.png"));
+        manager.unload(getSkinPath("textures", "portal.png"));
+        manager.unload(getSkinPath("textures", "pactale.png"));
+        manager.unload(getSkinPath("textures", "enemy.png"));
     }
 }

@@ -30,13 +30,8 @@ public class SkinSelectScreen extends BaseScreen {
         tbChangeLook.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                //game.setScreen(new GameScreen(game));
                 Assets.unload();
                 Assets.create("Skin2");
-//                PacketHighScore packet;
-//                packet = new PacketHighScore("MBoiz", 100, Client.getInstance().getId());
-//                Client.getInstance().send(packet);
-//                packet.getResult();
             }
         });
         
