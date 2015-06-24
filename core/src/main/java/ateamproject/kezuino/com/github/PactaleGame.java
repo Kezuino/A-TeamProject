@@ -19,7 +19,6 @@ public class PactaleGame extends Game {
     @Override
     public void dispose() {
         Gdx.app.debug("CLOSE", "Game is closing..");
-
         super.dispose();
     }
 }

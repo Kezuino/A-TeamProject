@@ -122,4 +122,9 @@ public abstract class ClientInfo implements IClientInfo {
         this.clans = clans;
         return this.clans;
     }
+
+    @Override
+    public String toString() {
+        return String.format("ClientInfo: username: %s, email: %s, private id: %s, public id: %s%s", getUsername(), getEmailAddress(), getPrivateId(), getPublicId(), getGame() == null ? "" : ", " + getGame());
+    }
 }

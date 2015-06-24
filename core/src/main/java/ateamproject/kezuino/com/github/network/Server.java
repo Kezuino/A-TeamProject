@@ -314,6 +314,21 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
             return true;
         });
 
+        console.registerCommand(CommandDefinitionBuilder.create("clients")
+                                                        .setDescription("Retrieves the clients currently on the server.")
+                                                        .get(), (sender, cmd) -> {
+            List<TClient> clients = getClients();
+            if (clients.size() == 0) {
+                console.getOut().println("No clients on server.");
+            } else {
+                console.getOut().println("Clients on server:");
+                for (TClient client : clients) {
+                    console.getOut().println('\t' + client.toString());
+                }
+            }
+            return true;
+        });
+
         return console;
     }
 }
