@@ -24,16 +24,14 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
 
     private Map<UUID, String> members = new HashMap<>();
 
-    private boolean isHost;
-
     private Table scrollTable;
 
     // host constructor
     public LobbyScreen(com.badlogic.gdx.Game game, String lobbyname, String clanName) {
         super(game);
-        this.lobbyName = lobbyname;
-        this.isHost = true;
         this.client = Client.getInstance();
+        this.lobbyName = lobbyname;
+        this.client.setHost(true);
         this.clanName = clanName;
 
         PacketCreateLobby p = new PacketCreateLobby(this.lobbyName, this.clanName);
@@ -54,10 +52,9 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
     // member constructor
     public LobbyScreen(com.badlogic.gdx.Game game, UUID lobbyId) {
         super(game);
-        this.lobbyId = lobbyId;
-        this.isHost = false;
-
         client = Client.getInstance();
+        this.lobbyId = lobbyId;
+        this.client.setHost(false);
 
         // Get lobby information and fill gui.
         PacketJoinLobby packet = new PacketJoinLobby(this.lobbyId, client.getId());
@@ -76,7 +73,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
 
     public void createGui() {
         // Lobby verlaten.
-        TextButton btnQuitLobby = new TextButton(isHost ? "Lobby sluiten" : "Lobby verlaten", skin);
+        TextButton btnQuitLobby = new TextButton(client.isHost() ? "Lobby sluiten" : "Lobby verlaten", skin);
         btnQuitLobby.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -116,7 +113,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
         scrollTable.row();
 
         // Run game button.
-        TextButton btnRunGame = new TextButton(isHost ? "Spel starten" : "Ready", skin);
+        TextButton btnRunGame = new TextButton(client.isHost() ? "Spel starten" : "Ready", skin);
         btnRunGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -124,7 +121,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
             }
         });
         btnRunGame.setPosition(stage.getWidth() - btnQuitLobby.getWidth() - 10 - btnRunGame.getWidth() - 10, stage.getHeight() - btnRunGame.getHeight() - 10);
-        if (isHost) {
+        if (client.isHost()) {
             this.stage.addActor(btnRunGame);
         }
 
@@ -172,7 +169,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
                 TextField lblmember = new TextField(member.getValue(), skin);
                 scrollTable.add(lblmember);
                 // if member is host
-                if (isHost && !member.getKey().equals(client.getPublicId())) {
+                if (client.isHost() && !member.getKey().equals(client.getPublicId())) {
 
                     TextButton btnKick = new TextButton("Kick", skin);
                     btnKick.addListener(new ClickListener() {
@@ -198,7 +195,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
     public void addMember(UUID client, String username) {
         this.members.put(client, username);
 
-        this.updateMembers();
+        this.reloadMembers();
     }
 
     public void removeMember(UUID client) {
@@ -206,35 +203,18 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
 
         if (i != null) {
             this.members.remove(i);
-
-            this.updateMembers();
+            this.reloadMembers();
         }
-    }
-
-    private void updateMembers() {
-        reloadMembers();
-        /*
-         scrollTable.clear();
-
-         TextField memberNameHeader = new TextField("Member name", skin);
-         memberNameHeader.setDisabled(true);
-
-         scrollTable.add(memberNameHeader);
-         scrollTable.row();
-        
-         if (this.members != null) {
-         for (String membername : members.values()) {
-         TextField lblmember = new TextField(membername, skin);
-         lblmember.setDisabled(true);
-
-         scrollTable.add(lblmember);
-         scrollTable.row();
-         }
-         }        */
     }
 
     @Override
     public void refresh() {
         reloadMembers();
+    }
+
+    @Override
+    public void dispose() {
+        super.dispose();
+        this.client.setHost(false);
     }
 }

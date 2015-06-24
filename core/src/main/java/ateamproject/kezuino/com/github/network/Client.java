@@ -8,7 +8,6 @@ package ateamproject.kezuino.com.github.network;
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketManager;
-import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import com.badlogic.gdx.Game;
 
 import java.util.HashMap;
@@ -30,6 +29,7 @@ public abstract class Client implements INetworkComponent, IPacketSender {
     protected PacketManager packets;
     protected String Username;
     protected String emailadres;
+    private boolean isHost;
 
     public Client(com.badlogic.gdx.Game game) {
         this.game = game;
@@ -124,5 +124,13 @@ public abstract class Client implements INetworkComponent, IPacketSender {
 
     public String getEmailadres() {
         return emailadres;
+    }
+
+    public boolean isHost() {
+        return isHost;
+    }
+
+    public void setHost(boolean isHost) {
+        this.isHost = isHost;
     }
 }

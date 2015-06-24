@@ -12,6 +12,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
+import java.math.BigDecimal;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -151,10 +152,14 @@ public class MapLoader {
                     runConsumers(MapObjectTypes.ITEM.getType(), item);
                 } else if (getTypesToLoad().contains(MapObjectTypes.ENEMY) && objTileProps.containsKey(MapObjectTypes.ENEMY
                         .getKey())) {
+                    //Create new enemy movement speed if level is not 1, add 3% for every level.
+                    float movementSpeed = 2.5f;
+                    if (level!=1){
+                        double factor = Math.pow(1.05, level-1);
+                        movementSpeed *=factor;
+                    } 
                     // Create enemy.
-                    Enemy enemy = new Enemy(null, curPos, 2.5f, Direction.Down);
-                    //float newSpeed = enemy.getMovementSpeed();
-                    //enemy.setMovementSpeed(newSpeed);
+                    Enemy enemy = new Enemy(null, curPos, movementSpeed, Direction.Down);
                     enemy.setTexture(obj.getTextureRegion());
                     enemy.setMap(map);
                     enemy.setId();

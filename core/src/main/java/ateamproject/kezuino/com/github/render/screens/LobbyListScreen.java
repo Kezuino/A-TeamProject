@@ -174,8 +174,6 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
                 btnJoin.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
-                        PacketJoinLobby packet = new PacketJoinLobby(game.lobbyId);
-                        Client.getInstance().send(packet);
                         LobbyListScreen.this.game.setScreen(new LobbyScreen(LobbyListScreen.this.game, game.lobbyId));
                     }
                 });
