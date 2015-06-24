@@ -314,11 +314,11 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         server.send(packet);
         return packet.getResult();
     }
-    }
 
     @Override
     public Map<String, Integer> getHighscores(UUID sender) throws RemoteException {
         PacketGetHighscores packet = new PacketGetHighscores(sender);
         server.send(packet);
         return packet.getResult();
+    }
 }

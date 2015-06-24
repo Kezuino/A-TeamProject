@@ -588,14 +588,14 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
             //Calculate the score based on the level of the game. For every level above 1, add 5% more score.
             int score = packet.getItemType().getScore();
-            if (game.getLevel() != 1){
-                double factor = Math.pow(1.05, game.getLevel()-1);
-                score *=factor;
-            } 
-               
+            if (game.getLevel() != 1) {
+                double factor = Math.pow(1.05, game.getLevel() - 1);
+                score *= factor;
+            }
+
             for (UUID receiver : game.getClients()) {
                 try {
-                    if(!receiver.equals(packet.getSender())) {
+                    if (!receiver.equals(packet.getSender())) {
                         getClient(receiver).getRmi().removeItem(packet.getSender(), packet.getItemId(), packet.getItemType());
                     }
                     getClient(receiver).getRmi().changeScore(null, PacketScoreChanged.ManipulationType.INCREASE, score);
@@ -604,7 +604,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             }
         });
-        
+
         packets.registerAction(PacketScoreChanged.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {
@@ -820,21 +820,21 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             }
         });
-        });
 
         packets.registerFunc(PacketGetHighscores.class, packet -> {
             Map<String, Integer> highscores = new HashMap<>();
-            
+
             ResultSet result = Database.getInstance().query("SELECT Name,Score FROM clan ORDER BY Score LIMIT 10");
-            
+
             try {
                 while (result.next()) {
-                    highscores.put(result.getString(0),result.getInt(1));
+                    highscores.put(result.getString(0), result.getInt(1));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
             return highscores;
+        });
     }
 
     @Override

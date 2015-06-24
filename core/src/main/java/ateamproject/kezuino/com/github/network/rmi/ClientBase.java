@@ -145,11 +145,12 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketShootProjectile packet = new PacketShootProjectile(sender);
         client.send(packet);
     }
-    }
+    
 
     @Override
     public Map<String, Integer> getHighscores(UUID sender) throws RemoteException {
         PacketGetHighscores packet = new PacketGetHighscores(sender);
         client.send(packet);
         return packet.getResult();
+    }
 }
