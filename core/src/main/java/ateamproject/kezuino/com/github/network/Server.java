@@ -329,6 +329,24 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
             return true;
         });
 
+        console.registerCommand(CommandDefinitionBuilder.create("games")
+                                                        .setDescription("Shows all active games with their clients.")
+                                                        .get(), (sender, cmd) -> {
+            LinkedHashMap<UUID, Game> games = getGames();
+            if (games.size() == 0) {
+                console.getOut().println("No games on server.");
+            } else {
+                console.getOut().println("Games on server:");
+                for (Game game : games.values()) {
+                    console.getOut().println('\t' + game.toString());
+                    for (UUID clientId : game.getClients()) {
+                        TClient client = getClient(clientId);
+                        console.getOut().println("\t\t" + client);
+                    }
+                }
+            }
+            return true;
+        });
         return console;
     }
 }
