@@ -9,11 +9,11 @@ import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.singleplayer.Score;
+import ateamproject.kezuino.com.github.utility.collection.ConcurrentLinkedHashSet;
 import com.badlogic.gdx.graphics.Color;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Stream;
 
 /**
  * Holds information about a hosted lobby/game. Used by the {@link INetworkComponent} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.
@@ -33,7 +33,7 @@ public class Game {
 
     protected UUID id;
     protected String name;
-    protected CopyOnWriteArrayList<UUID> clients;
+    protected ConcurrentLinkedHashSet<UUID> clients;
     /**
      * First UUID is the voter. second UUID is the person that received the vote.
      */
@@ -68,7 +68,7 @@ public class Game {
 
         // Add host to clients list
         this.hostId = host;
-        this.clients = new CopyOnWriteArrayList<>();
+        this.clients = new ConcurrentLinkedHashSet<>();
         this.clients.add(host);
     }
 
@@ -108,7 +108,7 @@ public class Game {
      *
      * @return All {@link IClientInfo clients} that are currently in this game / lobby.
      */
-    public CopyOnWriteArrayList<UUID> getClients() {
+    public ConcurrentLinkedHashSet<UUID> getClients() {
         return clients;
     }
 
