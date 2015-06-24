@@ -549,6 +549,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 throw new IllegalStateException(String.format("Cannot create GameObject of type: '%s'", p.getTypeName()));
             }
             object.setId(p.getId());
+            object.setStartingPosition(p.getPosition());
             object.setDirection(p.getDirection());
             object.setExactPosition(p.getPosition());
             object.setMap(session.getMap());
@@ -738,7 +739,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 }
             } else {
                 // Server sended this.
-                BaseScreen.getSession().getPlayer(packet.getSender()).setDirection(packet.getDirection());
+                Pactale player = BaseScreen.getSession().getPlayer(packet.getSender());
+                if (player != null) player.setDirection(packet.getDirection());
             }
         });
 

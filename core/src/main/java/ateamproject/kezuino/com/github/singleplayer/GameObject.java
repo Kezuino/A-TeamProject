@@ -642,4 +642,8 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
     public void move(Node targetNode) {
         throw new UnsupportedOperationException();
     }
+
+    public void setStartingPosition(Vector2 startingPosition) {
+        this.startingPosition = startingPosition;
+    }
 }
