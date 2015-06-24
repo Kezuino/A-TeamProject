@@ -93,13 +93,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     public ClientBase getRmi() {
         return rmi;
     }
-    
-    public void setSkin(String skin) {
-        this.skin = skin;
-    }
-    
+
     public String getSkin() {
         return this.skin;
+    }
+
+    public void setSkin(String skin) {
+        this.skin = skin;
     }
 
     @Override
@@ -577,7 +577,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                         .toLowerCase() + ".png", Texture.class))));
             } else if (object instanceof Enemy) {
                 final GameObject finalObject = object;
-                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.get( finalObject.getClass()
+                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.getTexture(finalObject.getClass()
                         .getSimpleName()
                         .toLowerCase() + ".png", Texture.class))));
             }
@@ -734,7 +734,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     e.printStackTrace();
                 }
             } else {
-                if (BaseScreen.getSession().getPlayer(packet.getSender())!=null){                    
+                if (BaseScreen.getSession().getPlayer(packet.getSender()) != null) {
                     // Server sended this.
                     BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
                 }

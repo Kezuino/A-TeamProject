@@ -163,7 +163,7 @@ public class MapLoader {
                     } 
                     // Create enemy.
                     Enemy enemy = new Enemy(null, curPos, movementSpeed, Direction.Down);
-                    enemy.setAnimation(new Animation(true, Assets.getTexture("enemy.png", Texture.class)));
+                    enemy.setAnimation(new Animation(Assets.getTexture("enemy.png", Texture.class)));
                     enemy.setMap(map);
                     enemy.setId();
 
