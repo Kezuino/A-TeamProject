@@ -189,7 +189,7 @@ public class Game {
     }
 
     /**
-     * Removes the client from the given private {@link UUID id}.
+     * Removes the client from the game where he is in with the given private client {@link UUID id}.
      *
      * @param id Private {@link UUID id} of the client.
      * @return If true, the client was removed.
@@ -212,10 +212,10 @@ public class Game {
         }
 
         // Notify removed client that it should leave.
-        server.send(new PacketKick(PacketKick.KickReasonType.GAME, "Gekickt van de lobby.", null, id));
+        server.send(new PacketKick(PacketKick.KickReasonType.GAME, "Gekickt.", null, id));
 
-        if (getClients().isEmpty()) {
-            server.removeGame(getId());
+        if (this.getHostId().equals(id)) {
+            server.removeGame(this.getId());
         }
         return true;
     }

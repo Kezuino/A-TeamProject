@@ -194,8 +194,12 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 return true;
             } else {
                 try {
-                    for (UUID receiver : packet.getReceivers()) {
-                        this.rmi.getServer().kickClient(packet.getSender(), receiver, packet.getReasonType(), packet.getReason());
+                    if (packet.getReceivers().length > 0) {
+                        for (UUID receiver : packet.getReceivers()) {
+                            this.rmi.getServer().kickClient(packet.getSender(), receiver, packet.getReasonType(), packet.getReason());
+                        }
+                    } else {
+                        this.rmi.getServer().kickClient(packet.getSender(), packet.getSender(), packet.getReasonType(), packet.getReason());
                     }
                 } catch (RemoteException ex) {
                     Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -307,16 +311,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                         .log(Level.SEVERE, null, ex);
             }
             return null;
-        });
-
-        packets.registerFunc(PacketLeaveLobby.class, (p) -> {
-            try {
-                return getRmi().getServer().leaveLobby(p.getSender());
-            } catch (RemoteException ex) {
-                Logger.getLogger(ateamproject.kezuino.com.github.network.rmi.Client.class.getName())
-                        .log(Level.SEVERE, null, ex);
-            }
-            return false;
         });
 
         packets.registerFunc(PacketLoginCreateNewUser.class, (p) -> {
@@ -816,5 +810,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
+
+//        packets.registerAction(PacketGetHighscores.class, packet -> {
+//            try {
+//                getRmi().getServer().PickUpItem(packet.getSender(), packet.getItem());
+//            } catch (RemoteException ex) {
+//                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        });
     }
 }
