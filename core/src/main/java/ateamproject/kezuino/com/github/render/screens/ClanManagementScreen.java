@@ -37,7 +37,6 @@ public class ClanManagementScreen extends BaseScreen implements RefreshableScree
         super(game);
 
         client = Client.getInstance();
-        System.out.println();
         emailaddress = client.getEmailadres();
 
         scrollTable = new Table();

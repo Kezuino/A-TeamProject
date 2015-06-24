@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.utility.io.Database;
+import com.badlogic.gdx.Gdx;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -26,7 +27,7 @@ public class ClanFunctions {
 
     private ClanFunctions() {
         if (!Database.getInstance().open()) {
-            System.out.println("Database could not be accessed.");
+            System.out.println("DATABASE NOT ONLINE!");
         }
     }
 
@@ -38,10 +39,10 @@ public class ClanFunctions {
      * Gives all clans for a specific {@code emailaddress}.
      *
      * @param emailaddress the emailaddress for which the clans needs to
-     * searched for.
+     *                     searched for.
      * @return the String array which contains all the clan names.
      */
-    public ArrayList<String> fillTable(String emailaddress) {
+    public ArrayList<String> getClansByEmailAddress(String emailaddress) {
         ArrayList<String> clans = new ArrayList<>();
 
         ResultSet resultSet;
@@ -68,13 +69,11 @@ public class ClanFunctions {
     }
 
     /**
-     * Gives all clans for a specific {@code emailaddress}.
+     * Gives all clans for a specific {@code username}.
      *
-     * @param emailaddress the emailaddress for which the clans needs to
-     * searched for.
-     * @return the String array which contains all the clan names.
+     * @return Names of the clans that the {@code username} is in.
      */
-    public ArrayList<String> fillTable2(String username) {
+    public ArrayList<String> getClansByUserName(String username) {
         try {
             ArrayList<String> clans = new ArrayList<>();
             ResultSet resultSet = Database.getInstance()
@@ -96,7 +95,7 @@ public class ClanFunctions {
     /**
      * Create a clan with the given {@code clanName} and {@code emailaddress}.
      *
-     * @param clanName Name of the clan.
+     * @param clanName     Name of the clan.
      * @param emailaddress Creater of the clan.
      * @return True if creation did succeed else false.
      */
@@ -144,7 +143,7 @@ public class ClanFunctions {
      * Gets the {@link InvitationType} for a given clan and a given
      * {@code emailaddress}.
      *
-     * @param clanName Name of the clan.
+     * @param clanName     Name of the clan.
      * @param emailaddress {@code emailaddress} of who is in the clan.
      * @return {@link InvitationType}, or null if failed.
      */
@@ -177,11 +176,10 @@ public class ClanFunctions {
     /**
      * Gets the managementType for a given clan and a given {
      *
-     * @copde emailaddress}.
-     *
-     * @param clanName Name of the clan
+     * @param clanName     Name of the clan
      * @param emailaddress Emailaddress of who is in the clan
      * @return {@link ManagementType}, or null if failed.
+     * @copde emailaddress}.
      */
     public ManagementType getManagement(String clanName, String emailaddress) {
         ResultSet resultSet;
@@ -234,13 +232,13 @@ public class ClanFunctions {
     /**
      * Processes an invitation.
      *
-     * @param invite Invite to process.
-     * @param clanName Name of the clan where the invite belongs to.
-     * @param emailAddress Email of the person who did send the invite to this
-     * function.
+     * @param invite             Invite to process.
+     * @param clanName           Name of the clan where the invite belongs to.
+     * @param emailAddress       Email of the person who did send the invite to this
+     *                           function.
      * @param nameOfEmailInvitee Optional name/emailaddress parameter for the
-     * 'INVITE' invite. Needs to be null when a invite is not of the type
-     * 'INVITE'.
+     *                           'INVITE' invite. Needs to be null when a invite is not of the type
+     *                           'INVITE'.
      * @return True if invitation is successfully handled else false.
      */
     public boolean handleInvitation(InvitationType invite, String clanName, String emailAddress, String nameOfEmailInvitee) {
@@ -279,9 +277,9 @@ public class ClanFunctions {
      * the {@code clan} and {@code emailaddress}.
      *
      * @param managementType {@link ManagementType} to process.
-     * @param clanName Name of the clan where the {@link ManagementType} belongs
-     * to
-     * @param emailaddress Emailaddress of the user.
+     * @param clanName       Name of the clan where the {@link ManagementType} belongs
+     *                       to
+     * @param emailaddress   Emailaddress of the user.
      * @return True if {@link ManagementType} is successfully handled else
      * false.
      */
@@ -341,7 +339,7 @@ public class ClanFunctions {
     /**
      * Set the username of an user.
      *
-     * @param name New name of the user.
+     * @param name         New name of the user.
      * @param emailaddress Emailaddress of the user to find in the database.
      * @return True if it succeeded, false if the {@code name} was already
      * taken.
@@ -357,7 +355,7 @@ public class ClanFunctions {
      * Check if a user is in or invited into a clan.
      *
      * @param nameOfEmailInvitee Name of the person to look for
-     * @param clanName Clan in which to search for
+     * @param clanName           Clan in which to search for
      * @return True if the user is currently in or is invited into the clan,
      * else false.
      */

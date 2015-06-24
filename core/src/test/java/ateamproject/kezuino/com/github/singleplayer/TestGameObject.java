@@ -28,7 +28,7 @@ public class TestGameObject {
 
     @Before
     public void setUp() {
-        session = new GameSession();
+        session = new GameSession(1);
         session.setMap(20);
         map = session.getMap();
         spawn = map.getNode(19, 19);

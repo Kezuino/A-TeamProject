@@ -6,7 +6,6 @@
 package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
-import ateamproject.kezuino.com.github.render.screens.RefreshableScreen;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
@@ -37,7 +36,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
     @Override
     public boolean drop(PacketKick.KickReasonType kick, String reason) throws RemoteException {
-        PacketKick packet = new PacketKick(kick, reason);
+        PacketKick packet = new PacketKick(kick, reason, null, null);
         this.client.send(packet);
         return packet.getResult();
     }
@@ -53,8 +52,8 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void loadGame(String mapName, boolean isMaster, int playerLimit) throws RemoteException {
-        client.send(new PacketLoadGame(mapName, isMaster, playerLimit));
+    public void loadGame(String mapName, boolean isMaster, int playerLimit, int level) throws RemoteException {
+        client.send(new PacketLoadGame(mapName, isMaster, playerLimit, level));
     }
 
     @Override
@@ -67,6 +66,11 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     @Override
     public void screenRefresh(Class<?> refreshableScreen) throws RemoteException {
         client.send(new PacketScreenUpdate(refreshableScreen));
+    }
+    
+    @Override
+    public void kickPopupRefresh() throws RemoteException {
+        client.send(new PacketKickPopupRefresh());
     }
 
     @Override
@@ -96,22 +100,24 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
     
     @Override
-    public void removeItem(UUID sender, UUID itemId) {
-        PacketRemoveItem packet = new PacketRemoveItem(itemId, sender);
+    public void removeItem(UUID sender, UUID itemId, ItemType itemType) {
+        PacketRemoveItem packet = new PacketRemoveItem(itemId, itemType, sender);
         client.send(packet);
     }
 
     @Override
     public void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException {
-        if (position == null && followTarget == null)
+        if (position == null && followTarget == null) {
             throw new IllegalArgumentException("Either position or followTarget must not be null.");
+        }
         PacketBalloonMessage packet;
 
         // Null, null is needed so this client doesn't automatically assign itself as sender (see Packet.send).
-        if (followTarget != null)
+        if (followTarget != null) {
             packet = new PacketBalloonMessage(typeName, followTarget, null, null);
-        else
+        } else {
             packet = new PacketBalloonMessage(typeName, position, null, null);
+        }
         client.send(packet);
     }
 

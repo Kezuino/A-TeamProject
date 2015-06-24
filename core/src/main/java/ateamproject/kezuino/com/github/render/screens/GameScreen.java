@@ -10,20 +10,24 @@ import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.render.orthographic.GameRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.GameUIRenderer;
+import static ateamproject.kezuino.com.github.render.screens.BaseScreen.getSession;
 import ateamproject.kezuino.com.github.singleplayer.*;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage;
 import ateamproject.kezuino.com.github.utility.game.balloons.messages.BalloonHelpMe;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.Touchable;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.MoveToAction;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
@@ -32,6 +36,8 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Anton
@@ -105,11 +111,7 @@ public class GameScreen extends BaseScreen {
                         break;
                     case Input.Keys.TAB:
                         if (!getSession().isPauseMenuShowing()) {
-                            if (getSession().isPlayerMenuShowing()) {
-                                hidePlayersView();
-                            } else {
-                                showPlayersView();
-                            }
+                            showPlayersView();
                         }
                         break;
                     case Input.Keys.ESCAPE:
@@ -140,6 +142,8 @@ public class GameScreen extends BaseScreen {
                 MoveToAction action = Actions.action(MoveToAction.class);
                 action.setPosition(stage.getWidth() / 2 - pauseMenu.getWidth() / 2, stage.getHeight() + pauseMenu.getHeight());
                 action.setDuration(0.1f);
+                getSession().setPauseMenuShowing(false);
+
                 pauseMenu.hide(action);
             }
         });
@@ -149,7 +153,7 @@ public class GameScreen extends BaseScreen {
         bExit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Client disconnected.");
+                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Client afgesloten.");
                 Client.getInstance().send(packet);
 
                 game.setScreen(new MainScreen(game));
@@ -157,6 +161,10 @@ public class GameScreen extends BaseScreen {
         });
 
         pauseMenu.add(bExit);
+
+        //Create player menu.
+        this.playerMenu = new Dialog("Menu", skin) {
+        };
     }
 
     public void start() {
@@ -165,8 +173,8 @@ public class GameScreen extends BaseScreen {
 
     public void start(Score score) {
         if (getSession() == null) {
-            System.out.println("Resetted session on GameScreen.start");
-            setSession(new GameSession());
+            Gdx.app.debug("GAMESESSION", "Resetting static GameSession.");
+            setSession(new GameSession(1));
         }
         if (getSession().getScore() == null) {
             getSession().setScore(score);
@@ -177,7 +185,7 @@ public class GameScreen extends BaseScreen {
 
         player = getSession().getPlayer(Client.getInstance().getPublicId());
         if (player == null) {
-            System.out.println("Could not get Pactale object from public id. Check your internet connection.");
+            Gdx.app.log("GAMESESSION", "Could not get Pactale object from public id. Check your internet connection.");
             player = getSession().getPlayer(0);
         }
 
@@ -207,6 +215,7 @@ public class GameScreen extends BaseScreen {
                         lblEndGameText.remove();
                         lblScore.remove();
                         start(getSession().getScore());
+                        Client.getInstance().send(new PacketLaunchGame());
                     }
                 });
 
@@ -237,13 +246,25 @@ public class GameScreen extends BaseScreen {
         getSession().showPauseMenu();
     }
 
+    public void refreshPlayersView() {
+        if (getSession().isPlayerMenuShowing()) {
+            showPlayersView();
+        }
+    }
+
     public void showPlayersView() {
-        //Create player menu.
-        playerMenu = new Dialog("Menu", skin) {
-            {
-                button("Oke");
+        this.playerMenu.clear();
+
+        TextButton btExit = new TextButton("Oke", skin);
+        btExit.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                getSession().setPlayerMenuShowing(false);
+                playerMenu.hide();
             }
-        };
+        });
+        
+        this.playerMenu.add(btExit);
 
         Table scrollTable = new Table(skin);
 
@@ -266,7 +287,6 @@ public class GameScreen extends BaseScreen {
                     Client.getInstance().send(packetKickInfo);
                     people.clear();
                     people.addAll(packetKickInfo.getResult());
-                    playerMenu.hide();
                 }
             });
 
@@ -278,18 +298,16 @@ public class GameScreen extends BaseScreen {
             scrollTable.columnDefaults(2);
             scrollTable.row();
 
-            if (peopleResult[3].equals("0")) {
+            if (peopleResult[3].equals("true")) {
                 bKick.setDisabled(true);
+                bKick.setTouchable(Touchable.disabled);
+                bKick.setColor(255, 0, 0, 100);
             }
         }
 
         playerMenu.add(scrollTable);
 
-        playerMenu.show(stage);
-        getSession().showPlayerMenu();
-    }
-
-    public void hidePlayersView() {
+        this.playerMenu.show(stage);
         getSession().showPlayerMenu();
     }
 

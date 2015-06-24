@@ -27,10 +27,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     private static Server instance;
     protected ServerBase rmi;
-    private ClanFunctions clanFunctions = ClanFunctions.getInstance();
+    private ClanFunctions clanFunctions;
 
     public Server() throws RemoteException {
         super();
+        clanFunctions = ClanFunctions.getInstance();
         rmi = new ServerBase(this);
     }
 
@@ -53,9 +54,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     @Override
     public void update() {
+        // Handle heartbeat messages.
         for (IClientInfo c : getClients()) {
             if (c.getSecondsInactive() >= clientTimeout) {
-                removeClient(c.getPrivateId());
+                PacketKick pKick = new PacketKick(PacketKick.KickReasonType.QUIT, c.getPrivateId());
+                this.send(pKick);
                 System.out.printf("Client %s timed out.%n", c.getPrivateId().toString());
             }
         }
@@ -72,7 +75,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         try {
             registerPackets();
 
-            System.out.println(Registry.REGISTRY_PORT);
             Registry registry = LocateRegistry.createRegistry(Registry.REGISTRY_PORT);
             registry.bind("server", rmi);
 
@@ -80,26 +82,24 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             Logger.getLogger(ServerBase.class.getName()).log(Level.SEVERE, ex.getMessage());
         }
 
-        System.out.println("Server started");
+        System.out.printf("Server started on port: %d%n", Registry.REGISTRY_PORT);
     }
 
     @Override
     public void stop() {
         super.stop();
 
+        send(new PacketKick(PacketKick.KickReasonType.QUIT, "Server stopped"));
+
+        unregisterPackets();
+
+        // Unexport server from RMI.
         try {
-            send(new PacketKick(PacketKick.KickReasonType.QUIT, "Server stopped"));
-
-            unregisterPackets();
-
             UnicastRemoteObject.unexportObject(rmi, true);
-
-            System.out.println("Server stopped");
-        } catch (NoSuchObjectException ex) {
-            System.out.println(ex.getMessage());
-
-            Logger.getLogger(ServerBase.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (NoSuchObjectException ignored) {
         }
+
+        System.out.println("Server stopped.");
     }
 
     /**
@@ -110,46 +110,64 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
      */
     @Override
     public void send(Packet packet) {
+        if (packets == null) {
+            return;
+        }
         packets.execute(packet);
     }
 
     @Override
     public void registerPackets() {
         packets.registerFunc(PacketKick.class, (packet) -> {
-            if (packet.getReceivers().length > 0) {
-                // Drop all receivers.
-                for (UUID receiver : packet.getReceivers()) {
-                    try {
-                        getClient(receiver).getRmi().drop(packet.getReasonType(), packet.getReason());
-                    } catch (RemoteException e) {
+            if (packet.getSender() != null) {//dont go in if, if both are null
+                // All public ids to remove from game.
+                List<UUID> peopleToGetKicked = new ArrayList<>();
+
+                if (packet.getReceivers().length > 0) {
+                    for (UUID receiver : packet.getReceivers()) {
+                        peopleToGetKicked.add(receiver);
+                    }
+                } else {
+                    peopleToGetKicked.add(packet.getSender());
+                }
+
+                // Remove all the clients from the game that received this packet.
+                for (UUID client : peopleToGetKicked) {
+                    ClientInfo clientI = getClientFromPublic(client);
+                    if (clientI == null) {
+                        clientI = getClient(client);
+                    }
+                    
+                    if (clientI.getGame() != null) {
+                        clientI.getGame().removeClient(clientI.getPrivateId());
+                    }
+                }
+
+                if (packet.getReasonType().equals(PacketKick.KickReasonType.QUIT)) {
+                    this.removeClient(packet.getSender());
+                    System.out.println("Client " + packet.getSender() + " removed from server");
+                }
+            } else {//if loopback from server
+                ClientInfo client = null;
+                try {
+                    // Notify receivers that they have been dropped by the server.
+                    for (UUID uuid : packet.getReceivers()) {
+                        client = getClient(uuid);
+                        if (client == null) {
+                            continue;
+                        }
+                        client.getRmi().drop(packet.getReasonType(), packet.getReason());
+
+                    }
+                } catch (RemoteException e) {
+                    if (client != null) {
+                        System.out.println("Tried sending kick to " + client.getPublicId() + " but failed");
+                    } else {
                         e.printStackTrace();
                     }
                 }
-                //TODO delete associated game?
-
-            } else {
-                // Drop sender.
-                try {
-                    getClient(packet.getSender()).getRmi().drop(packet.getReasonType(), packet.getReason());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-
-                Game currentGame = getGameFromClientId(packet.getSender());//get game
-                currentGame.getClients().remove(packet.getSender());//remove sender form clients
-                ArrayList<UUID[]> allVotes = currentGame.getVotes();
-                for (UUID[] voteCollection : allVotes) {
-                    if (voteCollection[0].equals(packet.getSender())) {
-                        allVotes.remove(voteCollection);//remove votes placed by sender
-                    }
-                    if (voteCollection[1].equals(packet.getSender())) {
-                        allVotes.remove(voteCollection);//remove votes placed on sender
-                    }
-                }
-                //TODO remove pactale from each client
             }
-
-            return false;
+            return true;
         });
 
         packets.registerAction(PacketClientJoined.class, packet -> {
@@ -174,19 +192,16 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
         });
 
-        packets.registerFunc(PacketCreateClan.class, (packet) -> {
-            System.out.print("Create clan packet received");
-            return clanFunctions.createClan(packet.getClanName(), getClient(packet.getSender()).getEmailAddress());
-        });
+        packets.registerFunc(PacketCreateClan.class, (packet) -> clanFunctions.createClan(packet.getClanName(), getClient(packet.getSender()).getEmailAddress()));
 
         packets.registerFunc(PacketGetLobbies.class, (packet -> {
             List<PacketGetLobbies.GetLobbiesData> result = new ArrayList<>();
-            if (packet.getIsClanGame()) {
-                ArrayList<String> clans = getClient(packet.getSender()).getClans();
+            if (packet.isClanGame()) {
+                List<String> clans = getClient(packet.getSender()).getClans();
                 if (!clans.isEmpty()) {
                     for (String clan : clans) {
                         for (Game game : getGamesAsList()) {
-                            if (game.getClanName().equals(clan)) {
+                            if (game.getClanName().equals(clan) && !game.isInGame()) {
                                 result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
                                         game.getId(),
                                         game.getClients().size(),
@@ -197,7 +212,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             } else {
                 for (Game game : getGamesAsList()) {
-                    if (game.getClanName() == null) {
+                    if (game.getClanName() == null && !game.isInGame()) {
                         result.add(new PacketGetLobbies.GetLobbiesData(game.getName(),
                                 game.getId(),
                                 game.getClients().size(),
@@ -219,12 +234,23 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
         });
 
+        packets.registerAction(PacketKickPopupRefresh.class, packet -> {
+            for (UUID id : packet.getReceivers()) {
+                ClientInfo client = getClient(id);
+                try {
+                    client.getRmi().kickPopupRefresh();
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
         packets.registerFunc(PacketGetClans.class, (p) -> getClient(p.getSender()).getClans());
 
-        packets.registerAction(PacketReloadClans.class, (p) -> getClient(p.getSender()).setClans(clanFunctions.fillTable2(getClient(p
+        packets.registerAction(PacketReloadClans.class, (p) -> getClient(p.getSender()).setClans(clanFunctions.getClansByUserName(getClient(p
                 .getSender()).getUsername())));
 
-        packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.fillTable(packet.getEmailadres()));
+        packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.getClansByEmailAddress(packet.getEmailadres()));
 
         packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(getClient(packet.getSender()).getUsername()));
 
@@ -272,7 +298,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
                 // fill clans
-                client.setClans(clanFunctions.fillTable2(client.getUsername()));
+                client.setClans(clanFunctions.getClansByUserName(client.getUsername()));
 
                 // Tell client what its id is.
                 return new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId(), client
@@ -284,7 +310,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketLogout.class, packet -> {
-            removeClient(packet.getSender());
+            PacketKick pKick = new PacketKick(PacketKick.KickReasonType.QUIT, packet.getSender());
+            this.send(pKick);
             System.out.printf("Client %s logged out.%n", packet.getSender());
         });
 
@@ -367,36 +394,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerFunc(PacketCreateLobby.class, packet -> {
-            Game newGame = new Game(packet.getLobbyname(), packet.getClanname(), packet.getSender());
+            Game newGame = new Game(this, packet.getLobbyname(), packet.getClanname(), packet.getSender());
             addGame(newGame);
             getClient(packet.getSender()).setGame(newGame);
 
             System.out.println("Lobby: " + newGame.getName() + " - id " + newGame.getId() + " CREATED !");
             return newGame.getId();
-        });
-
-        packets.registerFunc(PacketLeaveLobby.class, packet -> {
-            Game lobby = getGameFromClientId(packet.getSender());
-            if (lobby == null) {
-                return false;
-            }
-
-            if (packet.getSender().equals(lobby.getHostId())) {
-                // Remove everyone from the lobby.
-                removeGame(lobby.getId());
-            } else {
-                ClientInfo client = getClient(packet.getSender());
-                client.setGame(null);
-
-                // Remove the requesting client only.
-                lobby.getClients().remove(packet.getSender());
-
-                // Notify other connected clients of the game that someone left.
-                PacketClientLeft p = new PacketClientLeft(client.getPublicId(), client.getUsername());
-                p.setReceivers(lobby.getClientsAsArray());
-                send(p);
-            }
-            return true;
         });
 
         packets.registerFunc(PacketJoinLobby.class, packet -> {
@@ -446,7 +449,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             ArrayList<String> peoples = new ArrayList<>();
             System.out.println("sender:" + packet.getSender().toString());
             for (UUID personId : getGameFromClientId(packet.getSender()).getClients()) {//for all clients in this game
-                if (!personId.equals(packet.getSender())) {//if not sender
+                if (!personId.equals(packet.getSender()) && !getGameFromClientId(packet.getSender()).getClients().get(0).equals(personId)) {//if not sender and if not host == true
                     boolean hasVotedForCurrentPerson = false;
                     int amountOfVotesForCurrentPerson = 0;
                     int amountOfVotesNeededForKick = (int) Math.ceil((float) getGameFromClientId(packet.getSender()).getClients()
@@ -466,7 +469,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
 
                     if (amountOfVotesForCurrentPerson >= amountOfVotesNeededForKick) {
-                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Votekicked", personId);
+                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Uitgestemd", personId);
                         this.send(packetKick);
                     } else {
                         peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String
@@ -543,15 +546,17 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 System.out.println("Cannot launch game. The game was not found.");
                 return;
             }
-            //Level word +1, standaard is 0 dus eerst dat gelaunched word zal level 1 worden.
-            game.nextLevel();
+
+            // Increase level.
+            game.setLevel(packet.getLevel() == -1 ? 1 : packet.getLevel());
+
             // Set the loading states of everyone to empty and notify everyone to start loading the map.
             for (UUID uuid : game.getClients()) {
                 ClientInfo client = getClient(uuid);
                 client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
 
                 try {
-                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size());
+                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size(), game.getLevel());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -573,14 +578,20 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             Game game = getGameFromClientId(packet.getSender());
             game.getLoadQueue().add(packet);
         });
-        
+
         packets.registerAction(PacketRemoveItem.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {
-                System.out.println("Could not remove item with unique id: " + packet.getId());
+                System.out.println("Could not remove item with unique id: " + packet.getItemId());
                 return;
             }
-
+            //Calculate the score based on the level of the game. For every level above 1, add 5% more score.
+            int score = packet.getItemType().getScore();
+            if (game.getLevel() != 1) {
+                double factor = Math.pow(1.05, game.getLevel() - 1);
+                score *= factor;
+            }
+            game.getScore().increase(score);
             IProtocolClient[] receivers = game.getClients()
                     .stream()
                     .filter(c -> !c.equals(packet.getSender()))
@@ -589,7 +600,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             for (IProtocolClient receiver : receivers) {
                 try {
-                    receiver.removeItem(packet.getSender(), packet.getId());
+                    receiver.removeItem(packet.getSender(), packet.getItemId(), packet.getItemType());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -766,7 +777,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketBalloonMessage.class, packet -> {
-            if (packet.getSender() == null) throw new IllegalStateException("Sender must not be null.");
+            if (packet.getSender() == null) {
+                throw new IllegalStateException("Sender must not be null.");
+            }
 
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {
@@ -788,22 +801,25 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 }
             }
         });
-        
+
         packets.registerAction(PacketPickUpItem.class, packet -> {
-             Game game = getGameFromClientId(packet.getSender());
-             IProtocolClient[] receivers = game.getClients().stream().filter(c -> !c.equals(game.getHostId())).map(id -> getClient(id).getRmi()).toArray(IProtocolClient[]::new);
-             for (IProtocolClient receiver : receivers) {
-                        try {
-                            receiver.PickUpItem(packet.getSender(), packet.getItem());
-                        } catch (RemoteException e) {
-                            e.printStackTrace();
-                        }
-                    }
+            Game game = getGameFromClientId(packet.getSender());
+            IProtocolClient[] receivers = game.getClients().stream().filter(c -> !c.equals(game.getHostId())).map(id -> getClient(id).getRmi()).toArray(IProtocolClient[]::new);
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.PickUpItem(packet.getSender(), packet.getItem());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
         });
     }
 
     @Override
     public void unregisterPackets() {
+        if (packets == null) {
+            return;
+        }
         packets.unregisterAll();
     }
 }

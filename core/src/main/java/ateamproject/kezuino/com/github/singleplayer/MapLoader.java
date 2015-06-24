@@ -15,6 +15,7 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.math.Vector2;
+import java.math.BigDecimal;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -31,8 +32,9 @@ public class MapLoader {
     protected EnumSet<MapObjectTypes> typesToLoad;
     protected HashMap<Class, List<Consumer>> consumers;
     protected int playerLimit;
+    protected int level;
 
-    public MapLoader(GameSession session, String mapName) {
+    public MapLoader(GameSession session, String mapName, int level) {
         if (session == null) throw new IllegalArgumentException("Parameter session must not be null.");
         if (mapName == null || mapName.isEmpty())
             throw new IllegalArgumentException("Parameter mapName must not be null or empty.");
@@ -45,6 +47,7 @@ public class MapLoader {
         this.mapName = mapName;
         this.consumers = new HashMap<>();
         this.typesToLoad = EnumSet.allOf(MapObjectTypes.class);
+        this.level = level;
     }
 
     public EnumSet<MapObjectTypes> getTypesToLoad() {
@@ -152,14 +155,20 @@ public class MapLoader {
                     runConsumers(MapObjectTypes.ITEM.getType(), item);
                 } else if (getTypesToLoad().contains(MapObjectTypes.ENEMY) && objTileProps.containsKey(MapObjectTypes.ENEMY
                         .getKey())) {
+                    //Create new enemy movement speed if level is not 1, add 3% for every level.
+                    float movementSpeed = 2.5f;
+                    if (level!=1){
+                        double factor = Math.pow(1.05, level-1);
+                        movementSpeed *=factor;
+                    } 
                     // Create enemy.
-                    Enemy enemy = new Enemy(null, curPos, 2.5f, Direction.Down);
-
+                    Enemy enemy = new Enemy(null, curPos, movementSpeed, Direction.Down);
                     enemy.setAnimation(new Animation(true, Assets.getTexture("enemy.png", Texture.class)));
                     enemy.setMap(map);
                     enemy.setId();
-                    //map.addGameObject(enemy);
 
+                    // TODO: Enable enemies when sync works.
+                    map.addGameObject(enemy);
                     runConsumers(MapObjectTypes.ENEMY.getType(), enemy);
                 } else if (getTypesToLoad().contains(MapObjectTypes.PACTALE) && objTileProps.containsKey(MapObjectTypes.PACTALE
                         .getKey())) {

@@ -41,7 +41,7 @@ public class PacketGetLobbies extends Packet<List<GetLobbiesData>> {
         }
     }
 
-    public boolean getIsClanGame(){
+    public boolean isClanGame(){
         return this.isClanGame;
     }
 }

@@ -41,10 +41,10 @@ public class ClientTest {
 
         client = Client.getInstance();
         client.start();
-        client.stop();
+       // client.stop();
         //Als de boolean nog true is, is er geen RemoteException.
         assertTrue(succeeded);
-        client.stop();
+       // client.stop();
     }
 
 }

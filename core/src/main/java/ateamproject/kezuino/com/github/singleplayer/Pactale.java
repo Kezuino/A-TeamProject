@@ -122,9 +122,9 @@ public class Pactale extends GameObject {
 
     @Override
     protected boolean collisionWithItem(Item item) {
-        item.activate(this);
+        //item.activate(this);
         if(this.getId().equals(Client.getInstance().getPublicId())) {
-            Client.getInstance().send(new PacketRemoveItem(item.getId(), Client.getInstance().getId()));
+            Client.getInstance().send(new PacketRemoveItem(item.getId(), item.getItemType(), Client.getInstance().getId()));
             item.getNode().removeItem();
         }
         return true;

@@ -7,17 +7,32 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Timer;
+import javafx.scene.shape.Path;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Optional;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public abstract class BalloonMessage<T extends BalloonMessage> {
     protected static HashSet<BalloonMessage> balloonMessages;
     protected static HashMap<Class, BalloonMessage> cachedBalloonMessages;
+    protected static ScheduledExecutorService executor;
 
     static {
         balloonMessages = new HashSet<>();
         cachedBalloonMessages = new HashMap<>();
+        executor = Executors.newScheduledThreadPool(1);
     }
 
     /**
@@ -29,11 +44,6 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
      * {@link Texture} filename to load.
      */
     protected String name;
-
-    /**
-     * Timer for {@link BalloonMessage} fading and other effects.
-     */
-    protected Timer timer;
 
     /**
      * Destination size (width, height) to draw the {@link BalloonMessage} on.
@@ -61,17 +71,14 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
     private Direction direction;
 
     public BalloonMessage() {
-        timer = new Timer();
-
         this.direction = Direction.Down;
-        this.totalTimeShown = 1f;
+        this.totalTimeShown = 1000f;
         this.position = Vector2.Zero;
     }
 
     public BalloonMessage(float totalTimeShown, Vector2 position, Vector2 size) {
         if (totalTimeShown <= 0)
             throw new IllegalArgumentException("Parameter totalTimeShown must be higher than zero.");
-        timer = new Timer();
 
         this.direction = Direction.Down;
         this.totalTimeShown = totalTimeShown;
@@ -99,13 +106,9 @@ public abstract class BalloonMessage<T extends BalloonMessage> {
     public static <T extends BalloonMessage> T addBalloonMessage(T balloon) {
         if (balloon == null) return null;
         balloonMessages.add(balloon);
-        balloon.timer.clear();
-        balloon.timer.scheduleTask(new Timer.Task() {
-            @Override
-            public void run() {
-                balloonMessages.remove(balloon);
-            }
-        }, balloon.totalTimeShown);
+
+        // Schedule for deletion.
+        executor.schedule(() -> balloonMessages.remove(balloon), (long) balloon.getTotalTimeShown(), TimeUnit.MILLISECONDS);
         return balloon;
     }
 

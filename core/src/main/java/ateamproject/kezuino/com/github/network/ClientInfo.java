@@ -1,20 +1,26 @@
 package ateamproject.kezuino.com.github.network;
 
-import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketSetLoadStatus;
-import java.util.ArrayList;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public abstract class ClientInfo implements IClientInfo {
+    /**
+     * Secret {@link UUID id} of this {@link ClientInfo}.
+     */
     protected UUID privateId;
+    /**
+     * Public {@link UUID id} of this {@link ClientInfo}. This {@link UUID id} should be used by other {@link Client clients} to identify this {@link ClientInfo}.
+     */
     protected UUID publicId;
     protected float timeSinceLastActivity;
     protected Game game;
     protected String emailAddress;
     protected String username;
-    protected ArrayList<String> clans;
+    protected List<String> clans;
 
     /**
      * Determines if this {@link ClientInfo} has a {@link Map} loaded. And if so, what status it is currently in.
@@ -95,25 +101,30 @@ public abstract class ClientInfo implements IClientInfo {
     public void setUsername(String username) {
         this.username = username;
     }
-    
+
     @Override
     public PacketSetLoadStatus.LoadStatus getLoadStatus() {
         return this.loadStatus;
-    }
-    
-    @Override
-    public ArrayList<String> getClans(){
-        return this.clans;
     }
 
     @Override
     public void setLoadStatus(PacketSetLoadStatus.LoadStatus status) {
         this.loadStatus = status;
     }
-    
-     @Override
-    public ArrayList<String> setClans(ArrayList<String> clans){
-         this.clans = clans;
+
+    @Override
+    public List<String> getClans() {
         return this.clans;
+    }
+
+    @Override
+    public List<String> setClans(List<String> clans) {
+        this.clans = clans;
+        return this.clans;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ClientInfo: username: %s, email: %s, private id: %s, public id: %s%s", getUsername(), getEmailAddress(), getPrivateId(), getPublicId(), getGame() == null ? "" : ", " + getGame());
     }
 }

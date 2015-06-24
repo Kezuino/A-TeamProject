@@ -1,12 +1,16 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.render.IPactileEmitter;
 import ateamproject.kezuino.com.github.render.IRenderable;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import ateamproject.kezuino.com.github.utility.game.IPositionable;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
+import com.badlogic.gdx.graphics.g2d.ParticleEmitter;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
@@ -16,8 +20,13 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.UUID;
 
-public abstract class GameObject implements IRenderable, IPositionable {
+public abstract class GameObject implements IRenderable, IPositionable, IPactileEmitter {
 
+    protected String particleEffectName;
+    /**
+     * {@link ParticleEffect} used with this {@link GameObject}.
+     */
+    protected ParticleEffect particleEffect;
     /**
      * Unique id of this {@link GameObject} for synchronization on multiple clients.
      */
@@ -136,7 +145,6 @@ public abstract class GameObject implements IRenderable, IPositionable {
         this.isActive = true;
     }
 
-
     /**
      * Initializes this {@link GameObject} with a default {@code Color.WHITE}
      * color.
@@ -148,6 +156,21 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     public GameObject(Vector2 exactPosition, float movementSpeed, Direction direction) {
         this(exactPosition, movementSpeed, direction, Color.WHITE);
+    }
+
+    /**
+     * Destroys the previous {@link ParticleEffect} if it's active and then creates a new one given the {@code particleEffectName}.
+     *
+     * @param particleEffectName Name of the {@link ParticleEffect} to load from assets.
+     */
+    public void setParticleEffectName(String particleEffectName) {
+        this.particleEffectName = particleEffectName;
+        createParticleEffect();
+    }
+
+    @Override
+    public ParticleEffect getParticleEffect() {
+        return particleEffect;
     }
 
     /**
@@ -485,6 +508,47 @@ public abstract class GameObject implements IRenderable, IPositionable {
         moveAdjacent(this.direction);
     }
 
+    @Override
+    public void createParticleEffect() {
+        if (particleEffect != null) destroyPartileEffect();
+        particleEffect = new ParticleEffect(Assets.getParticleEffect(particleEffectName));
+        particleEffect.start();
+    }
+
+    @Override
+    public void destroyPartileEffect() {
+        if (particleEffect != null) {
+            particleEffect.reset();
+            particleEffect = null;
+        }
+    }
+
+    @Override
+    public void updateParticleEffect() {
+        if (particleEffect == null) return;
+        particleEffect.setPosition(this.getExactPosition().x + (this.getBounds().getWidth() / 2f), this.getExactPosition().y + (this.getBounds().getHeight() / 2f));
+
+        // Update color.
+        for (ParticleEmitter emitter : particleEffect.getEmitters()) {
+            emitter.getTint().setColors(new float[] { getColor().r, getColor().g, getColor().b });
+        }
+
+        // TODO: Update rotation.
+//        for (ParticleEmitter emitter : particleEffect.getEmitters()) {
+//            emitter.getAngle().setLow(getDirection().getRotation());
+//            emitter.getAngle().setHigh(getDirection().getRotation());
+//        }
+
+        particleEffect.update(Gdx.graphics.getDeltaTime());
+        if (particleEffect.isComplete()) particleEffect.reset();
+    }
+
+    @Override
+    public void drawParticleEffect(SpriteBatch batch) {
+        if (particleEffect == null) return;
+        particleEffect.draw(batch);
+    }
+
     /**
      * Updates this {@link GameObject}.
      */
@@ -529,6 +593,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
                 collisionWithItem(item);
             }
         }
+
+        // Particle particleEffect.
+        updateParticleEffect();
     }
 
     /**
@@ -554,6 +621,10 @@ public abstract class GameObject implements IRenderable, IPositionable {
             this.setTexture(this.animation.getFrame(this.direction));
         }
 
+        // Particle effect.
+        drawParticleEffect(batch);
+
+        // Draw object.
         batch.draw(this.texture, this.getExactPosition().x, this.getExactPosition().y, this.texture.getRegionHeight() / 2, this.texture
                 .getRegionWidth() / 2, this.texture.getRegionHeight(), this.texture.getRegionWidth(), 1, 1, rotation);
 
@@ -570,5 +641,9 @@ public abstract class GameObject implements IRenderable, IPositionable {
      */
     public void move(Node targetNode) {
         throw new UnsupportedOperationException();
+    }
+
+    public void setStartingPosition(Vector2 startingPosition) {
+        this.startingPosition = startingPosition;
     }
 }

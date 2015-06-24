@@ -1,19 +1,22 @@
 package ateamproject.kezuino.com.github.network;
 
+import ateamproject.kezuino.com.github.admin.inputs.CommandDefinitionBuilder;
+import ateamproject.kezuino.com.github.admin.inputs.Console;
+import ateamproject.kezuino.com.github.admin.inputs.IAdministrable;
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketManager;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketClientLeft;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.stream.Stream;
 
-public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, AutoCloseable {
+public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, IAdministrable<Server> {
     /**
      * Service for executing code on multiple threads.
      */
@@ -33,25 +36,29 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * {@link Game Games} that are currently active on this {@link Server}.
      */
     protected LinkedHashMap<UUID, Game> games;
-
-
+    /**
+     * {@link Console} used for administration of this {@link Server}.
+     */
+    protected Console<Server> console;
     /**
      * Thread for updating the {@link Server} state. Is executed in a while loop with a {@link Thread#sleep(long)} of 10 milliseconds.
      * Stop the thread by calling {@link #stop()}.
      */
-    protected Thread updateThread;
-
     protected boolean isUpdating;
+    protected boolean isRunning;
     /**
      * Gets or sets all {@link IClientInfo clients} currently connected to this {@link Server}.
      */
     protected LinkedHashMap<UUID, TClient> clients;
+    private Scanner input;
+    private PrintStream output;
 
     public Server() {
+        this.isRunning = true;
         this.games = new LinkedHashMap<>();
         this.clients = new LinkedHashMap<>();
         this.isUpdating = true;
-        this.clientTimeout = 30; // Default 30 seconds before client is dropped for all servers.
+        this.clientTimeout = 10; // Default 10 seconds before client is dropped for all servers.
         this.packets = new PacketManager();
         this.executor = Executors.newCachedThreadPool();
 
@@ -63,18 +70,15 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * Starts running the update loop.
      */
     protected void startUpdating() {
-        if (updateThread != null && updateThread.isAlive()) return;
-
-        updateThread = new Thread(() -> {
-            while (!updateThread.isInterrupted()) {
+        executor.submit(() -> {
+            while (!executor.isShutdown()) {
                 update();
                 try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
+                    Thread.sleep(100);
+                } catch (InterruptedException ignored) {
                 }
             }
         });
-        updateThread.start();
     }
 
     /**
@@ -130,7 +134,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         if (game == null) return null;
 
         // Notify all connected clients that the game is closing.
-        send(new PacketKick(PacketKick.KickReasonType.LOBBY, "Lobby closed.", game.getClientsAsArray()));
+        send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby is gesloten.", Stream.concat(Stream.of(new UUID[]{null}), game.getClients().stream().filter(c -> !c.equals(game.getHostId()))).toArray(UUID[]::new)));
 
         // Unregister client on game.
         for (UUID clientId : game.getClients()) {
@@ -140,39 +144,6 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
 
         // Remove the game.
         return games.remove(gameId);
-    }
-
-
-    /**
-     * Removes the {@link TClient} from all references in this {@link Server}.
-     *
-     * @param privateId Private id of the {@link TClient} to remove.
-     * @return Removed {@link TClient}.
-     */
-    public TClient removeClient(UUID privateId) {
-        // Remove client from game.
-        IClientInfo client = getClient(privateId);
-        client.setGame(null);
-
-        // Update/remove game from server.
-        Game lobby = getGameFromClientId(privateId);
-        if (lobby != null) {
-            lobby.getClients().remove(privateId);
-
-            // Close lobby if no more clients or client was host.
-            if (lobby.getClients().size() == 0) {
-                games.remove(lobby.getId());
-            } else if (lobby.getHostId().equals(privateId)) {
-                removeGame(lobby.getId());
-            } else {
-                // Notify other clients that someone left.
-                PacketClientLeft packet = new PacketClientLeft(client.getPublicId(), client.getUsername(), lobby.getClientsAsArray());
-                send(packet);
-            }
-        }
-
-        // Remove client from server.
-        return clients.remove(privateId);
     }
 
     /**
@@ -204,6 +175,10 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      */
     public List<TClient> getClients() {
         return new ArrayList<>(clients.values());
+    }
+    
+    public void removeClient(UUID privateId){
+        this.clients.remove(privateId);
     }
 
     /**
@@ -238,7 +213,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * @param sender Private id of the {@link TClient} to find.
      * @return {@link Game} that the {@link TClient} is currently in. Or null if {@link TClient} is not currently in a game / lobby.
      */
-    public Game getGameFromClientId(UUID sender) {
+    public synchronized Game getGameFromClientId(UUID sender) {
         TClient client = getClient(sender);
         if (client == null) return null;
         return client.getGame();
@@ -249,15 +224,10 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      */
     @Override
     public final void close() {
-        if (executor != null) executor.shutdown();
-        if (updateThread != null) {
-            updateThread.interrupt();
-            while (updateThread.isAlive()) {
-                try {
-                    Thread.sleep(20);
-                } catch (InterruptedException e) {
-                }
-            }
+        this.isRunning = false;
+        if (console != null) console.close();
+        if (executor != null) {
+            executor.shutdownNow();
         }
     }
 
@@ -266,4 +236,86 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         close();
     }
 
+    public Scanner getInput() {
+        return input;
+    }
+
+    @Override
+    public void setInput(InputStream input) {
+        if (this.input != null) this.input.close();
+        this.input = new Scanner(input);
+    }
+
+    public PrintStream getOutput() {
+        return output;
+    }
+
+    @Override
+    public void setOutput(OutputStream out) {
+        if (this.output != null) this.output.close();
+        this.output = new PrintStream(out);
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public Console<Server> createConsole(InputStream in, OutputStream out) {
+        if (this.console != null) this.console.close();
+
+        IAdministrable.super.createConsole(in, out);
+        Console<Server> console = new Console<>(this, in, out);
+        this.console = console;
+
+        // Register default commands.
+        console.registerCommand(CommandDefinitionBuilder.create("exit")
+                                                        .setDescription("Closes the server.")
+                                                        .get(), (sender, cmd) -> {
+            sender.stop();
+            return true;
+        });
+
+        console.registerCommand(CommandDefinitionBuilder.create("help")
+                                                        .setDescription("Shows the available commands.")
+                                                        .get(), (sender, cmd) -> {
+            console.getOut().println("Available commands: ");
+            for (String s : console.getCommands()) {
+                console.getOut().println(s);
+            }
+            return true;
+        });
+
+        console.registerCommand(CommandDefinitionBuilder.create("clients")
+                                                        .setDescription("Retrieves the clients currently on the server.")
+                                                        .get(), (sender, cmd) -> {
+            List<TClient> clients = getClients();
+            if (clients.size() == 0) {
+                console.getOut().println("No clients on server.");
+            } else {
+                console.getOut().println("Clients on server:");
+                for (TClient client : clients) {
+                    console.getOut().println('\t' + client.toString());
+                }
+            }
+            return true;
+        });
+
+        console.registerCommand(CommandDefinitionBuilder.create("games")
+                                                        .setDescription("Shows all active games with their clients.")
+                                                        .get(), (sender, cmd) -> {
+            LinkedHashMap<UUID, Game> games = getGames();
+            if (games.size() == 0) {
+                console.getOut().println("No games on server.");
+            } else {
+                console.getOut().println("Games on server:");
+                for (Game game : games.values()) {
+                    console.getOut().println('\t' + game.toString());
+                    for (UUID clientId : game.getClients()) {
+                        TClient client = getClient(clientId);
+                        console.getOut().println("\t\t" + client);
+                    }
+                }
+            }
+            return true;
+        });
+        return console;
+    }
 }

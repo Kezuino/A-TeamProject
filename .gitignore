@@ -71,3 +71,4 @@ core/src/assets/libs/
 core/src/assets/reports/
 core/src/assets/test-results/
 core/src/assets/libs/core_1.0.jar
+*.orig

@@ -9,6 +9,7 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import java.io.File;
@@ -80,6 +81,9 @@ public class Assets {
         manager.load(getSkinPath("textures","pactale.png"), Texture.class);
         manager.load(getSkinPath("textures","enemy.png"), Texture.class);
 
+        // Particle effects.
+        manager.load("textures/particles/projectile", ParticleEffect.class);
+
         // Sounds (Only short clips that are mainly used for interaction/action effects).
         manager.load(getSkinPath(AUDIO_SOUND_DIR , "defeat.wav"), Sound.class);
         manager.load(getSkinPath(AUDIO_SOUND_DIR , "portal_shot.mp3"), Sound.class);
@@ -87,12 +91,11 @@ public class Assets {
         manager.load(getSkinPath(AUDIO_SOUND_DIR , "enemy_eat.mp3"), Sound.class);
 
         // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
+
         //Skins
         //manager.load(SKINS_DIR + "pacskin.json",FileHandle.class);
         // Wait for assets to load.
         manager.finishLoading();
-        System.out.println(manager.getAssetNames());
-        
     }
 
     /**
@@ -137,6 +140,36 @@ public class Assets {
             manager.finishLoading();
         }
         return manager.get( getSkinPath("textures", asset), type);
+    }
+
+    /**
+     * Returns the {@link BitmapFont} that was loaded in the {@link AssetManager} with the given name.
+     *
+     * @param asset Name of the {@link BitmapFont} to get.
+     * @return {@link BitmapFont} if it was found. Or null.
+     */
+    public static BitmapFont getFont(String asset) {
+        return get(FONTS_DIR + asset, BitmapFont.class);
+    }
+
+    /**
+     * Loads the {@link Texture} for the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
+     *
+     * @param name Name of the {@link Texture} to load in the assets.
+     * @return {@link Texture} that was loaded by the name of the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
+     */
+    public static Texture getBalloon(String name) {
+        return get(getSkinPath("textures/balloons", name +".png"), Texture.class);
+    }
+
+    /**
+     * Retrieves the {@link ParticleEffect} by the given {@code name}. Automatically loads the {@link ParticleEffect} if it hasn't been loaded yet.
+     *
+     * @param name Name of the {@link ParticleEffect} file to search for.
+     * @return {@link ParticleEffect} that was loaded from the file.
+     */
+    public static ParticleEffect getParticleEffect(String name) {
+        return get("textures/particles/" + name, ParticleEffect.class);
     }
 
     /**
@@ -219,7 +252,7 @@ public class Assets {
 
         ShaderProgram shader = new ShaderProgram(vertexFile.readString(), fragmentFile.readString());
         if (!shader.isCompiled()) {
-            System.out.println(shader.getLog());
+            Gdx.app.error("SHADER", shader.getLog());
         }
         return shader;
     }
@@ -231,27 +264,6 @@ public class Assets {
         manager.dispose();
     }
 
-    /**
-     * Returns the {@link BitmapFont} that was loaded in the {@link AssetManager} with the given name.
-     *
-     * @param asset Name of the {@link BitmapFont} to get.
-     * @return {@link BitmapFont} if it was found. Or null.
-     */
-    public static BitmapFont getFont(String asset) {
-        return get(getSkinPath(FONTS_DIR, asset), BitmapFont.class);
-    }
-
-    /**
-     * Loads the {@link Texture} for the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
-     *
-     * @param name Name of the {@link Texture} to load in the assets.
-     * @return {@link Texture} that was loaded by the name of the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
-     */
-    public static Texture getBalloon(String name) {
-        //return get(Gdx.files.external(skin + "/textures/balloons/" + name + ".png").file().getAbsolutePath(), Texture.class);
-        return get(getSkinPath("textures/balloons", name +".png"), Texture.class);
-
-    }
 
     public static void unload() {
         manager.unload(getSkinPath("textures","projectile.png"));

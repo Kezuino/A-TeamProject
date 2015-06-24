@@ -1,8 +1,8 @@
 package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketSetLoadStatus;
-import java.util.ArrayList;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -94,10 +94,21 @@ public interface IClientInfo {
      * @param username Username from the {@link IClientInfo}.
      */
     void setUsername(String username);
-    
-     ArrayList<String> getClans();
-     
-     ArrayList<String> setClans(ArrayList<String> clans);
+
+    /**
+     * Gets the names of the clans that this {@link IClientInfo} is in.
+     *
+     * @return Names of the clans that this {@link IClientInfo} is in.
+     */
+    List<String> getClans();
+
+    /**
+     * Sets the names of the clans that this {@link IClientInfo} is in.
+     *
+     * @param clans Names of the clans that this {@link IClientInfo} is in.
+     * @return Names of the clans set. For chaining.
+     */
+    List<String> setClans(List<String> clans);
 
     /**
      * Gets the {@link ateamproject.kezuino.com.github.network.packet.packets.PacketSetLoadStatus.LoadStatus} that this {@link IClientInfo} is currently in.

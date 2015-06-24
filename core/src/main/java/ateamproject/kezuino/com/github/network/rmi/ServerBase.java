@@ -5,6 +5,7 @@ import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
+import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
@@ -69,19 +70,13 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean leaveLobby(UUID sender) throws RemoteException {
-        PacketLeaveLobby packet = new PacketLeaveLobby(sender);
-        server.send(packet);
-        
-        PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
-        server.send(tmp);
-        return packet.getResult();
-    }
-
-    @Override
     public boolean kickClient(UUID sender, UUID target, PacketKick.KickReasonType reasonType, String message) throws RemoteException {
         PacketKick packet = new PacketKick(reasonType, message, sender, target);
         server.send(packet);
+        
+        PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
+        server.send(tmp);
+        
         return packet.getResult();
     }
 
@@ -201,8 +196,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void launchGame(UUID sender) throws RemoteException {
-        PacketLaunchGame packet = new PacketLaunchGame(false, sender);
+    public void launchGame(UUID sender, int level) throws RemoteException {
+        PacketLaunchGame packet = new PacketLaunchGame(false, level, sender);
         server.send(packet);
     }
 
@@ -259,8 +254,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
     
     @Override
-    public void removeItem(UUID sender, UUID itemId) throws RemoteException {
-        PacketRemoveItem packet = new PacketRemoveItem(itemId, sender);
+    public void removeItem(UUID sender, UUID itemId, ItemType itemType) throws RemoteException {
+        PacketRemoveItem packet = new PacketRemoveItem(itemId, itemType, sender);
         server.send(packet);
     }
 
@@ -280,9 +275,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void setKickInformation(UUID sender,UUID getPersonToVoteFor) throws RemoteException {
-        PacketSetKickInformation packet = new PacketSetKickInformation(getPersonToVoteFor,sender);
+    public void setKickInformation(UUID sender, UUID getPersonToVoteFor) throws RemoteException {
+        PacketSetKickInformation packet = new PacketSetKickInformation(getPersonToVoteFor, sender);
         server.send(packet);
+
+        PacketKickPopupRefresh tmp = new PacketKickPopupRefresh(this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
+        server.send(tmp);
     }
 
     @Override

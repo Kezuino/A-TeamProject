@@ -35,8 +35,7 @@ public interface IProtocolServer extends IProtocol {
     java.util.Map<UUID, String> getLobbyMembers(UUID Lobbyid) throws RemoteException;
 
     PacketJoinLobby.PacketJoinLobbyData joinLobby(UUID sender, UUID lobbyId) throws RemoteException;
-
-    boolean leaveLobby(UUID sender) throws RemoteException;
+            
 
     /**
      * Kicks the {@link IClientInfo} from any lobby it is currently in.
@@ -98,7 +97,7 @@ public interface IProtocolServer extends IProtocol {
      * @param sender {@link UUID} that sended this message.
      * @throws RemoteException If RMI fails to connect.
      */
-    void launchGame(UUID sender) throws RemoteException;
+    void launchGame(UUID sender, int level) throws RemoteException;
 
     List<PacketGetGameClients.Data> getGameClients(UUID sender) throws RemoteException;
 }

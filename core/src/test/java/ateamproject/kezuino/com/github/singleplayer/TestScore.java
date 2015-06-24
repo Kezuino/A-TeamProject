@@ -20,9 +20,9 @@ public class TestScore {
     
     @Before
     public void setUp() {
-        this.testSession = new GameSession();
+        this.testSession = new GameSession(1);
         testSession.setMap(4);
-        this.testScore = new Score(this.testSession);
+        this.testScore = new Score();
         this.testScore.increase(25);
     }
     
