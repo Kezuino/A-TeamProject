@@ -57,7 +57,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         // Handle heartbeat messages.
         for (IClientInfo c : getClients()) {
             if (c.getSecondsInactive() >= clientTimeout) {
-                PacketKick pKick = new PacketKick(PacketKick.KickReasonType.QUIT, c.getPublicId());
+                PacketKick pKick = new PacketKick(PacketKick.KickReasonType.QUIT, c.getPrivateId());
                 this.send(pKick);
                 System.out.printf("Client %s timed out.%n", c.getPrivateId().toString());
             }
@@ -133,25 +133,38 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
                 // Remove all the clients from the game that received this packet.
                 for (UUID client : peopleToGetKicked) {
-                    ClientInfo clientFromPublic = getClientFromPublic(client);
-                    clientFromPublic.getGame().removeClient(clientFromPublic.getPrivateId());
+                    ClientInfo clientI = getClientFromPublic(client);
+                    if (clientI == null) {
+                        clientI = getClient(client);
+                    }
+                    
+                    if (clientI.getGame() != null) {
+                        clientI.getGame().removeClient(clientI.getPrivateId());
+                    }
                 }
 
-                if (packet.getReasonType().equals(PacketKick.KickReasonType.QUIT) && packet.getSender() != null) {
-                    this.getClients().remove(this.getClient(packet.getSender()));
+                if (packet.getReasonType().equals(PacketKick.KickReasonType.QUIT)) {
+                    this.removeClient(packet.getSender());
+                    System.out.println("Client " + packet.getSender() + " removed from server");
                 }
             } else {//if loopback from server
+                ClientInfo client = null;
                 try {
                     // Notify receivers that they have been dropped by the server.
                     for (UUID uuid : packet.getReceivers()) {
-                        ClientInfo client = getClient(uuid);
+                        client = getClient(uuid);
                         if (client == null) {
                             continue;
                         }
                         client.getRmi().drop(packet.getReasonType(), packet.getReason());
+
                     }
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    if (client != null) {
+                        System.out.println("Tried sending kick to " + client.getPublicId() + " but failed");
+                    } else {
+                        e.printStackTrace();
+                    }
                 }
             }
             return true;
@@ -574,10 +587,10 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
             //Calculate the score based on the level of the game. For every level above 1, add 5% more score.
             int score = packet.getItemType().getScore();
-               if (game.getLevel()!=1){
-                        double factor = Math.pow(1.05, game.getLevel()-1);
-                        score *=factor;
-                    } 
+            if (game.getLevel() != 1) {
+                double factor = Math.pow(1.05, game.getLevel() - 1);
+                score *= factor;
+            }
             game.getScore().increase(score);
             IProtocolClient[] receivers = game.getClients()
                     .stream()

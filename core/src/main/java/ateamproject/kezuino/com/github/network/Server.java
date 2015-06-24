@@ -176,6 +176,10 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
     public List<TClient> getClients() {
         return new ArrayList<>(clients.values());
     }
+    
+    public void removeClient(UUID privateId){
+        this.clients.remove(privateId);
+    }
 
     /**
      * Gets the {@link IClientInfo} based on the private id. Can be null.
