@@ -585,8 +585,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 System.out.println("Could not remove item with unique id: " + packet.getItemId());
                 return;
             }
-
-            game.getScore().increase(packet.getItemType().getScore());
+            //Calculate the score based on the level of the game. For every level above 1, add 5% more score.
+            int score = packet.getItemType().getScore();
+               if (game.getLevel()!=1){
+                        double factor = Math.pow(1.05, game.getLevel()-1);
+                        score *=factor;
+                    } 
+            game.getScore().increase(score);
             IProtocolClient[] receivers = game.getClients()
                     .stream()
                     .filter(c -> !c.equals(packet.getSender()))
