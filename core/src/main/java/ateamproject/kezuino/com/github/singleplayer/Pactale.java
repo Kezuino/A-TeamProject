@@ -78,7 +78,7 @@ public class Pactale extends GameObject {
 
         this.isMoving = false;
         this.lives--;
-        if (this.lives == 0) {
+        if (this.lives <= 0) {
             Assets.playSound("defeat.wav");
             this.setInactive();
         }
