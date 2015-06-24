@@ -212,7 +212,7 @@ public class Game {
         }
 
         // Notify removed client that it should leave.
-        server.send(new PacketKick(PacketKick.KickReasonType.GAME, "Kicked from lobby.", null, id));
+        server.send(new PacketKick(PacketKick.KickReasonType.GAME, "Gekickt van de lobby.", null, id));
 
         if (getClients().isEmpty()) {
             server.removeGame(getId());

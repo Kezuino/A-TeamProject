@@ -140,7 +140,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
         table.setSize(stage.getWidth(), stage.getHeight());
         table.setColor(com.badlogic.gdx.graphics.Color.BLUE);
 
-        Label lobby = new Label("Lobby name : " + lobbyName, skin);
+        Label lobby = new Label(lobbyName, skin);
         lobby.setSize(200, 30);
         lobby.setPosition(0, stage.getHeight() - lobby.getHeight());
 
@@ -161,7 +161,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
 
     private void reloadMembers() {
         scrollTable.clear();
-        TextField memberNameHeader = new TextField("Member name", skin);
+        TextField memberNameHeader = new TextField("Spelers :", skin);
         scrollTable.add(memberNameHeader);
         scrollTable.add();
         scrollTable.row();
@@ -178,7 +178,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
                     btnKick.addListener(new ClickListener() {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
-                            PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Kicked by host", Client.getInstance().getId(), member.getKey());
+                            PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Gekickt door de beheerder", Client.getInstance().getId(), member.getKey());
                             Client.getInstance().send(packet);
                         }
                     });
