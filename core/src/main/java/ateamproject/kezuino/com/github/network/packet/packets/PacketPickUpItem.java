@@ -23,5 +23,4 @@ public class PacketPickUpItem extends Packet<Boolean> {
     public UUID getItem() {
         return item;
     }
-
 }

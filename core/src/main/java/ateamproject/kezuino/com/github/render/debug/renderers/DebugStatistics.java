@@ -27,7 +27,7 @@ public class DebugStatistics extends DebugRenderer {
     public void render(IPositionable layerObject) {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 0, 0);
+        font.draw(batch, "FPS: " + Gdx.graphics.getFramesPerSecond(), 100, camera.viewportHeight - 50);
         batch.end();
     }
 }

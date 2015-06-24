@@ -1,5 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
+import ateamproject.kezuino.com.github.network.rmi.Client;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,7 +53,7 @@ public class Score {
      *                   with.
      * @return The new current score value of this {@link Score}.
      */
-    public int increase(int increaseBy) {
+    public synchronized int increase(int increaseBy) {
         if (increaseBy < 0) throw new IllegalArgumentException("Parameter increaseBy must not be negative.");
         this.score += increaseBy;
         return this.score;
@@ -66,7 +68,7 @@ public class Score {
      *                   with.
      * @return The new current score value of this {@link Score}.
      */
-    public int decrease(int decreaseBy) {
+    public synchronized int decrease(int decreaseBy) {
         if (decreaseBy < 0) throw new IllegalArgumentException("Parameter decreaseBy must not be negative.");
         this.score -= this.score - decreaseBy < 0 ? this.score : decreaseBy;
         return this.score;
@@ -84,9 +86,13 @@ public class Score {
                                               .collect(Collectors.counting())
                                               .intValue() * 60;
 
-            this.decrease(scoreToDecrement);
+            //this.decrease(scoreToDecrement);
             this.currentScoreManipulation += scoreToDecrement;
+            
+            PacketScoreChanged packet = new PacketScoreChanged(scoreToDecrement, PacketScoreChanged.ManipulationType.DECREASE, Client.getInstance().getId());
+            Client.getInstance().send(packet);
+
+            nextScoreUpdate = nextScoreUpdate + 1000;
         }
-        nextScoreUpdate = nextScoreUpdate + 1000;
     }
 }

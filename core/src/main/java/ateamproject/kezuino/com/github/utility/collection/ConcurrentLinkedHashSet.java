@@ -30,26 +30,20 @@ public class ConcurrentLinkedHashSet<E extends Object> extends LinkedHashSet<E> 
     }
     
     @Override
-    public boolean add(E e) {
-        synchronized(this) {
-            return super.add(e);
-        }
+    public synchronized boolean add(E e) {
+        return super.add(e);
     }
     
     @Override
-    public boolean remove(Object o) {
-        synchronized(this) {
-            return super.remove(o);
-        }
+    public synchronized boolean remove(Object o) {
+        return super.remove(o);
     }
     
-    public E get(int i) {
-        synchronized(this) {
-            return super.stream().filter(x -> this.indexOf(x) == i).findFirst().orElse(null);
-        }
+    public synchronized E get(int i) {
+        return super.stream().filter(x -> this.indexOf(x) == i).findFirst().orElse(null);
     }
     
-    public int indexOf(E e) {
+    public synchronized int indexOf(E e) {
         int index = 0;
         
         for(Object x : super.toArray()) {

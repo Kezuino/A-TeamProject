@@ -154,8 +154,6 @@ public class Item implements IRenderable, IPositionable {
                 //TODO apply powerup
                 break;
         }
-
-        this.getMap().getSession().getScore().increase(this.type.getScore());
     }
 
     public Node getNode() {

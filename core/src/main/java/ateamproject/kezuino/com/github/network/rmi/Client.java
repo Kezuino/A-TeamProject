@@ -802,17 +802,29 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 if ((foundItem = BaseScreen.getSession().findItem(packet.getItemId())) != null) {
                     foundItem.activate(BaseScreen.getSession().getPlayer(packet.getSender()));
                     foundItem.getNode().removeItem();
-                    System.out.printf("Succesfully removed item with id %s%n", foundItem.getId());
                 }
             }
         });
+        
+        packets.registerAction(PacketScoreChanged.class, packet -> {
+            if (packet.getSender() != null && packet.getSender().equals(getId())) {
+                try {
+                    getRmi().getServer().changeScore(packet.getSender(), packet.getManipulationType(), packet.getChange());
+                } catch (RemoteException ex) {
+                    ex.printStackTrace();
+                }
+            } else {
+                Score currentScore = BaseScreen.getSession().getScore();
 
-        packets.registerAction(PacketPickUpItem.class, packet -> {
-            try {
-                getRmi().getServer().PickUpItem(packet.getSender(), packet.getItem());
-            } catch (RemoteException ex) {
-                Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
-            }
+                switch(packet.getManipulationType()) {
+                    case DECREASE:
+                        currentScore.decrease(packet.getChange());
+                        break;
+                    case INCREASE:
+                        currentScore.increase(packet.getChange());
+                        break;
+                }
+            }            
         });
     }
 }

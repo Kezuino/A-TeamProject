@@ -49,7 +49,6 @@ public class Game {
     protected Server server;
     private int mapObjectCount;
     private int level;
-    private Score score;
 
     public Game(Server server, String name, String clanName, UUID host) {
         this.server = server;
@@ -58,7 +57,6 @@ public class Game {
         this.id = UUID.randomUUID();
         this.name = name;
         this.clanName = clanName;
-        this.score = new Score();
         this.votes = new CopyOnWriteArrayList<>();//[0]voter,[1]person to kick
         this.loadQueue = new ArrayDeque<>();
 
@@ -182,10 +180,6 @@ public class Game {
 
     public void setLevel(int level) {
         this.level = level;
-    }
-
-    public Score getScore() {
-        return this.score;
     }
 
     /**

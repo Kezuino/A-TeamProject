@@ -5,6 +5,7 @@
  */
 package ateamproject.kezuino.com.github.network.rmi;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.math.Vector2;
@@ -28,8 +29,8 @@ public interface IProtocol extends Remote {
     void createItem(UUID sender, UUID itemId, ItemType type, Vector2 position) throws RemoteException;
     
     void removeItem(UUID sender, UUID itemId, ItemType itemType) throws RemoteException;
+    
+    void changeScore(UUID sender, PacketScoreChanged.ManipulationType manipulationType, int change) throws RemoteException;
 
     void balloonMessage(UUID sender, String typeName, Vector2 position, UUID followTarget) throws RemoteException;
-    
-    void PickUpItem(UUID sender,UUID item) throws RemoteException;
 }

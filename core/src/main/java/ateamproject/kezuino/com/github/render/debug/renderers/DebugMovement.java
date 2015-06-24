@@ -2,6 +2,7 @@ package ateamproject.kezuino.com.github.render.debug.renderers;
 
 import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderer;
+import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.singleplayer.GameObject;
 import ateamproject.kezuino.com.github.singleplayer.Node;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
@@ -56,7 +57,7 @@ public class DebugMovement extends DebugRenderer<GameObject> {
 
         // Draw text.
         batch.begin();
-        font.draw(batch, "Direction:", 0, camera.viewportHeight - 50);
+        font.draw(batch, "Score: " + BaseScreen.getSession().getScore().valueOf(), 0, camera.viewportHeight - 50);
         batch.end();
     }
 }
