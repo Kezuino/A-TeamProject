@@ -1,6 +1,6 @@
 package ateamproject.kezuino.com.github.network;
 
-import ateamproject.kezuino.com.github.admin.inputs.Command;
+import ateamproject.kezuino.com.github.admin.inputs.CommandDefinitionBuilder;
 import ateamproject.kezuino.com.github.admin.inputs.Console;
 import ateamproject.kezuino.com.github.admin.inputs.IAdministrable;
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
@@ -288,6 +288,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public Console<Server> createConsole(InputStream in, OutputStream out) {
         if (this.console != null) this.console.close();
 
@@ -296,15 +297,19 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         this.console = console;
 
         // Register default commands.
-        console.registerCommand(new Command<>("exit", new String[0]), (sender, cmd) -> {
+        console.registerCommand(CommandDefinitionBuilder.create("exit")
+                                                        .setDescription("Closes the server.")
+                                                        .get(), (sender, cmd) -> {
             sender.stop();
             return true;
         });
 
-        console.registerCommand(new Command<>("help", new String[0]), (sender, cmd) -> {
+        console.registerCommand(CommandDefinitionBuilder.create("help")
+                                                        .setDescription("Shows the available commands.")
+                                                        .get(), (sender, cmd) -> {
             console.getOut().println("Available commands: ");
             for (String s : console.getCommands()) {
-                console.getOut().println('\t' + s);
+                console.getOut().println(s);
             }
             return true;
         });

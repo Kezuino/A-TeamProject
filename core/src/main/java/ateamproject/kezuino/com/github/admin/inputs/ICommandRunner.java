@@ -8,10 +8,14 @@ interface ICommandRunner<TOwner extends IAdministrable, TCommand extends Command
      */
     void runCommand(String command);
 
-    void registerCommand(Command<TOwner> command, ICommandFunction<TOwner, Command> action);
+    void registerCommand(CommandDefinition<TOwner> command, ICommandFunction<TOwner, Command> action);
 
     /**
      * Waits for input. This method blocks execution.
      */
     void acceptCommands();
+
+    default CommandDefinition<TOwner> createCommand(String name) {
+        return new CommandDefinition<>(name);
+    }
 }

@@ -1,7 +1,5 @@
 package ateamproject.kezuino.com.github.admin.inputs;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 import java.io.Closeable;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -12,7 +10,7 @@ public class Console<TOwner extends IAdministrable> implements ICommandRunner<TO
     protected Scanner in;
     protected PrintWriter out;
     protected TOwner owner;
-    protected HashMap<String, Command> registeredCommands;
+    protected HashMap<String, CommandDefinition> registeredCommands;
 
     /**
      * If true, this {@link Console} is currently able to accept input and write output.
@@ -80,14 +78,14 @@ public class Console<TOwner extends IAdministrable> implements ICommandRunner<TO
         Command cmd = Command.fromString(input);
         if (cmd == null) out.printf("Unknown command: '%s'%n", input);
 
-        for (Map.Entry<String, Command> set : registeredCommands.entrySet()) {
+        for (Map.Entry<String, CommandDefinition> set : registeredCommands.entrySet()) {
             if (cmd.getName().equals(set.getKey()) && set.getValue().getAction().action(owner, cmd)) return;
         }
         out.printf("Unknown command: '%s'%n", input);
     }
 
     @Override
-    public void registerCommand(Command<TOwner> command, ICommandFunction<TOwner, Command> action) {
+    public void registerCommand(CommandDefinition<TOwner> command, ICommandFunction<TOwner, Command> action) {
         if (registeredCommands.containsKey(command.getName()) || registeredCommands.containsValue(action))
             throw new IllegalStateException("Given command was already added to the registered commands.");
 
@@ -96,11 +94,16 @@ public class Console<TOwner extends IAdministrable> implements ICommandRunner<TO
     }
 
     /**
-     * Gets the names of the registered {@link Command commands}.
+     * Gets the names of the registered {@link CommandDefinition commands}.
      *
-     * @return Names of the registered {@link Command commands}.
+     * @return Names of the registered {@link CommandDefinition commands}.
      */
     public String[] getCommands() {
-        throw new NotImplementedException();
+        String[] result = new String[registeredCommands.values().size()];
+        int index = 0;
+        for (CommandDefinition command : registeredCommands.values()) {
+            result[index++] = command.getHelp();
+        }
+        return result;
     }
 }
