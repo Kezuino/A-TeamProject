@@ -179,7 +179,7 @@ public class MapLoader {
                     }
                     if (playerLimit <= 0 || playerIndex + 1 <= playerLimit) {
                         // Create pactale.
-                        Pactale pactale = new Pactale(playerIndex, curPos, 3, 3f, Direction.Down, Color.WHITE);
+                        Pactale pactale = new Pactale(playerIndex, curPos, 1, 3f, Direction.Down, Color.WHITE);
                         pactale.setAnimation(new Animation(true, Assets.getTexture("pactale.png", Texture.class)));
                         pactale.setId();
                         map.addGameObject(pactale);
