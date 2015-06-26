@@ -7,6 +7,8 @@ import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketManager;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketScreenUpdate;
+import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -146,8 +148,16 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
             client.setGame(null);
         }
 
+        Game removedGame = games.remove(gameId);
+
+        // Update lobbylistscreen for all clients.
+        if (removedGame != null) {
+            PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, Stream.concat(Stream.of(new UUID[] { null }), this.getClients().stream().map(info -> info.getPrivateId())).toArray(UUID[]::new));
+            send(tmp);
+        }
+
         // Remove the game.
-        return games.remove(gameId);
+        return removedGame;
     }
 
     /**

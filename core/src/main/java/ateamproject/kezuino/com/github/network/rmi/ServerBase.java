@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
 
@@ -48,7 +49,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketCreateLobby packet = new PacketCreateLobby(lobbyName, clanname, sender);
         server.send(packet);
 
-        PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
+        PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, Stream.concat(Stream.of(new UUID[] { null }), this.server.getClients().stream().map(info -> info.getPrivateId())).toArray(UUID[]::new));
         server.send(tmp);
         return packet.getResult();
     }
@@ -65,7 +66,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketJoinLobby packet = new PacketJoinLobby(sender, lobbyId);
         server.send(packet);
 
-        PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
+        PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, Stream.concat(Stream.of(new UUID[] {null}), this.server.getClients().stream().map(info -> info.getPrivateId())).toArray(UUID[]::new));
         server.send(tmp);
         return packet.getResult();
     }

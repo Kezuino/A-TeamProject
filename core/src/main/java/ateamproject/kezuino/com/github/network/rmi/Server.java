@@ -387,8 +387,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             Game newGame = new Game(this, packet.getLobbyname(), packet.getClanname(), packet.getSender());
             addGame(newGame);
             getClient(packet.getSender()).setGame(newGame);
-
-            System.out.println("Lobby: " + newGame.getName() + " - id " + newGame.getId() + " CREATED !");
             return newGame.getId();
         });
 

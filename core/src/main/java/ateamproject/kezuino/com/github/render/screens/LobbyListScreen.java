@@ -7,7 +7,6 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetClans;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketJoinLobby;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
@@ -55,12 +54,11 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
                 Dialog d = new Dialog("Lobby Name", skin);
                 lobbyname = new TextField("", skin);
 
-                SelectBox<Object> clanDropdown = null;
+                SelectBox<Object> clanDropdown;
                 String dropDownResult = "";
                 if (clanGame) {
                     Client client = Client.getInstance();
                     PacketGetClans packet = new PacketGetClans();
-
                     client.send(packet);
                     ArrayList<String> listclans = packet.getResult();
 
@@ -70,7 +68,7 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
                         arrayClans[i] = listclans.get(i);
 
                     }
-                    clanDropdown = new SelectBox<Object>(skin);
+                    clanDropdown = new SelectBox<>(skin);
 
                     clanDropdown.setItems(arrayClans);
 
