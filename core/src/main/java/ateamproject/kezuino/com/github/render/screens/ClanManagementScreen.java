@@ -74,7 +74,7 @@ public class ClanManagementScreen extends BaseScreen implements RefreshableScree
                         d.show(stage);
                     } else {
                         Dialog d = new Dialog("error", skin);
-                        d.add("De naam kan niet worden aangepast omdat de naam al bestaat");
+                        d.add("Naam al bestaat");
                         TextButton bExit = new TextButton("Oke", skin);
                         bExit.addListener(new ClickListener() {
                             @Override
@@ -101,7 +101,7 @@ public class ClanManagementScreen extends BaseScreen implements RefreshableScree
                     client.send(packetCreateClan);
                     if (!packetCreateClan.getResult()) {
                         Dialog d = new Dialog("error", skin);
-                        d.add("Maximum van 8 clans overschreden of de clan bestaat al");
+                        d.add("Maximum 8 clans of deze bestaat al");
                         TextButton bExit = new TextButton("Oke", skin);
                         bExit.addListener(new ClickListener() {
                             @Override

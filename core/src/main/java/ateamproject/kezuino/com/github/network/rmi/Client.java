@@ -26,6 +26,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -284,11 +285,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 RefreshableScreen screen = (RefreshableScreen) game.getScreen();
                 screen.refresh();
             }
-        });
-
-        packets.registerAction(PacketKickPopupRefresh.class, packet -> {
-            GameScreen screen = (GameScreen) game.getScreen();
-            screen.refreshPlayersView();
         });
 
         packets.registerFunc(PacketGetClans.class, (p) -> {
@@ -751,7 +747,9 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             } else {
                 // Server sended this.
                 Pactale player = BaseScreen.getSession().getPlayer(packet.getSender());
-                if (player != null) player.setDirection(packet.getDirection());
+                if (player != null) {
+                    player.setDirection(packet.getDirection());
+                }
             }
         });
 
@@ -834,12 +832,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
         });
 
-        packets.registerAction(PacketGetHighscores.class, packet -> {
+        packets.registerFunc(PacketGetHighscores.class, packet -> {
+            java.util.Map<String, Integer> returnMap = new HashMap<>();
             try {
-                getRmi().getServer().getHighscores(packet.getSender());
+                returnMap = getRmi().getServer().getHighscores(packet.getSender());
             } catch (RemoteException ex) {
                 Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
             }
+            return returnMap;
         });
     }
 }

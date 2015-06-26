@@ -235,17 +235,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
         });
 
-        packets.registerAction(PacketKickPopupRefresh.class, packet -> {
-            for (UUID id : packet.getReceivers()) {
-                ClientInfo client = getClient(id);
-                try {
-                    client.getRmi().kickPopupRefresh();
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
         packets.registerFunc(PacketGetClans.class, (p) -> getClient(p.getSender()).getClans());
 
         packets.registerAction(PacketReloadClans.class, (p) -> getClient(p.getSender()).setClans(clanFunctions.getClansByUserName(getClient(p
@@ -828,7 +817,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             try {
                 while (result.next()) {
-                    highscores.put(result.getString(0), result.getInt(1));
+                    highscores.put(result.getString(1), result.getInt(2));
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);

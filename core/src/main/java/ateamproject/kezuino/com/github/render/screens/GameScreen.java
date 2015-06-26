@@ -42,7 +42,7 @@ import java.util.logging.Logger;
 /**
  * @author Anton
  */
-public class GameScreen extends BaseScreen {
+public class GameScreen extends BaseScreen implements RefreshableScreen {
 
     private Pactale player;
     private GameRenderer gameRenderer;
@@ -198,12 +198,11 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         // Render Game and UI.
         super.render(delta);
-        
+
         //If player has 0 lives he is GameOVer
         /*if (player.getLives()==0){
-            getSession().gameOver();
-        }*/
-
+         getSession().gameOver();
+         }*/
         switch (getSession().getState()) {
             case GameOver:
                 //getSession().end();
@@ -252,12 +251,6 @@ public class GameScreen extends BaseScreen {
         getSession().showPauseMenu();
     }
 
-    public void refreshPlayersView() {
-        if (getSession().isPlayerMenuShowing()) {
-            showPlayersView();
-        }
-    }
-
     public void showPlayersView() {
         this.playerMenu.clear();
 
@@ -269,7 +262,7 @@ public class GameScreen extends BaseScreen {
                 playerMenu.hide();
             }
         });
-        
+
         this.playerMenu.add(btExit);
 
         Table scrollTable = new Table(skin);
@@ -334,5 +327,12 @@ public class GameScreen extends BaseScreen {
         // Once disposed. Assets cannot be reloaded.
         Assets.dispose();
         clearRenderers();
+    }
+
+    @Override
+    public void refresh() {
+        if (!getSession().isPauseMenuShowing()&& getSession().isPlayerMenuShowing()) {
+            showPlayersView();
+        }
     }
 }

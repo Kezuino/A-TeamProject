@@ -68,11 +68,6 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     public void screenRefresh(Class<?> refreshableScreen) throws RemoteException {
         client.send(new PacketScreenUpdate(refreshableScreen));
     }
-    
-    @Override
-    public void kickPopupRefresh() throws RemoteException {
-        client.send(new PacketKickPopupRefresh());
-    }
 
     @Override
     public void requestCompleted(String requestId, int progress) throws RemoteException {

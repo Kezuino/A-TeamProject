@@ -50,8 +50,6 @@ public interface IProtocolClient extends IProtocol {
 
     void screenRefresh(Class<?> refreshableScreen) throws RemoteException;
 
-    void kickPopupRefresh() throws RemoteException;
-
     /**
      * Notifies the {@link IProtocolClient} that is should start loading a map.
      * If {@code isMaster} is true, the {@link IProtocolClient} should load all
