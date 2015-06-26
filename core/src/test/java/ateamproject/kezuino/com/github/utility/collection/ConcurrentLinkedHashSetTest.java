@@ -3,10 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package ateamproject.kezuino.com.github.utility;
+package ateamproject.kezuino.com.github.utility.collection;
 
-import ateamproject.kezuino.com.github.utility.collection.ConcurrentLinkedHashSet;
-import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,7 +12,7 @@ import org.junit.Test;
  *
  * @author Kez and Jules
  */
-public class TestConcurrentLinkedHashSet {
+public class ConcurrentLinkedHashSetTest {
     private ConcurrentLinkedHashSet<Integer> testLinkedHashSet;
     
     @Before

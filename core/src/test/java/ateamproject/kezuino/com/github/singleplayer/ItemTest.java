@@ -17,7 +17,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author Fatih
  */
-public class TestItem {
+public class ItemTest {
 
     private Node node;
     private Map map;

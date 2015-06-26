@@ -1,4 +1,4 @@
-package ateamproject.kezuino.com.github.admin.inputs;
+package ateamproject.kezuino.com.github.admin.input.command;
 
 import java.io.Closeable;
 import java.io.InputStream;
@@ -76,17 +76,17 @@ public class Console<TOwner extends IAdministrable> implements ICommandRunner<TO
     @SuppressWarnings("unchecked")
     public void runCommand(String input) {
         Command cmd = Command.fromString(input);
-        if (cmd == null) out.printf("Unknown command: '%s'%n", input);
-
-        for (Map.Entry<String, CommandDefinition> set : registeredCommands.entrySet()) {
-            if (cmd.getName().equals(set.getKey()) && set.getValue().getAction().action(owner, cmd)) return;
+        if (cmd != null) {
+            for (Map.Entry<String, CommandDefinition> set : registeredCommands.entrySet()) {
+                if (set.getKey().equals(cmd.getName()) && set.getValue().getAction().action(owner, cmd)) return;
+            }
         }
         out.printf("Unknown command: '%s'%n", input);
     }
 
     @Override
     public void registerCommand(CommandDefinition<TOwner> command, ICommandFunction<TOwner, Command> action) {
-        if (registeredCommands.containsKey(command.getName()) || registeredCommands.containsValue(action))
+        if (registeredCommands.containsKey(command.getName()) || registeredCommands.containsValue(command))
             throw new IllegalStateException("Given command was already added to the registered commands.");
 
         command.setAction(action);

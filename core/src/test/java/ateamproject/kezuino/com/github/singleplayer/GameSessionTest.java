@@ -19,7 +19,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Kez and Jules
  */
-public class TestGameSession {
+public class GameSessionTest {
     private GameSession testSession;
     private Pactale testPactale;
 

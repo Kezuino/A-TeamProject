@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 /**
  * @author Sven
  */
-public class TestGameObject {
+public class GameObjectTest {
 
     GameSession session;
     Map map;
@@ -23,7 +23,7 @@ public class TestGameObject {
     Enemy enemy;
     Node moveNode;
 
-    public TestGameObject() {
+    public GameObjectTest() {
     }
 
     @Before

@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketManager;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 
 import java.util.HashMap;
 import java.util.UUID;
@@ -28,7 +29,7 @@ public abstract class Client implements INetworkComponent, IPacketSender {
     protected UUID publicId;
     protected PacketManager packets;
     protected String Username;
-    protected String emailadres;
+    protected String emailaddress;
     private boolean isHost;
 
     public Client(com.badlogic.gdx.Game game) {
@@ -114,16 +115,16 @@ public abstract class Client implements INetworkComponent, IPacketSender {
         this.Username = Username;
     }
 
-    public void setEmailadres(String emailadres) {
-        this.emailadres = emailadres;
+    public void setEmailaddress(String emailaddress) {
+        this.emailaddress = emailaddress;
     }
 
     public String getUsername() {
         return Username;
     }
 
-    public String getEmailadres() {
-        return emailadres;
+    public String getEmailaddress() {
+        return emailaddress;
     }
 
     public boolean isHost() {
@@ -132,5 +133,20 @@ public abstract class Client implements INetworkComponent, IPacketSender {
 
     public void setHost(boolean isHost) {
         this.isHost = isHost;
+    }
+
+    @Override
+    public void stop() {
+        try {
+            close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void close() {
+        unregisterPackets();
+        Gdx.app.debug("CLOSE", "Client closed.");
     }
 }

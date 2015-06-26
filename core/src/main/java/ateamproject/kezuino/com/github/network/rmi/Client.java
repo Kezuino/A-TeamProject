@@ -167,7 +167,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         updateTimer.stop();
         updateTimer.clear();
 
@@ -177,10 +177,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         } catch (RemoteException e) {
             e.printStackTrace();
         } finally {
-            System.out.println("Client stopped.");
             Timer.instance().stop();
             unregisterPackets();
         }
+        super.close();
     }
 
     @Override
@@ -226,13 +226,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
 
             if (data != null) {
-                this.setEmailadres(data.getEmailadress());
+                this.setEmailaddress(data.getEmailadress());
                 this.setUsername(data.getUsername());
                 this.setId(data.getPrivateId());
                 this.setPublicId(data.getPublicId());
                 System.out.printf("Logged in as: (Private: %s), (Public: %s)%n", data.getPrivateId(), data.getPublicId());
             } else {
-                this.setEmailadres(null);
+                this.setEmailaddress(null);
                 this.setUsername(null);
                 this.setId(null);
                 this.setPublicId(null);
@@ -812,7 +812,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 }
             }
         });
-        
+
         packets.registerAction(PacketScoreChanged.class, packet -> {
             if (packet.getSender() != null && packet.getSender().equals(getId())) {
                 try {
@@ -823,7 +823,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             } else {
                 Score currentScore = BaseScreen.getSession().getScore();
 
-                switch(packet.getManipulationType()) {
+                switch (packet.getManipulationType()) {
                     case DECREASE:
                         currentScore.decrease(packet.getChange());
                         break;
@@ -831,7 +831,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                         currentScore.increase(packet.getChange());
                         break;
                 }
-            }            
+            }
         });
 
         packets.registerAction(PacketGetHighscores.class, packet -> {

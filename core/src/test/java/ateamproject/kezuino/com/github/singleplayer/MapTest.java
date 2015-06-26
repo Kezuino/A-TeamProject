@@ -8,7 +8,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TestMap {
+public class MapTest {
     Map map;
 
     @Before

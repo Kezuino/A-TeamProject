@@ -4,7 +4,6 @@ import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketCreateClan;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketFillTable;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketGetEmail;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetInvitation;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetManagement;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetPeople;
@@ -37,7 +36,7 @@ public class ClanManagementScreen extends BaseScreen implements RefreshableScree
         super(game);
 
         client = Client.getInstance();
-        emailaddress = client.getEmailadres();
+        emailaddress = client.getEmailaddress();
 
         scrollTable = new Table();
         refreshScreen();
@@ -236,7 +235,7 @@ public class ClanManagementScreen extends BaseScreen implements RefreshableScree
             public void clicked(InputEvent event, float x, float y) {
                 if (iType.equals(InvitationType.INVITE)) {
                     Dialog d = new Dialog("toevoegen", skin);
-                    d.add("Gebruikersnaam/emailadres in: ");
+                    d.add("Gebruikersnaam/emailaddress in: ");
                     TextField tf = new TextField("", skin);
                     d.add(tf);
                     TextButton bAdd = new TextButton("Toevoegen", skin);

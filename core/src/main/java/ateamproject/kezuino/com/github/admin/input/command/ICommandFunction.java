@@ -1,4 +1,4 @@
-package ateamproject.kezuino.com.github.admin.inputs;
+package ateamproject.kezuino.com.github.admin.input.command;
 
 @FunctionalInterface
 public interface ICommandFunction<TOwner extends IAdministrable, TCommand extends Command> {

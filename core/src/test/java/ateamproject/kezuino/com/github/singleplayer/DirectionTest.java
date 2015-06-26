@@ -6,7 +6,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-public class TestDirection {
+public class DirectionTest {
     @Before
     public void setUp() throws Exception {
 

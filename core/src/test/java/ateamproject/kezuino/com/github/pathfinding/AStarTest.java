@@ -7,7 +7,7 @@ import com.badlogic.gdx.ai.pfa.GraphPath;
 import org.junit.*;
 import static org.junit.Assert.*;
 
-public class TestAStar {
+public class AStarTest {
 
     private AStar aStar;
     private GameSession session;

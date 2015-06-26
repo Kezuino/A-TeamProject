@@ -16,7 +16,7 @@ import static org.junit.Assert.assertNotNull;
 /**
  * @author Fatih
  */
-public class TestPortal {
+public class PortalTest {
 
     private Node node;
     private Map map;

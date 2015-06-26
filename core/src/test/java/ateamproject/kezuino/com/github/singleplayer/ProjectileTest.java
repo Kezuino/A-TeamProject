@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 /**
  * @author Jip
  */
-public class TestProjectile {
+public class ProjectileTest {
 
     private GameSession session;
     private Map map;

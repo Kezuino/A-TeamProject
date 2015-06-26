@@ -1,4 +1,4 @@
-package ateamproject.kezuino.com.github.admin.inputs;
+package ateamproject.kezuino.com.github.admin.input.command;
 
 import java.io.InputStream;
 import java.io.OutputStream;

@@ -1,19 +1,19 @@
 package ateamproject.kezuino.com.github.network;
 
-import ateamproject.kezuino.com.github.admin.inputs.CommandDefinitionBuilder;
-import ateamproject.kezuino.com.github.admin.inputs.Console;
-import ateamproject.kezuino.com.github.admin.inputs.IAdministrable;
+import ateamproject.kezuino.com.github.admin.input.command.CommandDefinitionBuilder;
+import ateamproject.kezuino.com.github.admin.input.command.Console;
+import ateamproject.kezuino.com.github.admin.input.command.IAdministrable;
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketManager;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketClientLeft;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, IAdministrable<Server> {
@@ -134,7 +134,11 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         if (game == null) return null;
 
         // Notify all connected clients that the game is closing.
-        send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby is gesloten.", Stream.concat(Stream.of(new UUID[]{null}), game.getClients().stream().filter(c -> !c.equals(game.getHostId()))).toArray(UUID[]::new)));
+        send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby is gesloten.", Stream.concat(Stream.of(new UUID[]{null}), game
+                .getClients()
+                .stream()
+                .filter(c -> !c
+                        .equals(game.getHostId()))).toArray(UUID[]::new)));
 
         // Unregister client on game.
         for (UUID clientId : game.getClients()) {
@@ -176,8 +180,8 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
     public List<TClient> getClients() {
         return new ArrayList<>(clients.values());
     }
-    
-    public void removeClient(UUID privateId){
+
+    public void removeClient(UUID privateId) {
         this.clients.remove(privateId);
     }
 

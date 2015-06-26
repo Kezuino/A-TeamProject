@@ -1,6 +1,4 @@
-package ateamproject.kezuino.com.github.admin.inputs;
-
-import java.util.Arrays;
+package ateamproject.kezuino.com.github.admin.input.command;
 
 public class CommandDefinition<TOwner extends IAdministrable> {
     /**

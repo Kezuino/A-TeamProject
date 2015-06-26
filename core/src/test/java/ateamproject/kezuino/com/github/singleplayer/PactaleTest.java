@@ -17,7 +17,7 @@ import static org.junit.Assert.assertEquals;
 /**
  * @author Jip
  */
-public class TestPactale {
+public class PactaleTest {
 
     private Map map;
     private GameSession session;

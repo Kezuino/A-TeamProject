@@ -15,7 +15,7 @@ import static org.junit.Assert.*;
 /**
  * @author Sven
  */
-public class TestEnemy {
+public class EnemyTest {
 
     GameSession session;
     Map map;

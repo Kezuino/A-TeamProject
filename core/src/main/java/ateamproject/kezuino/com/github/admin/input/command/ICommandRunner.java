@@ -1,4 +1,4 @@
-package ateamproject.kezuino.com.github.admin.inputs;
+package ateamproject.kezuino.com.github.admin.input.command;
 
 interface ICommandRunner<TOwner extends IAdministrable, TCommand extends Command> {
     /**

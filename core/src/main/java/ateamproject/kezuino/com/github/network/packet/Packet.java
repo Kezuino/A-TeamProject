@@ -10,7 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public abstract class Packet<TResult> {
 
@@ -57,8 +56,7 @@ public abstract class Packet<TResult> {
 
         if (senderAndReceivers.length > 0) sender = senderAndReceivers[0];
         if (senderAndReceivers.length > 1) {
-            senderAndReceivers = Arrays.copyOfRange(senderAndReceivers, 1, senderAndReceivers.length);
-            receivers.addAll(Arrays.asList(senderAndReceivers));
+            receivers.addAll(Arrays.asList(Arrays.copyOfRange(senderAndReceivers, 1, senderAndReceivers.length)));
         }
     }
 
@@ -223,7 +221,7 @@ public abstract class Packet<TResult> {
         TARGET,
 
         /**
-         * Sender is also the receiver.
+         * Packet should not execute for receivers.
          */
         SELF
     }
