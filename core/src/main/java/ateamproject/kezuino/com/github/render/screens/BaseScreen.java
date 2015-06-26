@@ -54,18 +54,7 @@ public abstract class BaseScreen implements Screen {
         this.game = game;
         
         // Bootstrap skin.
-        skin = new Skin(Gdx.files.internal("skins/uiskin.json"));
-       
-       
-
-            /*FileHandle fh = Gdx.files.internal("uiskin.atlas");
-            FileHandle fh1 = new FileHandle("skins");
-            fh.copyTo(fh1);
-            fh = Gdx.files.internal("uiskin.png");
-            fh1 = new FileHandle("skins");
-            fh.copyTo(fh1);*/
-        
-        
+        skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
            
         // Bootstrap input.
         inputs.addProcessor(stage);

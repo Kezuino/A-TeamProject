@@ -162,7 +162,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
                 } catch (RemoteException e) {
                     if (client != null) {
-                        System.out.println("Tried sending kick to " + client.getPublicId() + " but failed");
+                        System.out.printf("Tried sending kick to %s but failed.%n", client.getPrivateId());
                     } else {
                         e.printStackTrace();
                     }
