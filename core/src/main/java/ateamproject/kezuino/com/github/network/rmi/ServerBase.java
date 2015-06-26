@@ -4,6 +4,7 @@ import ateamproject.kezuino.com.github.network.packet.enums.InvitationType;
 import ateamproject.kezuino.com.github.network.packet.enums.ManagementType;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
+import ateamproject.kezuino.com.github.render.screens.GameScreen;
 import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
 import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
@@ -286,7 +287,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketSetKickInformation packet = new PacketSetKickInformation(getPersonToVoteFor, sender);
         server.send(packet);
 
-        PacketKickPopupRefresh tmp = new PacketKickPopupRefresh(this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
+        PacketScreenUpdate tmp = new PacketScreenUpdate(GameScreen.class, this.server.getClients().stream().map(info -> info.getPrivateId()).toArray(UUID[]::new));
         server.send(tmp);
     }
 
