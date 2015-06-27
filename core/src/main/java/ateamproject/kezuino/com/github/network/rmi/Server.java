@@ -230,7 +230,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 try {
                     client.getRmi().screenRefresh(packet.getScreenClass());
                 } catch (RemoteException e) {
-                    e.printStackTrace();
+                    System.out.println("Failed to send screen update to client: "+id.toString());
                 }
             }
         });

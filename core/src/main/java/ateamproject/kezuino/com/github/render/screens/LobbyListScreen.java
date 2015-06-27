@@ -54,7 +54,7 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
                 Dialog d = new Dialog("Lobby Name", skin);
                 lobbyname = new TextField("", skin);
 
-                SelectBox<Object> clanDropdown;
+                SelectBox<Object> clanDropdown = null;
                 String dropDownResult = "";
                 if (clanGame) {
                     Client client = Client.getInstance();
@@ -74,8 +74,6 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
 
                     clanDropdown.setSelectedIndex(0);
                     d.add(clanDropdown);
-
-                    dropDownResult = clanDropdown.getSelected().toString();
                 }
 
                 TextButton btnsubmit = new TextButton("Maken", skin);
@@ -84,14 +82,14 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
                 d.add(lobbyname);
                 d.add(btnsubmit);
 
-                final String dropDownResultFinal = dropDownResult;
+                final SelectBox dropDownResultFinal = clanDropdown;
                 btnsubmit.addListener(new ClickListener() {
                     @Override
                     public void clicked(InputEvent event, float x, float y) {
                         d.hide();
                         if (!lobbyname.getText().equals("")) {
                             if (clanGame) {
-                                game.setScreen(new LobbyScreen(game, lobbyname.getText(), dropDownResultFinal));
+                                game.setScreen(new LobbyScreen(game, lobbyname.getText(), dropDownResultFinal.getSelected().toString()));
                             } else {
                                 game.setScreen(new LobbyScreen(game, lobbyname.getText(), null));
                             }
