@@ -13,12 +13,12 @@ public class PacketScreenUpdate extends Packet {
     public PacketScreenUpdate() {
     }
 
-    public PacketScreenUpdate(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketScreenUpdate(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
     
-    public PacketScreenUpdate(Class<?> clazz, UUID... senderAndReceivers) {
-        this(senderAndReceivers);
+    public PacketScreenUpdate(Class<?> clazz, UUID sender, UUID... receivers) {
+        this(sender, receivers);
         this.screenClass = clazz;
     }
     

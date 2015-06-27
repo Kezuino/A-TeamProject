@@ -19,7 +19,7 @@ public class PacketGetKickInformation extends Packet<ArrayList<String>> {
     public PacketGetKickInformation() {
     }
     
-    public PacketGetKickInformation(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketGetKickInformation(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 }

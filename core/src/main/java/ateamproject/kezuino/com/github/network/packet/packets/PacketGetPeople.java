@@ -18,8 +18,8 @@ public class PacketGetPeople extends Packet<String> {
     @PacketField(0)
     protected String clanName;
 
-    public PacketGetPeople(String clanName, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketGetPeople(String clanName, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.clanName = clanName;
     }
 

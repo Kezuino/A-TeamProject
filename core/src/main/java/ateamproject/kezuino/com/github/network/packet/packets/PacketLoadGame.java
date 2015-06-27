@@ -28,18 +28,18 @@ public class PacketLoadGame extends Packet {
     public PacketLoadGame() {
     }
 
-    public PacketLoadGame(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketLoadGame(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 
-    public PacketLoadGame(String mapName, boolean master, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketLoadGame(String mapName, boolean master, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.mapName = mapName;
         this.master = master;
     }
 
-    public PacketLoadGame(String mapName, boolean master, int playerLimit, int level, UUID... senderAndReceivers) {
-        this(mapName, master);
+    public PacketLoadGame(String mapName, boolean master, int playerLimit, int level, UUID sender, UUID... receivers) {
+        this(mapName, master, sender, receivers);
         this.playerLimit = playerLimit;
         this.level = level;
     }

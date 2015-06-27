@@ -14,8 +14,8 @@ public class PacketHighScore extends Packet<Boolean> {
     public PacketHighScore() {
     }
 
-    public PacketHighScore(String ClanName, int Score, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketHighScore(String ClanName, int Score, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.ClanName = ClanName;
         this.Score = Score;
     }

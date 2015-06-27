@@ -13,8 +13,8 @@ public class PacketPlayerSetPosition extends Packet {
     public PacketPlayerSetPosition() {
     }
 
-    public PacketPlayerSetPosition(Vector2 position, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketPlayerSetPosition(Vector2 position, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.position = position;
     }
 

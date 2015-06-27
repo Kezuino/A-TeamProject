@@ -8,18 +8,19 @@ package ateamproject.kezuino.com.github.network.packet.packets;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketField;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
  *
  * @author Sven
  */
-public class PacketFillTable extends Packet<ArrayList<String>> {
+public class PacketFillTable extends Packet<List<String>> {
     @PacketField(0)
     protected String emailadres;
 
-    public PacketFillTable(String emailadres, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketFillTable(String emailadres, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.emailadres = emailadres;
     }
 
@@ -30,8 +31,4 @@ public class PacketFillTable extends Packet<ArrayList<String>> {
     public String getEmailadres() {
         return emailadres;
     }
-    
-    
-    
-    
 }

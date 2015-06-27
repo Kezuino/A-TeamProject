@@ -26,8 +26,8 @@ public class PacketHandleManagement extends Packet<Boolean> {
     @PacketField(3)
     protected String emailadres;
 
-    public PacketHandleManagement(ManagementType manage, String clanName, String emailadres, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketHandleManagement(ManagementType manage, String clanName, String emailadres, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.manage = manage;
         this.clanName = clanName;
         this.emailadres = emailadres;

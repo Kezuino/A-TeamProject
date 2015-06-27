@@ -14,8 +14,8 @@ public class PacketRequestCompleted extends Packet {
     public PacketRequestCompleted() {
     }
 
-    public PacketRequestCompleted(String id, int progress, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketRequestCompleted(String id, int progress, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.id = id;
         this.progress = progress;
     }

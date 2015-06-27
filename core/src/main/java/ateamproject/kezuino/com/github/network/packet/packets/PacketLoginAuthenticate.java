@@ -18,14 +18,14 @@ public class PacketLoginAuthenticate extends Packet<PacketLoginAuthenticate.Retu
     public PacketLoginAuthenticate() {
     }
 
-    public PacketLoginAuthenticate(String emailAddress, String password, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketLoginAuthenticate(String emailAddress, String password, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.emailAddress = emailAddress;
         this.password = password;
     }
 
-    public PacketLoginAuthenticate(String emailAddress, String password, Object connectObject, UUID... senderAndReceivers) {
-        this(emailAddress, password, senderAndReceivers);
+    public PacketLoginAuthenticate(String emailAddress, String password, Object connectObject, UUID sender, UUID... receivers) {
+        this(emailAddress, password, sender, receivers);
         this.connectObject = connectObject;
     }
 
@@ -47,12 +47,28 @@ public class PacketLoginAuthenticate extends Packet<PacketLoginAuthenticate.Retu
         protected String emailadress;
         protected UUID privateId;
         protected UUID publicId;
+        protected String message;
+        protected boolean successful;
 
-        public ReturnData(String username, String emailadress, UUID privateId, UUID publicId) {
+        public ReturnData(String username, String emailadress, UUID privateId, UUID publicId, String message, boolean successful) {
             this.username = username;
             this.emailadress = emailadress;
             this.privateId = privateId;
             this.publicId = publicId;
+            this.message = message;
+            this.successful = successful;
+        }
+
+        public boolean isSuccessful() {
+            return successful;
+        }
+
+        public String getMessage() {
+            return message;
+        }
+
+        public void setMessage(String message) {
+            this.message = message;
         }
 
         public UUID getPublicId() {

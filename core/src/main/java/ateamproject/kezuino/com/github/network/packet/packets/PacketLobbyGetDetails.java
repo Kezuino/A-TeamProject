@@ -9,7 +9,7 @@ public class PacketLobbyGetDetails extends Packet<PacketLobbySetDetails.Data> {
     public PacketLobbyGetDetails() {
     }
 
-    public PacketLobbyGetDetails(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketLobbyGetDetails(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 }

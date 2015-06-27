@@ -7,6 +7,8 @@ package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketScreenUpdate;
+import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.singleplayer.Score;
 import ateamproject.kezuino.com.github.utility.collection.ConcurrentLinkedHashSet;
@@ -14,6 +16,7 @@ import com.badlogic.gdx.graphics.Color;
 
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 /**
  * Holds information about a hosted lobby/game. Used by the {@link INetworkComponent} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.
@@ -193,23 +196,24 @@ public class Game {
         IClientInfo client = server.getClient(id);
         if (client == null) return false;
 
-        // Destroy game and client relation.
-        client.setGame(null);
-        getClients().remove(id);
+        if (client.getPrivateId().equals(getHostId())) {
+            this.server.removeGame(this.getId());
+        } else {
+            // Destroy game and client relation.
+            client.setGame(null);
+            getClients().remove(id);
 
-        // Remove votes that are open.
-        CopyOnWriteArrayList<UUID[]> allVotes = getVotes();
-        for (UUID[] voteCollection : allVotes) {
-            if (voteCollection[0].equals(client) || voteCollection[1].equals(client)) {
-                allVotes.remove(voteCollection);//remove votes placed by sender
+            // Remove votes that are open.
+            CopyOnWriteArrayList<UUID[]> allVotes = getVotes();
+            for (UUID[] voteCollection : allVotes) {
+                if (voteCollection[0].equals(client) || voteCollection[1].equals(client)) {
+                    allVotes.remove(voteCollection);
+                }
             }
-        }
 
-        // Notify removed client that it should leave.
-        server.send(new PacketKick(PacketKick.KickReasonType.GAME, "Gekickt van de lobby.", null, id));
-
-        if (getClients().isEmpty()) {
-            server.removeGame(getId());
+            if (getClients().isEmpty()) {
+                server.removeGame(getId());
+            }
         }
         return true;
     }

@@ -18,8 +18,8 @@ public class PacketSetKickInformation extends Packet<Void> {
     @PacketField(0)
     protected UUID personToVoteFor;
 
-    public PacketSetKickInformation(UUID personToVoteFor, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketSetKickInformation(UUID personToVoteFor, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.personToVoteFor = personToVoteFor;
     }
     

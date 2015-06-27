@@ -9,7 +9,7 @@ public class PacketLogout extends Packet {
     public PacketLogout() {
     }
 
-    public PacketLogout(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketLogout(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 }

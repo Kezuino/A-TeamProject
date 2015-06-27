@@ -33,12 +33,12 @@ public class PacketCreateGameObject extends Packet {
     public PacketCreateGameObject() {
     }
 
-    public PacketCreateGameObject(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketCreateGameObject(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 
-    public PacketCreateGameObject(String typeName, Vector2 position, Direction direction, float speed, UUID id, int color, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketCreateGameObject(String typeName, Vector2 position, Direction direction, float speed, UUID id, int color, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.typeName = typeName;
         this.position = position;
         this.direction = direction;

@@ -6,13 +6,14 @@ import ateamproject.kezuino.com.github.network.mail.MailAccount;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
+import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
 import ateamproject.kezuino.com.github.singleplayer.Pactale;
-import ateamproject.kezuino.com.github.singleplayer.Score;
 import ateamproject.kezuino.com.github.utility.io.Database;
 import com.badlogic.gdx.graphics.Color;
 
 import java.rmi.AlreadyBoundException;
+import java.rmi.ConnectException;
 import java.rmi.NoSuchObjectException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -23,6 +24,7 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class Server extends ateamproject.kezuino.com.github.network.Server<ClientInfo> {
 
@@ -58,8 +60,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         // Handle heartbeat messages.
         for (IClientInfo c : getClients()) {
             if (c.getSecondsInactive() >= clientTimeout) {
-                PacketKick pKick = new PacketKick(PacketKick.KickReasonType.QUIT, c.getPrivateId());
-                this.send(pKick);
+                this.removeClient(c.getPrivateId());
                 System.out.printf("Client %s timed out.%n", c.getPrivateId().toString());
             }
         }
@@ -90,7 +91,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
     public void stop() {
         super.stop();
 
-        send(new PacketKick(PacketKick.KickReasonType.QUIT, "Server stopped"));
+        send(new PacketKick(PacketKick.KickReasonType.QUIT, "Server stopped.", null, getClients().stream().map(c -> c.getPublicId()).toArray(UUID[]::new)));
 
         unregisterPackets();
 
@@ -120,52 +121,70 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
     @Override
     public void registerPackets() {
         packets.registerFunc(PacketKick.class, (packet) -> {
-            if (packet.getSender() != null) {//dont go in if, if both are null
-                // All public ids to remove from game.
-                List<UUID> peopleToGetKicked = new ArrayList<>();
+            if (packet.getSender() != null) {
+                System.out.println("Server: From client");
+                ClientInfo client = getClient(packet.getSender());
 
+                // Sender wants to kick receiver.
                 if (packet.getReceivers().length > 0) {
-                    for (UUID receiver : packet.getReceivers()) {
-                        peopleToGetKicked.add(receiver);
-                    }
-                } else {
-                    peopleToGetKicked.add(packet.getSender());
-                }
+                    // Sender must be host of game.
+                    Optional.of(client.getGame()).ifPresent((game -> {
+                        if (packet.getSender().equals(game.getHostId())) {
+                            for (UUID receiver : packet.getReceivers()) {
+                                ClientInfo recClient = getClientFromPublic(receiver);
 
-                // Remove all the clients from the game that received this packet.
-                for (UUID client : peopleToGetKicked) {
-                    ClientInfo clientI = getClientFromPublic(client);
-                    if (clientI == null) {
-                        clientI = getClient(client);
-                    }
-
-                    if (clientI.getGame() != null) {
-                        clientI.getGame().removeClient(clientI.getPrivateId());
-                    }
-                }
-
-                if (packet.getReasonType().equals(PacketKick.KickReasonType.QUIT)) {
-                    this.removeClient(packet.getSender());
-                    System.out.println("Client " + packet.getSender() + " removed from server");
-                }
-            } else {//if loopback from server
-                ClientInfo client = null;
-                try {
-                    // Notify receivers that they have been dropped by the server.
-                    for (UUID uuid : packet.getReceivers()) {
-                        client = getClient(uuid);
-                        if (client == null) {
-                            continue;
+                                if (recClient.getGame() != null) {
+                                    if (recClient.getGame().removeClient(recClient.getPrivateId())) {
+                                        try {
+                                            recClient.getRmi().drop(packet.getReasonType(), packet.getReason());
+                                        } catch (RemoteException e) {
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            System.out.printf("Sender tried to kick players from other games: %s.%n", client);
                         }
-                        client.getRmi().drop(packet.getReasonType(), packet.getReason());
+                    }));
+                } else {
+                    // Sender wants to kick itself.
+                    switch (packet.getReasonType()) {
+                        case GAME:
+                            // Remove out of the game.
+                            if (client != null) {
+                                if (client.getGame() != null) {
+                                    client.getGame().removeClient(packet.getSender());
+                                }
+                                try {
+                                    client.getRmi().drop(packet.getReasonType(), packet.getReason());
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                            }
 
+                            // Update lobbylistscreen for all clients.
+                            PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, null, this.getClients().stream().map(info -> info.getPublicId()).toArray(UUID[]::new));
+                            send(tmp);
+                            break;
+                        case QUIT:
+                            this.removeClient(packet.getSender());
+                            System.out.println("Client " + packet.getSender() + " removed from server");
+                            break;
                     }
-                } catch (RemoteException e) {
-                    if (client != null) {
-                        System.out.printf("Tried sending kick to %s but failed.%n", client.getPrivateId());
-                    } else {
-                        e.printStackTrace();
-                    }
+                }
+            } else {
+                System.out.println("Server: From server");
+                switch (packet.getReasonType()) {
+                    case QUIT:
+                        Stream.of(packet.getReceivers()).forEach(id -> {
+                            try {
+                                getClientFromPublic(id).getRmi().drop(packet.getReasonType(), packet.getReason());
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        break;
                 }
             }
             return true;
@@ -226,9 +245,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerAction(PacketScreenUpdate.class, packet -> {
             for (UUID id : packet.getReceivers()) {
-                ClientInfo client = getClient(id);
+                ClientInfo client = getClientFromPublic(id);
                 try {
                     client.getRmi().screenRefresh(packet.getScreenClass());
+                } catch (ConnectException e) {
+                    removeClient(client.getPrivateId());
                 } catch (RemoteException e) {
                     System.out.println("Failed to send screen update to client: "+id.toString());
                 }
@@ -268,31 +289,36 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
-            System.out.print("Login request received for account: " + packet.getEmailAddress());
+            String resultMessage = "Ingelogd.";
 
             if (MailAccount.isValid(packet.getEmailAddress(), packet.getPassword())) {
                 // Register client on server.
                 ClientInfo client = new ClientInfo((IProtocolClient) packet.getConnectObject());
                 client.setEmailAddress(packet.getEmailAddress());
-                clients.put(client.getPrivateId(), client);
-                System.out.println(" .. login accepted. " + clients.size() + " clients total.");
+                if (!getClients().stream().anyMatch(c -> c.getEmailAddress().equals(packet.getEmailAddress()))) {
+                    clients.put(client.getPrivateId(), client);
+                    System.out.println(" .. login accepted. " + clients.size() + " clients total.");
 
-                // Get username from database.
-                try (ResultSet set = Database.getInstance()
-                        .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
-                    if (set.isBeforeFirst()) {
-                        set.next();
-                        client.setUsername(set.getString(1));
+                    // Get username from database.
+                    try (ResultSet set = Database.getInstance()
+                            .query("SELECT Name FROM account WHERE Email = ?", packet.getEmailAddress())) {
+                        if (set.isBeforeFirst()) {
+                            set.next();
+                            client.setUsername(set.getString(1));
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
                     }
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                    // fill clans
+                    client.setClans(clanFunctions.getClansByUserName(client.getUsername()));
+                } else {
+                    resultMessage = "Dit account is al ingelogd.";
                 }
-                // fill clans
-                client.setClans(clanFunctions.getClansByUserName(client.getUsername()));
+
 
                 // Tell client what its id is.
                 return new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId(), client
-                        .getPublicId());
+                        .getPublicId(), resultMessage, resultMessage.equals("Ingelogd."));
             }
 
             System.out.println(" .. login credentials not valid.");
@@ -300,7 +326,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketLogout.class, packet -> {
-            PacketKick pKick = new PacketKick(PacketKick.KickReasonType.QUIT, packet.getSender());
+            PacketKick pKick = new PacketKick(PacketKick.KickReasonType.QUIT, null, null, getClient(packet.getSender()).getPublicId());
             this.send(pKick);
             System.out.printf("Client %s logged out.%n", packet.getSender());
         });
@@ -397,8 +423,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
 
             // Add new client to game.
-            lobby.getClients().add(packet.getSender());
             IClientInfo client = getClient(packet.getSender());
+            if (client == null) {
+                System.out.printf("Cannot let NULL client: Join lobby %s%n", lobby);
+                return null;
+            }
+            lobby.getClients().add(packet.getSender());
             client.setGame(lobby);
 
             // Get all clients currently in the game.
@@ -412,7 +442,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
 
             // Notify other users that someone joined the lobby (excluding itself).
-            PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername());
+            PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername(), null);
             p.setReceivers(lobby.getClients()
                     .stream()
                     .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
@@ -457,7 +487,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
 
                     if (amountOfVotesForCurrentPerson >= amountOfVotesNeededForKick) {
-                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Uitgestemd", personId);
+                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Uitgestemd", null, getClient(personId).getPublicId());
                         this.send(packetKick);
                     } else {
                         peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String

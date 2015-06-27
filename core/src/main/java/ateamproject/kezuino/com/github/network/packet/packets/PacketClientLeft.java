@@ -17,12 +17,12 @@ public class PacketClientLeft extends Packet {
     public PacketClientLeft() {
     }
 
-    public PacketClientLeft(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketClientLeft(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 
-    public PacketClientLeft(UUID clientThatLeft, String username, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketClientLeft(UUID clientThatLeft, String username, UUID sender, UUID... receivers) {
+        this(sender, receivers);
         this.clientThatLeft = clientThatLeft;
         this.username = username;
     }

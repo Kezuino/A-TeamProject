@@ -18,8 +18,8 @@ public class PacketCreateItem extends Packet {
     public PacketCreateItem() {
     }
 
-    public PacketCreateItem(UUID objId, ItemType type, Vector2 position, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketCreateItem(UUID objId, ItemType type, Vector2 position, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.objId = objId;
         this.type = type;
         this.position = position;

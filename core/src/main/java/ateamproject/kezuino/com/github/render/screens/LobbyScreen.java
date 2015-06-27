@@ -34,7 +34,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
         this.client.setHost(true);
         this.clanName = clanName;
 
-        PacketCreateLobby p = new PacketCreateLobby(this.lobbyName, this.clanName);
+        PacketCreateLobby p = new PacketCreateLobby(this.lobbyName, this.clanName, null);
         client.send(p);
         this.lobbyId = p.getResult();
 
@@ -44,7 +44,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
         // TODO: Add control for selecting maps.
         PacketLobbySetDetails.Data data = new PacketLobbySetDetails.Data();
         data.setMap("2");
-        client.send(new PacketLobbySetDetails(data));
+        client.send(new PacketLobbySetDetails(data, null));
 
         createGui();
     }
@@ -78,8 +78,9 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 // Quit lobby
-                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, Client.getInstance().getPublicId());
+                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, null, null);
                 client.send(packet);
+
                 boolean succeeded = packet.getResult();
                 if (succeeded) {
                     if (clanName != null) {
@@ -114,13 +115,14 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
 
         // Run game button.
         TextButton btnRunGame = new TextButton(client.isHost() ? "Spel starten" : "Ready", skin);
+        btnRunGame.setPosition(stage.getWidth() - btnQuitLobby.getWidth() - 10 - btnRunGame.getWidth() - 10, stage.getHeight() - btnRunGame.getHeight() - 10);
         btnRunGame.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 client.send(new PacketLaunchGame());
             }
         });
-        btnRunGame.setPosition(stage.getWidth() - btnQuitLobby.getWidth() - 10 - btnRunGame.getWidth() - 10, stage.getHeight() - btnRunGame.getHeight() - 10);
+
         if (client.isHost()) {
             this.stage.addActor(btnRunGame);
         }
@@ -175,7 +177,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
                     btnKick.addListener(new ClickListener() {
                         @Override
                         public void clicked(InputEvent event, float x, float y) {
-                            PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Gekickt door de beheerder", Client.getInstance().getId(), member.getKey());
+                            PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Gekickt door de beheerder.", Client.getInstance().getId(), member.getKey());
                             Client.getInstance().send(packet);
                         }
                     });

@@ -21,8 +21,8 @@ public class PacketGetLobbies extends Packet<List<GetLobbiesData>> {
 
     private boolean isClanGame;
     
-    public PacketGetLobbies(boolean isClanGame, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketGetLobbies(boolean isClanGame, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.isClanGame = isClanGame;
     }
 

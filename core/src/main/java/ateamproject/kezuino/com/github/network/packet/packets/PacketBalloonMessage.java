@@ -31,14 +31,14 @@ public class PacketBalloonMessage extends Packet {
     public PacketBalloonMessage() {
     }
 
-    public PacketBalloonMessage(String typeName, Vector2 position, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketBalloonMessage(String typeName, Vector2 position, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.typeName = typeName;
         this.position = position;
     }
 
-    public PacketBalloonMessage(String typeName, UUID followTarget, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketBalloonMessage(String typeName, UUID followTarget, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.typeName = typeName;
         this.followTarget = followTarget;
     }

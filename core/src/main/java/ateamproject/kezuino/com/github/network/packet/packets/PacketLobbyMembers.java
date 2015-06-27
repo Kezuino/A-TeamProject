@@ -19,8 +19,8 @@ public class PacketLobbyMembers extends Packet<Map<UUID, String>> {
      @PacketField(0)
     protected UUID lobbyId;
 
-     public PacketLobbyMembers(UUID lobbyId, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+     public PacketLobbyMembers(UUID lobbyId, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.lobbyId = lobbyId;
      }
      

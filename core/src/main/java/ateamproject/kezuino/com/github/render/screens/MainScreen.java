@@ -85,7 +85,7 @@ public class MainScreen extends BaseScreen {
         tbLogout.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                PacketKick packet = new PacketKick(PacketKick.KickReasonType.QUIT, Client.getInstance().getId());
+                PacketKick packet = new PacketKick(PacketKick.KickReasonType.QUIT, "Logging out.", null);
                 Client.getInstance().send(packet);
                 game.setScreen(new LoginScreen(game));
             }

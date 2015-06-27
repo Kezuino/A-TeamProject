@@ -23,12 +23,12 @@ public class PacketRemoveItem extends Packet {
     public PacketRemoveItem() {
     }
     
-    public PacketRemoveItem(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketRemoveItem(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 
-    public PacketRemoveItem(UUID id, ItemType itemType, UUID... senderAndReceivers) {
-        this(senderAndReceivers);
+    public PacketRemoveItem(UUID id, ItemType itemType, UUID sender, UUID... receivers) {
+        this(sender, receivers);
         this.itemId = id;
         this.itemType = itemType;
     }

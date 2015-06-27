@@ -68,28 +68,28 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
                             break;
                         }
                         player.setDirection(Direction.Up);
-                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Up));
+                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Up, null));
                         break;
                     case Input.Keys.S:
                         if (getSession().getState() == GameState.Paused) {
                             break;
                         }
                         player.setDirection(Direction.Down);
-                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Down));
+                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Down, null));
                         break;
                     case Input.Keys.A:
                         if (getSession().getState() == GameState.Paused) {
                             break;
                         }
                         player.setDirection(Direction.Left);
-                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Left));
+                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Left, null));
                         break;
                     case Input.Keys.D:
                         if (getSession().getState() == GameState.Paused) {
                             break;
                         }
                         player.setDirection(Direction.Right);
-                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Right));
+                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Right, null));
                         break;
                     case Input.Keys.SPACE:
                         if (getSession().getState() != GameState.Paused) {
@@ -101,7 +101,7 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
                         BalloonMessage.getBalloonMessage(BalloonHelpMe.class)
                                 .setFollowObject(player)
                                 .addBalloonMessage();
-                        Client.getInstance().send(new PacketBalloonMessage("HelpMe", player.getId()));
+                        Client.getInstance().send(new PacketBalloonMessage("HelpMe", player.getId(), null));
                         break;
                     case Input.Keys.F1:
                         DebugRenderManager.toggle();
@@ -153,7 +153,7 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
         bExit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Client afgesloten.");
+                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Client afgesloten.", null);
                 Client.getInstance().send(packet);
 
                 game.setScreen(new MainScreen(game));
@@ -279,7 +279,7 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
             bKick.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    PacketSetKickInformation packetKick = new PacketSetKickInformation(UUID.fromString(peopleResult[4]));
+                    PacketSetKickInformation packetKick = new PacketSetKickInformation(UUID.fromString(peopleResult[4]), null);
                     Client.getInstance().send(packetKick);
 
                     PacketGetKickInformation packetKickInfo = new PacketGetKickInformation();

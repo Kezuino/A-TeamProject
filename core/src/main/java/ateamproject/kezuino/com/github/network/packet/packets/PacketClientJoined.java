@@ -14,12 +14,12 @@ public class PacketClientJoined extends Packet {
     public PacketClientJoined() {
     }
 
-    public PacketClientJoined(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketClientJoined(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 
-    public PacketClientJoined(UUID joinenId, String username, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketClientJoined(UUID joinenId, String username, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.joinenId = joinenId;
         this.username = username;
     }

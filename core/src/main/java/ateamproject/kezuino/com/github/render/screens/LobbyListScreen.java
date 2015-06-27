@@ -151,7 +151,7 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
         scrollTable.columnDefaults(2);
         scrollTable.row();
 
-        List<PacketGetLobbies.GetLobbiesData> hostList = null;
+        List<PacketGetLobbies.GetLobbiesData> hostList;
 
         Client client = Client.getInstance();
         PacketGetLobbies packet = new PacketGetLobbies(this.clanGame, client.getId());

@@ -174,7 +174,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         try {
             this.rmi.getServer()
-                    .kickClient(this.getId(), this.getId(), PacketKick.KickReasonType.QUIT, "Client disconnected.");
+                    .kickClient(this.getId(), null, PacketKick.KickReasonType.QUIT, "Client disconnected.");
         } catch (RemoteException e) {
             e.printStackTrace();
         } finally {
@@ -188,6 +188,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     public void registerPackets() {
         packets.registerFunc(PacketKick.class, packet -> {
             if (packet.getSender() == null) {
+                System.out.println("Client: From server");
                 new Dialog("Kicked", ((BaseScreen) game.getScreen()).getSkin()) {
                     {
                         text(packet.getReason());
@@ -203,13 +204,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 }.show(((BaseScreen) game.getScreen()).getStage());
                 return true;
             } else {
+                System.out.println("Client: From client");
                 try {
                     if (packet.getReceivers().length > 0) {
                         for (UUID receiver : packet.getReceivers()) {
                             this.rmi.getServer().kickClient(packet.getSender(), receiver, packet.getReasonType(), packet.getReason());
                         }
                     } else {
-                        this.rmi.getServer().kickClient(packet.getSender(), packet.getSender(), packet.getReasonType(), packet.getReason());
+                        this.rmi.getServer().kickClient(packet.getSender(), null, packet.getReasonType(), packet.getReason());
                     }
                 } catch (RemoteException ex) {
                     Logger.getLogger(Client.class.getName()).log(Level.SEVERE, null, ex);
@@ -223,26 +225,27 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             try {
                 data = getRmi().getServer().login(packet.getEmailAddress(), packet.getPassword(), getRmi());
             } catch (RemoteException e) {
-                e.printStackTrace();
+                data = new PacketLoginAuthenticate.ReturnData(null, null, null, null, "Server is niet online.", false);
             }
 
-            if (data != null) {
-                this.setEmailaddress(data.getEmailadress());
-                this.setUsername(data.getUsername());
-                this.setId(data.getPrivateId());
-                this.setPublicId(data.getPublicId());
-                System.out.printf("Logged in as: (Private: %s), (Public: %s)%n", data.getPrivateId(), data.getPublicId());
-            } else {
+            if (data.getPrivateId() == null) {
                 this.setEmailaddress(null);
                 this.setUsername(null);
                 this.setId(null);
                 this.setPublicId(null);
-                return false;
+            } else {
+                this.setEmailaddress(data.getEmailadress());
+                this.setUsername(data.getUsername());
+                this.setId(data.getPrivateId());
+                this.setPublicId(data.getPublicId());
+                System.out.printf("Logged in as: (Username: %s), (Email: %s), (Private: %s), (Public: %s)%n", data.getUsername(), data.getEmailadress(), data.getPrivateId(), data.getPublicId());
             }
-            return true;
+
+            return data;
         });
 
         packets.registerAction(PacketLogout.class, packet -> {
+
             try {
                 getRmi().getServer().logout(getId());
             } catch (RemoteException e) {
@@ -506,8 +509,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     e.printStackTrace();
                 }
             } else {
+                // Request came from server..
                 if (p.isPaused()) {
-                    // Request came from server..
                     Gdx.app.postRunnable(() -> {
                         // Sync data of pactales already send to connected clients with host.
                         try {
@@ -569,13 +572,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 pactale.setPlayerIndex(p.getIndex());
                 final GameObject finalObject = object;
                 Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(true, Assets.getTexture(finalObject.getClass()
-                        .getSimpleName()
-                        .toLowerCase() + ".png", Texture.class))));
+                                                                                                                  .getSimpleName()
+                                                                                                                  .toLowerCase() + ".png", Texture.class))));
             } else if (object instanceof Enemy) {
                 final GameObject finalObject = object;
                 Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.getTexture(finalObject.getClass()
-                        .getSimpleName()
-                        .toLowerCase() + ".png", Texture.class))));
+                                                                                                            .getSimpleName()
+                                                                                                            .toLowerCase() + ".png", Texture.class))));
             }
 
             session.getMap().addGameObject(object);
@@ -585,7 +588,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     .getSimpleName(), session.getObjectsLoaded(), session.getObjectsToLoad());
 
             if (session.getObjectsToLoad() == session.getObjectsLoaded()) {
-                send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.ObjectsLoaded));
+                send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.ObjectsLoaded, null));
             }
         });
 
@@ -602,8 +605,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             item.setMap(session.getMap());
 
             Gdx.app.postRunnable(() -> item.setTexture(new TextureRegion(Assets.getTexture(item.getItemType()
-                    .name()
-                    .toLowerCase() + ".png", Texture.class))));
+                                                                                                   .name()
+                                                                                                   .toLowerCase() + ".png", Texture.class))));
             session.getMap().getNode(item.getExactPosition()).setItem(item);
 
             // Update load status.
@@ -612,7 +615,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     .getSimpleName(), session.getObjectsLoaded(), session.getObjectsToLoad());
 
             if (session.getObjectsToLoad() == session.getObjectsLoaded()) {
-                send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.ObjectsLoaded));
+                send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.ObjectsLoaded, null));
             }
         });
 
@@ -694,9 +697,9 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
                 // Tell the game that we are done loading.
                 if (p.isMaster()) {
-                    send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.ObjectsLoaded));
+                    send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.ObjectsLoaded, null));
                 } else {
-                    send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.MapLoaded));
+                    send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.MapLoaded, null));
                 }
             });
         });
@@ -779,7 +782,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 Gdx.app.postRunnable(() -> {
                     try {
                         BalloonMessage message = ((BalloonMessage) Class.forName(BalloonMessage.class.getPackage()
-                                .getName() + ".messages.Balloon" + packet
+                                                                                         .getName() + ".messages.Balloon" + packet
                                 .getTypeName()).newInstance());
                         if (packet.getFollowTarget() != null) {
                             message.setFollowObject(BaseScreen.getSession().findObject(packet.getFollowTarget()));

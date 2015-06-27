@@ -14,8 +14,8 @@ import java.util.UUID;
  */
 public class PacketReloadClans extends Packet<Void> {
     
-    public PacketReloadClans(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketReloadClans(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
     
 }

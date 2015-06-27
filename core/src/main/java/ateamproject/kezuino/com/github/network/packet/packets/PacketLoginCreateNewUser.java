@@ -13,8 +13,8 @@ public class PacketLoginCreateNewUser extends Packet<Boolean> {
     @PacketField(1)
     protected String email;
 
-    public PacketLoginCreateNewUser(String username, String email, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketLoginCreateNewUser(String username, String email, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.username = username;
         this.email = email;
     }

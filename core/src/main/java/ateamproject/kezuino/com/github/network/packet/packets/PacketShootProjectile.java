@@ -8,7 +8,7 @@ public class PacketShootProjectile extends Packet<Boolean> {
     public PacketShootProjectile() {
     }
 
-    public PacketShootProjectile(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketShootProjectile(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 }

@@ -26,14 +26,17 @@ public class PacketKick extends Packet<Boolean> {
     public PacketKick() {
     }
 
-    public PacketKick(KickReasonType reasonType, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    /**
+     * Creates a new {@link Packet} for kicking of clients.
+     *
+     * @param reasonType ReasonType to give why this {@link Packet} was send.
+     * @param reason Reason message to send to clients that should be kicked (can be null for default).
+     * @param sender {@link UUID} that sent this {@link Packet}.
+     * @param receivers {@link UUID clients} that should be kicked.
+     */
+    public PacketKick(KickReasonType reasonType, String reason, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         if (reasonType == null) throw new IllegalArgumentException("Parameter reasonType must not be null.");
-        this.reasonType = reasonType;
-    }
-
-    public PacketKick(KickReasonType reasonType, String reason, UUID... senderAndReceivers) {
-        this(reasonType, senderAndReceivers);
         this.reasonType = reasonType;
         this.reason = reason;
     }
@@ -83,8 +86,22 @@ public class PacketKick extends Packet<Boolean> {
         return message + '.';
     }
 
+    @Override
+    public String toString() {
+        return "PacketKick{" +
+                "reason='" + reason + '\'' +
+                ", reasonType=" + reasonType +
+                "} " + super.toString();
+    }
+
     public enum KickReasonType implements Serializable {
-        GAME,//when playing or in a lobby
-        QUIT//when the client closes the program or logs out
+        /**
+         * When playing or in a lobby.
+         */
+        GAME,
+        /**
+         * When the client closes the program or logs out.
+         */
+        QUIT
     }
 }

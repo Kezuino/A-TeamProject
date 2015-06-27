@@ -13,8 +13,8 @@ public class PacketHeartbeat extends Packet {
     public PacketHeartbeat() {
     }
 
-    public PacketHeartbeat(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketHeartbeat(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 }
 

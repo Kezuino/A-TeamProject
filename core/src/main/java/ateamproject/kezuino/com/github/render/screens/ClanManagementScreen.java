@@ -43,7 +43,7 @@ public class ClanManagementScreen extends BaseScreen implements RefreshableScree
     }
 
     private void refreshScreen() {
-        PacketReloadClans packet = new PacketReloadClans();
+        PacketReloadClans packet = new PacketReloadClans(null);
         client.send(packet);
 
         scrollTable.clear();

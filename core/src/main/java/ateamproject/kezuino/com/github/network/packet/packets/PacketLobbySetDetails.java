@@ -16,12 +16,12 @@ public class PacketLobbySetDetails extends Packet {
     public PacketLobbySetDetails() {
     }
 
-    public PacketLobbySetDetails(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketLobbySetDetails(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 
-    public PacketLobbySetDetails(Data data, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketLobbySetDetails(Data data, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.data = data;
     }
 

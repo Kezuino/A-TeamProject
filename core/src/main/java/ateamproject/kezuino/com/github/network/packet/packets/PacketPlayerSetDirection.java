@@ -13,8 +13,8 @@ public class PacketPlayerSetDirection extends Packet {
     public PacketPlayerSetDirection() {
     }
 
-    public PacketPlayerSetDirection(Direction direction, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketPlayerSetDirection(Direction direction, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.direction = direction;
     }
 

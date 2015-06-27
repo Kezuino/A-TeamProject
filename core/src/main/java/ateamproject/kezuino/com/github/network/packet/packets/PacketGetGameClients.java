@@ -10,8 +10,8 @@ public class PacketGetGameClients extends Packet<List<PacketGetGameClients.Data>
     public PacketGetGameClients() {
     }
 
-    public PacketGetGameClients(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketGetGameClients(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 
     public static class Data implements Serializable {

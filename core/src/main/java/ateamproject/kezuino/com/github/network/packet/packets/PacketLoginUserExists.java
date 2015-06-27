@@ -10,8 +10,8 @@ public class PacketLoginUserExists extends Packet<Boolean> {
     protected String email;
 
 
-    public PacketLoginUserExists(String email, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketLoginUserExists(String email, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.email = email;
     }
 

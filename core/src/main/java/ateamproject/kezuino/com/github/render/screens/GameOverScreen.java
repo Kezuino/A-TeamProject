@@ -38,7 +38,7 @@ public class GameOverScreen extends BaseScreen {
         btnRetry.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {                
-                Client.getInstance().send(new PacketLaunchGame(false));
+                Client.getInstance().send(new PacketLaunchGame(false, null));
                 game.setScreen(new GameScreen(game));
             }
         });

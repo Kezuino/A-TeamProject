@@ -25,8 +25,8 @@ public class PacketJoinLobby extends Packet<PacketJoinLobbyData> {
     public PacketJoinLobby() {
     }
 
-    public PacketJoinLobby(UUID lobbyId, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketJoinLobby(UUID lobbyId, UUID sender, UUID... receivers) {
+        super(sender, receivers);
 
         this.lobbyId = lobbyId;
     }

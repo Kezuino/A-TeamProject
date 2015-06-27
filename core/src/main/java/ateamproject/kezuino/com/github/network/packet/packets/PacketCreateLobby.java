@@ -23,12 +23,12 @@ public class PacketCreateLobby extends Packet<UUID> {
     public PacketCreateLobby() {
     }
 
-    public PacketCreateLobby(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketCreateLobby(UUID sender, UUID... receivers) {
+        super(sender, receivers);
     }
 
-    public PacketCreateLobby(String lobbyname, String clanname, UUID... senderAndReceivers) {
-        this(senderAndReceivers);
+    public PacketCreateLobby(String lobbyname, String clanname, UUID sender, UUID... receivers) {
+        this(sender, receivers);
 
         this.lobbyname = lobbyname;
         this.clanname = clanname;

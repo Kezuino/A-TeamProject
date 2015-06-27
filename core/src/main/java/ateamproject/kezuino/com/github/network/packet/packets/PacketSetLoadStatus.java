@@ -16,13 +16,13 @@ public class PacketSetLoadStatus extends Packet {
     public PacketSetLoadStatus() {
     }
 
-    public PacketSetLoadStatus(LoadStatus status, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketSetLoadStatus(LoadStatus status, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.status = status;
     }
 
-    public PacketSetLoadStatus(LoadStatus status, int progress, int maxProgress, UUID... senderAndReceivers) {
-        this(status, senderAndReceivers);
+    public PacketSetLoadStatus(LoadStatus status, int progress, int maxProgress, UUID sender, UUID... receivers) {
+        this(status, sender, receivers);
         this.progress = progress;
         this.maxProgress = maxProgress;
     }

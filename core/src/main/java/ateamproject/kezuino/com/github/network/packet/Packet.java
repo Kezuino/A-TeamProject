@@ -42,7 +42,7 @@ public abstract class Packet<TResult> {
     /**
      * Initializes the fields of the {@link Packet} and sets it's {@link #sender} and all (optional) {@link #receivers}.
      *
-     * @param senderAndReceivers First index is the sender, the others are all the receivers of this {@link Packet}.
+     * @param receivers First index is the sender, the others are all the receivers of this {@link Packet}.
      *                           <p>
      *                           Can be empty to indicate loopback. Example: {@code new Packet()}.
      *                           </p>
@@ -50,14 +50,11 @@ public abstract class Packet<TResult> {
      *                           Or first index only for broadcast. <b>Example:</b> {@code new Packet(null)} <b>or</b> {@code new Packet(server)}
      *                           </p>
      */
-    protected Packet(UUID... senderAndReceivers) {
+    protected Packet(UUID sender, UUID... receivers) {
         this();
-        if (senderAndReceivers == null || senderAndReceivers.length == 0) return;
-
-        if (senderAndReceivers.length > 0) sender = senderAndReceivers[0];
-        if (senderAndReceivers.length > 1) {
-            receivers.addAll(Arrays.asList(Arrays.copyOfRange(senderAndReceivers, 1, senderAndReceivers.length)));
-        }
+        setSender(sender);
+        if (receivers == null || receivers.length == 0) return;
+        this.receivers.addAll(Arrays.asList(receivers));
     }
 
     public TResult getResult() {
@@ -199,6 +196,14 @@ public abstract class Packet<TResult> {
         }
 
         return bos.toByteArray();
+    }
+
+    @Override
+    public String toString() {
+        return "Packet{" +
+                "sender=" + sender +
+                ", receivers=" + receivers +
+                '}';
     }
 
     /**

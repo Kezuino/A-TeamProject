@@ -14,8 +14,8 @@ public class PacketPickUpItem extends Packet<Boolean> {
     public PacketPickUpItem() {
     }
 
-    public PacketPickUpItem(UUID item, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketPickUpItem(UUID item, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.item = item;
 
     }

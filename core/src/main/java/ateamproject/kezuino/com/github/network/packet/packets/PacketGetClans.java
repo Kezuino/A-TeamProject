@@ -6,17 +6,20 @@
 package ateamproject.kezuino.com.github.network.packet.packets;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
+
 import java.util.ArrayList;
 import java.util.UUID;
 
 /**
- *
  * @author Fatih
  */
 public class PacketGetClans extends Packet<ArrayList<String>> {
-    
-     public PacketGetClans(UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+
+    public PacketGetClans() {
     }
-    
+
+    public PacketGetClans(UUID sender, UUID... receivers) {
+        super(sender, receivers);
+    }
+
 }

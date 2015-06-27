@@ -136,11 +136,13 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         if (game == null) return null;
 
         // Notify all connected clients that the game is closing.
-        send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby is gesloten.", Stream.concat(Stream.of(new UUID[]{null}), game
+        send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby is gesloten.", null, game
                 .getClients()
                 .stream()
                 .filter(c -> !c
-                        .equals(game.getHostId()))).toArray(UUID[]::new)));
+                        .equals(game.getHostId()))
+                .map(c -> getClient(c).getPublicId())
+                .toArray(UUID[]::new)));
 
         // Unregister client on game.
         for (UUID clientId : game.getClients()) {
@@ -152,7 +154,7 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
 
         // Update lobbylistscreen for all clients.
         if (removedGame != null) {
-            PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, Stream.concat(Stream.of(new UUID[] { null }), this.getClients().stream().map(info -> info.getPrivateId())).toArray(UUID[]::new));
+            PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, null, this.getClients().stream().map(IClientInfo::getPublicId).toArray(UUID[]::new));
             send(tmp);
         }
 
@@ -202,7 +204,15 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * @return {@link IClientInfo} based on the private id. Can be null.
      */
     public TClient getClient(UUID privateId) {
-        return clients.get(privateId);
+        if (privateId == null) throw new IllegalArgumentException("Parameter privateId must not be null.");
+
+        TClient client = clients.get(privateId);
+//        if (client == null) {
+//            if (getClientFromPublic(privateId) != null) {
+//                throw new IllegalArgumentException("Possible public id was given to getClient.");
+//            }
+//        }
+        return client;
     }
 
     /**
@@ -212,13 +222,24 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
      * @return {@link TClient} based on the public id.
      */
     public TClient getClientFromPublic(UUID publicId) {
+        if (publicId == null) throw new IllegalArgumentException("Parameter publicId must not be null.");
+
         // Do not simplify code. Needs to be high-performance.
+        TClient result = null;
         for (TClient client : getClients()) {
             if (client.getPublicId().equals(publicId)) {
-                return client;
+                result = client;
+                break;
             }
         }
-        return null;
+
+//        if (result == null) {
+//            if (getClient(publicId) != null) {
+//                throw new IllegalArgumentException("Possible private id was given to getClientFromPublic.");
+//            }
+//        }
+
+        return result;
     }
 
     /**
@@ -281,15 +302,15 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
 
         // Register default commands.
         console.registerCommand(CommandDefinitionBuilder.create("exit")
-                                                        .setDescription("Closes the server.")
-                                                        .get(), (sender, cmd) -> {
+                                        .setDescription("Closes the server.")
+                                        .get(), (sender, cmd) -> {
             sender.stop();
             return true;
         });
 
         console.registerCommand(CommandDefinitionBuilder.create("help")
-                                                        .setDescription("Shows the available commands.")
-                                                        .get(), (sender, cmd) -> {
+                                        .setDescription("Shows the available commands.")
+                                        .get(), (sender, cmd) -> {
             console.getOut().println("Available commands: ");
             for (String s : console.getCommands()) {
                 console.getOut().println(s);
@@ -298,8 +319,8 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         });
 
         console.registerCommand(CommandDefinitionBuilder.create("clients")
-                                                        .setDescription("Retrieves the clients currently on the server.")
-                                                        .get(), (sender, cmd) -> {
+                                        .setDescription("Retrieves the clients currently on the server.")
+                                        .get(), (sender, cmd) -> {
             List<TClient> clients = getClients();
             if (clients.size() == 0) {
                 console.getOut().println("No clients on server.");
@@ -313,8 +334,8 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         });
 
         console.registerCommand(CommandDefinitionBuilder.create("games")
-                                                        .setDescription("Shows all active games with their clients.")
-                                                        .get(), (sender, cmd) -> {
+                                        .setDescription("Shows all active games with their clients.")
+                                        .get(), (sender, cmd) -> {
             LinkedHashMap<UUID, Game> games = getGames();
             if (games.size() == 0) {
                 console.getOut().println("No games on server.");

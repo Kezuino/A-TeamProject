@@ -15,14 +15,14 @@ public class PacketLaunchGame extends Packet {
         this.level = -1;
     }
 
-    public PacketLaunchGame(boolean paused, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketLaunchGame(boolean paused, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.paused = paused;
         this.level = -1;
     }
 
-    public PacketLaunchGame(boolean paused, int level, UUID... senderAndReceivers) {
-        super(senderAndReceivers);
+    public PacketLaunchGame(boolean paused, int level, UUID sender, UUID... receivers) {
+        super(sender, receivers);
         this.paused = paused;
         this.level = level < -1 ? -1 : level;
     }
