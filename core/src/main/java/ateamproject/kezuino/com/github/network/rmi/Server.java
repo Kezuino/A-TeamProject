@@ -104,25 +104,10 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         System.out.println("Server stopped.");
     }
 
-    /**
-     * Executes the given {@link Packet} based on the registered function or
-     * action. For RMI, the packet executes a RMI function directly.
-     *
-     * @param packet {@link Packet} to send to the {@link Client}.
-     */
-    @Override
-    public void send(Packet packet) {
-        if (packets == null) {
-            return;
-        }
-        packets.execute(packet);
-    }
-
     @Override
     public void registerPackets() {
         packets.registerFunc(PacketKick.class, (packet) -> {
             if (packet.getSender() != null) {
-                System.out.println("Server: From client");
                 ClientInfo client = getClient(packet.getSender());
 
                 // Sender wants to kick receiver.
@@ -136,6 +121,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                                 if (recClient.getGame() != null) {
                                     if (recClient.getGame().removeClient(recClient.getPrivateId())) {
                                         try {
+                                            // Tell receiver to move it's screen from the LobbyScreen.
                                             recClient.getRmi().drop(packet.getReasonType(), packet.getReason());
                                         } catch (RemoteException e) {
                                             e.printStackTrace();
@@ -156,26 +142,24 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                                 if (client.getGame() != null) {
                                     client.getGame().removeClient(packet.getSender());
                                 }
-                                try {
-                                    client.getRmi().drop(packet.getReasonType(), packet.getReason());
-                                } catch (RemoteException e) {
-                                    e.printStackTrace();
-                                }
                             }
-
-                            // Update lobbylistscreen for all clients.
-                            PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, null, this.getClients().stream().map(info -> info.getPublicId()).toArray(UUID[]::new));
-                            send(tmp);
                             break;
                         case QUIT:
                             this.removeClient(packet.getSender());
-                            System.out.println("Client " + packet.getSender() + " removed from server");
                             break;
                     }
                 }
             } else {
-                System.out.println("Server: From server");
                 switch (packet.getReasonType()) {
+                    case GAME:
+                        Stream.of(packet.getReceivers()).forEach(id -> {
+                            try {
+                                getClientFromPublic(id).getRmi().drop(packet.getReasonType(), packet.getReason());
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                        break;
                     case QUIT:
                         Stream.of(packet.getReceivers()).forEach(id -> {
                             try {
@@ -184,6 +168,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                                 e.printStackTrace();
                             }
                         });
+
+                        // Also remove client from connected clients of server.
+                        this.removeClient(packet.getSender());
                         break;
                 }
             }
@@ -251,7 +238,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 } catch (ConnectException e) {
                     removeClient(client.getPrivateId());
                 } catch (RemoteException e) {
-                    System.out.println("Failed to send screen update to client: "+id.toString());
+                    System.out.println("Failed to send screen update to client: " + id.toString());
                 }
             }
         });
@@ -297,7 +284,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 client.setEmailAddress(packet.getEmailAddress());
                 if (!getClients().stream().anyMatch(c -> c.getEmailAddress().equals(packet.getEmailAddress()))) {
                     clients.put(client.getPrivateId(), client);
-                    System.out.println(" .. login accepted. " + clients.size() + " clients total.");
 
                     // Get username from database.
                     try (ResultSet set = Database.getInstance()
@@ -383,7 +369,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerFunc(PacketLoginUserExists.class, (packet) -> {
-            System.out.println("Checking if the following user exists: " + packet.getEmail());
             ResultSet resultSet = null;
             int count = 0;
 

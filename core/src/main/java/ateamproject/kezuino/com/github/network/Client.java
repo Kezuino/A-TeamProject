@@ -95,6 +95,15 @@ public abstract class Client implements INetworkComponent, IPacketSender {
     @Override
     public void send(Packet packet) {
         if (packet.getSender() == null && packet.getReceivers().length <= 0) packet.setSender(getId());
+
+        if (!packet.getClass().getSimpleName().contains("Heartbeat")) {
+            if (packet.getSender() == null) {
+                Gdx.app.debug("NET", "Incoming: " + packet);
+            } else {
+                Gdx.app.debug("NET", "Outgoing: " + packet);
+            }
+        }
+
         packets.execute(packet);
     }
 
@@ -147,6 +156,5 @@ public abstract class Client implements INetworkComponent, IPacketSender {
     @Override
     public void close() {
         unregisterPackets();
-        Gdx.app.debug("CLOSE", "Client closed.");
     }
 }

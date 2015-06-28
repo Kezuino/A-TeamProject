@@ -1,11 +1,14 @@
 package ateamproject.kezuino.com.github.network.packet;
 
 import ateamproject.kezuino.com.github.network.IClientInfo;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,12 +46,12 @@ public abstract class Packet<TResult> {
      * Initializes the fields of the {@link Packet} and sets it's {@link #sender} and all (optional) {@link #receivers}.
      *
      * @param receivers First index is the sender, the others are all the receivers of this {@link Packet}.
-     *                           <p>
-     *                           Can be empty to indicate loopback. Example: {@code new Packet()}.
-     *                           </p>
-     *                           <p>
-     *                           Or first index only for broadcast. <b>Example:</b> {@code new Packet(null)} <b>or</b> {@code new Packet(server)}
-     *                           </p>
+     *                  <p>
+     *                  Can be empty to indicate loopback. Example: {@code new Packet()}.
+     *                  </p>
+     *                  <p>
+     *                  Or first index only for broadcast. <b>Example:</b> {@code new Packet(null)} <b>or</b> {@code new Packet(server)}
+     *                  </p>
      */
     protected Packet(UUID sender, UUID... receivers) {
         this();
@@ -200,10 +203,17 @@ public abstract class Packet<TResult> {
 
     @Override
     public String toString() {
-        return "Packet{" +
-                "sender=" + sender +
-                ", receivers=" + receivers +
-                '}';
+        ReflectionToStringBuilder builder = new ReflectionToStringBuilder(this, new ToStringStyle() {
+            {
+                setUseShortClassName(true);
+            }
+        }) {
+            @Override
+            protected boolean accept(Field field) {
+                return super.accept(field) && (field.getName().equals("sender") || field.getName().equals("receivers") || field.getAnnotation(PacketField.class) != null);
+            }
+        };
+        return builder.toString();
     }
 
     /**

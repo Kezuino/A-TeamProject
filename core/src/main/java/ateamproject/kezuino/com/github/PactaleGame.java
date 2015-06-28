@@ -21,10 +21,10 @@ public class PactaleGame extends Game {
 
     @Override
     public void dispose() {
-        Gdx.app.debug("CLOSE", "Game is closing..");
+        Gdx.app.debug("APP", "Game is closing..");
         Client.getInstance().stop();
-        Gdx.app.debug("CLOSE", "Network client stopped.");
+        Gdx.app.debug("APP", "Network client stopped.");
         super.dispose();
-        Gdx.app.debug("CLOSE", "Game is closed.");
+        Gdx.app.debug("APP", "Game is closed.");
     }
 }

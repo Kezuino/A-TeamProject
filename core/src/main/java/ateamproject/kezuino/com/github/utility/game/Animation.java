@@ -27,10 +27,10 @@ public class Animation {
         TextureRegion[][] region = TextureRegion.split(frames, 32, 32);
 
         this.textures = new HashMap<>();
-        this.textures.put(Direction.Down, new Array(region[0]));
-        this.textures.put(Direction.Right, new Array(region[1]));
-        this.textures.put(Direction.Up, new Array(region[2]));
-        this.textures.put(Direction.Left, new Array(region[3]));
+        this.textures.put(Direction.Down, new Array<>(region[0]));
+        this.textures.put(Direction.Right, new Array<>(region[1]));
+        this.textures.put(Direction.Up, new Array<>(region[2]));
+        this.textures.put(Direction.Left, new Array<>(region[3]));
         this.currentFrame = 0;
         this.hasInitialFrame = hasInitialFrame;
     }

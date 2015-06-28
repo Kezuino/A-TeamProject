@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.network.packet.PacketManager;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketScreenUpdate;
 import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
+import com.badlogic.gdx.Gdx;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -124,6 +125,19 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         return new ArrayList<>(games.values());
     }
 
+    @Override
+    public void send(Packet packet) {
+        if (!packet.getClass().getSimpleName().contains("Heartbeat")) {
+            if (packet.getSender() == null) {
+                System.out.println("NET: Outgoing: " + packet);
+            } else {
+                System.out.println("NET: Incoming: " + packet);
+            }
+        }
+
+        packets.execute(packet);
+    }
+
     /**
      * Removes a {@link Game} from this {@link Server} if it exists and notifies all connected users that the {@link Game} has closed.
      * Does nothing otherwise.
@@ -139,8 +153,8 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby is gesloten.", null, game
                 .getClients()
                 .stream()
-                .filter(c -> !c
-                        .equals(game.getHostId()))
+//                .filter(c -> !c
+//                        .equals(game.getHostId()))
                 .map(c -> getClient(c).getPublicId())
                 .toArray(UUID[]::new)));
 

@@ -6,17 +6,13 @@
 package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketScreenUpdate;
-import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
 import ateamproject.kezuino.com.github.singleplayer.Map;
-import ateamproject.kezuino.com.github.singleplayer.Score;
 import ateamproject.kezuino.com.github.utility.collection.ConcurrentLinkedHashSet;
 import com.badlogic.gdx.graphics.Color;
 
+import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.stream.Stream;
 
 /**
  * Holds information about a hosted lobby/game. Used by the {@link INetworkComponent} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.

@@ -33,6 +33,9 @@ allprojects {
     dependencies {
         apply plugin: 'java'
 
+        compile "commons-io:commons-io:+"
+        compile 'org.apache.commons:commons-lang3:+'
+
         testCompile 'junit:junit:4.12'
     }
 }

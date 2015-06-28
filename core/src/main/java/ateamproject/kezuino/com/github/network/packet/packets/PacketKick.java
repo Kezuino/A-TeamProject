@@ -86,14 +86,6 @@ public class PacketKick extends Packet<Boolean> {
         return message + '.';
     }
 
-    @Override
-    public String toString() {
-        return "PacketKick{" +
-                "reason='" + reason + '\'' +
-                ", reasonType=" + reasonType +
-                "} " + super.toString();
-    }
-
     public enum KickReasonType implements Serializable {
         /**
          * When playing or in a lobby.

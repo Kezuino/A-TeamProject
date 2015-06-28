@@ -103,7 +103,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     
     @Override
     public void changeScore(UUID sender, PacketScoreChanged.ManipulationType manipulationType, int change) throws RemoteException {
-        PacketScoreChanged packet = new PacketScoreChanged(change, manipulationType, sender, null);
+        PacketScoreChanged packet = new PacketScoreChanged(change, manipulationType, sender, new UUID[] { null });
         client.send(packet);
     }
 
