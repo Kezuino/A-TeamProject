@@ -2,13 +2,10 @@ package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
 import ateamproject.kezuino.com.github.network.rmi.Client;
-import ateamproject.kezuino.com.github.utility.assets.Assets;
-import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
 import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 
@@ -18,43 +15,38 @@ import java.util.Random;
 public class Enemy extends GameObject {
 
     public static Random random = new Random();
-
+    /**
+     * If true, this {@link Enemy} won't try to find a path to its {@link #objectToFollow}.
+     */
+    protected boolean disablePathfinding;
     /**
      * If true, {@link Enemy} is currently dead and doesn't participate in the game until respawned.
      */
     private boolean dead;
-
     /**
      * If true, {@link Enemy} can be eaten by a {@link Pactale}.
      */
     private boolean edible;
-
     /**
      * The {@link GameObject} this {@link Enemy} currently follows. Can be null.
      */
     private GameObject objectToFollow;
-
     /**
      * The {@link Vector2 Position} that this {@link Enemy} will respawn on.
      */
     private Vector2 respawnPosition;
-
     /**
      * The space to store the start time when the edible state has been set to this {@link Enemy}.
      */
     private float edibleStartTime;
-
     /**
      * The time this {@link Enemy} will be edible, if set edible.
      */
     private float edibleTime;
-
-
     /**
      * The path created by pathfinding
      */
     private GraphPath<Node> graphPath;
-
     private float timeToChangePath;
     private float timeToChangePathStart;
 
@@ -64,7 +56,6 @@ public class Enemy extends GameObject {
     public Enemy() {
         isActive = true;
     }
-
     /**
      * Constructs a new {@link Enemy}.
      * The newly constructed {@link Enemy} is not dead.
@@ -101,6 +92,14 @@ public class Enemy extends GameObject {
      */
     public Enemy(GameObject objectToFollow, Vector2 exactPosition, float movementSpeed, Direction direction) {
         this(objectToFollow, exactPosition, movementSpeed, direction, Color.WHITE.cpy());
+    }
+
+    public boolean isDisablePathfinding() {
+        return disablePathfinding;
+    }
+
+    public void setDisablePathfinding(boolean disablePathfinding) {
+        this.disablePathfinding = disablePathfinding;
     }
 
     /**
@@ -163,11 +162,11 @@ public class Enemy extends GameObject {
 
     @Override
     protected boolean collisionWithGameObject(GameObject object) {
-        if (object instanceof Pactale  && object.getId().equals(Client.getInstance().getPublicId())) {
+        if (object instanceof Pactale && object.getId().equals(Client.getInstance().getPublicId())) {
             if (this.isEdible()) {
                 this.isMoving = false;
                 this.setNodePosition(this.getStartingPosition());
-                
+
                 PacketScoreChanged packet = new PacketScoreChanged(300, PacketScoreChanged.ManipulationType.INCREASE, Client.getInstance().getId());
                 Client.getInstance().send(packet);
             }
@@ -189,20 +188,20 @@ public class Enemy extends GameObject {
 
         // Set first Pactale as target.
         this.objectToFollow = this.getMap()
-                                  .getAllGameObjects()
-                                  .stream()
-                                  .filter(go -> go instanceof Pactale)
-                                  .map(go -> (Pactale) go)
-                                  .max((p1, p2) -> (int) Vector2.len(p2.getExactPosition().x, p2.getExactPosition().y))
-                                  .orElse(null);
+                .getAllGameObjects()
+                .stream()
+                .filter(go -> go instanceof Pactale)
+                .map(go -> (Pactale) go)
+                .max((p1, p2) -> (int) Vector2.len(p2.getExactPosition().x, p2.getExactPosition().y))
+                .orElse(null);
 
         if (!this.isMoving) {
             //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
-            if (this.objectToFollow != null) {
-                if (graphPath == null || (System.nanoTime() - timeToChangePathStart) / 1000000000.0f >= timeToChangePath) {
+            if (!this.disablePathfinding && this.objectToFollow != null) {
+                if (graphPath == null || (TimeUtils.nanoTime() - timeToChangePathStart) / 1000000000.0f >= timeToChangePath) {
                     graphPath = this.getMap()
-                                    .getPathfinder()
-                                    .searchNodePath(this.getNode(), this.objectToFollow.getNode());
+                            .getPathfinder()
+                            .searchNodePath(this.getNode(), this.objectToFollow.getNode());
 
                     this.timeToChangePath = random.nextFloat() * (.5f - 2f) + .5f;
                     this.timeToChangePathStart = TimeUtils.nanoTime();
@@ -217,8 +216,8 @@ public class Enemy extends GameObject {
                 if (nodeFromPath.hasNext()) {
                     Node nextNode = nodeFromPath.next();
                     this.setDirection(Direction.getDirection(this.getNode().getX(), this.getNode()
-                                                                                        .getY(), nextNode.getX(), nextNode
-                            .getY()));
+                            .getY(), nextNode.getX(), nextNode
+                                                                     .getY()));
                     nodeFromPath.remove();
                     graphPath.clear();
                     while (nodeFromPath.hasNext()) {

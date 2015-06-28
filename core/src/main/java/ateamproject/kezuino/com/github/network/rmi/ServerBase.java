@@ -8,7 +8,9 @@ import ateamproject.kezuino.com.github.render.screens.GameScreen;
 import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
 import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
+import ateamproject.kezuino.com.github.singleplayer.Node;
 import ateamproject.kezuino.com.github.utility.game.Direction;
+import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
@@ -311,6 +313,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     @Override
     public void shootProjectile(UUID sender) throws RemoteException {
         PacketShootProjectile packet = new PacketShootProjectile(sender);
+        server.send(packet);
+    }
+
+    @Override
+    public void setAIPath(UUID sender, UUID objectId, Vector2 position, GraphPath<Node> nodes) throws RemoteException {
+        PacketSetAIPath packet = new PacketSetAIPath(objectId, nodes, position, sender, new UUID[] { null });
         server.send(packet);
     }
 

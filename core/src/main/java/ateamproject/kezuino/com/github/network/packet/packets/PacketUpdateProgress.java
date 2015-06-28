@@ -5,16 +5,16 @@ import ateamproject.kezuino.com.github.network.packet.PacketField;
 
 import java.util.UUID;
 
-public class PacketRequestCompleted extends Packet {
+public class PacketUpdateProgress extends Packet {
     @PacketField(0)
     protected String id;
     @PacketField(1)
     protected int progress;
 
-    public PacketRequestCompleted() {
+    public PacketUpdateProgress() {
     }
 
-    public PacketRequestCompleted(String id, int progress, UUID sender, UUID... receivers) {
+    public PacketUpdateProgress(String id, int progress, UUID sender, UUID... receivers) {
         super(sender, receivers);
         this.id = id;
         this.progress = progress;

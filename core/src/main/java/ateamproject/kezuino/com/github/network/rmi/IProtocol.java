@@ -7,7 +7,9 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
+import ateamproject.kezuino.com.github.singleplayer.Node;
 import ateamproject.kezuino.com.github.utility.game.Direction;
+import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.Remote;
@@ -25,6 +27,8 @@ public interface IProtocol extends Remote {
     void playerSetPosition(UUID sender, Vector2 position) throws RemoteException;
 
     void shootProjectile(UUID sender) throws RemoteException;
+
+    void setAIPath(UUID sender, UUID objectId, Vector2 position, GraphPath<Node> nodes) throws RemoteException;
 
     void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException;
 

@@ -575,8 +575,11 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                                                                                                                   .getSimpleName()
                                                                                                                   .toLowerCase() + ".png", Texture.class))));
             } else if (object instanceof Enemy) {
-                final GameObject finalObject = object;
-                Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(Assets.getTexture(finalObject.getClass()
+                final Enemy enemy = (Enemy)object;
+
+                // Only host should generate enemy paths. Clients will receive them from the host.
+                enemy.setDisablePathfinding(!Client.getInstance().isHost());
+                Gdx.app.postRunnable(() -> enemy.setAnimation(new Animation(Assets.getTexture(enemy.getClass()
                                                                                                             .getSimpleName()
                                                                                                             .toLowerCase() + ".png", Texture.class))));
             }
@@ -712,11 +715,11 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
         });
 
-        packets.registerAction(PacketRequestCompleted.class, packet -> {
+        packets.registerAction(PacketUpdateProgress.class, packet -> {
             switch (packet.getId()) {
                 case "game_load_objects":
                     if (BaseScreen.getSession() == null) {
-                        System.out.println("Warning: PacketRequestCompleted received but was not expected. GameSession is null.");
+                        System.out.println("Warning: PacketUpdateProgress received but was not expected. GameSession is null.");
                         return;
                     }
                     BaseScreen.getSession().setObjectsToLoad(packet.getProgress());

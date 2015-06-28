@@ -246,7 +246,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerFunc(PacketGetClans.class, (p) -> getClient(p.getSender()).getClans());
 
         packets.registerAction(PacketReloadClans.class, (p) -> getClient(p.getSender()).setClans(clanFunctions.getClansByUserName(getClient(p
-                .getSender()).getUsername())));
+                                                                                                                                                    .getSender()).getUsername())));
 
         packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.getClansByEmailAddress(packet.getEmailadres()));
 
@@ -262,7 +262,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketHandleInvitation.class, (packet) -> clanFunctions.handleInvitation(packet.getInvite(), packet
                 .getClanName(), packet.getEmailadres(), packet
-                .getNameOfInvitee()));
+                                                                                                              .getNameOfInvitee()));
 
         packets.registerFunc(PacketHandleManagement.class, (packet) -> clanFunctions.handleManagement(packet.getManage(), packet
                 .getClanName(), packet.getEmailadres()));
@@ -496,7 +496,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             if (!hasVotedForSpecificPerson) {
                 getGameFromClientId(packet.getSender()).getVotes()
-                        .add(new UUID[]{packet.getSender(), packet.getPersonToVoteFor()});
+                        .add(new UUID[] {packet.getSender(), packet.getPersonToVoteFor()});
             }
         });
 
@@ -590,19 +590,22 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
             //Calculate the score based on the level of the game. For every level above 1, add 5% more score.
             int score = packet.getItemType().getScore();
-            if (game.getLevel() != 1) {
+            if (game.getLevel() > 1) {
                 double factor = Math.pow(1.05, game.getLevel() - 1);
                 score *= factor;
             }
 
             for (UUID receiver : game.getClients()) {
                 try {
-                    if (!receiver.equals(packet.getSender())) {
-                        getClient(receiver).getRmi().removeItem(packet.getSender(), packet.getItemId(), packet.getItemType());
+                    ClientInfo client = getClient(receiver);
+                    if (client != null) {
+                        if (!receiver.equals(packet.getSender())) {
+                            client.getRmi().removeItem(packet.getSender(), packet.getItemId(), packet.getItemType());
+                        }
+                        client.getRmi().changeScore(null, PacketScoreChanged.ManipulationType.INCREASE, score);
                     }
-                    getClient(receiver).getRmi().changeScore(null, PacketScoreChanged.ManipulationType.INCREASE, score);
-                } catch (RemoteException e) {
-                    e.printStackTrace();
+                } catch (RemoteException ignored) {
+                    // One of the clients lost connection.
                 }
             }
         });
@@ -639,9 +642,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                         .getSender()));
                 return;
             }
-
-            System.out.printf("Sender: (public: %s) (private: %s). New status: %s%n", client.getPublicId(), client.getPrivateId(), packet
-                    .getStatus());
 
             if (game.getClients()
                     .stream()

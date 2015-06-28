@@ -7,7 +7,9 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
+import ateamproject.kezuino.com.github.singleplayer.Node;
 import ateamproject.kezuino.com.github.utility.game.Direction;
+import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
@@ -71,7 +73,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
     @Override
     public void requestCompleted(String requestId, int progress) throws RemoteException {
-        PacketRequestCompleted packet = new PacketRequestCompleted(requestId, progress, null);
+        PacketUpdateProgress packet = new PacketUpdateProgress(requestId, progress, null);
         client.send(packet);
     }
 
@@ -139,7 +141,13 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketShootProjectile packet = new PacketShootProjectile(sender);
         client.send(packet);
     }
-    
+
+    @Override
+    public void setAIPath(UUID sender, UUID objectId, Vector2 position, GraphPath<Node> nodes) throws RemoteException {
+        PacketSetAIPath packet = new PacketSetAIPath(objectId, nodes, position, sender, new UUID[] { null });
+        client.send(packet);
+    }
+
 
     @Override
     public Map<String, Integer> getHighscores(UUID sender) throws RemoteException {
