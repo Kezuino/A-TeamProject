@@ -63,11 +63,6 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
         PacketJoinLobby.PacketJoinLobbyData lob = packet.getResult();
         this.lobbyName = lob.getLobbyName();
 
-        PacketLobbyMembers p = new PacketLobbyMembers(this.lobbyId, client.getId());
-        client.send(p);
-
-        this.members = p.getResult();
-
         createGui();
     }
 
@@ -164,6 +159,11 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
         scrollTable.add(memberNameHeader);
         scrollTable.add();
         scrollTable.row();
+        
+        PacketLobbyMembers p = new PacketLobbyMembers(this.lobbyId, client.getId());
+        client.send(p);
+
+        this.members = p.getResult();
 
         if (this.members != null) {
             for (Map.Entry<UUID, String> member : members.entrySet()) {

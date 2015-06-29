@@ -438,12 +438,16 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketLobbyMembers.class, packet -> {
             // return all current members in the lobby
-
+            Game game = games.get(packet.getLobbyId());            
             Map<UUID, String> curMembers = new HashMap<>();
+            
+            if(game == null) {
+                return curMembers;
+            }
 
             for (UUID lobby : games.get(packet.getLobbyId()).getClients()) {
                 IClientInfo client = getClient(lobby);
-                curMembers.put(lobby, client.getUsername());
+                curMembers.put(client.getPublicId(), client.getUsername());
             }
             return curMembers;
         });
