@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketObjectCollision;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketRemoveItem;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
 import ateamproject.kezuino.com.github.network.rmi.Client;
@@ -106,33 +107,39 @@ public class Pactale extends GameObject {
     }
 
     @Override
-    protected boolean collisionWithGameObject(GameObject object) {
-        /*if(!this.getId().equals(Client.getInstance().getPublicId())) {
-            return false;
-        }*/
-        
-        if (object instanceof Enemy) {
-            Enemy e = (Enemy) object;
+    public boolean collisionWithGameObject(GameObject object) {
+        if(this.getId().equals(Client.getInstance().getPublicId())) {
+            PacketObjectCollision packet = new PacketObjectCollision(getId(), object.getId(), null);
+            Client.getInstance().send(packet);
 
-            if (!e.isEdible()) {
-                this.hurt();
-                this.setNodePosition(this.getStartingPosition().x / 32, this.getStartingPosition().y / 32);
+            if (object instanceof Enemy) {
+                Enemy e = (Enemy) object;
 
-                PacketScoreChanged packet = new PacketScoreChanged(100, PacketScoreChanged.ManipulationType.DECREASE, Client.getInstance().getId());
-                Client.getInstance().send(packet);
-                
-                Assets.playSound("enemy_eat.mp3");
+                if (!e.isEdible()) {
+                    this.hurt();
+                    this.setNodePosition(this.getStartingPosition().x / 32, this.getStartingPosition().y / 32);
+
+                    PacketScoreChanged pScore = new PacketScoreChanged(100, PacketScoreChanged.ManipulationType.DECREASE, Client.getInstance().getId());
+                    Client.getInstance().send(pScore);
+
+                    Assets.playSound("enemy_eat.mp3");
+                }
+                return true;
             }
-            return true;
+        } else {
+            return false;
         }
         return false;
     }
 
     @Override
-    protected boolean collisionWithItem(Item item) {
-        //item.activate(this);
+    public boolean collisionWithItem(Item item) {
         if(this.getId().equals(Client.getInstance().getPublicId())) {
             Client.getInstance().send(new PacketRemoveItem(item.getId(), item.getItemType(), Client.getInstance().getId()));
+            item.activate(this);
+            item.getNode().removeItem();
+        } else if (!Client.getInstance().isRunning()) {
+            // Singleplayer.
             item.activate(this);
             item.getNode().removeItem();
         }

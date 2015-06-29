@@ -51,7 +51,7 @@ public class Projectile extends GameObject {
     }
 
     @Override
-    protected boolean collisionWithGameObject(GameObject object) {
+    public boolean collisionWithGameObject(GameObject object) {
         if (object.equals(owner) || object instanceof Projectile) return false;
 
         GameObject obj = object;
@@ -66,7 +66,7 @@ public class Projectile extends GameObject {
     }
 
     @Override
-    protected boolean collisionWithWall(Node node) {
+    public boolean collisionWithWall(Node node) {
         Node NextNode = getMap().getAdjacentNode(node, this.direction);
         if (NextNode.isWall() && this.getActive()) {
             Portal portal = new Portal(owner, node, this.direction.reverse());

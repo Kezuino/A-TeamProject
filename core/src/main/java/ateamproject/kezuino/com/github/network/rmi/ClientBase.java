@@ -149,6 +149,12 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         client.send(packet);
     }
 
+    @Override
+    public void objectCollision(UUID sender, UUID collider, UUID target) throws RemoteException {
+        PacketObjectCollision packet = new PacketObjectCollision(collider, target, sender);
+        client.send(packet);
+    }
+
 
     @Override
     public Map<String, Integer> getHighscores(UUID sender) throws RemoteException {

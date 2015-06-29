@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Timer;
+import javafx.application.Platform;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -566,13 +567,13 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                                                                                                                   .getSimpleName()
                                                                                                                   .toLowerCase() + ".png", Texture.class))));
             } else if (object instanceof Enemy) {
-                final Enemy enemy = (Enemy)object;
+                final Enemy enemy = (Enemy) object;
 
                 // Only host should generate enemy paths. Clients will receive them from the host.
                 enemy.setDisablePathfinding(!Client.getInstance().isHost());
                 Gdx.app.postRunnable(() -> enemy.setAnimation(new Animation(Assets.getTexture(enemy.getClass()
-                                                                                                            .getSimpleName()
-                                                                                                            .toLowerCase() + ".png", Texture.class))));
+                                                                                                      .getSimpleName()
+                                                                                                      .toLowerCase() + ".png", Texture.class))));
             }
 
             session.getMap().addGameObject(object);
@@ -823,6 +824,21 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 if ((foundItem = BaseScreen.getSession().findItem(packet.getItemId())) != null) {
                     foundItem.activate(BaseScreen.getSession().getPlayer(packet.getSender()));
                     foundItem.getNode().removeItem();
+                }
+            }
+        });
+
+        packets.registerAction(PacketObjectCollision.class, packet -> {
+            if (packet.getSender() == null) {
+                GameObject collider = BaseScreen.getSession().findObject(packet.getCollider());
+                GameObject target = BaseScreen.getSession().findObject(packet.getTarget());
+                if (collider == null || target == null) return;
+                Gdx.app.postRunnable(() -> collider.collisionWithGameObject(target));
+            } else {
+                try {
+                    getRmi().getServer().objectCollision(packet.getSender(), packet.getCollider(), packet.getTarget());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
             }
         });

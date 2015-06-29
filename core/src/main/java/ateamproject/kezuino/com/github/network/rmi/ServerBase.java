@@ -320,6 +320,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
+    public void objectCollision(UUID sender, UUID collider, UUID target) throws RemoteException {
+        PacketObjectCollision packet = new PacketObjectCollision(collider, target, sender);
+        server.send(packet);
+    }
+
+    @Override
     public Map<UUID, String> getLobbyMembers(UUID lobbyId) throws RemoteException {
         PacketLobbyMembers packet = new PacketLobbyMembers(lobbyId, null);
         server.send(packet);

@@ -443,7 +443,7 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
      *               colliding with.
      * @return True if collision has been handled and {@link GameObject}.
      */
-    protected boolean collisionWithGameObject(GameObject object) {
+    public boolean collisionWithGameObject(GameObject object) {
         return false;
     }
 
@@ -454,11 +454,11 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
      * @param node {@link Node} this {@link GameObject} collided with.
      * @return True if the collision has been handled.
      */
-    protected boolean collisionWithWall(Node node) {
+    public boolean collisionWithWall(Node node) {
         return false;
     }
 
-    protected boolean collisionWithItem(Item item) {
+    public boolean collisionWithItem(Item item) {
         return false;
     }
 
@@ -594,7 +594,6 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
             }
         }
 
-        // Particle particleEffect.
         updateParticleEffect();
     }
 

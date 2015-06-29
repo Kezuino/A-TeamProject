@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketObjectCollision;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketSetAIPath;
 import ateamproject.kezuino.com.github.network.rmi.Client;
@@ -164,7 +165,7 @@ public class Enemy extends GameObject {
     }
 
     @Override
-    protected boolean collisionWithGameObject(GameObject object) {
+    public boolean collisionWithGameObject(GameObject object) {
         if (object instanceof Pactale && object.getId().equals(Client.getInstance().getPublicId())) {
             if (this.isEdible()) {
                 this.isMoving = false;

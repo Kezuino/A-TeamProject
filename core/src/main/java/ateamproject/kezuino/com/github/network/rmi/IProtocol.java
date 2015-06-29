@@ -32,6 +32,8 @@ public interface IProtocol extends Remote {
 
     void setAIPath(UUID sender, UUID objectId, Vector2 position, Collection<Vector2> nodes) throws RemoteException;
 
+    void objectCollision(UUID sender, UUID collider, UUID target) throws RemoteException;
+
     void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException;
 
     void createItem(UUID sender, UUID itemId, ItemType type, Vector2 position) throws RemoteException;

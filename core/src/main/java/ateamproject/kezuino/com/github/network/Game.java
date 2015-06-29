@@ -120,6 +120,17 @@ public class Game {
     }
 
     /**
+     * Gets all {@link IClientInfo clients} excluding the private id {@link IClientInfo clients} given by {@code excluded}.
+     *
+     * @param excluded {@link IClientInfo} to exclude from the result.
+     * @return {@link IClientInfo clients} excluding the {@link IClientInfo clients} given by {@code excluded}.
+     */
+    public Stream<UUID> getClientsExclude(UUID... excluded) {
+        if (excluded == null || excluded.length == 0) return getClients().stream();
+        return getClients().stream().filter(id -> !Stream.of(excluded).anyMatch(id::equals));
+    }
+
+    /**
      * This array is a copy of {@link #getClients()}. Do not add to this array!
      *
      * @return A unmodifiable list.
