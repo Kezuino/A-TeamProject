@@ -13,17 +13,17 @@ import com.badlogic.gdx.maps.tiled.TiledMapTileSet;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class Node extends TiledMapTileLayer.Cell implements IndexedNode<Node>, IPositionable {
 
-    private final Map map;
+    private transient final Map map;
     /**
      * All {@link GameObject GameObjects} on this {@link Node}.
      */
-    //private final List<GameObject> gameObjects;
     private final int x;
     private final int y;
     /**

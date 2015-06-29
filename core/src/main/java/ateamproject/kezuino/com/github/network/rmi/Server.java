@@ -577,6 +577,23 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             game.getLoadQueue().add(packet);
         });
 
+        packets.registerAction(PacketSetAIPath.class, packet -> {
+            if (packet.getSender() == null) return;
+            ClientInfo client = getClient(packet.getSender());
+            if (client != null) {
+                Game game = client.getGame();
+                if (game != null) {
+                    game.getClientsWithoutHost().map(this::getClient).forEach(c -> {
+                        try {
+                            c.getRmi().setAIPath(null, packet.getObjId(), packet.getPosition(), packet.getPath());
+                        } catch (RemoteException ignored) {
+                            ignored.printStackTrace();
+                        }
+                    });
+                }
+            }
+        });
+
         packets.registerAction(PacketCreateItem.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             game.getLoadQueue().add(packet);

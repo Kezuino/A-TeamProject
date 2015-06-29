@@ -16,10 +16,7 @@ import com.badlogic.gdx.math.Vector2;
 import java.rmi.RemoteException;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Stream;
 
 public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
@@ -317,7 +314,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void setAIPath(UUID sender, UUID objectId, Vector2 position, GraphPath<Node> nodes) throws RemoteException {
+    public void setAIPath(UUID sender, UUID objectId, Vector2 position, Collection<Vector2> nodes) throws RemoteException {
         PacketSetAIPath packet = new PacketSetAIPath(objectId, nodes, position, sender, new UUID[] { null });
         server.send(packet);
     }

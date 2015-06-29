@@ -8,6 +8,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.*;
 import ateamproject.kezuino.com.github.singleplayer.*;
+import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage;
@@ -25,10 +26,7 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -42,34 +40,16 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     protected Timer updateTimer;
     private String skin = "Skin1";
 
+    public boolean isRunning() {
+        return updateTimer != null;
+    }
+
     protected Client() {
         super(null);
-
-        updateTimer = new Timer();
-        updateTimer.start();
-
-        System.setProperty("pactales.client.servername", "localhost");
-        System.setProperty("pactales.client.serverobject", "server");
-        try {
-            rmi = new ClientBase(this);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
     }
 
     protected Client(Game game) {
         super(game);
-
-        updateTimer = new Timer();
-        updateTimer.start();
-
-        System.setProperty("pactales.client.servername", "localhost");
-        System.setProperty("pactales.client.serverobject", "server");
-        try {
-            rmi = new ClientBase(this);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
@@ -106,6 +86,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     @Override
     public void start() {
         System.out.println("Client starting...");
+
+        System.setProperty("pactales.client.servername", "localhost");
+        System.setProperty("pactales.client.serverobject", "server");
+        try {
+            rmi = new ClientBase(this);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
 
         try {
             registerPackets();
@@ -148,8 +136,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                             }
                             try {
                                 Thread.sleep(3000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                            } catch (InterruptedException ignored) {
                                 break;
                             }
                         }
@@ -171,6 +158,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     public void close() {
         updateTimer.stop();
         updateTimer.clear();
+        // Required for isRunning() to work.
+        updateTimer = null;
+
+        if (updateThread != null) updateThread.interrupt();
 
         try {
             this.rmi.getServer()
@@ -595,6 +586,26 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
         });
 
+        packets.registerAction(PacketSetAIPath.class, packet -> {
+            if (packet.getSender() != null) {
+                try {
+                    getRmi().getServer().setAIPath(packet.getSender(), packet.getObjId(), packet.getPosition(), packet.getPath());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                // Server sended this.
+                Optional.of(BaseScreen.getSession().findObject(packet.getObjId())).ifPresent(obj -> {
+                    if (!(obj instanceof Enemy)) return;
+                    Enemy enemy = (Enemy)obj;
+                    Gdx.app.postRunnable(() -> {
+                        enemy.setExactPosition(packet.getPosition());
+                        enemy.setPath(packet.getPath());
+                    });
+                });
+            }
+        });
+
         packets.registerAction(PacketCreateItem.class, packet -> {
             GameSession session = BaseScreen.getSession();
             if (session == null) {
@@ -624,7 +635,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerAction(PacketLobbySetDetails.class, p -> {
             try {
-
                 rmi.getServer().setLobbyDetails(p.getSender(), p.getData());
             } catch (RemoteException e) {
                 e.printStackTrace();

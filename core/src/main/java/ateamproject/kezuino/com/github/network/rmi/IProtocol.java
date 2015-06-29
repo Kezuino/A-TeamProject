@@ -14,6 +14,8 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -28,7 +30,7 @@ public interface IProtocol extends Remote {
 
     void shootProjectile(UUID sender) throws RemoteException;
 
-    void setAIPath(UUID sender, UUID objectId, Vector2 position, GraphPath<Node> nodes) throws RemoteException;
+    void setAIPath(UUID sender, UUID objectId, Vector2 position, Collection<Vector2> nodes) throws RemoteException;
 
     void createObject(UUID sender, String type, Vector2 position, Direction direction, float speed, UUID newObjectId, int color, int index) throws RemoteException;
 

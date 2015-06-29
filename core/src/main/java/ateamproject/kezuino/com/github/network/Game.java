@@ -10,16 +10,16 @@ import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.utility.collection.ConcurrentLinkedHashSet;
 import com.badlogic.gdx.graphics.Color;
 
-import java.rmi.RemoteException;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Stream;
 
 /**
  * Holds information about a hosted lobby/game. Used by the {@link INetworkComponent} to synchronize {@link ateamproject.kezuino.com.github.network.rmi.IProtocolClient}.
  */
 public class Game {
 
-    public static final Color[] SELECTABLE_COLORS = new Color[]{
+    public static final Color[] SELECTABLE_COLORS = new Color[] {
             Color.RED,
             Color.BLUE,
             Color.ORANGE,
@@ -101,12 +101,22 @@ public class Game {
     }
 
     /**
-     * Gets all {@link IClientInfo clients} that are currently in this game / lobby.
+     * Gets all {@link IClientInfo clients} that are currently in this {@link Game}.
      *
-     * @return All {@link IClientInfo clients} that are currently in this game / lobby.
+     * @return All {@link IClientInfo clients} that are currently in this {@link Game}.
      */
     public ConcurrentLinkedHashSet<UUID> getClients() {
         return clients;
+    }
+
+    /**
+     * Gets all {@link IClientInfo clients} that are in this {@link Game} excluding the {@link UUID host}.
+     *
+     * @return {@link IClientInfo clients} that are in this {@link Game} excluding the {@link UUID host}.
+     * @see #getClients()
+     */
+    public Stream<UUID> getClientsWithoutHost() {
+        return clients.stream().filter(c -> !c.equals(getHostId()));
     }
 
     /**

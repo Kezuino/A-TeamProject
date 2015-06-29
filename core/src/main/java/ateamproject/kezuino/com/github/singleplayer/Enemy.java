@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketSetAIPath;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
@@ -9,6 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -56,6 +58,7 @@ public class Enemy extends GameObject {
     public Enemy() {
         isActive = true;
     }
+
     /**
      * Constructs a new {@link Enemy}.
      * The newly constructed {@link Enemy} is not dead.
@@ -203,6 +206,11 @@ public class Enemy extends GameObject {
                             .getPathfinder()
                             .searchNodePath(this.getNode(), this.objectToFollow.getNode());
 
+                    // Notify that a path was generated.
+                    if (Client.getInstance().isRunning()) {
+                        Client.getInstance().send(new PacketSetAIPath(getId(), this.getMap().getPathfinder().pathToVector2(graphPath), getExactPosition(), null));
+                    }
+
                     this.timeToChangePath = random.nextFloat() * (.5f - 2f) + .5f;
                     this.timeToChangePathStart = TimeUtils.nanoTime();
                 }
@@ -228,5 +236,14 @@ public class Enemy extends GameObject {
         }
 
         super.update();
+    }
+
+    /**
+     * Sets the {@link GraphPath} that this {@link Enemy} will move towards.
+     *
+     * @param path {@link Collection} of vector2 that indicate the nodes to follow.
+     */
+    public void setPath(Collection<Vector2> path) {
+        this.graphPath = this.getMap().getPathfinder().vector2ToPath(path);
     }
 }
