@@ -11,11 +11,12 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
+
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -56,8 +57,8 @@ public class CreditsScreen extends BaseScreen {
         content = new ArrayList<>();
         titelLabels = new ArrayList<>();
         contentLabels = new ArrayList<>();
-        titelLabelsModified = new CopyOnWriteArrayList();
-        contentLabelsModified = new CopyOnWriteArrayList();
+        titelLabelsModified = new CopyOnWriteArrayList<>();
+        contentLabelsModified = new CopyOnWriteArrayList<>();
 
         this.titel = "The A - Team";
         content.add("Lead developer: Fatih Taskent,");
@@ -68,6 +69,8 @@ public class CreditsScreen extends BaseScreen {
         content.add("Documentation/Support: Sven Keunen");
 
         backgroundMusic = Assets.getMusicStream("credits.mp3");
+        backgroundMusic.setPosition(0);
+        clearOnRenderColor = Color.BLACK;
 
         Image i = new Image(new Texture("gui/credits.png"));
         i.setFillParent(true);
@@ -134,52 +137,44 @@ public class CreditsScreen extends BaseScreen {
     }
 
     private void modifyLabels() {
-        Thread t = new Thread(new Runnable() {
+        Thread t = new Thread(() -> {
+            ArrayList<Thread> threads = new ArrayList<>();
 
-            @Override
-            public void run() {
-                ArrayList<Thread> threads = new ArrayList<>();
-
-                Random r = new Random();
-                if (r.nextBoolean()) {
-                    while (!Thread.currentThread().isInterrupted()) {
-                        if (numberOfModifieingThreadsRandom.get() <= maxNumberOfModifieingThreadsRandom) {
-                            numberOfModifieingThreadsRandom.incrementAndGet();
-                            Thread t = new Thread(randomModifier);
-                            t.start();
-                            threads.add(t);
-                        }
-                    }
-                } else {
-                    while (!Thread.currentThread().isInterrupted()) {
-                        if (numberOfModifieingThreadsRow.get() <= maxNumberOfModifieingThreadsRow) {
-                            numberOfModifieingThreadsRow.incrementAndGet();
-                            Thread t = new Thread(rowModifier);
-                            t.start();
-                            threads.add(t);
-                        }
+            Random r = new Random();
+            if (r.nextBoolean()) {
+                while (!Thread.currentThread().isInterrupted()) {
+                    if (numberOfModifieingThreadsRandom.get() <= maxNumberOfModifieingThreadsRandom) {
+                        numberOfModifieingThreadsRandom.incrementAndGet();
+                        Thread t1 = new Thread(randomModifier);
+                        t1.start();
+                        threads.add(t1);
                     }
                 }
-
-                for (Thread thread : threads) {
-                    thread.interrupt();
+            } else {
+                while (!Thread.currentThread().isInterrupted()) {
+                    if (numberOfModifieingThreadsRow.get() <= maxNumberOfModifieingThreadsRow) {
+                        numberOfModifieingThreadsRow.incrementAndGet();
+                        Thread t1 = new Thread(rowModifier);
+                        t1.start();
+                        threads.add(t1);
+                    }
                 }
+            }
+
+            for (Thread thread : threads) {
+                thread.interrupt();
             }
         });
         t.start();
     }
 
     private void singleStep(Label label, float x, float y, boolean randomColor) {
-        Gdx.app.postRunnable(new Runnable() {
-
-            @Override
-            public void run() {
-                label.setPosition(x, y);
-                if (randomColor) {
-                    Random r = new Random();
-                    Color initRandomColor = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat(), 1);
-                    label.setColor(initRandomColor);
-                }
+        Gdx.app.postRunnable(() -> {
+            label.setPosition(x, y);
+            if (randomColor) {
+                Random r = new Random();
+                Color initRandomColor = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat(), 1);
+                label.setColor(initRandomColor);
             }
         });
     }
@@ -252,33 +247,30 @@ public class CreditsScreen extends BaseScreen {
             for (Label label : labels) {
                 final String pattern = "+1+1+1+1+1+1+1+1+1+1-1-1-1-1-1-1-1-1-1-1+1+1+1+1+1-1-1-1-1-1+1+1-1-1";
 
-                Thread t = new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        for (int i = 0; i < pattern.length(); i += 2) {
-                            if (Thread.currentThread().isInterrupted()) {
-                                break;
-                            }
+                Thread t = new Thread(() -> {
+                    for (int i = 0; i < pattern.length(); i += 2) {
+                        if (Thread.currentThread().isInterrupted()) {
+                            break;
+                        }
 
-                            boolean randomColor = false;
-                            float height = label.getY();
+                        boolean randomColor = false;
+                        float height = label.getY();
 
-                            if (pattern.substring(i, i + 1).equals("+")) {
-                                height += Float.parseFloat(pattern.substring(i + 1, i + 2));
-                            } else {
-                                height -= Float.parseFloat(pattern.substring(i + 1, i + 2));
-                            }
+                        if (pattern.substring(i, i + 1).equals("+")) {
+                            height += Float.parseFloat(pattern.substring(i + 1, i + 2));
+                        } else {
+                            height -= Float.parseFloat(pattern.substring(i + 1, i + 2));
+                        }
 
-                            if (pattern.length() == i) {
-                                randomColor = true;
-                            }
+                        if (pattern.length() == i) {
+                            randomColor = true;
+                        }
 
-                            singleStep(label, label.getX(), height, randomColor);
-                            try {
-                                Thread.sleep(30);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(CreditsScreen.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                        singleStep(label, label.getX(), height, randomColor);
+                        try {
+                            Thread.sleep(30);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(CreditsScreen.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
                 });
