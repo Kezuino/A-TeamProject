@@ -198,7 +198,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 }.show(((BaseScreen) game.getScreen()).getStage());
                 return true;
             } else {
-                System.out.println("Client: From client");
                 try {
                     if (packet.getReceivers().length > 0) {
                         for (UUID receiver : packet.getReceivers()) {

@@ -13,6 +13,7 @@ public class PacketObjectCollision extends Packet {
 
     public PacketObjectCollision() {
     }
+
     public PacketObjectCollision(UUID collider, UUID target, UUID sender, UUID... receivers) {
         super(sender, receivers);
         if (collider == null) throw new IllegalArgumentException("Parameter collider must not be null.");

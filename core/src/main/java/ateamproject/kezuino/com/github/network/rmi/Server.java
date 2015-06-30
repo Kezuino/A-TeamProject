@@ -633,26 +633,24 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketObjectCollision.class, packet -> {
-            return;
-            // TODO: Fix infinite loop.
-//            if (packet.getSender() != null) {
-//                ClientInfo client = getClient(packet.getSender());
-//                if (client != null) {
-//                    Game game = client.getGame();
-//                    if (game != null) {
-//                        game.getClientsExclude(packet.getSender()).forEach(id -> {
-//                            ClientInfo c = getClient(id);
-//                            if (c != null) {
-//                                try {
-//                                    c.getRmi().objectCollision(null, packet.getCollider(), packet.getTarget());
-//                                } catch (RemoteException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        });
-//                    }
-//                }
-//            }
+            if (packet.getSender() != null) {
+                ClientInfo client = getClient(packet.getSender());
+                if (client != null) {
+                    Game game = client.getGame();
+                    if (game != null) {
+                        game.getClientsExclude(packet.getSender()).forEach(id -> {
+                            ClientInfo c = getClient(id);
+                            if (c != null) {
+                                try {
+                                    c.getRmi().objectCollision(null, packet.getCollider(), packet.getTarget());
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
         });
 
         packets.registerAction(PacketScoreChanged.class, packet -> {
