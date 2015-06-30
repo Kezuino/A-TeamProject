@@ -5,9 +5,11 @@ import ateamproject.kezuino.com.github.network.IClientInfo;
 import ateamproject.kezuino.com.github.network.mail.MailAccount;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
+import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
 import ateamproject.kezuino.com.github.singleplayer.ClanFunctions;
+import ateamproject.kezuino.com.github.singleplayer.GameObject;
 import ateamproject.kezuino.com.github.singleplayer.Pactale;
 import ateamproject.kezuino.com.github.utility.io.Database;
 import com.badlogic.gdx.graphics.Color;
@@ -795,6 +797,28 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             for (IProtocolClient receiver : receivers) {
                 try {
                     receiver.playerSetDirection(getClient(packet.getSender()).getPublicId(), packet.getDirection());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+        
+        packets.registerAction(PacketObjectSetDirection.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) {
+                System.out.println("Could not set direction for client: " + packet.getSender());
+                return;
+            }
+
+            IProtocolClient[] receivers = game.getClients()
+                    .stream()
+                    .filter(c -> !c.equals(packet.getSender()))
+                    .map(id -> getClient(id).getRmi())
+                    .toArray(IProtocolClient[]::new);
+
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.objectSetDirection(packet.getSender(), packet.getObject(), packet.getFrom(), packet.getTo());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

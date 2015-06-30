@@ -7,9 +7,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
-import ateamproject.kezuino.com.github.singleplayer.Node;
 import ateamproject.kezuino.com.github.utility.game.Direction;
-import com.badlogic.gdx.ai.pfa.GraphPath;
 import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
@@ -128,6 +126,12 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     @Override
     public void playerSetDirection(UUID sender, Direction direction) throws RemoteException {
         PacketPlayerSetDirection packet = new PacketPlayerSetDirection(direction, sender);
+        client.send(packet);
+    }
+    
+    @Override
+    public void objectSetDirection(UUID sender, UUID object, Vector2 from, Vector2 to) throws RemoteException {
+        PacketObjectSetDirection packet = new PacketObjectSetDirection(from, to, object, sender);
         client.send(packet);
     }
 

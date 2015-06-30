@@ -1,0 +1,577 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" renderorder="left-up" width="10" height="10" tilewidth="32" tileheight="32" nextobjectid="32">
+ <tileset firstgid="1" name="tiles" tilewidth="32" tileheight="32">
+  <tile id="0">
+   <image width="32" height="32" source="tiles/6566.png"/>
+  </tile>
+  <tile id="1">
+   <image width="32" height="32" source="tiles/6568.png"/>
+  </tile>
+  <tile id="2">
+   <image width="32" height="32" source="tiles/6569.png"/>
+  </tile>
+  <tile id="3">
+   <image width="32" height="32" source="tiles/6570.png"/>
+  </tile>
+  <tile id="4">
+   <image width="32" height="32" source="tiles/6571.png"/>
+  </tile>
+  <tile id="5">
+   <image width="32" height="32" source="tiles/6572.png"/>
+  </tile>
+  <tile id="6">
+   <image width="32" height="32" source="tiles/6573.png"/>
+  </tile>
+  <tile id="7">
+   <image width="32" height="32" source="tiles/6574.png"/>
+  </tile>
+  <tile id="8">
+   <image width="32" height="32" source="tiles/6575.png"/>
+  </tile>
+  <tile id="9">
+   <image width="32" height="32" source="tiles/6576.png"/>
+  </tile>
+  <tile id="10">
+   <image width="32" height="32" source="tiles/6577.png"/>
+  </tile>
+  <tile id="11">
+   <image width="32" height="32" source="tiles/10111.png"/>
+  </tile>
+  <tile id="12">
+   <image width="32" height="32" source="tiles/10140.png"/>
+  </tile>
+  <tile id="13">
+   <image width="32" height="32" source="tiles/10141.png"/>
+  </tile>
+  <tile id="14">
+   <image width="32" height="32" source="tiles/10142.png"/>
+  </tile>
+  <tile id="15">
+   <image width="32" height="32" source="tiles/10143.png"/>
+  </tile>
+  <tile id="16">
+   <image width="32" height="32" source="tiles/10144.png"/>
+  </tile>
+  <tile id="17">
+   <image width="32" height="32" source="tiles/10145.png"/>
+  </tile>
+  <tile id="18">
+   <image width="32" height="32" source="tiles/10146.png"/>
+  </tile>
+  <tile id="19">
+   <image width="32" height="32" source="tiles/10147.png"/>
+  </tile>
+  <tile id="20">
+   <image width="32" height="32" source="tiles/10148.png"/>
+  </tile>
+  <tile id="21">
+   <image width="32" height="32" source="tiles/10149.png"/>
+  </tile>
+  <tile id="22">
+   <image width="32" height="32" source="tiles/10150.png"/>
+  </tile>
+  <tile id="23">
+   <image width="32" height="32" source="tiles/10151.png"/>
+  </tile>
+  <tile id="24">
+   <image width="32" height="32" source="tiles/10152.png"/>
+  </tile>
+  <tile id="25">
+   <image width="32" height="32" source="tiles/10154.png"/>
+  </tile>
+  <tile id="26">
+   <image width="32" height="32" source="tiles/10155.png"/>
+  </tile>
+  <tile id="27">
+   <image width="32" height="32" source="tiles/10156.png"/>
+  </tile>
+  <tile id="28">
+   <image width="32" height="32" source="tiles/10157.png"/>
+  </tile>
+  <tile id="29">
+   <image width="32" height="32" source="tiles/10158.png"/>
+  </tile>
+  <tile id="30">
+   <image width="32" height="32" source="tiles/10159.png"/>
+  </tile>
+  <tile id="31">
+   <image width="32" height="32" source="tiles/10160.png"/>
+  </tile>
+  <tile id="32">
+   <image width="32" height="32" source="tiles/10162.png"/>
+  </tile>
+  <tile id="33">
+   <image width="32" height="32" source="tiles/10164.png"/>
+  </tile>
+  <tile id="34">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/10178.png"/>
+  </tile>
+  <tile id="35">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/10180.png"/>
+  </tile>
+  <tile id="36">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/10182.png"/>
+  </tile>
+  <tile id="37">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/10183.png"/>
+  </tile>
+  <tile id="38">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/10184.png"/>
+  </tile>
+  <tile id="39">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/10185.png"/>
+  </tile>
+  <tile id="40">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/10190.png"/>
+  </tile>
+  <tile id="41">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/10192.png"/>
+  </tile>
+  <tile id="42">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/10194.png"/>
+  </tile>
+  <tile id="43">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/10195.png"/>
+  </tile>
+  <tile id="44">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/10196.png"/>
+  </tile>
+  <tile id="45">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/10199.png"/>
+  </tile>
+  <tile id="46">
+   <image width="32" height="32" source="tiles/10396.png"/>
+  </tile>
+  <tile id="47">
+   <image width="32" height="32" source="tiles/10397.png"/>
+  </tile>
+  <tile id="48">
+   <image width="32" height="32" source="tiles/10398.png"/>
+  </tile>
+  <tile id="49">
+   <image width="32" height="32" source="tiles/10399.png"/>
+  </tile>
+  <tile id="50">
+   <image width="32" height="32" source="tiles/10400.png"/>
+  </tile>
+  <tile id="51">
+   <image width="32" height="32" source="tiles/10401.png"/>
+  </tile>
+  <tile id="52">
+   <image width="32" height="32" source="tiles/10402.png"/>
+  </tile>
+  <tile id="53">
+   <image width="32" height="32" source="tiles/10403.png"/>
+  </tile>
+  <tile id="54">
+   <image width="32" height="32" source="tiles/10404.png"/>
+  </tile>
+  <tile id="55">
+   <image width="32" height="32" source="tiles/10405.png"/>
+  </tile>
+  <tile id="56">
+   <image width="32" height="32" source="tiles/10406.png"/>
+  </tile>
+  <tile id="57">
+   <image width="32" height="32" source="tiles/10407.png"/>
+  </tile>
+  <tile id="58">
+   <image width="32" height="32" source="tiles/10408.png"/>
+  </tile>
+  <tile id="59">
+   <image width="32" height="32" source="tiles/10409.png"/>
+  </tile>
+  <tile id="60">
+   <image width="32" height="32" source="tiles/10410.png"/>
+  </tile>
+  <tile id="61">
+   <image width="32" height="32" source="tiles/10411.png"/>
+  </tile>
+  <tile id="62">
+   <image width="32" height="32" source="tiles/10412.png"/>
+  </tile>
+  <tile id="63">
+   <image width="32" height="32" source="tiles/10413.png"/>
+  </tile>
+  <tile id="64">
+   <image width="32" height="32" source="tiles/10414.png"/>
+  </tile>
+  <tile id="65">
+   <image width="32" height="32" source="tiles/10415.png"/>
+  </tile>
+  <tile id="66">
+   <image width="32" height="32" source="tiles/10416.png"/>
+  </tile>
+  <tile id="67">
+   <image width="32" height="32" source="tiles/10417.png"/>
+  </tile>
+  <tile id="68">
+   <image width="32" height="32" source="tiles/10418.png"/>
+  </tile>
+  <tile id="69">
+   <image width="32" height="32" source="tiles/10419.png"/>
+  </tile>
+  <tile id="70">
+   <image width="32" height="32" source="tiles/11517.png"/>
+  </tile>
+  <tile id="71">
+   <image width="32" height="32" source="tiles/12131.png"/>
+  </tile>
+  <tile id="72">
+   <image width="32" height="32" source="tiles/12132.png"/>
+  </tile>
+  <tile id="73">
+   <image width="32" height="32" source="tiles/12133.png"/>
+  </tile>
+  <tile id="74">
+   <image width="32" height="32" source="tiles/12339.png"/>
+  </tile>
+  <tile id="75">
+   <image width="32" height="32" source="tiles/12340.png"/>
+  </tile>
+  <tile id="76">
+   <image width="32" height="32" source="tiles/12341.png"/>
+  </tile>
+  <tile id="77">
+   <image width="32" height="32" source="tiles/12342.png"/>
+  </tile>
+  <tile id="78">
+   <image width="32" height="32" source="tiles/12343.png"/>
+  </tile>
+  <tile id="79">
+   <image width="32" height="32" source="tiles/12344.png"/>
+  </tile>
+  <tile id="80">
+   <image width="32" height="32" source="tiles/12345.png"/>
+  </tile>
+  <tile id="81">
+   <image width="32" height="32" source="tiles/12346.png"/>
+  </tile>
+  <tile id="82">
+   <image width="32" height="32" source="tiles/12347.png"/>
+  </tile>
+  <tile id="83">
+   <image width="32" height="32" source="tiles/12348.png"/>
+  </tile>
+  <tile id="84">
+   <image width="32" height="32" source="tiles/12349.png"/>
+  </tile>
+  <tile id="85">
+   <image width="32" height="32" source="tiles/12350.png"/>
+  </tile>
+  <tile id="86">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/12351.png"/>
+  </tile>
+  <tile id="87">
+   <image width="32" height="32" source="tiles/12352.png"/>
+  </tile>
+  <tile id="88">
+   <image width="32" height="32" source="tiles/12353.png"/>
+  </tile>
+  <tile id="89">
+   <image width="32" height="32" source="tiles/12354.png"/>
+  </tile>
+  <tile id="90">
+   <properties>
+    <property name="isWall" value="true"/>
+   </properties>
+   <image width="32" height="32" source="tiles/12355.png"/>
+  </tile>
+  <tile id="91">
+   <image width="32" height="32" source="tiles/12356.png"/>
+  </tile>
+  <tile id="92">
+   <image width="32" height="32" source="tiles/12357.png"/>
+  </tile>
+  <tile id="93">
+   <image width="32" height="32" source="tiles/12358.png"/>
+  </tile>
+  <tile id="94">
+   <image width="32" height="32" source="tiles/12359.png"/>
+  </tile>
+  <tile id="95">
+   <image width="32" height="32" source="tiles/12360.png"/>
+  </tile>
+  <tile id="96">
+   <image width="32" height="32" source="tiles/12361.png"/>
+  </tile>
+  <tile id="97">
+   <image width="32" height="32" source="tiles/12362.png"/>
+  </tile>
+  <tile id="98">
+   <image width="32" height="32" source="tiles/12561.png"/>
+  </tile>
+  <tile id="99">
+   <image width="32" height="32" source="tiles/12565.png"/>
+  </tile>
+  <tile id="100">
+   <image width="32" height="32" source="tiles/12569.png"/>
+  </tile>
+  <tile id="101">
+   <image width="32" height="32" source="tiles/12570.png"/>
+  </tile>
+  <tile id="102">
+   <image width="32" height="32" source="tiles/12571.png"/>
+  </tile>
+  <tile id="103">
+   <image width="32" height="32" source="tiles/12572.png"/>
+  </tile>
+  <tile id="104">
+   <image width="32" height="32" source="tiles/12573.png"/>
+  </tile>
+  <tile id="105">
+   <image width="32" height="32" source="tiles/12574.png"/>
+  </tile>
+  <tile id="106">
+   <image width="32" height="32" source="tiles/12575.png"/>
+  </tile>
+  <tile id="107">
+   <image width="32" height="32" source="tiles/12576.png"/>
+  </tile>
+  <tile id="108">
+   <image width="32" height="32" source="tiles/12577.png"/>
+  </tile>
+  <tile id="109">
+   <image width="32" height="32" source="tiles/12578.png"/>
+  </tile>
+  <tile id="110">
+   <image width="32" height="32" source="tiles/12579.png"/>
+  </tile>
+  <tile id="111">
+   <image width="32" height="32" source="tiles/12580.png"/>
+  </tile>
+  <tile id="112">
+   <image width="32" height="32" source="tiles/12581.png"/>
+  </tile>
+  <tile id="113">
+   <image width="32" height="32" source="tiles/12582.png"/>
+  </tile>
+  <tile id="114">
+   <image width="32" height="32" source="tiles/12583.png"/>
+  </tile>
+  <tile id="115">
+   <image width="32" height="32" source="tiles/12584.png"/>
+  </tile>
+  <tile id="116">
+   <image width="32" height="32" source="tiles/12585.png"/>
+  </tile>
+  <tile id="117">
+   <image width="32" height="32" source="tiles/12586.png"/>
+  </tile>
+  <tile id="118">
+   <image width="32" height="32" source="tiles/12587.png"/>
+  </tile>
+  <tile id="119">
+   <image width="32" height="32" source="tiles/12588.png"/>
+  </tile>
+  <tile id="120">
+   <image width="32" height="32" source="tiles/12589.png"/>
+  </tile>
+  <tile id="121">
+   <image width="32" height="32" source="tiles/12590.png"/>
+  </tile>
+  <tile id="122">
+   <image width="32" height="32" source="tiles/12591.png"/>
+  </tile>
+  <tile id="123">
+   <image width="32" height="32" source="tiles/12592.png"/>
+  </tile>
+  <tile id="124">
+   <image width="32" height="32" source="tiles/12593.png"/>
+  </tile>
+  <tile id="125">
+   <image width="32" height="32" source="tiles/12594.png"/>
+  </tile>
+  <tile id="126">
+   <image width="32" height="32" source="tiles/12597.png"/>
+  </tile>
+  <tile id="127">
+   <image width="32" height="32" source="tiles/12598.png"/>
+  </tile>
+  <tile id="128">
+   <image width="32" height="32" source="tiles/12599.png"/>
+  </tile>
+  <tile id="129">
+   <image width="32" height="32" source="tiles/12600.png"/>
+  </tile>
+  <tile id="130">
+   <image width="32" height="32" source="tiles/12601.png"/>
+  </tile>
+  <tile id="131">
+   <image width="32" height="32" source="tiles/12602.png"/>
+  </tile>
+  <tile id="132">
+   <image width="32" height="32" source="tiles/12603.png"/>
+  </tile>
+  <tile id="133">
+   <image width="32" height="32" source="tiles/12912.png"/>
+  </tile>
+  <tile id="134">
+   <image width="32" height="32" source="tiles/12913.png"/>
+  </tile>
+  <tile id="135">
+   <image width="32" height="32" source="tiles/12914.png"/>
+  </tile>
+  <tile id="136">
+   <image width="32" height="32" source="tiles/12915.png"/>
+  </tile>
+  <tile id="137">
+   <image width="32" height="32" source="tiles/12917.png"/>
+  </tile>
+  <tile id="138">
+   <image width="32" height="32" source="tiles/12918.png"/>
+  </tile>
+  <tile id="139">
+   <image width="32" height="32" source="tiles/12919.png"/>
+  </tile>
+  <tile id="140">
+   <image width="32" height="32" source="tiles/12920.png"/>
+  </tile>
+  <tile id="141">
+   <image width="32" height="32" source="tiles/12921.png"/>
+  </tile>
+  <tile id="142">
+   <image width="32" height="32" source="tiles/12922.png"/>
+  </tile>
+  <tile id="143">
+   <image width="32" height="32" source="tiles/12923.png"/>
+  </tile>
+  <tile id="144">
+   <image width="32" height="32" source="tiles/12924.png"/>
+  </tile>
+  <tile id="145">
+   <image width="32" height="32" source="tiles/12925.png"/>
+  </tile>
+  <tile id="146">
+   <image width="32" height="32" source="tiles/12926.png"/>
+  </tile>
+  <tile id="147">
+   <image width="32" height="32" source="tiles/12927.png"/>
+  </tile>
+  <tile id="148">
+   <image width="32" height="32" source="tiles/12928.png"/>
+  </tile>
+  <tile id="149">
+   <image width="32" height="32" source="tiles/12929.png"/>
+  </tile>
+ </tileset>
+ <tileset firstgid="151" name="objects" tilewidth="32" tileheight="32">
+  <tile id="0">
+   <properties>
+    <property name="item" value="BigObject"/>
+   </properties>
+   <image width="32" height="32" source="objects/1047.png"/>
+  </tile>
+  <tile id="1">
+   <properties>
+    <property name="isPactale" value="true"/>
+   </properties>
+   <image width="32" height="32" source="objects/1464.png"/>
+  </tile>
+  <tile id="2">
+   <properties>
+    <property name="isEnemy" value="true"/>
+   </properties>
+   <image width="32" height="32" source="objects/9017.png"/>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="item" value="Sapphire"/>
+   </properties>
+   <image width="32" height="32" source="objects/28623.png"/>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="item" value="SmallObject"/>
+   </properties>
+   <image width="32" height="32" source="objects/28631.png"/>
+  </tile>
+ </tileset>
+ <layer name="tiles" width="10" height="10">
+  <data encoding="base64" compression="zlib">
+   eJyLZ2BgCCeA1YA4GogZCWCtUXU41ekCsTIBrA7EAJBkCRI=
+  </data>
+ </layer>
+ <objectgroup name="objects">
+  <object id="1" gid="152" x="32" y="64">
+   <properties>
+    <property name="index" value="0"/>
+   </properties>
+  </object>
+  <object id="2" gid="152" x="64" y="64">
+   <properties>
+    <property name="index" value="1"/>
+   </properties>
+  </object>
+  <object id="3" gid="152" x="96" y="64">
+   <properties>
+    <property name="index" value="2"/>
+   </properties>
+  </object>
+  <object id="4" gid="152" x="128" y="64">
+   <properties>
+    <property name="index" value="3"/>
+   </properties>
+  </object>
+  <object id="5" gid="153" x="256" y="288"/>
+  <object id="6" gid="155" x="128" y="160"/>
+  <object id="7" gid="151" x="192" y="160"/>
+  <object id="8" gid="154" x="224" y="160"/>
+  <object id="12" gid="151" x="160" y="160"/>
+  <object id="13" gid="151" x="160" y="128"/>
+  <object id="14" gid="151" x="128" y="128"/>
+  <object id="18" gid="151" x="192" y="128"/>
+  <object id="19" gid="151" x="256" y="128"/>
+  <object id="20" gid="151" x="224" y="128"/>
+  <object id="21" gid="151" x="256" y="96"/>
+  <object id="22" gid="151" x="224" y="96"/>
+  <object id="23" gid="151" x="192" y="96"/>
+  <object id="24" gid="151" x="160" y="96"/>
+  <object id="25" gid="151" x="128" y="96"/>
+  <object id="26" gid="151" x="128" y="192"/>
+  <object id="27" gid="151" x="160" y="192"/>
+  <object id="28" gid="151" x="192" y="192"/>
+  <object id="29" gid="151" x="224" y="192"/>
+  <object id="30" gid="151" x="256" y="192"/>
+  <object id="31" gid="151" x="256" y="160"/>
+ </objectgroup>
+</map>

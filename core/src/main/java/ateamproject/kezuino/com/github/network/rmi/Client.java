@@ -11,6 +11,7 @@ import ateamproject.kezuino.com.github.singleplayer.*;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Animation;
+import ateamproject.kezuino.com.github.utility.game.Direction;
 import ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
@@ -21,7 +22,6 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Timer;
-import javafx.application.Platform;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -765,6 +765,24 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 Pactale player = BaseScreen.getSession().getPlayer(packet.getSender());
                 if (player != null) {
                     player.setDirection(packet.getDirection());
+                }
+            }
+        });
+        
+        
+        packets.registerAction(PacketObjectSetDirection.class, packet -> {
+            if (packet.getSender() != null && packet.getSender().equals(getId())) {
+                try {
+                    getRmi().getServer().objectSetDirection(packet.getSender(), packet.getObject(), packet.getFrom(), packet.getTo());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                // Server sent this.
+                GameObject object = BaseScreen.getSession().findObject(packet.getObject());
+                if (object != null) {
+                    object.setExactPosition(packet.getFrom());
+                    object.setDirection(Direction.getDirection((int)packet.getFrom().x, (int)packet.getFrom().y, (int)packet.getTo().x, (int)packet.getTo().y));
                 }
             }
         });

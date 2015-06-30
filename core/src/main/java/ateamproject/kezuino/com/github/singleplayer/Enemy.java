@@ -1,8 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import ateamproject.kezuino.com.github.network.packet.packets.PacketObjectCollision;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketObjectSetDirection;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketSetAIPath;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.ai.pfa.DefaultGraphPath;
@@ -190,47 +189,50 @@ public class Enemy extends GameObject {
             }
         }
 
-        // Set first Pactale as target.
-        this.objectToFollow = this.getMap()
-                .getAllGameObjects()
-                .stream()
-                .filter(go -> go instanceof Pactale)
-                .map(go -> (Pactale) go)
-                .max((p1, p2) -> (int) Vector2.len(p2.getExactPosition().x, p2.getExactPosition().y))
-                .orElse(null);
+        if(Client.getInstance().isHost()) {
+            // Set first Pactale as target.
+            this.objectToFollow = this.getMap()
+                    .getAllGameObjects()
+                    .stream()
+                    .filter(go -> go instanceof Pactale)
+                    .map(go -> (Pactale) go)
+                    .max((p1, p2) -> (int) Vector2.len(p2.getExactPosition().x, p2.getExactPosition().y))
+                    .orElse(null);
 
-        if (!this.isMoving) {
-            //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
-            if (!this.disablePathfinding && this.objectToFollow != null) {
-                if (graphPath == null || (TimeUtils.nanoTime() - timeToChangePathStart) / 1000000000.0f >= timeToChangePath) {
-                    graphPath = this.getMap()
-                            .getPathfinder()
-                            .searchNodePath(this.getNode(), this.objectToFollow.getNode());
+            if (!this.isMoving) {
+                //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
+                if (!this.disablePathfinding && this.objectToFollow != null) {
+                    if (graphPath == null || (TimeUtils.nanoTime() - timeToChangePathStart) / 1000000000.0f >= timeToChangePath) {
+                        graphPath = this.getMap()
+                                .getPathfinder()
+                                .searchNodePath(this.getNode(), this.objectToFollow.getNode());
 
-                    // Notify that a path was generated.
-                    if (Client.getInstance().isRunning()) {
-                        Client.getInstance().send(new PacketSetAIPath(getId(), this.getMap().getPathfinder().pathToVector2(graphPath), getExactPosition(), null));
+                        // Notify that a path was generated.
+                        /*if (Client.getInstance().isRunning()) {
+                            Client.getInstance().send(new PacketSetAIPath(getId(), this.getMap().getPathfinder().pathToVector2(graphPath), getExactPosition(), null));
+                        }*/
+
+                        this.timeToChangePath = random.nextFloat() * (.5f - 2f) + .5f;
+                        this.timeToChangePathStart = TimeUtils.nanoTime();
                     }
-
-                    this.timeToChangePath = random.nextFloat() * (.5f - 2f) + .5f;
-                    this.timeToChangePathStart = TimeUtils.nanoTime();
                 }
-            }
 
-            //Take the first node out of the created Path, and try to move to it. 
-            if (this.graphPath != null && this.graphPath.getCount() > 0) {
-                Iterator<Node> nodeFromPath = graphPath.iterator();
-                nodeFromPath.next();
+                //Take the first node out of the created Path, and try to move to it. 
+                if (this.graphPath != null && this.graphPath.getCount() > 0) {
+                    Iterator<Node> nodeFromPath = graphPath.iterator();
+                    nodeFromPath.next();
 
-                if (nodeFromPath.hasNext()) {
-                    Node nextNode = nodeFromPath.next();
-                    this.setDirection(Direction.getDirection(this.getNode().getX(), this.getNode()
-                            .getY(), nextNode.getX(), nextNode
-                                                                     .getY()));
-                    nodeFromPath.remove();
-                    graphPath.clear();
-                    while (nodeFromPath.hasNext()) {
-                        graphPath.add(nodeFromPath.next());
+                    if (nodeFromPath.hasNext()) {
+                        Node nextNode = nodeFromPath.next();
+                        this.setDirection(Direction.getDirection(this.getNode().getX(), this.getNode()
+                                .getY(), nextNode.getX(), nextNode.getY()));
+
+                        Client.getInstance().send(new PacketObjectSetDirection(this.getNode().getExactPosition(), nextNode.getExactPosition(), this.getId(), Client.getInstance().getId()));                        
+                        nodeFromPath.remove();
+                        graphPath.clear();
+                        while (nodeFromPath.hasNext()) {
+                            graphPath.add(nodeFromPath.next());
+                        }
                     }
                 }
             }

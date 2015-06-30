@@ -8,7 +8,7 @@ import java.util.logging.Logger;
 
 public class Database {
 
-    private static Database instance = new Database("jdbc:mysql://localhost:3306/pactales", "root", "");
+    private static final Database instance = new Database("jdbc:mysql://192.168.1.101:3306/pactales", "pactales", "p@2015");
     /**
      * {@link Connection} used for executing queries on the database.
      */

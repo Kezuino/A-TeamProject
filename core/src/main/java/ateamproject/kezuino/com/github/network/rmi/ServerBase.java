@@ -306,6 +306,12 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketPlayerSetPosition packet = new PacketPlayerSetPosition(position, sender);
         server.send(packet);
     }
+    
+    @Override
+    public void objectSetDirection(UUID sender, UUID object, Vector2 from, Vector2 to) throws RemoteException {
+        PacketObjectSetDirection packet = new PacketObjectSetDirection(from, to, object, sender);
+        server.send(packet);
+    }
 
     @Override
     public void shootProjectile(UUID sender) throws RemoteException {

@@ -109,8 +109,8 @@ public class Pactale extends GameObject {
     @Override
     public boolean collisionWithGameObject(GameObject object) {
         if(this.getId().equals(Client.getInstance().getPublicId())) {
-            PacketObjectCollision packet = new PacketObjectCollision(getId(), object.getId(), null);
-            Client.getInstance().send(packet);
+            //PacketObjectCollision packet = new PacketObjectCollision(getId(), object.getId(), null);
+            //Client.getInstance().send(packet);
 
             if (object instanceof Enemy) {
                 Enemy e = (Enemy) object;
@@ -138,11 +138,11 @@ public class Pactale extends GameObject {
             Client.getInstance().send(new PacketRemoveItem(item.getId(), item.getItemType(), Client.getInstance().getId()));
             item.activate(this);
             item.getNode().removeItem();
-        } else if (!Client.getInstance().isRunning()) {
+        }/* else if (!Client.getInstance().isRunning()) {
             // Singleplayer.
             item.activate(this);
             item.getNode().removeItem();
-        }
+        }*/
         return true;
     }
 

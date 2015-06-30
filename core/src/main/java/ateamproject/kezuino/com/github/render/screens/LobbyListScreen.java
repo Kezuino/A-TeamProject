@@ -10,6 +10,7 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -142,6 +143,9 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
         TextField lb3 = new TextField("Deelnemers", skin);
         lb3.setDisabled(true);
 
+        
+        lb3.setStyle(new TextField.TextFieldStyle(lb3.getStyle().font, Color.PINK, lb3.getStyle().cursor, lb3.getStyle().selection, lb3.getStyle().background));
+        
         // add headers to table
         scrollTable.add(lb1);
         scrollTable.columnDefaults(0);
