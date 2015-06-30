@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.utility.assets;
 import ateamproject.kezuino.com.github.utility.io.FilenameUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.BitmapFontLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -14,8 +15,10 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-import java.io.File;
+import java.io.*;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -42,17 +45,39 @@ public class Assets {
         manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));
     }
 
+    private static boolean debug;
+
     public static String getSkinPath(String... args) {
+        String result = null;
         if (Assets.skin == null) {
-            return String.join("/", args).replace("\\", "/");
+            result = String.join("/", args).replace("\\", "/");
         } else {
             try {
-                return Paths.get(Paths.get(new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent(), "Skins", skin).toString(), args).toString().replace("\\", "/");
+                String parent = Paths.get(new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent()).getParent().toString();
+                result = Paths.get(Paths.get(parent, "Skins", skin).toString(), args).toString().replace("\\", "/").replace("/src/", "/");
             } catch (URISyntaxException ex) {
                 Logger.getLogger(Assets.class.getName()).log(Level.SEVERE, null, ex);
             }
+
+            boolean useInternal = false;
+            if (result == null) {
+                useInternal = true;
+            } else {
+                // Check if skin file exists.
+                FileHandle file = new FileHandle(result.replace("/", "\\"));
+                if (!file.exists()) useInternal = true;
+            }
+
+            if (useInternal) {
+                result = String.join("/", args).replace("\\", "/");
+            }
         }
-        return null;
+
+        if (debug) {
+            System.out.println(result);
+        }
+
+        return result;
     }
 
     /**
@@ -64,6 +89,18 @@ public class Assets {
     }
 
     public static void create(String skin) {
+        if (debug) {
+            try {
+                Path path = Files.createFile(Paths.get("out.txt"));
+                File file = path.toFile();
+                System.setIn(new FileInputStream(file));
+                System.setOut(new PrintStream(file));
+                System.setErr(new PrintStream(file));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         Assets.skin = skin;
         loadFonts();
 
@@ -289,5 +326,9 @@ public class Assets {
             Logger.getLogger(Assets.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
+    }
+
+    public static void setDebug(boolean debug) {
+        Assets.debug = debug;
     }
 }
