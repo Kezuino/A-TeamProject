@@ -1,5 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
+import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
 import java.util.Date;
 import java.util.UUID;
 
@@ -7,12 +8,13 @@ public class GameSession {
 
     private final Date startTime;
     /**
-     * Used for lobby hosting.
-     * Counts the amount of objects received from the host. If count is equal, all objects were received and game can start.
+     * Used for lobby hosting. Counts the amount of objects received from the
+     * host. If count is equal, all objects were received and game can start.
      */
     private int objectsLoaded;
     /**
-     * Total amount of objects the {@link ateamproject.kezuino.com.github.network.Client} should load.
+     * Total amount of objects the
+     * {@link ateamproject.kezuino.com.github.network.Client} should load.
      */
     private int objectsToLoad;
     private Map map;
@@ -55,9 +57,11 @@ public class GameSession {
     }
 
     /**
-     * Gets the {@link GameState} in which this {@link GameSession} is currently in.
+     * Gets the {@link GameState} in which this {@link GameSession} is currently
+     * in.
      *
-     * @return {@link GameState} in which this {@link GameSession} is currently in.
+     * @return {@link GameState} in which this {@link GameSession} is currently
+     * in.
      */
     public GameState getState() {
         return this.state;
@@ -88,6 +92,11 @@ public class GameSession {
     public void gameOver() {
         if (!this.hasEnded()) {
             this.state = GameState.GameOver;
+        }
+
+        if (false) {//TODO: if clan
+            PacketHighScore packet = new PacketHighScore("jos", this.score.valueOf(),null,null);
+            //TODO: send PacketHighScore
         }
     }
 
@@ -170,14 +179,16 @@ public class GameSession {
      * @param playerIndex
      */
     public Pactale getPlayer(int playerIndex) {
-        if (this.map == null) return null;
+        if (this.map == null) {
+            return null;
+        }
         return this.map.getAllGameObjects()
-                       .stream()
-                       .filter(gameObject -> gameObject instanceof Pactale)
-                       .map(gameObject -> (Pactale) gameObject)
-                       .filter((Pactale pactale) -> pactale.getPlayerIndex() == playerIndex)
-                       .findFirst()
-                       .orElse(null);
+                .stream()
+                .filter(gameObject -> gameObject instanceof Pactale)
+                .map(gameObject -> (Pactale) gameObject)
+                .filter((Pactale pactale) -> pactale.getPlayerIndex() == playerIndex)
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -187,18 +198,21 @@ public class GameSession {
      * @return {@link Pactale} matching the given {@code id}.
      */
     public Pactale getPlayer(UUID id) {
-        if (this.map == null) return null;
+        if (this.map == null) {
+            return null;
+        }
         return this.map.getAllGameObjects()
-                       .stream()
-                       .filter(obj -> obj instanceof Pactale)
-                       .map(obj -> (Pactale) obj)
-                       .filter(p -> p.getId().equals(id))
-                       .findFirst()
-                       .orElse(null);
+                .stream()
+                .filter(obj -> obj instanceof Pactale)
+                .map(obj -> (Pactale) obj)
+                .filter(p -> p.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     /**
-     * Returns the {@link GameObject} found on this {@link Map} for the given {@code id} or null.
+     * Returns the {@link GameObject} found on this {@link Map} for the given
+     * {@code id} or null.
      *
      * @param id {@link UUID} to find the {@link GameObject} on.
      * @return {@link GameObject} matching the given {@code id}.
@@ -206,11 +220,11 @@ public class GameSession {
     public GameObject findObject(UUID id) {
         return this.map.getAllGameObjects().stream().filter(obj -> obj.getId().equals(id)).findFirst().orElse(null);
     }
-    
+
     /**
-     * Return the {@link Item} found on this {@link Map} by the given {@code id}.
-     * Will return null if none found.
-     * 
+     * Return the {@link Item} found on this {@link Map} by the given
+     * {@code id}. Will return null if none found.
+     *
      * @param id {@link UUID} to search for an {@link Item}.
      * @return {@link Item} matching the given {@code id}.
      */
@@ -222,18 +236,19 @@ public class GameSession {
      * Sets a new {@link Map} for this {@link GameSession}. Connected clients
      * should be synced here if the current computer is the host.
      *
-     * @param width  X dimension of the {@link Map}.
+     * @param width X dimension of the {@link Map}.
      * @param height Y dimension of the {@link Map}.
      */
     public void setMap(int width, int height) {
         setMap(new Map(this, width, height));
     }
-    
+
     /**
-     *Return the level of the GameSession object 
+     * Return the level of the GameSession object
+     *
      * @return int level
      */
-    public int getLevel(){
+    public int getLevel() {
         return level;
     }
 }

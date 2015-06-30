@@ -56,7 +56,7 @@ public class CreditsScreen extends BaseScreen {
 
     public CreditsScreen(Game game) {
         super(game);
-        this.maxNumberOfModifieingThreadsRandom = 20;
+        this.maxNumberOfModifieingThreadsRandom = 40;
         this.maxNumberOfModifieingThreadsRow = 1;
 
         this.numberOfModifieingThreadsRow = new AtomicInteger(0);
@@ -69,12 +69,12 @@ public class CreditsScreen extends BaseScreen {
         contentLabelsModified = new CopyOnWriteArrayList<>();
 
         this.titel = "The A - Team";
-        content.add("Lead developer: Fatih Taskent,");
-        content.add("Logic/Netcode: Anton van Dijk,");
-        content.add("Logic/Clansystem: Jip van de Vijfeijke,");
-        content.add("Logic/Synchronisation: Ken van de Linde,");
-        content.add("Graphics/Testing: David Vlijmincx,");
-        content.add("Documentation/Support: Sven Keunen");
+        content.add("* Lead developer: Fatih Taskent*,");
+        content.add("* Logic/Netcode: Anton van Dijk*,");
+        content.add("* Logic/Clansystem: Jip van de Vijfeijke*,");
+        content.add("* Logic/Syncing: Ken van de Linde*,");
+        content.add("* Graphics/Testing: David Vlijmincx*,");
+        content.add("* Documentation/Support: Sven Keunen*");
 
         backgroundMusic = Assets.getMusicStream("credits.mp3");
         backgroundMusic.setPosition(0);
@@ -91,7 +91,7 @@ public class CreditsScreen extends BaseScreen {
 
         final Thread head = Thread.currentThread();
 
-        TextButton exit = new TextButton("X", skin);
+        TextButton exit = new TextButton("", skin);
         exit.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -99,8 +99,8 @@ public class CreditsScreen extends BaseScreen {
                 game.setScreen(new MainScreen(game));
             }
         });
-        exit.setColor(Color.CYAN);
-        exit.setPosition(20, 20);
+        exit.setColor(Color.DARK_GRAY);
+        exit.setPosition(stage.getWidth() - 15, stage.getHeight()- 15);
         stage.addActor(exit);
 
         createLabels();
@@ -156,7 +156,7 @@ public class CreditsScreen extends BaseScreen {
 
             if (rand.nextBoolean()) {
                 while (!Thread.currentThread().isInterrupted()) {
-                    if (numberOfModifieingThreadsRandom.get() <= maxNumberOfModifieingThreadsRandom) {
+                    if (numberOfModifieingThreadsRandom.get() < maxNumberOfModifieingThreadsRandom) {
                         numberOfModifieingThreadsRandom.incrementAndGet();
                         Thread t1 = new Thread(randomModifier);
                         t1.start();
@@ -165,7 +165,7 @@ public class CreditsScreen extends BaseScreen {
                 }
             } else {
                 while (!Thread.currentThread().isInterrupted()) {
-                    if (numberOfModifieingThreadsRow.get() <= maxNumberOfModifieingThreadsRow) {
+                    if (numberOfModifieingThreadsRow.get() < maxNumberOfModifieingThreadsRow) {
                         numberOfModifieingThreadsRow.incrementAndGet();
                         Thread t1 = new Thread(rowModifier);
                         t1.start();
@@ -239,10 +239,6 @@ public class CreditsScreen extends BaseScreen {
                     contentLabelsModified.add(label);
                     labels.add(label);
                 }
-            }
-
-            for (Label label : labels) {
-                System.out.println(label.getText());
             }
 
             for (Label label : labels) {
