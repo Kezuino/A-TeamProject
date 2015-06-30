@@ -4,7 +4,6 @@ import ateamproject.kezuino.com.github.utility.io.FilenameUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
-import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.files.FileHandle;
@@ -20,7 +19,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,7 +37,7 @@ public class Assets {
     private static boolean debug;
 
     static {
-        manager = new AssetManager(fileName -> {
+        FileHandleResolver resolver = fileName -> {
             if (Assets.skin == null || Assets.skin.isEmpty()) {
                 // Load from internal.
                 return Gdx.files.internal(fileName);
@@ -51,16 +49,18 @@ public class Assets {
                 }
                 return handle;
             }
-        });
+        };
+
+        manager = new AssetManager(resolver);
         musicInstances = new HashMap<>();
 
         // Add loaders to the ContentManager.
-        manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));
+        manager.setLoader(BitmapFont.class, ".ttf", new FreeTypeFontLoader(resolver));
     }
 
-    public static String getFilePath(String... args) {
+    public static String getFileName(String... args) {
         String result;
-        result = String.join("/", args).replace("\\", "/");
+        result = String.join("/", args).replace("\\", "/").replace("//", "/");
         return result;
     }
 
@@ -100,7 +100,7 @@ public class Assets {
      * {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
     private static void loadFonts() {
-        manager.load(getFilePath(FONTS_DIR, "opensans.ttf"), BitmapFont.class);
+        manager.load(getFileName(FONTS_DIR, "opensans.ttf"), BitmapFont.class);
     }
 
     /**
@@ -110,19 +110,19 @@ public class Assets {
     private static void load() {
 
         // Textures (only load those that aren't loaded by the TmxMapLoader).
-        manager.load(getFilePath(TEXTURE_DIR, "projectile.png"), Texture.class);
-        manager.load(getFilePath(TEXTURE_DIR, "portal.png"), Texture.class);
-        manager.load(getFilePath(TEXTURE_DIR, "pactale.png"), Texture.class);
-        manager.load(getFilePath(TEXTURE_DIR, "enemy.png"), Texture.class);
+        manager.load(getFileName(TEXTURE_DIR, "projectile.png"), Texture.class);
+        manager.load(getFileName(TEXTURE_DIR, "portal.png"), Texture.class);
+        manager.load(getFileName(TEXTURE_DIR, "pactale.png"), Texture.class);
+        manager.load(getFileName(TEXTURE_DIR, "enemy.png"), Texture.class);
 
         // Particle effects.
         manager.load("textures/particles/projectile", ParticleEffect.class);
 
         // Sounds (Only short clips that are mainly used for interaction/action effects).
-        manager.load(getFilePath(AUDIO_SOUND_DIR, "defeat.wav"), Sound.class);
-        manager.load(getFilePath(AUDIO_SOUND_DIR, "portal_shot.mp3"), Sound.class);
-        manager.load(getFilePath(AUDIO_SOUND_DIR, "portal_hit.mp3"), Sound.class);
-        manager.load(getFilePath(AUDIO_SOUND_DIR, "enemy_eat.mp3"), Sound.class);
+        manager.load(getFileName(AUDIO_SOUND_DIR, "defeat.wav"), Sound.class);
+        manager.load(getFileName(AUDIO_SOUND_DIR, "portal_shot.mp3"), Sound.class);
+        manager.load(getFileName(AUDIO_SOUND_DIR, "portal_hit.mp3"), Sound.class);
+        manager.load(getFileName(AUDIO_SOUND_DIR, "enemy_eat.mp3"), Sound.class);
 
         // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
         // Wait for assets to load.
@@ -142,11 +142,11 @@ public class Assets {
         if (manager == null) {
             return null;
         }
-        if (!manager.isLoaded(getFilePath(asset), type)) {
-            manager.load(getFilePath(asset), type);
+        if (!manager.isLoaded(getFileName(asset), type)) {
+            manager.load(getFileName(asset), type);
             manager.finishLoading();
         }
-        return manager.get(getFilePath(asset), type);
+        return manager.get(getFileName(asset), type);
     }
 
     public static Texture getTexture(String asset) {
@@ -199,7 +199,7 @@ public class Assets {
      * @return {@link Sound} from the assets folder and plays it.
      */
     public static Sound playSound(String asset) {
-        Sound sound = Assets.get(getFilePath(AUDIO_SOUND_DIR, asset), Sound.class);
+        Sound sound = Assets.get(getFileName(AUDIO_SOUND_DIR, asset), Sound.class);
         if (sound != null) {
             sound.play();
         }
@@ -213,7 +213,7 @@ public class Assets {
      * @return {@link Sound} from the assets folder and loops it.
      */
     public static Sound loopSound(String asset) {
-        Sound sound = Assets.get(getFilePath(AUDIO_SOUND_DIR, asset), Sound.class);
+        Sound sound = Assets.get(getFileName(AUDIO_SOUND_DIR, asset), Sound.class);
         if (sound != null) {
             sound.loop();
         }
@@ -232,7 +232,7 @@ public class Assets {
         if (fileName == null || fileName.isEmpty()) {
             return null;
         }
-        String asset = getFilePath(AUDIO_MUSIC_DIR, fileName);
+        String asset = getFileName(AUDIO_MUSIC_DIR, fileName);
 
         Music music;
 
@@ -268,8 +268,8 @@ public class Assets {
     public static ShaderProgram getShaderProgram(String shaderName) {
         ShaderProgram.pedantic = false;
         String assetName = FilenameUtils.getFileNameWithoutExtension(shaderName);
-        FileHandle vertexFile = new FileHandle((getFilePath(SHADER_DIR + "vertex", assetName + ".vsh")));
-        FileHandle fragmentFile = new FileHandle((getFilePath(SHADER_DIR + "fragment", assetName + ".fsh")));
+        FileHandle vertexFile = new FileHandle((getFileName(SHADER_DIR + "vertex", assetName + ".vsh")));
+        FileHandle fragmentFile = new FileHandle((getFileName(SHADER_DIR + "fragment", assetName + ".fsh")));
         if (!vertexFile.exists() || !fragmentFile.exists()) {
             throw new GdxRuntimeException("Couldn't find shader files.");
         }
@@ -289,10 +289,10 @@ public class Assets {
     }
 
     public static void unload() {
-        manager.unload(getFilePath(TEXTURE_DIR, "projectile.png"));
-        manager.unload(getFilePath(TEXTURE_DIR, "portal.png"));
-        manager.unload(getFilePath(TEXTURE_DIR, "pactale.png"));
-        manager.unload(getFilePath(TEXTURE_DIR, "enemy.png"));
+        manager.unload(getFileName(TEXTURE_DIR, "projectile.png"));
+        manager.unload(getFileName(TEXTURE_DIR, "portal.png"));
+        manager.unload(getFileName(TEXTURE_DIR, "pactale.png"));
+        manager.unload(getFileName(TEXTURE_DIR, "enemy.png"));
     }
 
     public static String[] getSkins() {
