@@ -57,6 +57,8 @@ public class Enemy extends GameObject {
      */
     public Enemy() {
         isActive = true;
+        this.edible = false;
+        this.edibleTime = 2000f;
     }
 
     /**
@@ -76,7 +78,7 @@ public class Enemy extends GameObject {
         this.respawnPosition = exactPosition.cpy();
         this.dead = false;
         this.edible = false;
-        this.edibleTime = 2f;
+        this.edibleTime = 2000f;
         this.graphPath = new DefaultGraphPath<>();
         this.drawOnDirection = false;
 
@@ -150,7 +152,7 @@ public class Enemy extends GameObject {
     public void setEdible(boolean edible) {
         if (edible) {
             this.setColor(Color.BLACK);
-            this.edibleStartTime = System.nanoTime();
+            this.edibleStartTime = TimeUtils.nanoTime();
         }
 
         this.edible = edible;
