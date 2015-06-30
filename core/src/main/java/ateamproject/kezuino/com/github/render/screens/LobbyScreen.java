@@ -69,6 +69,41 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen {
     }
 
     public void createGui() {
+         // Player list.
+        scrollTable = new Table();
+
+        TextField memberNameHeader = new TextField("Member name", skin);
+        memberNameHeader.setDisabled(true);
+
+        scrollTable.add(memberNameHeader);
+        scrollTable.columnDefaults(0);
+        scrollTable.row();
+
+        // Create member table.
+        scrollTable.row();
+        scrollTable.setColor(com.badlogic.gdx.graphics.Color.BLUE);
+        final ScrollPane scroller = new ScrollPane(scrollTable);
+        scroller.setColor(com.badlogic.gdx.graphics.Color.BLUE);
+        final Table table = new Table();
+        table.setFillParent(false);
+        table.add(scroller).fill().expand();
+        table.setSize(stage.getWidth(), stage.getHeight());
+        table.setColor(com.badlogic.gdx.graphics.Color.BLUE);
+
+        Label lobby = new Label(lobbyName, skin);
+        lobby.setSize(200, 30);
+        lobby.setPosition(0, stage.getHeight() - lobby.getHeight());
+
+        reloadMembers();
+
+        stage.addActor(lobby);
+
+        float x = stage.getWidth() / 2 - table.getWidth() / 2;
+        float y = stage.getHeight() - table.getHeight() - 30;
+
+        table.setPosition(x, y);
+        this.stage.addActor(table);
+        
         // Lobby verlaten.
         TextButton btnQuitLobby = new TextButton(client.isHost() ? "Lobby sluiten" : "Lobby verlaten", skin);
         btnQuitLobby.addListener(new ClickListener() {
@@ -100,16 +135,6 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen {
         btnQuitLobby.setPosition(stage.getWidth() - btnQuitLobby.getWidth() - 10, stage.getHeight() - btnQuitLobby.getHeight() - 10);
         this.stage.addActor(btnQuitLobby);
 
-        // Player list.
-        scrollTable = new Table();
-
-        TextField memberNameHeader = new TextField("Member name", skin);
-        memberNameHeader.setDisabled(true);
-
-        scrollTable.add(memberNameHeader);
-        scrollTable.columnDefaults(0);
-        scrollTable.row();
-
         // Run game button.
         TextButton btnRunGame = new TextButton(client.isHost() ? "Spel starten" : "Ready", skin);
         btnRunGame.setPosition(stage.getWidth() - btnQuitLobby.getWidth() - 10 - btnRunGame.getWidth() - 10, stage.getHeight() - btnRunGame.getHeight() - 10);
@@ -123,33 +148,6 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen {
         if (client.isHost()) {
             this.stage.addActor(btnRunGame);
         }
-
-        // Create member table.
-        scrollTable.row();
-        scrollTable.setColor(com.badlogic.gdx.graphics.Color.BLUE);
-        final ScrollPane scroller = new ScrollPane(scrollTable);
-        scroller.sizeBy(200, 400);
-        scroller.setDebug(true);
-        scroller.setColor(com.badlogic.gdx.graphics.Color.BLUE);
-        final Table table = new Table();
-        table.setFillParent(false);
-        table.add(scroller).fill().expand();
-        table.setSize(stage.getWidth(), stage.getHeight());
-        table.setColor(com.badlogic.gdx.graphics.Color.BLUE);
-
-        Label lobby = new Label(lobbyName, skin);
-        lobby.setSize(200, 30);
-        lobby.setPosition(0, stage.getHeight() - lobby.getHeight());
-
-        reloadMembers();
-
-        stage.addActor(lobby);
-
-        float x = stage.getWidth() / 2 - table.getWidth() / 2;
-        float y = stage.getHeight() - table.getHeight() - 30;
-
-        table.setPosition(x, y);
-        this.stage.addActor(table);
     }
 
     public UUID getLobbyId() {
@@ -159,6 +157,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen {
     private void reloadMembers() {
         scrollTable.clear();
         TextField memberNameHeader = new TextField("Spelers :", skin);
+        memberNameHeader.setDisabled(true);
         scrollTable.add(memberNameHeader);
         scrollTable.add();
         scrollTable.row();
@@ -172,6 +171,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen {
             for (Map.Entry<UUID, String> member : members.entrySet()) {
 
                 TextField lblmember = new TextField(member.getValue(), skin);
+                lblmember.setDisabled(true);
                 scrollTable.add(lblmember);
                 // if member is host
                 if (client.isHost() && !member.getKey().equals(client.getPublicId())) {
