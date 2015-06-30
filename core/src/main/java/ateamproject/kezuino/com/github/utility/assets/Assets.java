@@ -171,7 +171,7 @@ public class Assets {
      * @return {@link Texture} that was loaded by the name of the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
      */
     public static Texture getBalloon(String name) {
-        return get("textures/balloons" + name + ".png", Texture.class);
+        return get("textures/balloons/" + name + ".png", Texture.class);
     }
 
     /**
