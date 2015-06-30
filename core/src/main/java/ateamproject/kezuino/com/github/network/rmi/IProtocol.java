@@ -42,7 +42,7 @@ public interface IProtocol extends Remote {
 
     void createItem(UUID sender, UUID itemId, ItemType type, Vector2 position) throws RemoteException;
 
-    void removeItem(UUID sender, UUID itemId, ItemType itemType) throws RemoteException;
+    void removeItem(UUID sender, UUID player, UUID itemId, ItemType itemType) throws RemoteException;
     
     void changeScore(UUID sender, PacketScoreChanged.ManipulationType manipulationType, int change) throws RemoteException;
 
