@@ -3,7 +3,6 @@ package ateamproject.kezuino.com.github.utility.assets;
 import ateamproject.kezuino.com.github.utility.io.FilenameUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.BitmapFontLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -15,7 +14,10 @@ import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintStream;
 import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -48,6 +50,8 @@ public class Assets {
     private static boolean debug;
 
     public static String getSkinPath(String... args) {
+        if (debug) System.out.println("Input path: " + String.join("/", args).replace("\\", "/"));
+
         String result = null;
         if (Assets.skin == null) {
             result = String.join("/", args).replace("\\", "/");
@@ -74,7 +78,7 @@ public class Assets {
         }
 
         if (debug) {
-            System.out.println(result);
+            System.out.println("Found path: " + result);
         }
 
         return result;
@@ -91,8 +95,11 @@ public class Assets {
     public static void create(String skin) {
         if (debug) {
             try {
-                Path path = Files.createFile(Paths.get("out.txt"));
-                File file = path.toFile();
+                File file = new File("out.txt");
+                if (file.exists()) {
+                    file.delete();
+                }
+                file.createNewFile();
                 System.setIn(new FileInputStream(file));
                 System.setOut(new PrintStream(file));
                 System.setErr(new PrintStream(file));
@@ -113,7 +120,7 @@ public class Assets {
      * {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
     private static void loadFonts() {
-        manager.load(getSkinPath("fonts", "opensans.ttf"), BitmapFont.class);
+        manager.load(getSkinPath(FONTS_DIR, "opensans.ttf"), BitmapFont.class);
     }
 
     /**
@@ -152,7 +159,7 @@ public class Assets {
         if (asset == null || asset.isEmpty()) {
             throw new IllegalArgumentException("Parameter asset must not be null or empty.");
         }
-        FileHandle file = new FileHandle(new File(getSkinPath(asset)));
+        FileHandle file = new FileHandle(getSkinPath(asset));
         if (!file.exists()) {
             throw new NullPointerException(String.format("Asset '%s' could not be found.", asset));
         }
