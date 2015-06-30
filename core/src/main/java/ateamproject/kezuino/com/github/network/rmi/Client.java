@@ -88,7 +88,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     public void start() {
         System.out.println("Client starting...");
 
-        System.setProperty("pactales.client.servername", "localhost");
         System.setProperty("pactales.client.serverobject", "server");
         try {
             rmi = new ClientBase(this);
@@ -99,7 +98,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         try {
             registerPackets();
 
-            String rmiHost = System.getProperty("pactales.client.servername");
+            String rmiHost = System.getProperty("java.rmi.server.hostname");
             String rmiObject = System.getProperty("pactales.client.serverobject");
 
             this.rmi.setServer((IProtocolServer) Naming.lookup(String.format("//%s/%s", rmiHost, rmiObject)));

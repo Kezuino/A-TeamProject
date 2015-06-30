@@ -1,0 +1,2 @@
+gradlew server:dist
+pause

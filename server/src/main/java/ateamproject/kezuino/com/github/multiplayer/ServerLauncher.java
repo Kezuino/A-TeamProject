@@ -7,8 +7,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ServerLauncher {
+
     public static void main(String[] args) {
-        System.setProperty("java.rmi.server.hostname", "localhost");
+        if (args.length > 0) {
+            System.setProperty("java.rmi.server.hostname", args[0]);
+        } else {
+            System.setProperty("java.rmi.server.hostname", "localhost");
+        }
 
         try {
             Server server = Server.getInstance();
