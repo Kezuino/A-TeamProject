@@ -172,7 +172,7 @@ public class Enemy extends GameObject {
                 this.isMoving = false;
                 this.setNodePosition(this.getStartingPosition());
 
-                PacketScoreChanged packet = new PacketScoreChanged(300, PacketScoreChanged.ManipulationType.INCREASE, Client.getInstance().getId());
+                PacketScoreChanged packet = new PacketScoreChanged(500, PacketScoreChanged.ManipulationType.INCREASE, Client.getInstance().getId());
                 Client.getInstance().send(packet);
             }
             return true;

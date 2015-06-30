@@ -124,7 +124,7 @@ public class Pactale extends GameObject {
                     this.hurt();
                     this.setNodePosition(this.getStartingPosition().x / 32, this.getStartingPosition().y / 32);
 
-                    PacketScoreChanged pScore = new PacketScoreChanged(100, PacketScoreChanged.ManipulationType.DECREASE, Client.getInstance().getId());
+                    PacketScoreChanged pScore = new PacketScoreChanged(500, PacketScoreChanged.ManipulationType.DECREASE, Client.getInstance().getId());
                     Client.getInstance().send(pScore);
 
                     Assets.playSound("enemy_eat.mp3");

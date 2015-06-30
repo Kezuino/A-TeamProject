@@ -4,19 +4,18 @@ import java.io.Serializable;
 
 public enum ItemType implements Serializable {
     //BigNugget item/consumable. grants 100 score
-    BigObject(300),
+    BigObject(150),
     //SmallNugget item/consumable. grants 50 score
-    SmallObject(30),
+    SmallObject(10),
 
     //test for object
     Watch(0),
 
     //PowerUps
-    Diamond(250),
+    Diamond(300),
     Emerald(200),
     Sapphire(150),
     Ruby(100);
-
 
     //The score of this {@link ItemType}.
     private final int score;
