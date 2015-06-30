@@ -28,7 +28,7 @@ public interface IProtocol extends Remote {
 
     void playerSetPosition(UUID sender, Vector2 position) throws RemoteException;
 
-    void shootProjectile(UUID sender) throws RemoteException;
+    void shootProjectile(Vector2 pos, Direction dir,UUID sender) throws RemoteException;
 
     void setAIPath(UUID sender, UUID objectId, Vector2 position, Collection<Vector2> nodes) throws RemoteException;
 

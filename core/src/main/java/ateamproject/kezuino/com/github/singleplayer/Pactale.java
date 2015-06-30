@@ -90,10 +90,10 @@ public class Pactale extends GameObject {
      * If this {@link Pactale} is active, will shoot a portal in the direction
      * that this {@link Pactale} currently is heading.
      */
-    public Projectile shootProjectile() {
+    public Projectile shootProjectile(Vector2 position,Direction direction) {
         if (this.getActive()) {
             // create projectile
-            Projectile proj = new Projectile(this.getExactPosition(), this, this.getMovementSpeed() * 3, this.getDirection(), this
+            Projectile proj = new Projectile(position, this, this.getMovementSpeed() * 3, direction, this
                     .getColor());
             proj.setId();
             getMap().addGameObject(proj);
@@ -109,8 +109,8 @@ public class Pactale extends GameObject {
     @Override
     public boolean collisionWithGameObject(GameObject object) {
         if(this.getId().equals(Client.getInstance().getPublicId())) {
-            PacketObjectCollision packet = new PacketObjectCollision(getId(), object.getId(), null);
-            Client.getInstance().send(packet);
+            //PacketObjectCollision packet = new PacketObjectCollision(getId(), object.getId(), null);
+            //Client.getInstance().send(packet);
 
             if (object instanceof Enemy) {
                 Enemy e = (Enemy) object;

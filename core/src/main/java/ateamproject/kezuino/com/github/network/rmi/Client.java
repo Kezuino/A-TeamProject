@@ -741,14 +741,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             // If client sended it..send this private id to server.
             if (packet.getSender() != null && packet.getSender().equals(getId())) {
                 try {
-                    getRmi().getServer().shootProjectile(packet.getSender());
+                    getRmi().getServer().shootProjectile(packet.getExactPosition(),packet.getDirection(),packet.getSender());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
             } else {
                 if (BaseScreen.getSession().getPlayer(packet.getSender()) != null) {
                     // Server sended this.
-                    BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
+                    BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile(packet.getExactPosition(),packet.getDirection());
                 }
             }
         });

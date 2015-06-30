@@ -93,8 +93,8 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
                         break;
                     case Input.Keys.SPACE:
                         if (getSession().getState() != GameState.Paused) {
-                            player.shootProjectile();
-                            Client.getInstance().send(new PacketShootProjectile());
+                            player.shootProjectile(player.getExactPosition(),player.getDirection());
+                            Client.getInstance().send(new PacketShootProjectile(player.getExactPosition(),player.getDirection()));
                         }
                         break;
                     case Input.Keys.H:
