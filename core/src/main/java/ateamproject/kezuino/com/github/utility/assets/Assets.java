@@ -127,7 +127,7 @@ public class Assets {
     }
 
     public static Texture getTexture(String asset) {
-        return get(TEXTURE_DIR + '/' + asset, Texture.class);
+        return get(TEXTURE_DIR + asset, Texture.class);
     }
 
     /**
@@ -137,11 +137,11 @@ public class Assets {
      * @return {@link BitmapFont} if it was found. Or null.
      */
     public static BitmapFont getFont(String asset) {
-        return get(FONTS_DIR + '/' + asset, BitmapFont.class);
+        return get(FONTS_DIR + asset, BitmapFont.class);
     }
 
     public static Skin getSkin(String asset) {
-        return get(GUI_DIR + '/' + asset, Skin.class);
+        return get(GUI_DIR + asset, Skin.class);
     }
     
     /**
