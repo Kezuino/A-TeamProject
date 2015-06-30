@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.utility.assets;
 import ateamproject.kezuino.com.github.utility.io.FilenameUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -11,10 +12,13 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.GdxRuntimeException;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -94,7 +98,6 @@ public class Assets {
         manager.load(getSkinPath(AUDIO_SOUND_DIR, "enemy_eat.mp3"), Sound.class);
 
         // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
-
         // Wait for assets to load.
         manager.finishLoading();
     }
@@ -117,7 +120,11 @@ public class Assets {
             return null;
         }
         if (!manager.isLoaded(getSkinPath(asset), type)) {
-            manager.load(getSkinPath(asset), type);
+            if (type.isAssignableFrom(Skin.class)) {
+                //manager.load(getSkinPath(asset), type, new SkinLoader.SkinParameter(getSkinPath(asset)));
+            } else {
+                manager.load(getSkinPath(asset), type);
+            }            
             manager.finishLoading();
         }
         return manager.get(asset, type);
@@ -150,9 +157,13 @@ public class Assets {
      * @return {@link BitmapFont} if it was found. Or null.
      */
     public static BitmapFont getFont(String asset) {
-        return get(FONTS_DIR + asset, BitmapFont.class);
+        return get("fonts/"+ asset, BitmapFont.class);
     }
 
+    public static Skin getSkin(String asset) {
+        return get("gui/"+ asset, Skin.class);
+    }
+    
     /**
      * Loads the {@link Texture} for the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
      *
@@ -270,5 +281,21 @@ public class Assets {
         manager.unload(getSkinPath("textures", "portal.png"));
         manager.unload(getSkinPath("textures", "pactale.png"));
         manager.unload(getSkinPath("textures", "enemy.png"));
+    }
+
+    public static String[] getSkins() {
+       
+        String path;
+        File file;
+        try {
+            path = new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent();
+            file = new File(path);
+            System.out.println(file.getPath());
+            String[] directories = file.list((File current, String name) -> new File(current, name).isDirectory());
+        return directories;
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(Assets.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
     }
 }
