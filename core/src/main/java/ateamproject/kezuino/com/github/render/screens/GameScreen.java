@@ -174,11 +174,9 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
     public void start(Score score) {
         if (getSession() == null) {
             Gdx.app.debug("GAMESESSION", "Resetting static GameSession.");
-            setSession(new GameSession(1));
+            setSession(new GameSession(1, score != null ? score.valueOf() : 0));
         }
-        if (getSession().getScore() == null) {
-            getSession().setScore(score);
-        }
+        
         if (getSession().getMap() == null) {
             throw new IllegalStateException("Map should be loaded before the GameScreen can be started.");
         }
@@ -220,7 +218,7 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
                         lblEndGameText.remove();
                         lblScore.remove();
                         start(getSession().getScore());
-                        Client.getInstance().send(new PacketLaunchGame());
+                        Client.getInstance().send(new PacketLaunchGame(false, BaseScreen.getSession().getLevel() + 1, BaseScreen.getSession().getScore().valueOf(), Client.getInstance().getId()));
                     }
                 });
 

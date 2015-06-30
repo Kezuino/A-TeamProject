@@ -2,6 +2,7 @@ package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
 import ateamproject.kezuino.com.github.network.rmi.Client;
+import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -80,7 +81,7 @@ public class Score {
      * @param gameObjects
      */
     public void generateNewScore(List<GameObject> gameObjects) {
-        if (System.currentTimeMillis() - startTime > nextScoreUpdate && currentScoreManipulation < maxScoreManipulation) {//make sure that the score wont be decremented beyond its initial starting value
+        if (System.currentTimeMillis() - startTime > nextScoreUpdate && currentScoreManipulation < maxScoreManipulation && BaseScreen.getSession().getState() == GameState.Running) {//make sure that the score wont be decremented beyond its initial starting value
             int scoreToDecrement = gameObjects.stream()
                                               .filter(go -> go instanceof Pactale)
                                               .collect(Collectors.counting())

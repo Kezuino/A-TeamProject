@@ -9,6 +9,8 @@ public class PacketLaunchGame extends Packet {
     protected boolean paused;
     @PacketField(0)
     protected int level;
+    @PacketField(1)
+    protected int score;
 
     public PacketLaunchGame() {
         this.paused = false;
@@ -21,10 +23,11 @@ public class PacketLaunchGame extends Packet {
         this.level = -1;
     }
 
-    public PacketLaunchGame(boolean paused, int level, UUID sender, UUID... receivers) {
+    public PacketLaunchGame(boolean paused, int level, int score, UUID sender, UUID... receivers) {
         super(sender, receivers);
         this.paused = paused;
         this.level = level < -1 ? -1 : level;
+        this.score = score;
     }
 
     public int getLevel() {
@@ -33,6 +36,10 @@ public class PacketLaunchGame extends Packet {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+    
+    public int getScore() {
+        return this.score;
     }
 
     public boolean isPaused() {

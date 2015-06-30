@@ -1,6 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import ateamproject.kezuino.com.github.network.packet.packets.PacketObjectSetPosition;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketObjectMove;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.game.Direction;
@@ -229,7 +229,7 @@ public class Enemy extends GameObject {
                         this.setDirection(Direction.getDirection(this.getNode().getX(), this.getNode()
                                 .getY(), nextNode.getX(), nextNode.getY()));
 
-                        Client.getInstance().send(new PacketObjectSetPosition(this.getNode().getExactPosition(), nextNode.getExactPosition(), this.getId(), Client.getInstance().getId()));                        
+                        Client.getInstance().send(new PacketObjectMove(this.getNode().getExactPosition(), nextNode.getExactPosition(), this.getId(), Client.getInstance().getId()));                        
                         nodeFromPath.remove();
                         graphPath.clear();
                         while (nodeFromPath.hasNext()) {

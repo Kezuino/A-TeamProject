@@ -24,6 +24,8 @@ public class PacketLoadGame extends Packet {
     protected int playerLimit;
     @PacketField(3)
     protected int level;
+    @PacketField(4)
+    protected int score;
 
     public PacketLoadGame() {
     }
@@ -42,6 +44,11 @@ public class PacketLoadGame extends Packet {
         this(mapName, master, sender, receivers);
         this.playerLimit = playerLimit;
         this.level = level;
+    }
+    
+     public PacketLoadGame(String mapName, boolean master, int playerLimit, int level, int score, UUID sender, UUID... receivers) {
+        this(mapName, master, playerLimit, level, sender, receivers);
+        this.score = score;
     }
 
     public int getPlayerLimit() {
@@ -65,5 +72,9 @@ public class PacketLoadGame extends Packet {
     
     public int getLevel(){
         return level;
+    }
+    
+    public int getScore() {
+        return this.score;
     }
 }
