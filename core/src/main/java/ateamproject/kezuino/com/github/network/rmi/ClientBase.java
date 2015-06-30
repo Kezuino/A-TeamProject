@@ -117,9 +117,9 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketBalloonMessage packet;
 
         if (followTarget != null) {
-            packet = new PacketBalloonMessage(typeName, followTarget, null);
+            packet = new PacketBalloonMessage(typeName, followTarget, null, new UUID[] { null });
         } else {
-            packet = new PacketBalloonMessage(typeName, position, null);
+            packet = new PacketBalloonMessage(typeName, position, null, new UUID[] { null });
         }
         client.send(packet);
     }

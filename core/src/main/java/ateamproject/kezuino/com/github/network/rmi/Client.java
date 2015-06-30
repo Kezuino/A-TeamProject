@@ -182,7 +182,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     public void registerPackets() {
         packets.registerFunc(PacketKick.class, packet -> {
             if (packet.getSender() == null) {
-                System.out.println("Client: From server");
                 new Dialog("Kicked", ((BaseScreen) game.getScreen()).getSkin()) {
                     {
                         text(packet.getReason());

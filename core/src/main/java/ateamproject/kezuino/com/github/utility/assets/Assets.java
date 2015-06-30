@@ -19,8 +19,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -34,10 +32,10 @@ public class Assets {
     public static final String GUI_DIR = "gui/";
     public static final String TEXTURE_DIR = "textures/";
     public static final String SHADER_DIR = "shaders/";
-
-    private static String skin;
     public static AssetManager manager;
+    private static String skin;
     private static HashMap<String, Music> musicInstances;
+    private static boolean debug;
 
     static {
         manager = new AssetManager();
@@ -46,8 +44,6 @@ public class Assets {
         // Add loaders to the ContentManager.
         manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));
     }
-
-    private static boolean debug;
 
     public static String getSkinPath(String... args) {
         if (debug) System.out.println("Input path: " + String.join("/", args).replace("\\", "/"));
@@ -158,10 +154,6 @@ public class Assets {
     public static <T> T get(String asset, Class<T> type) {
         if (asset == null || asset.isEmpty()) {
             throw new IllegalArgumentException("Parameter asset must not be null or empty.");
-        }
-        FileHandle file = new FileHandle(getSkinPath(asset));
-        if (!file.exists()) {
-            throw new NullPointerException(String.format("Asset '%s' could not be found.", asset));
         }
         if (manager == null) {
             return null;

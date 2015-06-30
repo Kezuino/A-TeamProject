@@ -324,7 +324,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketShootProjectile packet = new PacketShootProjectile(pos,dir,sender);
         server.send(packet);
     }
-
+;
     @Override
     public void setAIPath(UUID sender, UUID objectId, Vector2 position, Collection<Vector2> nodes) throws RemoteException {
         PacketSetAIPath packet = new PacketSetAIPath(objectId, nodes, position, sender, new UUID[] { null });
