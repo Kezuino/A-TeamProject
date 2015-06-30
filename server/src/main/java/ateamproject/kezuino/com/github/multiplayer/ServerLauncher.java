@@ -1,6 +1,8 @@
 package ateamproject.kezuino.com.github.multiplayer;
 
 import ateamproject.kezuino.com.github.network.rmi.Server;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 
 import java.rmi.RemoteException;
 import java.util.logging.Level;

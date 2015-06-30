@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -28,6 +29,7 @@ public class SkinSelectScreen extends BaseScreen {
             tbChangeLook.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
+                    Gdx.app.getPreferences("user").putString("skin", path.getFileName().toString());
                     Assets.setSkin(path.getFileName().toString(), true, () -> game.setScreen(new MainScreen(game)));
                 }
             });
