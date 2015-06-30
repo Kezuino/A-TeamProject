@@ -58,6 +58,11 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     public void loadGame(String mapName, boolean isMaster, int playerLimit, int level) throws RemoteException {
         client.send(new PacketLoadGame(mapName, isMaster, playerLimit, level, null));
     }
+    
+    @Override
+    public void loadGame(String mapName, boolean isMaster, int playerLimit, int level, int score) throws RemoteException {
+        client.send(new PacketLoadGame(mapName, isMaster, playerLimit, level, score, null));
+    }
 
     @Override
     public void setLobbyDetails(PacketLobbySetDetails.Data data) throws RemoteException {
@@ -132,7 +137,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     
     @Override
     public void objectSetDirection(UUID sender, UUID object, Vector2 from, Vector2 to) throws RemoteException {
-        PacketObjectSetPosition packet = new PacketObjectSetPosition(from, to, object, sender);
+        PacketObjectMove packet = new PacketObjectMove(from, to, object, sender);
         client.send(packet);
     }
 

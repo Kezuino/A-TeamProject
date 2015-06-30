@@ -64,6 +64,8 @@ public interface IProtocolClient extends IProtocol {
      */
     void loadGame(String mapName, boolean isMaster, int playerLimit, int level) throws RemoteException;
 
+    void loadGame(String mapName, boolean isMaster, int playerLimit, int level, int score) throws RemoteException;
+    
     /**
      * Updates the information displayed in the lobby.
      *

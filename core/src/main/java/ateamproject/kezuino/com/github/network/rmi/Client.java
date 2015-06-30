@@ -497,7 +497,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             if (p.getSender() != null) {
                 // Request came from client..
                 try {
-                    rmi.getServer().launchGame(p.getSender(), p.getLevel());
+                    rmi.getServer().launchGame(p.getSender(), p.getLevel(), p.getScore());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -661,7 +661,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerAction(PacketLoadGame.class, p -> {
             // Set this session as the new main session.
-            GameSession session = new GameSession(p.getLevel());
+            GameSession session = new GameSession(p.getLevel(), p.getScore());
             BaseScreen.setSession(session);
             MapLoader loader = Map.getLoader(session, p.getMap(), p.getLevel());
 
@@ -776,7 +776,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         });
         
         
-        packets.registerAction(PacketObjectSetPosition.class, packet -> {
+        packets.registerAction(PacketObjectMove.class, packet -> {
             if (packet.getSender() != null && packet.getSender().equals(getId())) {
                 try {
                     getRmi().getServer().objectSetDirection(packet.getSender(), packet.getObject(), packet.getFrom(), packet.getTo());

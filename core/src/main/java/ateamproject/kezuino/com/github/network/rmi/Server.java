@@ -604,7 +604,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
 
                 try {
-                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size(), game.getLevel());
+                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size(), game.getLevel(), packet.getScore());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -662,14 +662,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 System.out.println("Could not remove item with unique id: " + packet.getItemId());
                 return;
             }
-            //Calculate the score based on the level of the game. For every level above 1, add 5% more score.
-            int score = packet.getItemType().getScore();
-
             if (game.getLevel()
                     > 1) {
-                double factor = Math.pow(1.05, game.getLevel() - 1);
-                score *= factor;
-            }
 
             for (UUID receiver
                     : game.getClients()) {
@@ -679,7 +673,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                         if (!receiver.equals(packet.getSender())) {
                             client.getRmi().removeItem(null, packet.getPlayer(), packet.getItemId(), packet.getItemType());
                         }
-                        client.getRmi().changeScore(null, PacketScoreChanged.ManipulationType.INCREASE, score);
+                        client.getRmi().changeScore(null, PacketScoreChanged.ManipulationType.INCREASE, packet.getItemType().getScore());
                     }
                 } catch (RemoteException ignored) {
                     // One of the clients lost connection.
@@ -718,6 +712,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 System.out.println("Could not change score since game is not active");
                 return;
             }
+            
+            //Calculate the score based on the level of the game. For every level above 1, add 5% more score.
+            int score = packet.getChange();
+            if (game.getLevel() > 1) {
+                double factor = Math.pow(1.05, game.getLevel() - 1);
+                score *= factor;
+            }
 
             IProtocolClient[] receivers = game.getClients()
                     .stream()
@@ -726,7 +727,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             for (IProtocolClient receiver : receivers) {
                 try {
-                    receiver.changeScore(null, packet.getManipulationType(), packet.getChange());
+                    receiver.changeScore(null, packet.getManipulationType(), score);
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -868,7 +869,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         }
         );
 
-        packets.registerAction(PacketObjectSetPosition.class, packet -> {
+        packets.registerAction(PacketObjectMove.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             if (game
                     == null) {

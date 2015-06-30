@@ -201,8 +201,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void launchGame(UUID sender, int level) throws RemoteException {
-        PacketLaunchGame packet = new PacketLaunchGame(false, level, sender);
+    public void launchGame(UUID sender, int level, int score) throws RemoteException {
+        PacketLaunchGame packet = new PacketLaunchGame(false, level, score, sender);
         server.send(packet);
     }
 
@@ -315,7 +315,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     
     @Override
     public void objectSetDirection(UUID sender, UUID object, Vector2 from, Vector2 to) throws RemoteException {
-        PacketObjectSetPosition packet = new PacketObjectSetPosition(from, to, object, sender);
+        PacketObjectMove packet = new PacketObjectMove(from, to, object, sender);
         server.send(packet);
     }
 

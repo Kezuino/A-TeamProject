@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.utility.assets;
 import ateamproject.kezuino.com.github.utility.io.FilenameUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -38,45 +39,28 @@ public class Assets {
     private static boolean debug;
 
     static {
-        manager = new AssetManager();
+        manager = new AssetManager(fileName -> {
+            if (Assets.skin == null || Assets.skin.isEmpty()) {
+                // Load from internal.
+                return Gdx.files.internal(fileName);
+            } else {
+                // Load files from external map.
+                FileHandle handle = Gdx.files.local("Skins/" + Assets.skin + '/' + fileName);
+                if (!handle.exists()) {
+                    handle = Gdx.files.internal(fileName);
+                }
+                return handle;
+            }
+        });
         musicInstances = new HashMap<>();
 
         // Add loaders to the ContentManager.
         manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));
     }
 
-    public static String getSkinPath(String... args) {
-        if (debug) System.out.println("Input path: " + String.join("/", args).replace("\\", "/"));
-
-        String result = null;
-        if (Assets.skin == null) {
-            result = String.join("/", args).replace("\\", "/");
-        } else {
-            try {
-                String parent = Paths.get(new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent()).getParent().toString();
-                result = Paths.get(Paths.get(parent, "Skins", skin).toString(), args).toString().replace("\\", "/").replace("/src/", "/");
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(Assets.class.getName()).log(Level.SEVERE, null, ex);
-            }
-
-            boolean useInternal = false;
-            if (result == null) {
-                useInternal = true;
-            } else {
-                // Check if skin file exists.
-                FileHandle file = new FileHandle(result.replace("/", "\\"));
-                if (!file.exists()) useInternal = true;
-            }
-
-            if (useInternal) {
-                result = String.join("/", args).replace("\\", "/");
-            }
-        }
-
-        if (debug) {
-            System.out.println("Found path: " + result);
-        }
-
+    public static String getFilePath(String... args) {
+        String result;
+        result = String.join("/", args).replace("\\", "/");
         return result;
     }
 
@@ -116,7 +100,7 @@ public class Assets {
      * {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
     private static void loadFonts() {
-        manager.load(getSkinPath(FONTS_DIR, "opensans.ttf"), BitmapFont.class);
+        manager.load(getFilePath(FONTS_DIR, "opensans.ttf"), BitmapFont.class);
     }
 
     /**
@@ -126,19 +110,19 @@ public class Assets {
     private static void load() {
 
         // Textures (only load those that aren't loaded by the TmxMapLoader).
-        manager.load(getSkinPath(TEXTURE_DIR, "projectile.png"), Texture.class);
-        manager.load(getSkinPath(TEXTURE_DIR, "portal.png"), Texture.class);
-        manager.load(getSkinPath(TEXTURE_DIR, "pactale.png"), Texture.class);
-        manager.load(getSkinPath(TEXTURE_DIR, "enemy.png"), Texture.class);
+        manager.load(getFilePath(TEXTURE_DIR, "projectile.png"), Texture.class);
+        manager.load(getFilePath(TEXTURE_DIR, "portal.png"), Texture.class);
+        manager.load(getFilePath(TEXTURE_DIR, "pactale.png"), Texture.class);
+        manager.load(getFilePath(TEXTURE_DIR, "enemy.png"), Texture.class);
 
         // Particle effects.
         manager.load("textures/particles/projectile", ParticleEffect.class);
 
         // Sounds (Only short clips that are mainly used for interaction/action effects).
-        manager.load(getSkinPath(AUDIO_SOUND_DIR, "defeat.wav"), Sound.class);
-        manager.load(getSkinPath(AUDIO_SOUND_DIR, "portal_shot.mp3"), Sound.class);
-        manager.load(getSkinPath(AUDIO_SOUND_DIR, "portal_hit.mp3"), Sound.class);
-        manager.load(getSkinPath(AUDIO_SOUND_DIR, "enemy_eat.mp3"), Sound.class);
+        manager.load(getFilePath(AUDIO_SOUND_DIR, "defeat.wav"), Sound.class);
+        manager.load(getFilePath(AUDIO_SOUND_DIR, "portal_shot.mp3"), Sound.class);
+        manager.load(getFilePath(AUDIO_SOUND_DIR, "portal_hit.mp3"), Sound.class);
+        manager.load(getFilePath(AUDIO_SOUND_DIR, "enemy_eat.mp3"), Sound.class);
 
         // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
         // Wait for assets to load.
@@ -158,11 +142,11 @@ public class Assets {
         if (manager == null) {
             return null;
         }
-        if (!manager.isLoaded(getSkinPath(asset), type)) {
-            manager.load(getSkinPath(asset), type);
+        if (!manager.isLoaded(getFilePath(asset), type)) {
+            manager.load(getFilePath(asset), type);
             manager.finishLoading();
         }
-        return manager.get(getSkinPath(asset), type);
+        return manager.get(getFilePath(asset), type);
     }
 
     public static Texture getTexture(String asset) {
@@ -215,7 +199,7 @@ public class Assets {
      * @return {@link Sound} from the assets folder and plays it.
      */
     public static Sound playSound(String asset) {
-        Sound sound = Assets.get(getSkinPath(AUDIO_SOUND_DIR, asset), Sound.class);
+        Sound sound = Assets.get(getFilePath(AUDIO_SOUND_DIR, asset), Sound.class);
         if (sound != null) {
             sound.play();
         }
@@ -229,7 +213,7 @@ public class Assets {
      * @return {@link Sound} from the assets folder and loops it.
      */
     public static Sound loopSound(String asset) {
-        Sound sound = Assets.get(getSkinPath(AUDIO_SOUND_DIR, asset), Sound.class);
+        Sound sound = Assets.get(getFilePath(AUDIO_SOUND_DIR, asset), Sound.class);
         if (sound != null) {
             sound.loop();
         }
@@ -248,7 +232,7 @@ public class Assets {
         if (fileName == null || fileName.isEmpty()) {
             return null;
         }
-        String asset = getSkinPath(AUDIO_MUSIC_DIR, fileName);
+        String asset = getFilePath(AUDIO_MUSIC_DIR, fileName);
 
         Music music;
 
@@ -284,8 +268,8 @@ public class Assets {
     public static ShaderProgram getShaderProgram(String shaderName) {
         ShaderProgram.pedantic = false;
         String assetName = FilenameUtils.getFileNameWithoutExtension(shaderName);
-        FileHandle vertexFile = new FileHandle((getSkinPath(SHADER_DIR + "vertex", assetName + ".vsh")));
-        FileHandle fragmentFile = new FileHandle((getSkinPath(SHADER_DIR + "fragment", assetName + ".fsh")));
+        FileHandle vertexFile = new FileHandle((getFilePath(SHADER_DIR + "vertex", assetName + ".vsh")));
+        FileHandle fragmentFile = new FileHandle((getFilePath(SHADER_DIR + "fragment", assetName + ".fsh")));
         if (!vertexFile.exists() || !fragmentFile.exists()) {
             throw new GdxRuntimeException("Couldn't find shader files.");
         }
@@ -305,10 +289,10 @@ public class Assets {
     }
 
     public static void unload() {
-        manager.unload(getSkinPath(TEXTURE_DIR, "projectile.png"));
-        manager.unload(getSkinPath(TEXTURE_DIR, "portal.png"));
-        manager.unload(getSkinPath(TEXTURE_DIR, "pactale.png"));
-        manager.unload(getSkinPath(TEXTURE_DIR, "enemy.png"));
+        manager.unload(getFilePath(TEXTURE_DIR, "projectile.png"));
+        manager.unload(getFilePath(TEXTURE_DIR, "portal.png"));
+        manager.unload(getFilePath(TEXTURE_DIR, "pactale.png"));
+        manager.unload(getFilePath(TEXTURE_DIR, "enemy.png"));
     }
 
     public static String[] getSkins() {

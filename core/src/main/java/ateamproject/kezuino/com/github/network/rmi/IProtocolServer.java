@@ -101,7 +101,7 @@ public interface IProtocolServer extends IProtocol {
      * @param sender {@link UUID} that sended this message.
      * @throws RemoteException If RMI fails to connect.
      */
-    void launchGame(UUID sender, int level) throws RemoteException;
+    void launchGame(UUID sender, int level, int score) throws RemoteException;
 
     List<PacketGetGameClients.Data> getGameClients(UUID sender) throws RemoteException;
 }
