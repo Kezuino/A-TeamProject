@@ -38,7 +38,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
     @Override
     public boolean drop(PacketKick.KickReasonType kick, String reason) throws RemoteException {
-        PacketKick packet = new PacketKick(kick, reason, null, new UUID[] { null });
+        PacketKick packet = new PacketKick(kick, reason, null, new UUID[]{null});
         client.send(packet);
         return packet.getResult();
     }
@@ -67,7 +67,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
     @Override
     public void screenRefresh(Class<?> refreshableScreen) throws RemoteException {
-        client.send(new PacketScreenUpdate(refreshableScreen, null, new UUID[] { null }));
+        client.send(new PacketScreenUpdate(refreshableScreen, null, new UUID[]{null}));
     }
 
     @Override
@@ -79,7 +79,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     @Override
     public void launchGame(boolean paused) throws RemoteException {
         // Null, null is needed so this client doesn't automatically assign itself as sender (see Packet.send).
-        PacketLaunchGame packet = new PacketLaunchGame(paused, null, new UUID[] { null });
+        PacketLaunchGame packet = new PacketLaunchGame(paused, null, new UUID[]{null});
         client.send(packet);
     }
 
@@ -95,16 +95,16 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketCreateItem packet = new PacketCreateItem(itemId, type, position, null);
         client.send(packet);
     }
-    
+
     @Override
     public void removeItem(UUID sender, UUID itemId, ItemType itemType) {
         PacketRemoveItem packet = new PacketRemoveItem(itemId, itemType, sender);
         client.send(packet);
     }
-    
+
     @Override
     public void changeScore(UUID sender, PacketScoreChanged.ManipulationType manipulationType, int change) throws RemoteException {
-        PacketScoreChanged packet = new PacketScoreChanged(change, manipulationType, sender, new UUID[] { null });
+        PacketScoreChanged packet = new PacketScoreChanged(change, manipulationType, sender, new UUID[]{null});
         client.send(packet);
     }
 
@@ -142,20 +142,21 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void shootProjectile(UUID sender) throws RemoteException {
-        PacketShootProjectile packet = new PacketShootProjectile(sender);
+    public void shootProjectile(Vector2 pos, Direction dir,UUID sender) throws RemoteException {
+        PacketShootProjectile packet = new PacketShootProjectile(pos,dir,sender);
         client.send(packet);
     }
 
     @Override
     public void setAIPath(UUID sender, UUID objectId, Vector2 position, Collection<Vector2> nodes) throws RemoteException {
-        PacketSetAIPath packet = new PacketSetAIPath(objectId, nodes, position, sender, new UUID[] { null });
+        PacketSetAIPath packet = new PacketSetAIPath(objectId,
+                nodes, position, sender, new UUID[]{null});
         client.send(packet);
     }
 
     @Override
     public void objectCollision(UUID sender, UUID collider, UUID target) throws RemoteException {
-        PacketObjectCollision packet = new PacketObjectCollision(collider, target, sender);
+        PacketObjectCollision packet = new PacketObjectCollision(collider, target, sender, new UUID[]{null});
         client.send(packet);
     }
 

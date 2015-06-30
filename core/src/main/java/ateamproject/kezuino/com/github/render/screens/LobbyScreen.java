@@ -7,6 +7,7 @@ package ateamproject.kezuino.com.github.render.screens;
 
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.network.rmi.Client;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -15,7 +16,7 @@ import java.util.*;
 /**
  * @author Fatih
  */
-public class LobbyScreen extends BaseScreen implements RefreshableScreen{
+public class LobbyScreen extends BaseScreen implements RefreshableScreen {
 
     private Client client;
     private String lobbyName;
@@ -46,6 +47,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
         data.setMap("2");
         client.send(new PacketLobbySetDetails(data, null));
 
+        backgroundMusic = Assets.getMusicStream("menu.mp3");
         createGui();
     }
 
@@ -159,7 +161,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen{
         scrollTable.add(memberNameHeader);
         scrollTable.add();
         scrollTable.row();
-        
+
         PacketLobbyMembers p = new PacketLobbyMembers(this.lobbyId, client.getId());
         client.send(p);
 

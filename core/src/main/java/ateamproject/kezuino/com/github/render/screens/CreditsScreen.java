@@ -8,11 +8,14 @@ package ateamproject.kezuino.com.github.render.screens;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
@@ -36,7 +39,7 @@ public class CreditsScreen extends BaseScreen {
     private CopyOnWriteArrayList<Label> contentLabelsModified;
 
     private final int titelSpacingHorizontal = 40;
-    private final int titelSpacingVertical = 40;
+    private final int titelSpacingVertical = 55;
     private final int contentSpacingHorizontal = 15;
     private final int contentSpacingVertical = 30;
 
@@ -46,10 +49,15 @@ public class CreditsScreen extends BaseScreen {
     private final AtomicInteger numberOfModifieingThreadsRandom;
     private final AtomicInteger numberOfModifieingThreadsRow;
 
+    private LabelStyle titelFont;
+    private LabelStyle contentFont;
+
+    private Random rand;
+
     public CreditsScreen(Game game) {
         super(game);
-        this.maxNumberOfModifieingThreadsRandom = 5;
-        this.maxNumberOfModifieingThreadsRow = 2;
+        this.maxNumberOfModifieingThreadsRandom = 20;
+        this.maxNumberOfModifieingThreadsRow = 1;
 
         this.numberOfModifieingThreadsRow = new AtomicInteger(0);
         this.numberOfModifieingThreadsRandom = new AtomicInteger(0);
@@ -71,6 +79,11 @@ public class CreditsScreen extends BaseScreen {
         backgroundMusic = Assets.getMusicStream("credits.mp3");
         backgroundMusic.setPosition(0);
         clearOnRenderColor = Color.BLACK;
+
+        titelFont = new Label.LabelStyle(new BitmapFont(Gdx.files.internal("fonts/credits.fnt"), Gdx.files.internal("fonts/credits_0.png"), false), Color.BLUE);
+        contentFont = new Label.LabelStyle(new BitmapFont(Gdx.files.internal("fonts/credits.fnt"), Gdx.files.internal("fonts/credits_0.png"), false), Color.WHITE);
+
+        rand = new Random();
 
         Image i = new Image(new Texture("gui/credits.png"));
         i.setFillParent(true);
@@ -113,8 +126,8 @@ public class CreditsScreen extends BaseScreen {
         float lastHorizontalPositionTitel = 0;
         for (Label label : titelLabels) {
             label.setPosition(lastHorizontalPositionTitel, stage.getHeight() - this.titelSpacingVertical);
-            label.setFontScale(4);
-            label.setColor(Color.YELLOW);
+            label.setFontScale(3);
+            label.setStyle(titelFont);
             stage.addActor(label);
 
             lastHorizontalPositionTitel += this.titelSpacingHorizontal;
@@ -124,6 +137,7 @@ public class CreditsScreen extends BaseScreen {
         float lastHorizontalPositionContent = 0;
         for (Label label : contentLabels) {
             label.setPosition(lastHorizontalPositionContent, stage.getHeight() - 60 - (this.contentSpacingVertical * lineNumber));
+            label.setStyle(contentFont);
             label.setColor(Color.BLACK);
 
             if (!label.getText().toString().equals(",")) {
@@ -140,8 +154,7 @@ public class CreditsScreen extends BaseScreen {
         Thread t = new Thread(() -> {
             ArrayList<Thread> threads = new ArrayList<>();
 
-            Random r = new Random();
-            if (r.nextBoolean()) {
+            if (rand.nextBoolean()) {
                 while (!Thread.currentThread().isInterrupted()) {
                     if (numberOfModifieingThreadsRandom.get() <= maxNumberOfModifieingThreadsRandom) {
                         numberOfModifieingThreadsRandom.incrementAndGet();
@@ -168,25 +181,20 @@ public class CreditsScreen extends BaseScreen {
         t.start();
     }
 
-    private void singleStep(Label label, float x, float y, boolean randomColor) {
+    private void singleStep(Label label, float x, float y) {
         Gdx.app.postRunnable(() -> {
             label.setPosition(x, y);
-            if (randomColor) {
-                Random r = new Random();
-                Color initRandomColor = new Color(r.nextFloat(), r.nextFloat(), r.nextFloat(), 1);
-                label.setColor(initRandomColor);
-            }
+            Color initRandomColor = new Color(rand.nextFloat(), rand.nextFloat(),255, 1);
+            label.setColor(initRandomColor);
         });
     }
 
     private Runnable randomModifier = new Runnable() {
         @Override
         public void run() {
-            Random r = new Random();
-
             while (!Thread.currentThread().isInterrupted()) {
                 try {
-                    Label currentLabel = contentLabels.get(r.nextInt(contentLabels.size()));
+                    Label currentLabel = contentLabels.get(rand.nextInt(contentLabels.size()));
                     if (contentLabelsModified.contains(currentLabel)) {
                         continue;
                     } else {
@@ -197,18 +205,13 @@ public class CreditsScreen extends BaseScreen {
                     String pattern = "+1+1+1+1+1+1+1+1+1+1-1-1-1-1-1-1-1-1-1-1+1+1+1+1+1-1-1-1-1-1+1+1-1-1";
 
                     for (int i = 0; i < pattern.length(); i += 2) {
-                        boolean randomColor = false;
                         if (pattern.substring(i, i + 1).equals("+")) {
                             height += Float.parseFloat(pattern.substring(i + 1, i + 2));
                         } else {
                             height -= Float.parseFloat(pattern.substring(i + 1, i + 2));
                         }
 
-                        if (pattern.length() == i) {
-                            randomColor = true;
-                        }
-
-                        singleStep(currentLabel, currentLabel.getX(), height, randomColor);
+                        singleStep(currentLabel, currentLabel.getX(), height);
                         Thread.sleep(30);
                     }
 
@@ -218,7 +221,7 @@ public class CreditsScreen extends BaseScreen {
                 }
 
                 try {
-                    Thread.sleep(r.nextInt(255));
+                    Thread.sleep(rand.nextInt(255));
                 } catch (InterruptedException ex) {
                     Logger.getLogger(CreditsScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -229,9 +232,7 @@ public class CreditsScreen extends BaseScreen {
     private Runnable rowModifier = new Runnable() {
         @Override
         public void run() {
-            Random r = new Random();
-
-            float y = contentLabels.get(r.nextInt(contentLabels.size())).getY();
+            float y = contentLabels.get(rand.nextInt(contentLabels.size())).getY();
             ArrayList<Label> labels = new ArrayList<>();
             for (Label label : contentLabels) {
                 if (label.getY() == y) {
@@ -253,7 +254,6 @@ public class CreditsScreen extends BaseScreen {
                             break;
                         }
 
-                        boolean randomColor = false;
                         float height = label.getY();
 
                         if (pattern.substring(i, i + 1).equals("+")) {
@@ -262,11 +262,7 @@ public class CreditsScreen extends BaseScreen {
                             height -= Float.parseFloat(pattern.substring(i + 1, i + 2));
                         }
 
-                        if (pattern.length() == i) {
-                            randomColor = true;
-                        }
-
-                        singleStep(label, label.getX(), height, randomColor);
+                        singleStep(label, label.getX(), height);
                         try {
                             Thread.sleep(30);
                         } catch (InterruptedException ex) {

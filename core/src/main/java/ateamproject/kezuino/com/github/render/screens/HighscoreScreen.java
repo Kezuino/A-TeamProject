@@ -21,6 +21,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -48,24 +49,16 @@ public class HighscoreScreen extends BaseScreen {
         lblTitle.setColor(Color.YELLOW);
         lblTitle.setPosition(stage.getWidth() / 2 - lblTitle.getWidth() / 2, stage.getHeight() - 50);
         
-        Map<String, Integer> scores = new HashMap<>();
-        ValueComparator bvc = new ValueComparator(scores);
-        TreeMap<String, Integer> sortedScores = new TreeMap<>(bvc);
-        
         PacketGetHighscores packet = new PacketGetHighscores(Client.getInstance().getId());
         Client.getInstance().send(packet);
-        scores.putAll(packet.getResult());
-        
-        sortedScores.putAll(scores);
         
         Table table = new Table();
         table.setSkin(skin);
         
         int rankNr = 0;
-        
-        for (Map.Entry<String, Integer> entry : sortedScores.entrySet()) {
+
+        for (Map.Entry<String, Integer> entry : packet.getResult().entrySet()) {
             rankNr++;
-            
             table.add(new Label(Integer.toString(rankNr), skin)).padRight(50);
             table.add(new Label(entry.getKey(), skin)).padRight(50);
             table.add(new Label(Integer.toString(entry.getValue()), skin));

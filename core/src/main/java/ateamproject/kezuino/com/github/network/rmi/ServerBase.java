@@ -314,8 +314,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public void shootProjectile(UUID sender) throws RemoteException {
-        PacketShootProjectile packet = new PacketShootProjectile(sender);
+    public void shootProjectile(Vector2 pos, Direction dir,UUID sender) throws RemoteException {
+        PacketShootProjectile packet = new PacketShootProjectile(pos,dir,sender);
         server.send(packet);
     }
 
@@ -339,7 +339,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public Map<String, Integer> getHighscores(UUID sender) throws RemoteException {
+    public LinkedHashMap<String, Integer> getHighscores(UUID sender) throws RemoteException {
         PacketGetHighscores packet = new PacketGetHighscores(sender);
         server.send(packet);
         return packet.getResult();

@@ -25,18 +25,29 @@ public class SkinSelectScreen extends BaseScreen {
 
     public SkinSelectScreen(Game game) {
         super(game);
+        String[] Skins = Assets.getSkins();
+        float x = stage.getWidth() / 2 - 300 / 2;
+        float y = stage.getHeight() - 100;
 
-        TextButton tbChangeLook = new TextButton("Uiterlijk aanpassen", skin);
-        tbChangeLook.addListener(new ClickListener() {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                Assets.unload();
-                Assets.create("Skin2");
-            }
-        });
-        
-        
-        TextButton tbOptions = new TextButton("Opties", skin);
+        for (String SkinString : Skins) {
+
+            TextButton tbChangeLook = new TextButton(SkinString, skin);
+            tbChangeLook.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+                    Assets.unload();
+                    Assets.create(SkinString);
+                    Assets.getSkins();
+                }
+            });
+            tbChangeLook.setSize(300, 40);
+
+            tbChangeLook.setPosition(x, y);
+            stage.addActor(tbChangeLook);
+            y = y - 50;
+        }
+
+        TextButton tbOptions = new TextButton("Terug", skin);
         tbOptions.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -44,18 +55,9 @@ public class SkinSelectScreen extends BaseScreen {
             }
         });
 
-
         tbOptions.setSize(300, 40);
-        tbChangeLook.setSize(300, 40);
-
-        float xOfSearchGameButton = stage.getWidth() / 2 - tbChangeLook.getWidth() / 2;
-        float yOfSearchGameButton = stage.getHeight() - 50;
-         tbOptions.setPosition(xOfSearchGameButton, yOfSearchGameButton - 200);
-
-        tbChangeLook.setPosition(xOfSearchGameButton, yOfSearchGameButton - 150);
-stage.addActor(tbOptions);
-
-        stage.addActor(tbChangeLook);
+        tbOptions.setPosition(x, y - 50);
+        stage.addActor(tbOptions);
 
         backgroundMusic = Assets.getMusicStream("menu.mp3");
     }

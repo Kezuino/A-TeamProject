@@ -30,7 +30,7 @@ public interface IProtocol extends Remote {
     
     void objectSetDirection(UUID sender, UUID object, Vector2 from, Vector2 to) throws RemoteException;
 
-    void shootProjectile(UUID sender) throws RemoteException;
+    void shootProjectile(Vector2 pos, Direction dir,UUID sender) throws RemoteException;
 
     void setAIPath(UUID sender, UUID objectId, Vector2 position, Collection<Vector2> nodes) throws RemoteException;
 

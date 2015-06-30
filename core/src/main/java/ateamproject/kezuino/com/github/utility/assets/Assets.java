@@ -3,6 +3,7 @@ package ateamproject.kezuino.com.github.utility.assets;
 import ateamproject.kezuino.com.github.utility.io.FilenameUtils;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.assets.loaders.BitmapFontLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -11,11 +12,14 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.GdxRuntimeException;
-import java.io.File;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 
+import java.io.*;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,6 +29,9 @@ public class Assets {
     public static final String AUDIO_SOUND_DIR = "audio/sound/";
     public static final String AUDIO_MUSIC_DIR = "audio/music/";
     public static final String FONTS_DIR = "fonts/";
+    public static final String GUI_DIR = "gui/";
+    public static final String TEXTURE_DIR = "textures/";
+    public static final String SHADER_DIR = "shaders/";
 
     private static String skin;
     public static AssetManager manager;
@@ -38,27 +45,62 @@ public class Assets {
         manager.setLoader(BitmapFont.class, new FreeTypeFontLoader(new InternalFileHandleResolver()));
     }
 
+    private static boolean debug;
+
     public static String getSkinPath(String... args) {
+        String result = null;
         if (Assets.skin == null) {
-            return String.join("/", args).replace("\\", "/");
+            result = String.join("/", args).replace("\\", "/");
         } else {
             try {
-                return Paths.get(Paths.get(new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent(), skin).toString(), args).toString().replace("\\", "/");
+                String parent = Paths.get(new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent()).getParent().toString();
+                result = Paths.get(Paths.get(parent, "Skins", skin).toString(), args).toString().replace("\\", "/").replace("/src/", "/");
             } catch (URISyntaxException ex) {
                 Logger.getLogger(Assets.class.getName()).log(Level.SEVERE, null, ex);
             }
+
+            boolean useInternal = false;
+            if (result == null) {
+                useInternal = true;
+            } else {
+                // Check if skin file exists.
+                FileHandle file = new FileHandle(result.replace("/", "\\"));
+                if (!file.exists()) useInternal = true;
+            }
+
+            if (useInternal) {
+                result = String.join("/", args).replace("\\", "/");
+            }
         }
-        return null;
+
+        if (debug) {
+            System.out.println(result);
+        }
+
+        return result;
     }
 
     /**
-     * Loads the fonts and textures used by the {@link ateamproject.kezuino.com.github.PactaleGame}.
+     * Loads the fonts and textures used by the
+     * {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
     public static void create() {
         create(null);
     }
 
     public static void create(String skin) {
+        if (debug) {
+            try {
+                Path path = Files.createFile(Paths.get("out.txt"));
+                File file = path.toFile();
+                System.setIn(new FileInputStream(file));
+                System.setOut(new PrintStream(file));
+                System.setErr(new PrintStream(file));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
         Assets.skin = skin;
         loadFonts();
 
@@ -67,22 +109,24 @@ public class Assets {
     }
 
     /**
-     * Loads all the fonts used throughout the {@link ateamproject.kezuino.com.github.PactaleGame}.
+     * Loads all the fonts used throughout the
+     * {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
     private static void loadFonts() {
         manager.load(getSkinPath("fonts", "opensans.ttf"), BitmapFont.class);
     }
 
     /**
-     * Loads all the basic textures required for the {@link ateamproject.kezuino.com.github.PactaleGame}.
+     * Loads all the basic textures required for the
+     * {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
     private static void load() {
 
         // Textures (only load those that aren't loaded by the TmxMapLoader).
-        manager.load(getSkinPath("textures", "projectile.png"), Texture.class);
-        manager.load(getSkinPath("textures", "portal.png"), Texture.class);
-        manager.load(getSkinPath("textures", "pactale.png"), Texture.class);
-        manager.load(getSkinPath("textures", "enemy.png"), Texture.class);
+        manager.load(getSkinPath(TEXTURE_DIR, "projectile.png"), Texture.class);
+        manager.load(getSkinPath(TEXTURE_DIR, "portal.png"), Texture.class);
+        manager.load(getSkinPath(TEXTURE_DIR, "pactale.png"), Texture.class);
+        manager.load(getSkinPath(TEXTURE_DIR, "enemy.png"), Texture.class);
 
         // Particle effects.
         manager.load("textures/particles/projectile", ParticleEffect.class);
@@ -94,7 +138,6 @@ public class Assets {
         manager.load(getSkinPath(AUDIO_SOUND_DIR, "enemy_eat.mp3"), Sound.class);
 
         // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
-
         // Wait for assets to load.
         manager.finishLoading();
     }
@@ -120,31 +163,16 @@ public class Assets {
             manager.load(getSkinPath(asset), type);
             manager.finishLoading();
         }
-        return manager.get(asset, type);
+        return manager.get(getSkinPath(asset), type);
     }
 
-    public static <T> T getTexture(String asset, Class<T> type) {
-        if (asset == null || asset.isEmpty()) {
-            throw new IllegalArgumentException("Parameter asset must not be null or empty.");
-        }
-
-        FileHandle file = new FileHandle(getSkinPath("textures", asset));
-        if (!file.exists()) {
-            throw new NullPointerException(String.format("Asset texture '%s' could not be found.", asset));
-        }
-        if (manager == null) {
-            return null;
-        }
-        if (!manager.isLoaded(getSkinPath("textures", asset), type)) {
-            System.out.println(getSkinPath("textures", asset));
-            manager.load(getSkinPath("textures", asset), type);
-            manager.finishLoading();
-        }
-        return manager.get(getSkinPath("textures", asset), type);
+    public static Texture getTexture(String asset) {
+        return get(TEXTURE_DIR + asset, Texture.class);
     }
 
     /**
-     * Returns the {@link BitmapFont} that was loaded in the {@link AssetManager} with the given name.
+     * Returns the {@link BitmapFont} that was loaded in the
+     * {@link AssetManager} with the given name.
      *
      * @param asset Name of the {@link BitmapFont} to get.
      * @return {@link BitmapFont} if it was found. Or null.
@@ -153,24 +181,32 @@ public class Assets {
         return get(FONTS_DIR + asset, BitmapFont.class);
     }
 
+    public static Skin getSkin(String asset) {
+        return get(GUI_DIR + asset, Skin.class);
+    }
+
     /**
-     * Loads the {@link Texture} for the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
+     * Loads the {@link Texture} for the
+     * {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
      *
      * @param name Name of the {@link Texture} to load in the assets.
-     * @return {@link Texture} that was loaded by the name of the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
+     * @return {@link Texture} that was loaded by the name of the
+     * {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
      */
     public static Texture getBalloon(String name) {
         return get("textures/balloons/" + name + ".png", Texture.class);
     }
 
     /**
-     * Retrieves the {@link ParticleEffect} by the given {@code name}. Automatically loads the {@link ParticleEffect} if it hasn't been loaded yet.
+     * Retrieves the {@link ParticleEffect} by the given {@code name}.
+     * Automatically loads the {@link ParticleEffect} if it hasn't been loaded
+     * yet.
      *
      * @param name Name of the {@link ParticleEffect} file to search for.
      * @return {@link ParticleEffect} that was loaded from the file.
      */
     public static ParticleEffect getParticleEffect(String name) {
-        return get("textures/particles/" + name, ParticleEffect.class);
+        return get(TEXTURE_DIR + "particles/" + name, ParticleEffect.class);
     }
 
     /**
@@ -202,10 +238,12 @@ public class Assets {
     }
 
     /**
-     * Creates a {@link Music Musicstream} to stream {@link Music} while it's playing.
+     * Creates a {@link Music Musicstream} to stream {@link Music} while it's
+     * playing.
      *
      * @param fileName Name of {@link Music} to search for in the assets folder.
-     * @return {@link Music Musicstream} to stream {@link Music} while it's playing
+     * @return {@link Music Musicstream} to stream {@link Music} while it's
+     * playing
      */
     public static Music getMusicStream(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
@@ -237,16 +275,18 @@ public class Assets {
     }
 
     /**
-     * Gets the vertex and fragement shaders and creates a new {@link ShaderProgram}.
+     * Gets the vertex and fragement shaders and creates a new
+     * {@link ShaderProgram}.
      *
      * @param shaderName Name of the shader to search for in the assets folder.
-     * @return {@link ShaderProgram} that has been created by the two shader files.
+     * @return {@link ShaderProgram} that has been created by the two shader
+     * files.
      */
     public static ShaderProgram getShaderProgram(String shaderName) {
         ShaderProgram.pedantic = false;
         String assetName = FilenameUtils.getFileNameWithoutExtension(shaderName);
-        FileHandle vertexFile = new FileHandle((getSkinPath("shaders/vertex", assetName + ".vsh")));
-        FileHandle fragmentFile = new FileHandle((getSkinPath("shaders/fragment", assetName + ".fsh")));
+        FileHandle vertexFile = new FileHandle((getSkinPath(SHADER_DIR + "vertex", assetName + ".vsh")));
+        FileHandle fragmentFile = new FileHandle((getSkinPath(SHADER_DIR + "fragment", assetName + ".fsh")));
         if (!vertexFile.exists() || !fragmentFile.exists()) {
             throw new GdxRuntimeException("Couldn't find shader files.");
         }
@@ -266,9 +306,29 @@ public class Assets {
     }
 
     public static void unload() {
-        manager.unload(getSkinPath("textures", "projectile.png"));
-        manager.unload(getSkinPath("textures", "portal.png"));
-        manager.unload(getSkinPath("textures", "pactale.png"));
-        manager.unload(getSkinPath("textures", "enemy.png"));
+        manager.unload(getSkinPath(TEXTURE_DIR, "projectile.png"));
+        manager.unload(getSkinPath(TEXTURE_DIR, "portal.png"));
+        manager.unload(getSkinPath(TEXTURE_DIR, "pactale.png"));
+        manager.unload(getSkinPath(TEXTURE_DIR, "enemy.png"));
+    }
+
+    public static String[] getSkins() {
+
+        String path;
+        File file;
+        try {
+            path = new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent() + "/Skins/";
+            file = new File(path);
+            System.out.println(file.getPath());
+            String[] directories = file.list((File current, String name) -> new File(current, name).isDirectory());
+            return directories;
+        } catch (URISyntaxException ex) {
+            Logger.getLogger(Assets.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return null;
+    }
+
+    public static void setDebug(boolean debug) {
+        Assets.debug = debug;
     }
 }

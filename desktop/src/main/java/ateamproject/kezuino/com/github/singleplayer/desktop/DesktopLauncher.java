@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 public class DesktopLauncher {
 
     public static void main(String[] arg) {
-        System.setProperty("java.rmi.server.hostname", getLocalIP());
+        System.setProperty("java.rmi.server.hostname", "localhost");
 
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
         cfg.foregroundFPS = 60;
