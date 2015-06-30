@@ -246,7 +246,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerFunc(PacketGetClans.class, (p) -> getClient(p.getSender()).getClans());
 
         packets.registerAction(PacketReloadClans.class, (p) -> getClient(p.getSender()).setClans(clanFunctions.getClansByUserName(getClient(p
-                                                                                                                                                    .getSender()).getUsername())));
+                .getSender()).getUsername())));
 
         packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.getClansByEmailAddress(packet.getEmailadres()));
 
@@ -262,7 +262,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketHandleInvitation.class, (packet) -> clanFunctions.handleInvitation(packet.getInvite(), packet
                 .getClanName(), packet.getEmailadres(), packet
-                                                                                                              .getNameOfInvitee()));
+                .getNameOfInvitee()));
 
         packets.registerFunc(PacketHandleManagement.class, (packet) -> clanFunctions.handleManagement(packet.getManage(), packet
                 .getClanName(), packet.getEmailadres()));
@@ -301,14 +301,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     resultMessage = "Dit account is al ingelogd.";
                 }
 
-
                 // Tell client what its id is.
                 return new PacketLoginAuthenticate.ReturnData(client.getUsername(), client.getEmailAddress(), client.getPrivateId(), client
                         .getPublicId(), resultMessage, resultMessage.equals("Ingelogd."));
             }
 
             System.out.println(" .. login credentials not valid.");
-            return null;
+            return new PacketLoginAuthenticate.ReturnData(null, null, null, null, null, resultMessage.equals("Invalide credentials."));
         });
 
         packets.registerAction(PacketLogout.class, packet -> {
@@ -438,10 +437,10 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketLobbyMembers.class, packet -> {
             // return all current members in the lobby
-            Game game = games.get(packet.getLobbyId());            
+            Game game = games.get(packet.getLobbyId());
             Map<UUID, String> curMembers = new HashMap<>();
-            
-            if(game == null) {
+
+            if (game == null) {
                 return curMembers;
             }
 
@@ -500,7 +499,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             if (!hasVotedForSpecificPerson) {
                 getGameFromClientId(packet.getSender()).getVotes()
-                        .add(new UUID[] {packet.getSender(), packet.getPersonToVoteFor()});
+                        .add(new UUID[]{packet.getSender(), packet.getPersonToVoteFor()});
             }
         });
 
@@ -582,7 +581,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketSetAIPath.class, packet -> {
-            if (packet.getSender() == null) return;
+            if (packet.getSender() == null) {
+                return;
+            }
             ClientInfo client = getClient(packet.getSender());
             if (client != null) {
                 Game game = client.getGame();
@@ -632,26 +633,24 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketObjectCollision.class, packet -> {
-            return;
-            // TODO: Fix infinite loop.
-//            if (packet.getSender() != null) {
-//                ClientInfo client = getClient(packet.getSender());
-//                if (client != null) {
-//                    Game game = client.getGame();
-//                    if (game != null) {
-//                        game.getClientsExclude(packet.getSender()).forEach(id -> {
-//                            ClientInfo c = getClient(id);
-//                            if (c != null) {
-//                                try {
-//                                    c.getRmi().objectCollision(null, packet.getCollider(), packet.getTarget());
-//                                } catch (RemoteException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        });
-//                    }
-//                }
-//            }
+            if (packet.getSender() != null) {
+                ClientInfo client = getClient(packet.getSender());
+                if (client != null) {
+                    Game game = client.getGame();
+                    if (game != null) {
+                        game.getClientsExclude(packet.getSender()).forEach(id -> {
+                            ClientInfo c = getClient(id);
+                            if (c != null) {
+                                try {
+                                    c.getRmi().objectCollision(null, packet.getCollider(), packet.getTarget());
+                                } catch (RemoteException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
         });
 
         packets.registerAction(PacketScoreChanged.class, packet -> {

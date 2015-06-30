@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -43,6 +44,14 @@ public abstract class BaseScreen implements Screen {
     protected InputMultiplexer inputs;
 
     public BaseScreen(Game game) {
+         System.out.println(Assets.manager.getAssetNames());
+        Assets.unload();
+         System.out.println(Assets.manager.getAssetNames());
+        Assets.create("Skin1");
+         System.out.println(Assets.manager.getAssetNames());
+        skin = Assets.getSkin("uiskin.json");
+        System.out.println(Assets.manager.getAssetNames());
+        
         // Bootstrap screen.
         renderers = new ArrayList<>();
         inputs = new InputMultiplexer();
@@ -53,9 +62,6 @@ public abstract class BaseScreen implements Screen {
         // Bootstrap game objects.
         this.game = game;
         
-        // Bootstrap skin.
-        skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
-           
         // Bootstrap input.
         inputs.addProcessor(stage);
         Gdx.input.setInputProcessor(inputs);
@@ -76,8 +82,7 @@ public abstract class BaseScreen implements Screen {
 
     public Stage getStage() {
         return stage;
-    }    
-  
+    }
 
     public Skin getSkin() {
         return skin;
@@ -85,14 +90,19 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void show() {
-        if (game == null)
+        if (game == null) {
             throw new UnsupportedOperationException("Game must be set. Did you forget to call super(game) in the constructor of this screen?");
+        }
         for (IRenderer renderer : renderers) {
             renderer.active();
         }
         if (backgroundMusic != null) {
-            if (!backgroundMusic.isLooping()) backgroundMusic.setLooping(true);
-            if (!backgroundMusic.isPlaying()) backgroundMusic.play();
+            if (!backgroundMusic.isLooping()) {
+                backgroundMusic.setLooping(true);
+            }
+            if (!backgroundMusic.isPlaying()) {
+                backgroundMusic.play();
+            }
         }
     }
 
@@ -120,29 +130,37 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void pause() {
-        if (backgroundMusic != null) backgroundMusic.pause();
+        if (backgroundMusic != null) {
+            backgroundMusic.pause();
+        }
     }
 
     @Override
     public void resume() {
-        if (backgroundMusic != null) backgroundMusic.play();
+        if (backgroundMusic != null) {
+            backgroundMusic.play();
+        }
     }
 
     @Override
     public void hide() {
-        if (backgroundMusic != null) backgroundMusic.pause();
+        if (backgroundMusic != null) {
+            backgroundMusic.pause();
+        }
     }
 
     @Override
     public void dispose() {
-        if (backgroundMusic != null) backgroundMusic.dispose();
+        if (backgroundMusic != null) {
+            backgroundMusic.dispose();
+        }
     }
 
     /**
      * Adds the {@link IRenderer} to the list of renderers.
      *
      * @param renderer {@link IRenderer} to add to the list.
-     * @param <T>      Any class that implements the interface {@link IRenderer} to add to the list.
+     * @param <T> Any class that implements the interface {@link IRenderer} to add to the list.
      * @return {@link IRenderer} that was added for chaining purposes.
      */
     public <T extends IRenderer> T addRenderer(T renderer) {
@@ -154,7 +172,7 @@ public abstract class BaseScreen implements Screen {
      * Removes a specific {@link IRenderer} from this {@link Screen}.
      *
      * @param renderer {@link IRenderer} to remove.
-     * @param <T>      Type of instance to remove that extends from {@link IRenderer}.
+     * @param <T> Type of instance to remove that extends from {@link IRenderer}.
      */
     public <T extends IRenderer> void removeRenderer(T renderer) {
         renderers.remove(renderer);

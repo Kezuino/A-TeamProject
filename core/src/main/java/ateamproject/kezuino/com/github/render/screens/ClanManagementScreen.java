@@ -18,6 +18,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.graphics.Pixmap.Format;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
@@ -235,7 +236,7 @@ public class ClanManagementScreen extends BaseScreen implements RefreshableScree
             public void clicked(InputEvent event, float x, float y) {
                 if (iType.equals(InvitationType.INVITE)) {
                     Dialog d = new Dialog("toevoegen", skin);
-                    d.add("Gebruikersnaam/emailaddress in: ");
+                    d.add("Gebruiker/email: ");
                     TextField tf = new TextField("", skin);
                     d.add(tf);
                     TextButton bAdd = new TextButton("Toevoegen", skin);
@@ -372,5 +373,10 @@ public class ClanManagementScreen extends BaseScreen implements RefreshableScree
     @Override
     public void refresh() {
         this.refreshScreen();
+        for (Actor item : this.getStage().getActors()) {
+            if (item instanceof Dialog) {
+                ((Dialog)item).toFront();
+            }
+        }
     }
 }
