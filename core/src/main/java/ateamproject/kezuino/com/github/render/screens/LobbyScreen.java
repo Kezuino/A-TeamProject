@@ -44,7 +44,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen {
 
         // TODO: Add control for selecting maps.
         PacketLobbySetDetails.Data data = new PacketLobbySetDetails.Data();
-        data.setMap("3");
+        data.setMap("2");
         client.send(new PacketLobbySetDetails(data, null));
 
         backgroundMusic = Assets.getMusicStream("menu.mp3");
