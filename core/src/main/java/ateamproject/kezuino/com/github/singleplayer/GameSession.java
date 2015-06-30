@@ -95,7 +95,7 @@ public class GameSession {
         }
 
         if (false) {//TODO: if clan
-            PacketHighScore packet = new PacketHighScore("jos", this.score.valueOf(),null,null);
+            PacketHighScore packet = new PacketHighScore("jos", this.score.valueOf(),null, new UUID[] { null });
             //TODO: send PacketHighScore
         }
     }

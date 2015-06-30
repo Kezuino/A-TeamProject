@@ -850,7 +850,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         packets.registerAction(PacketRemoveItem.class, packet -> {
             if (packet.getSender() != null && packet.getSender().equals(getId())) {
                 try {
-                    getRmi().getServer().removeItem(packet.getSender(), packet.getItemId(), packet.getItemType());
+                    getRmi().getServer().removeItem(packet.getSender(), packet.getPlayer(), packet.getItemId(), packet.getItemType());
                 } catch (RemoteException ex) {
                     ex.printStackTrace();
                 }
@@ -858,7 +858,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 Item foundItem;
 
                 if ((foundItem = BaseScreen.getSession().findItem(packet.getItemId())) != null) {
-                    foundItem.activate(BaseScreen.getSession().getPlayer(packet.getSender()));
+                    foundItem.activate(BaseScreen.getSession().getPlayer(packet.getPlayer()));
                     foundItem.getNode().removeItem();
                 }
             }

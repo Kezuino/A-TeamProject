@@ -624,7 +624,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     ClientInfo client = getClient(receiver);
                     if (client != null) {
                         if (!receiver.equals(packet.getSender())) {
-                            client.getRmi().removeItem(getClient(packet.getSender()).getPublicId(), packet.getItemId(), packet.getItemType());
+                            client.getRmi().removeItem(null, packet.getPlayer(), packet.getItemId(), packet.getItemType());
                         }
                         client.getRmi().changeScore(null, PacketScoreChanged.ManipulationType.INCREASE, score);
                     }
