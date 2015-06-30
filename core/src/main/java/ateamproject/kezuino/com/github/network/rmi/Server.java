@@ -657,14 +657,11 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerAction(PacketRemoveItem.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game
-                    == null) {
+            if (game == null) {
                 System.out.println("Could not remove item with unique id: " + packet.getItemId());
                 return;
             }
-            if (game.getLevel()
-                    > 1) {
-
+            
             for (UUID receiver
                     : game.getClients()) {
                 try {
@@ -679,8 +676,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     // One of the clients lost connection.
                 }
             }
-        }
-        );
+        });
 
         packets.registerAction(PacketObjectCollision.class, packet -> {
             if (packet.getSender()
