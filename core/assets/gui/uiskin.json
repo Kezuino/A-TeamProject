@@ -1,7 +1,7 @@
 {
-com.badlogic.gdx.graphics.g2d.BitmapFont: { default-font2: { file: calibri.fnt },
-											default-font: { file: cooperplate.fnt },
-											default-font3: { file: newFont.fnt }},
+com.badlogic.gdx.graphics.g2d.BitmapFont: { default-font: { file: cooperplate.fnt }
+											default-font2: { file: calibri.fnt },
+											default-font3: { file: newfont.fnt }},
 com.badlogic.gdx.graphics.Color: {
 	green: { a: 1, b: 0, g: 1, r: 0 },
 	white: { a: 1, b: 1, g: 1, r: 1 },
