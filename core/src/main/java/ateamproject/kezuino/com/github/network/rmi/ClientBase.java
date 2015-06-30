@@ -8,6 +8,7 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
+import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
