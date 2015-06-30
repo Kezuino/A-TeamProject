@@ -147,8 +147,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     @Override
     public void close() {
-        updateTimer.stop();
-        updateTimer.clear();
+        if (updateTimer != null) {
+            updateTimer.stop();
+            updateTimer.clear();
+        }
         // Required for isRunning() to work.
         updateTimer = null;
 
@@ -206,7 +208,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             PacketLoginAuthenticate.ReturnData data = null;
             try {
                 data = getRmi().getServer().login(packet.getEmailAddress(), packet.getPassword(), getRmi());
-            } catch (RemoteException e) {
+            } catch (Exception e) {
                 data = new PacketLoginAuthenticate.ReturnData(null, null, null, null, "Server is niet online.", false);
             }
 
