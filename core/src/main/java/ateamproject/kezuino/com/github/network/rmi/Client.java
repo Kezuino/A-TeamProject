@@ -39,7 +39,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     private static ateamproject.kezuino.com.github.network.rmi.Client instance;
     protected ClientBase rmi;
     protected Timer updateTimer;
-    private String skin = "Skin1";
 
     public boolean isRunning() {
         return updateTimer != null;
@@ -74,14 +73,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     public ClientBase getRmi() {
         return rmi;
-    }
-
-    public String getSkin() {
-        return this.skin;
-    }
-
-    public void setSkin(String skin) {
-        this.skin = skin;
     }
 
     @Override
