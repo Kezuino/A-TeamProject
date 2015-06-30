@@ -111,10 +111,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                     // Update position constantly when in-game.
                     if (BaseScreen.getSession() != null && game.getScreen() instanceof GameScreen) {
                         try {
-                            rmi.getServer()
+                            /*rmi.getServer()
                                     .playerSetPosition(getId(), BaseScreen.getSession()
                                             .getPlayer(getPublicId())
-                                            .getExactPosition());
+                                            .getExactPosition());*/
                         } catch (Exception ex) {
                             System.out.println("Error: Cannot set position, possibly not in game or offline.");
                         }

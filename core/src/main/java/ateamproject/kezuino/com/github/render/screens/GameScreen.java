@@ -68,28 +68,28 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
                             break;
                         }
                         player.setDirection(Direction.Up);
-                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Up, null));
+                        //Client.getInstance().send(new PacketPlayerSetDirection(Direction.Up, null));
                         break;
                     case Input.Keys.S:
                         if (getSession().getState() == GameState.Paused) {
                             break;
                         }
                         player.setDirection(Direction.Down);
-                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Down, null));
+                        //Client.getInstance().send(new PacketPlayerSetDirection(Direction.Down, null));
                         break;
                     case Input.Keys.A:
                         if (getSession().getState() == GameState.Paused) {
                             break;
                         }
                         player.setDirection(Direction.Left);
-                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Left, null));
+                        //Client.getInstance().send(new PacketPlayerSetDirection(Direction.Left, null));
                         break;
                     case Input.Keys.D:
                         if (getSession().getState() == GameState.Paused) {
                             break;
                         }
                         player.setDirection(Direction.Right);
-                        Client.getInstance().send(new PacketPlayerSetDirection(Direction.Right, null));
+                        //Client.getInstance().send(new PacketPlayerSetDirection(Direction.Right, null));
                         break;
                     case Input.Keys.SPACE:
                         if (getSession().getState() != GameState.Paused) {

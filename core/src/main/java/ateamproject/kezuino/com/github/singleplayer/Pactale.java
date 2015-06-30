@@ -130,19 +130,6 @@ public class Pactale extends GameObject {
                 }
                 return true;
             }
-            //If the pactale is not the player, it is another player and shouldnt update score and send another packet.
-        } else if (!this.getId().equals(Client.getInstance().getPublicId()) && super.getActive()) {
-             if (object instanceof Enemy) {
-                Enemy e = (Enemy) object;
-
-                if (!e.isEdible()) {
-                    this.hurt();
-                    this.setNodePosition(this.getStartingPosition().x / 32, this.getStartingPosition().y / 32);
-
-                    Assets.playSound("enemy_eat.mp3");
-                }
-                return true;
-            }
         } else {
             return false;
         }
