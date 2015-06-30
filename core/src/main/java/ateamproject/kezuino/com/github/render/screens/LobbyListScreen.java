@@ -8,6 +8,7 @@ package ateamproject.kezuino.com.github.render.screens;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetClans;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketGetLobbies;
 import ateamproject.kezuino.com.github.network.rmi.Client;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Pixmap;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -30,6 +31,7 @@ public class LobbyListScreen extends BaseScreen implements RefreshableScreen {
         super(game);
         this.clanGame = clanGame;
 
+        backgroundMusic = Assets.getMusicStream("menu.mp3");
         createGui();
     }
 

@@ -61,7 +61,8 @@ public class Assets {
     }
 
     /**
-     * Loads the fonts and textures used by the {@link ateamproject.kezuino.com.github.PactaleGame}.
+     * Loads the fonts and textures used by the
+     * {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
     public static void create() {
         create(null);
@@ -76,14 +77,16 @@ public class Assets {
     }
 
     /**
-     * Loads all the fonts used throughout the {@link ateamproject.kezuino.com.github.PactaleGame}.
+     * Loads all the fonts used throughout the
+     * {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
     private static void loadFonts() {
         manager.load(getSkinPath("fonts", "opensans.ttf"), BitmapFont.class);
     }
 
     /**
-     * Loads all the basic textures required for the {@link ateamproject.kezuino.com.github.PactaleGame}.
+     * Loads all the basic textures required for the
+     * {@link ateamproject.kezuino.com.github.PactaleGame}.
      */
     private static void load() {
 
@@ -152,7 +155,8 @@ public class Assets {
     }
 
     /**
-     * Returns the {@link BitmapFont} that was loaded in the {@link AssetManager} with the given name.
+     * Returns the {@link BitmapFont} that was loaded in the
+     * {@link AssetManager} with the given name.
      *
      * @param asset Name of the {@link BitmapFont} to get.
      * @return {@link BitmapFont} if it was found. Or null.
@@ -164,19 +168,23 @@ public class Assets {
     public static Skin getSkin(String asset) {
         return get(GUI_DIR + '/' + asset, Skin.class);
     }
-    
+
     /**
-     * Loads the {@link Texture} for the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
+     * Loads the {@link Texture} for the
+     * {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
      *
      * @param name Name of the {@link Texture} to load in the assets.
-     * @return {@link Texture} that was loaded by the name of the {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
+     * @return {@link Texture} that was loaded by the name of the
+     * {@link ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage}.
      */
     public static Texture getBalloon(String name) {
         return get("textures/balloons/" + name + ".png", Texture.class);
     }
 
     /**
-     * Retrieves the {@link ParticleEffect} by the given {@code name}. Automatically loads the {@link ParticleEffect} if it hasn't been loaded yet.
+     * Retrieves the {@link ParticleEffect} by the given {@code name}.
+     * Automatically loads the {@link ParticleEffect} if it hasn't been loaded
+     * yet.
      *
      * @param name Name of the {@link ParticleEffect} file to search for.
      * @return {@link ParticleEffect} that was loaded from the file.
@@ -214,10 +222,12 @@ public class Assets {
     }
 
     /**
-     * Creates a {@link Music Musicstream} to stream {@link Music} while it's playing.
+     * Creates a {@link Music Musicstream} to stream {@link Music} while it's
+     * playing.
      *
      * @param fileName Name of {@link Music} to search for in the assets folder.
-     * @return {@link Music Musicstream} to stream {@link Music} while it's playing
+     * @return {@link Music Musicstream} to stream {@link Music} while it's
+     * playing
      */
     public static Music getMusicStream(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
@@ -249,10 +259,12 @@ public class Assets {
     }
 
     /**
-     * Gets the vertex and fragement shaders and creates a new {@link ShaderProgram}.
+     * Gets the vertex and fragement shaders and creates a new
+     * {@link ShaderProgram}.
      *
      * @param shaderName Name of the shader to search for in the assets folder.
-     * @return {@link ShaderProgram} that has been created by the two shader files.
+     * @return {@link ShaderProgram} that has been created by the two shader
+     * files.
      */
     public static ShaderProgram getShaderProgram(String shaderName) {
         ShaderProgram.pedantic = false;
@@ -285,7 +297,7 @@ public class Assets {
     }
 
     public static String[] getSkins() {
-       
+
         String path;
         File file;
         try {
@@ -293,7 +305,7 @@ public class Assets {
             file = new File(path);
             System.out.println(file.getPath());
             String[] directories = file.list((File current, String name) -> new File(current, name).isDirectory());
-        return directories;
+            return directories;
         } catch (URISyntaxException ex) {
             Logger.getLogger(Assets.class.getName()).log(Level.SEVERE, null, ex);
         }
