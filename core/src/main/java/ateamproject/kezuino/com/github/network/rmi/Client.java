@@ -248,7 +248,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerFunc(PacketHighScore.class, (packet) -> {
             try {
-                return getRmi().getServer().setScore(packet.getClanName(), packet.getScore());
+                return getRmi().getServer().setScore(packet.getSender(),packet.getScore());
             } catch (RemoteException ex) {
                 Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -100,7 +100,7 @@ public class CreditsScreen extends BaseScreen {
             }
         });
         exit.setColor(Color.DARK_GRAY);
-        exit.setPosition(stage.getWidth() - 15, stage.getHeight()- 15);
+        exit.setPosition(stage.getWidth() - 35, stage.getHeight()- 30);
         stage.addActor(exit);
 
         createLabels();

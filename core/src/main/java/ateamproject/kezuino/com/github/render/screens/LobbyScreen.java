@@ -129,6 +129,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen {
         scrollTable.setColor(com.badlogic.gdx.graphics.Color.BLUE);
         final ScrollPane scroller = new ScrollPane(scrollTable);
         scroller.sizeBy(200, 400);
+        scroller.setDebug(true);
         scroller.setColor(com.badlogic.gdx.graphics.Color.BLUE);
         final Table table = new Table();
         table.setFillParent(false);

@@ -13,6 +13,7 @@ public enum GameState {
     Running,
     Paused,
     GameOver,
+    GameOverHighscoreReached,
     Completed,
     Ended
 }

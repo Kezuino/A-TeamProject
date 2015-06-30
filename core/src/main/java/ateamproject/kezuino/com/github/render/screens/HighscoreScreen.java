@@ -30,31 +30,39 @@ import java.util.TreeMap;
  */
 public class HighscoreScreen extends BaseScreen {
 
-    public HighscoreScreen(Game game) {
+    public HighscoreScreen(Game game, boolean top10HighscoreReached) {
         super(game);
-        
+
         TextButton btnBack = new TextButton("Terug", skin);
         btnBack.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                game.setScreen(new MainScreen(game));
+                if (top10HighscoreReached) {
+                    game.setScreen(new CreditsScreen(game));
+                } else {
+                    game.setScreen(new MainScreen(game));
+                }
             }
         });
         float x = 240;
         float y = stage.getHeight() / 4;
         btnBack.setSize(200, 40);
         btnBack.setPosition(stage.getWidth() / 2 - btnBack.getWidth() / 2, stage.getHeight() / 4 - btnBack.getHeight() / 2);
-        
+
         Label lblTitle = new Label("Highscore", skin);
+        if (top10HighscoreReached) {
+            lblTitle.setText("Gefeliciteerd met een top 10 plek!");
+            btnBack.setText("Haal mijn prijs op");
+        }
         lblTitle.setColor(Color.YELLOW);
-        lblTitle.setPosition(stage.getWidth() / 2 - lblTitle.getWidth() / 2, stage.getHeight() - 50);
-        
+        lblTitle.setPosition((stage.getWidth() / 2) - (lblTitle.getWidth()/ 2), stage.getHeight() - 50);
+
         PacketGetHighscores packet = new PacketGetHighscores(Client.getInstance().getId());
         Client.getInstance().send(packet);
-        
+
         Table table = new Table();
         table.setSkin(skin);
-        
+
         int rankNr = 0;
 
         for (Map.Entry<String, Integer> entry : packet.getResult().entrySet()) {
@@ -64,13 +72,13 @@ public class HighscoreScreen extends BaseScreen {
             table.add(new Label(Integer.toString(entry.getValue()), skin));
             table.row();
         }
-        
+
         table.setPosition(stage.getWidth() / 2 - table.getWidth() / 2, stage.getHeight() - 190);
-        
+
         stage.addActor(btnBack);
         stage.addActor(lblTitle);
         stage.addActor(table);
-        
+
         backgroundMusic = Assets.getMusicStream("menu.mp3");
     }
 }
@@ -83,14 +91,14 @@ public class HighscoreScreen extends BaseScreen {
 class ValueComparator implements Comparator<String> {
 
     Map<String, Integer> base;
-    
+
     public ValueComparator(Map<String, Integer> base) {
         this.base = base;
     }
-    
+
     @Override
     public int compare(String a, String b) {
         return base.get(b).compareTo(base.get(a));
     }
-    
+
 }

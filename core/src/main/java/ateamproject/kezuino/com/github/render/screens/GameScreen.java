@@ -93,8 +93,8 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
                         break;
                     case Input.Keys.SPACE:
                         if (getSession().getState() != GameState.Paused) {
-                            player.shootProjectile(player.getExactPosition(),player.getDirection());
-                            Client.getInstance().send(new PacketShootProjectile(player.getExactPosition(),player.getDirection()));
+                            player.shootProjectile(player.getExactPosition(), player.getDirection());
+                            Client.getInstance().send(new PacketShootProjectile(player.getExactPosition(), player.getDirection()));
                         }
                         break;
                     case Input.Keys.H:
@@ -204,6 +204,10 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
          getSession().gameOver();
          }*/
         switch (getSession().getState()) {
+            case GameOverHighscoreReached:
+                //getSession().end();
+                game.setScreen(new HighscoreScreen(game,true));
+                break;
             case GameOver:
                 //getSession().end();
                 game.setScreen(new GameOverScreen(game, getSession().getScore()));
@@ -331,7 +335,7 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
 
     @Override
     public void refresh() {
-        if (!getSession().isPauseMenuShowing()&& getSession().isPlayerMenuShowing()) {
+        if (!getSession().isPauseMenuShowing() && getSession().isPlayerMenuShowing()) {
             showPlayersView();
         }
     }

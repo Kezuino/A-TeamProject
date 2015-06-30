@@ -7,24 +7,17 @@ import java.util.UUID;
 
 public class PacketHighScore extends Packet<Boolean> {
     @PacketField(0)
-    protected String ClanName;
-    @PacketField(1)
-    protected int Score;
+    protected int score;
 
     public PacketHighScore() {
     }
 
-    public PacketHighScore(String ClanName, int Score, UUID sender, UUID... receivers) {
-        super(sender, receivers);
-        this.ClanName = ClanName;
-        this.Score = Score;
-    }
-
-    public String getClanName() {
-        return ClanName;
+    public PacketHighScore(int score, UUID sender) {
+        super(sender);
+        this.score = score;
     }
 
     public int getScore() {
-        return Score;
+        return score;
     }
 }

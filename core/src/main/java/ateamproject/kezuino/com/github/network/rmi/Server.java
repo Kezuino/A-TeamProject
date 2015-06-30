@@ -318,27 +318,33 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             System.out.printf("Client %s logged out.%n", packet.getSender());
         });
 
+        //return true if score is in top 10, false if not
         packets.registerFunc(PacketHighScore.class, (packet) -> {
-            try {
-                ResultSet resultSet = Database.getInstance()
-                        .query("SELECT `Score` FROM `clan` WHERE Name = ?", packet
-                                .getClanName());
-                resultSet.next();
-                int id = resultSet.getInt("Score");
 
-                if (id < packet.getScore()) {
-                    return Database.getInstance()
-                            .update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet
-                                    .getScore(), packet.getClanName()) > -1;
+            String clanName = getGameFromClientId(packet.getSender()).getClanName();
+
+            if (clanName != null) {
+                try {
+                    ResultSet resultSet = Database.getInstance().query("SELECT `Score` FROM `clan` WHERE Name = ?", clanName);
+                    resultSet.next();
+                    int id = resultSet.getInt("Score");
+
+                    if (id < packet.getScore()) {
+                        Database.getInstance().update("UPDATE `clan` SET `Score` = ? WHERE `Name` = ?", packet.getScore(), clanName);
+                    }
+
+                    resultSet = Database.getInstance().query("SELECT Name FROM clan WHERE ? IN (SELECT Name FROM (SELECT Name FROM clan ORDER BY score DESC LIMIT 10) AS t)", clanName);//check if score is in top 10. weird query due the fact that limit could not be used in a inner query
+                    return resultSet.first();//true if in top 10, false if not
+                } catch (SQLException ex) {
+                    Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
                 }
-            } catch (SQLException ex) {
-                Logger.getLogger(ClanManagementScreen.class.getName()).log(Level.SEVERE, null, ex);
             }
             return false;
         });
 
         packets.registerFunc(PacketLoginCreateNewUser.class, (packet) -> {
-            System.out.println("Trying to create following user in database: " + packet.getUsername());
+            System.out.println(
+                    "Trying to create following user in database: " + packet.getUsername());
             ResultSet resultSet = null;
             int count = 0;
 
@@ -382,81 +388,102 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
 
-            return count == 1;
+            return count
+                    == 1;
         });
 
         packets.registerAction(PacketHeartbeat.class, packet -> {
-            if (packet.getSender() == null) {
+            if (packet.getSender()
+                    == null) {
                 return;
             }
             IClientInfo client = getClient(packet.getSender());
-            if (client != null) {
+            if (client
+                    != null) {
                 client.resetSecondsActive();
             }
-        });
+        }
+        );
 
         packets.registerFunc(PacketCreateLobby.class, packet -> {
             Game newGame = new Game(this, packet.getLobbyname(), packet.getClanname(), packet.getSender());
+
             addGame(newGame);
+
             getClient(packet.getSender()).setGame(newGame);
             return newGame.getId();
-        });
+        }
+        );
 
         packets.registerFunc(PacketJoinLobby.class, packet -> {
             Game lobby = getGame(packet.getLobbyId());
-            if (lobby == null) {
+            if (lobby
+                    == null) {
                 return null;
             }
 
             // Add new client to game.
             IClientInfo client = getClient(packet.getSender());
-            if (client == null) {
+            if (client
+                    == null) {
                 System.out.printf("Cannot let NULL client: Join lobby %s%n", lobby);
                 return null;
             }
-            lobby.getClients().add(packet.getSender());
+
+            lobby.getClients()
+                    .add(packet.getSender());
             client.setGame(lobby);
 
             // Get all clients currently in the game.
             PacketJoinLobby.PacketJoinLobbyData data = new PacketJoinLobby.PacketJoinLobbyData();
+
             data.setLobbyName(lobby.getName());
             data.setMap(lobby.getMap());
 
-            for (UUID clientId : lobby.getClients()) {
+            for (UUID clientId
+                    : lobby.getClients()) {
                 IClientInfo c = getClient(clientId);
                 data.getMembers().put(c.getPublicId(), c.getUsername());
             }
 
             // Notify other users that someone joined the lobby (excluding itself).
             PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername(), null);
+
             p.setReceivers(lobby.getClients()
                     .stream()
                     .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
             send(p);
 
             return data;
-        });
+        }
+        );
 
         packets.registerFunc(PacketLobbyMembers.class, packet -> {
             // return all current members in the lobby
             Game game = games.get(packet.getLobbyId());
             Map<UUID, String> curMembers = new HashMap<>();
 
-            if (game == null) {
+            if (game
+                    == null) {
                 return curMembers;
             }
 
-            for (UUID lobby : games.get(packet.getLobbyId()).getClients()) {
+            for (UUID lobby
+                    : games.get(packet.getLobbyId()).getClients()) {
                 IClientInfo client = getClient(lobby);
                 curMembers.put(client.getPublicId(), client.getUsername());
             }
             return curMembers;
-        });
+        }
+        );
 
         packets.registerFunc(PacketGetKickInformation.class, packet -> {
             ArrayList<String> peoples = new ArrayList<>();
-            System.out.println("sender:" + packet.getSender().toString());
-            for (UUID personId : getGameFromClientId(packet.getSender()).getClients()) {//for all clients in this game
+
+            System.out.println(
+                    "sender:" + packet.getSender().toString());
+            for (UUID personId
+                    : getGameFromClientId(packet.getSender()).getClients()) {//for all clients in this game
                 if (!personId.equals(packet.getSender()) && !getGameFromClientId(packet.getSender()).getClients().get(0).equals(personId)) {//if not sender and if not host == true
                     boolean hasVotedForCurrentPerson = false;
                     int amountOfVotesForCurrentPerson = 0;
@@ -487,12 +514,14 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
 
             return peoples;
-        });
+        }
+        );
 
         packets.registerAction(PacketSetKickInformation.class, packet -> {
             boolean hasVotedForSpecificPerson = false;
 
-            for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
+            for (UUID[] voteCombination
+                    : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
                 if (voteCombination[0] == packet.getSender() && voteCombination[1] == packet.getPersonToVoteFor()) {
                     hasVotedForSpecificPerson = true;
                     break;
@@ -503,25 +532,30 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 getGameFromClientId(packet.getSender()).getVotes()
                         .add(new UUID[]{packet.getSender(), packet.getPersonToVoteFor()});
             }
-        });
+        }
+        );
 
         packets.registerAction(PacketLobbySetDetails.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
+            if (game
+                    == null) {
                 return;
             }
 
             String newName = packet.getData().getName();
             String newMap = packet.getData().getMap();
-            if (newMap != null && !newMap.isEmpty()) {
+            if (newMap
+                    != null && !newMap.isEmpty()) {
                 game.setMap(newMap);
             }
-            if (newName != null && !newName.isEmpty()) {
+            if (newName
+                    != null && !newName.isEmpty()) {
                 game.setName(newName);
             }
 
             // Notify all connected clients (but host) that the game details have changed.
-            for (UUID uuid : game.getClientsAsArray()) {
+            for (UUID uuid
+                    : game.getClientsAsArray()) {
                 if (game.getHostId().equals(uuid)) {
                     continue;
                 }
@@ -533,24 +567,29 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
             }
-        });
+        }
+        );
 
         packets.registerFunc(PacketLobbyGetDetails.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
+            if (game
+                    == null) {
                 return null;
             }
 
             PacketLobbySetDetails.Data data = new PacketLobbySetDetails.Data();
+
             data.setName(game.getName());
             data.setMap(game.getMap());
 
             return data;
-        });
+        }
+        );
 
         packets.registerAction(PacketLaunchGame.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
+            if (game
+                    == null) {
                 System.out.println("Cannot launch game. The game was not found.");
                 return;
             }
@@ -559,7 +598,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             game.setLevel(packet.getLevel() == -1 ? 1 : packet.getLevel());
 
             // Set the loading states of everyone to empty and notify everyone to start loading the map.
-            for (UUID uuid : game.getClients()) {
+            for (UUID uuid
+                    : game.getClients()) {
                 ClientInfo client = getClient(uuid);
                 client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
 
@@ -569,25 +609,31 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
             }
-        });
+        }
+        );
 
         packets.registerAction(PacketCreateGameObject.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
 
             // This packet is only called for the connected clients excluding the host. Public ids will be shared here.
-            if (packet.getTypeName().equalsIgnoreCase(Pactale.class.getSimpleName())) {
+            if (packet.getTypeName()
+                    .equalsIgnoreCase(Pactale.class
+                            .getSimpleName())) {
                 packet.setId(getClient(game.getClientsAsArray()[packet.getIndex()]).getPublicId());
             }
 
-            game.getLoadQueue().add(packet);
+            game.getLoadQueue()
+                    .add(packet);
         });
 
         packets.registerAction(PacketSetAIPath.class, packet -> {
-            if (packet.getSender() == null) {
+            if (packet.getSender()
+                    == null) {
                 return;
             }
             ClientInfo client = getClient(packet.getSender());
-            if (client != null) {
+            if (client
+                    != null) {
                 Game game = client.getGame();
                 if (game != null) {
                     game.getClientsWithoutHost().map(this::getClient).forEach(c -> {
@@ -599,27 +645,34 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     });
                 }
             }
-        });
+        }
+        );
 
         packets.registerAction(PacketCreateItem.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            game.getLoadQueue().add(packet);
+
+            game.getLoadQueue()
+                    .add(packet);
         });
 
         packets.registerAction(PacketRemoveItem.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
+            if (game
+                    == null) {
                 System.out.println("Could not remove item with unique id: " + packet.getItemId());
                 return;
             }
             //Calculate the score based on the level of the game. For every level above 1, add 5% more score.
             int score = packet.getItemType().getScore();
-            if (game.getLevel() > 1) {
+
+            if (game.getLevel()
+                    > 1) {
                 double factor = Math.pow(1.05, game.getLevel() - 1);
                 score *= factor;
             }
 
-            for (UUID receiver : game.getClients()) {
+            for (UUID receiver
+                    : game.getClients()) {
                 try {
                     ClientInfo client = getClient(receiver);
                     if (client != null) {
@@ -632,10 +685,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     // One of the clients lost connection.
                 }
             }
-        });
+        }
+        );
 
         packets.registerAction(PacketObjectCollision.class, packet -> {
-            if (packet.getSender() != null) {
+            if (packet.getSender()
+                    != null) {
                 ClientInfo client = getClient(packet.getSender());
                 if (client != null) {
                     Game game = client.getGame();
@@ -653,11 +708,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
                 }
             }
-        });
+        }
+        );
 
         packets.registerAction(PacketScoreChanged.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
+            if (game
+                    == null) {
                 System.out.println("Could not change score since game is not active");
                 return;
             }
@@ -674,15 +731,18 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
             }
-        });
+        }
+        );
 
         packets.registerAction(PacketSetLoadStatus.class, packet -> {
             ClientInfo client = getClient(packet.getSender());
+
             client.setLoadStatus(packet.getStatus());
 
             // Find game with the player that sended the new load status.
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
+            if (game
+                    == null) {
                 System.out.println(String.format("Error: Client '%s' tried to load a game while not in a lobby.", packet
                         .getSender()));
                 return;
@@ -763,7 +823,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
                 }
             }
-        });
+        }
+        );
 
         packets.registerAction(PacketShootProjectile.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
@@ -780,11 +841,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
             }
-        });
+        }
+        );
 
         packets.registerAction(PacketPlayerSetDirection.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
+            if (game
+                    == null) {
                 System.out.println("Could not set direction for client: " + packet.getSender());
                 return;
             }
@@ -802,11 +865,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
             }
-        });
-        
+        }
+        );
+
         packets.registerAction(PacketObjectSetPosition.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
+            if (game
+                    == null) {
                 System.out.println("Could not set direction for client: " + packet.getSender());
                 return;
             }
@@ -824,11 +889,13 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
             }
-        });
+        }
+        );
 
         packets.registerAction(PacketPlayerSetPosition.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
+            if (game
+                    == null) {
                 System.out.println("Could not set position for client: " + packet.getSender());
                 return;
             }
@@ -839,20 +906,23 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     .map(id -> getClient(id).getRmi())
                     .toArray(IProtocolClient[]::new);
 
-            executor.submit(() -> {
-                for (IProtocolClient receiver : receivers) {
-                    try {
-                        receiver.playerSetPosition(getClient(packet.getSender()).getPublicId(), packet.getPosition());
-                    } catch (RemoteException e) {
-                        e.printStackTrace();
+            executor.submit(
+                    () -> {
+                        for (IProtocolClient receiver : receivers) {
+                            try {
+                                receiver.playerSetPosition(getClient(packet.getSender()).getPublicId(), packet.getPosition());
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
-                }
-            });
+            );
         });
-        
+
         packets.registerAction(PacketPlayerDied.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
+            if (game
+                    == null) {
                 System.out.println("Could not set position for client: " + packet.getSender());
                 return;
             }
@@ -870,29 +940,35 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
             }
-        });
+        }
+        );
 
         packets.registerFunc(PacketGetGameClients.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
+            if (game
+                    == null) {
                 System.out.println("Game was not found for the sender.");
                 return null;
             }
             List<PacketGetGameClients.Data> result = new ArrayList<>();
             int num = 0;
-            for (UUID uuid : game.getClients()) {
+            for (UUID uuid
+                    : game.getClients()) {
                 result.add(new PacketGetGameClients.Data(num++, getClient(uuid).getPublicId(), game.getHostId().equals(uuid)));
             }
             return result;
-        });
+        }
+        );
 
         packets.registerAction(PacketBalloonMessage.class, packet -> {
-            if (packet.getSender() == null) {
+            if (packet.getSender()
+                    == null) {
                 throw new IllegalStateException("Sender must not be null.");
             }
 
             Game game = getGameFromClientId(packet.getSender());
-            if (game == null) {
+            if (game
+                    == null) {
                 System.out.println("Game was not found for sender.");
                 return;
             }
@@ -910,11 +986,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     e.printStackTrace();
                 }
             }
-        });
+        }
+        );
 
         packets.registerFunc(PacketGetHighscores.class, packet -> {
             LinkedHashMap<String, Integer> highscores = new LinkedHashMap<>();
-            
+
             ResultSet result = Database.getInstance().query("SELECT Name,Score FROM clan ORDER BY Score DESC LIMIT 10");
 
             try {
@@ -925,10 +1002,12 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
             }
             return highscores;
-        });
+        }
+        );
     }
 
     @Override
+
     public void unregisterPackets() {
         if (packets == null) {
             return;

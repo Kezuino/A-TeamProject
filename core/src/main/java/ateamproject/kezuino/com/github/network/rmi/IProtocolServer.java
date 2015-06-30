@@ -82,7 +82,7 @@ public interface IProtocolServer extends IProtocol {
 
     boolean setUsername(String name, String emailaddress, UUID sender) throws RemoteException;
 
-    boolean setScore(String clanName, int score) throws RemoteException;
+    boolean setScore(UUID sender, int score) throws RemoteException;
 
     void logout(UUID sender) throws RemoteException;
 

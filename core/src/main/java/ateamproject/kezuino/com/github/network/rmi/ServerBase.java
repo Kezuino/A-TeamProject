@@ -188,8 +188,8 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public boolean setScore(String clanName, int score) throws RemoteException {
-        PacketHighScore packet = new PacketHighScore(clanName, score, null);
+    public boolean setScore(UUID sender,int score) throws RemoteException {
+        PacketHighScore packet = new PacketHighScore(score, sender);
         server.send(packet);
         return packet.getResult();
     }

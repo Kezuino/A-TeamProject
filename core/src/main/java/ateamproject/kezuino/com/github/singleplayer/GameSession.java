@@ -1,6 +1,7 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
+import ateamproject.kezuino.com.github.network.rmi.Client;
 import java.util.Date;
 import java.util.UUID;
 
@@ -91,12 +92,14 @@ public class GameSession {
 
     public void gameOver() {
         if (!this.hasEnded()) {
-            this.state = GameState.GameOver;
-        }
+            PacketHighScore packet = new PacketHighScore(this.score.valueOf(), Client.getInstance().getId());
+            Client.getInstance().send(packet);
+            if (packet.getResult()) {//if score is in top 10
+                this.state = GameState.GameOverHighscoreReached;
+                return;
+            }
 
-        if (false) {//TODO: if clan
-            PacketHighScore packet = new PacketHighScore("jos", this.score.valueOf(),null, new UUID[] { null });
-            //TODO: send PacketHighScore
+            this.state = GameState.GameOver;
         }
     }
 
