@@ -5,10 +5,8 @@ import ateamproject.kezuino.com.github.network.packet.packets.PacketRemoveItem;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
-import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.math.Vector2;
 
 public class Pactale extends GameObject {
@@ -108,7 +106,7 @@ public class Pactale extends GameObject {
 
     @Override
     public boolean collisionWithGameObject(GameObject object) {
-        if(this.getId().equals(Client.getInstance().getPublicId())) {
+        if (this.getId().equals(Client.getInstance().getPublicId())) {
             //PacketObjectCollision packet = new PacketObjectCollision(getId(), object.getId(), null);
             //Client.getInstance().send(packet);
 
@@ -134,7 +132,7 @@ public class Pactale extends GameObject {
 
     @Override
     public boolean collisionWithItem(Item item) {
-        if(this.getId().equals(Client.getInstance().getPublicId())) {
+        if (this.getId().equals(Client.getInstance().getPublicId())) {
             Client.getInstance().send(new PacketRemoveItem(item.getId(), item.getItemType(), Client.getInstance().getId()));
             item.activate(this);
             item.getNode().removeItem();
@@ -153,8 +151,8 @@ public class Pactale extends GameObject {
         // Add portal to new node.
         this.setPortal(portal);
         this.getMap()
-            .getNode(portal.getNode().getX(), portal.getNode().getY())
-            .setPortal(portal.getDirection(), portal);
+                .getNode(portal.getNode().getX(), portal.getNode().getY())
+                .setPortal(portal.getDirection(), portal);
     }
 
     /**

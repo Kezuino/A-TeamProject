@@ -101,7 +101,7 @@ public enum Direction {
     }
 
     public float getRotation() {
-        float rotation = 0;
+        float rotation;
         switch (this) {
             case Up:
                 rotation = 180;
@@ -112,6 +112,8 @@ public enum Direction {
             case Right:
                 rotation = 90;
                 break;
+            default:
+                rotation = 0;
         }
         return rotation;
     }

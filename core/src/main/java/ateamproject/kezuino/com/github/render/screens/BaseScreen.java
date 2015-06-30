@@ -9,6 +9,7 @@ import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.debug.DebugLayers;
 import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
+import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
@@ -43,6 +44,8 @@ public abstract class BaseScreen implements Screen {
     protected InputMultiplexer inputs;
 
     public BaseScreen(Game game) {
+        skin = Assets.getSkin("uiskin.json");
+
         // Bootstrap screen.
         renderers = new ArrayList<>();
         inputs = new InputMultiplexer();
@@ -52,10 +55,7 @@ public abstract class BaseScreen implements Screen {
 
         // Bootstrap game objects.
         this.game = game;
-        
-        // Bootstrap skin.
-        skin = new Skin(Gdx.files.internal("gui/uiskin.json"));
-           
+
         // Bootstrap input.
         inputs.addProcessor(stage);
         Gdx.input.setInputProcessor(inputs);
@@ -76,8 +76,7 @@ public abstract class BaseScreen implements Screen {
 
     public Stage getStage() {
         return stage;
-    }    
-  
+    }
 
     public Skin getSkin() {
         return skin;
@@ -85,14 +84,19 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void show() {
-        if (game == null)
+        if (game == null) {
             throw new UnsupportedOperationException("Game must be set. Did you forget to call super(game) in the constructor of this screen?");
+        }
         for (IRenderer renderer : renderers) {
             renderer.active();
         }
         if (backgroundMusic != null) {
-            if (!backgroundMusic.isLooping()) backgroundMusic.setLooping(true);
-            if (!backgroundMusic.isPlaying()) backgroundMusic.play();
+            if (!backgroundMusic.isLooping()) {
+                backgroundMusic.setLooping(true);
+            }
+            if (!backgroundMusic.isPlaying()) {
+                backgroundMusic.play();
+            }
         }
     }
 
@@ -120,22 +124,30 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void pause() {
-        if (backgroundMusic != null) backgroundMusic.pause();
+        if (backgroundMusic != null) {
+            backgroundMusic.pause();
+        }
     }
 
     @Override
     public void resume() {
-        if (backgroundMusic != null) backgroundMusic.play();
+        if (backgroundMusic != null) {
+            backgroundMusic.play();
+        }
     }
 
     @Override
     public void hide() {
-        if (backgroundMusic != null) backgroundMusic.pause();
+        if (backgroundMusic != null) {
+            backgroundMusic.pause();
+        }
     }
 
     @Override
     public void dispose() {
-        if (backgroundMusic != null) backgroundMusic.dispose();
+        if (backgroundMusic != null) {
+            backgroundMusic.dispose();
+        }
     }
 
     /**

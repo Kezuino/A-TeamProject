@@ -5,6 +5,12 @@ import ateamproject.kezuino.com.github.render.screens.LoginScreen;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PactaleGame extends Game {
 
@@ -12,6 +18,7 @@ public class PactaleGame extends Game {
     public void create() {
         Assets.create();
         this.setScreen(new LoginScreen(this));
+
     }
 
     @Override
