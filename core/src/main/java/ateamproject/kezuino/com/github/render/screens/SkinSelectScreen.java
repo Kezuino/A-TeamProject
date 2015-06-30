@@ -27,11 +27,11 @@ public class SkinSelectScreen extends BaseScreen {
         super(game);
         String[] Skins = Assets.getSkins();
         float x = stage.getWidth() / 2 - 300 / 2;
-        float y = stage.getHeight() - 200;
+        float y = stage.getHeight() - 100;
 
         for (String SkinString : Skins) {
 
-            TextButton tbChangeLook = new TextButton("Uiterlijk aanpassen", skin);
+            TextButton tbChangeLook = new TextButton(SkinString, skin);
             tbChangeLook.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
@@ -44,10 +44,10 @@ public class SkinSelectScreen extends BaseScreen {
 
             tbChangeLook.setPosition(x, y);
             stage.addActor(tbChangeLook);
-            y += 100;
+            y = y - 50;
         }
 
-        TextButton tbOptions = new TextButton("Opties", skin);
+        TextButton tbOptions = new TextButton("Terug", skin);
         tbOptions.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -56,7 +56,7 @@ public class SkinSelectScreen extends BaseScreen {
         });
 
         tbOptions.setSize(300, 40);
-
+        tbOptions.setPosition(x, y - 50);
         stage.addActor(tbOptions);
 
         backgroundMusic = Assets.getMusicStream("menu.mp3");

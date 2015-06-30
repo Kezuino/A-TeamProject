@@ -268,7 +268,7 @@ public class Assets {
         String path;
         File file;
         try {
-            path = new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent();
+            path = new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent() + "/Skins/";
             file = new File(path);
             System.out.println(file.getPath());
             String[] directories = file.list((File current, String name) -> new File(current, name).isDirectory());
