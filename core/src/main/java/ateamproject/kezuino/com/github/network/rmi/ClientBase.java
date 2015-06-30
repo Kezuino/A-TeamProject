@@ -132,13 +132,19 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     
     @Override
     public void objectSetDirection(UUID sender, UUID object, Vector2 from, Vector2 to) throws RemoteException {
-        PacketObjectSetDirection packet = new PacketObjectSetDirection(from, to, object, sender);
+        PacketObjectSetPosition packet = new PacketObjectSetPosition(from, to, object, sender);
         client.send(packet);
     }
 
     @Override
     public void playerSetPosition(UUID sender, Vector2 position) throws RemoteException {
         PacketPlayerSetPosition packet = new PacketPlayerSetPosition(position, sender);
+        client.send(packet);
+    }
+    
+    @Override
+    public void playerDied(UUID sender) throws RemoteException {
+        PacketPlayerDied packet = new PacketPlayerDied(sender);
         client.send(packet);
     }
 

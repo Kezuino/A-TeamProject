@@ -778,7 +778,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         });
         
         
-        packets.registerAction(PacketObjectSetDirection.class, packet -> {
+        packets.registerAction(PacketObjectSetPosition.class, packet -> {
             if (packet.getSender() != null && packet.getSender().equals(getId())) {
                 try {
                     getRmi().getServer().objectSetDirection(packet.getSender(), packet.getObject(), packet.getFrom(), packet.getTo());
@@ -805,6 +805,19 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             } else {
                 // Server sended this.
                 BaseScreen.getSession().getPlayer(packet.getSender()).setExactPosition(packet.getPosition());
+            }
+        });
+        
+        
+        packets.registerAction(PacketPlayerDied.class, packet -> {
+            if (packet.getSender() != null && packet.getSender().equals(getId())) {
+                try {
+                    getRmi().getServer().playerDied(packet.getSender());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                BaseScreen.getSession().getPlayer(packet.getSender()).setInactive();
             }
         });
 

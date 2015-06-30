@@ -1,6 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import ateamproject.kezuino.com.github.network.packet.packets.PacketObjectSetDirection;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketObjectSetPosition;
 import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.render.IPactileEmitter;
 import ateamproject.kezuino.com.github.render.IRenderable;
@@ -433,7 +433,7 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
     /**
      * Marks this {@link GameObject} for deletion. Must not be undone.
      */
-    protected void setInactive() {
+    public void setInactive() {
         this.isActive = false;
     }
 
@@ -498,7 +498,7 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
             moveEndNode = getNode().getAdjacentNode(this.direction);
             
             if(this.getId().equals(Client.getInstance().getPublicId())) {
-                Client.getInstance().send(new PacketObjectSetDirection(moveStartNode.getExactPosition(), moveEndNode.getExactPosition(), this.getId(), Client.getInstance().getId()));
+                Client.getInstance().send(new PacketObjectSetPosition(moveStartNode.getExactPosition(), moveEndNode.getExactPosition(), this.getId(), Client.getInstance().getId()));
             }
 
             movementStartTime = moveTotalStep;

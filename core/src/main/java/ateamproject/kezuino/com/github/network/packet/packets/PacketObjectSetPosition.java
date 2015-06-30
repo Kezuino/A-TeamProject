@@ -7,7 +7,7 @@ import com.badlogic.gdx.math.Vector2;
 
 import java.util.UUID;
 
-public class PacketObjectSetDirection extends Packet {
+public class PacketObjectSetPosition extends Packet {
     @PacketField(0)
     protected Vector2 from;
     @PacketField(1)
@@ -15,10 +15,10 @@ public class PacketObjectSetDirection extends Packet {
     @PacketField(2)
     protected UUID object;
 
-    public PacketObjectSetDirection() {
+    public PacketObjectSetPosition() {
     }
 
-    public PacketObjectSetDirection(Vector2 from, Vector2 to, UUID object, UUID sender, UUID... receivers) {
+    public PacketObjectSetPosition(Vector2 from, Vector2 to, UUID object, UUID sender, UUID... receivers) {
         super(sender, receivers);
         this.from = from;
         this.to = to;

@@ -804,7 +804,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
         });
         
-        packets.registerAction(PacketObjectSetDirection.class, packet -> {
+        packets.registerAction(PacketObjectSetPosition.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {
                 System.out.println("Could not set direction for client: " + packet.getSender());
@@ -848,6 +848,28 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     }
                 }
             });
+        });
+        
+        packets.registerAction(PacketPlayerDied.class, packet -> {
+            Game game = getGameFromClientId(packet.getSender());
+            if (game == null) {
+                System.out.println("Could not set position for client: " + packet.getSender());
+                return;
+            }
+
+            IProtocolClient[] receivers = game.getClients()
+                    .stream()
+                    .filter(c -> !c.equals(packet.getSender()))
+                    .map(id -> getClient(id).getRmi())
+                    .toArray(IProtocolClient[]::new);
+
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.playerDied(getClient(packet.getSender()).getPublicId());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
         });
 
         packets.registerFunc(PacketGetGameClients.class, packet -> {

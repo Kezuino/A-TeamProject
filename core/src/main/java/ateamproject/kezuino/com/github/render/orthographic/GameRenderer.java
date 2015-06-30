@@ -122,18 +122,18 @@ public class GameRenderer implements IRenderer {
             this.map.getSession()
                     .getScore()
                     .generateNewScore(this.map.getAllGameObjects());
+        }
         
-            // Check if here are any pactales on the map.
-            if (!this.map.getAllGameObjects().stream().anyMatch(go -> go instanceof Pactale)) {
-                this.session.gameOver();
-            }
-
-            // Check if there are any items on the map.
-            if (this.map.getAllItems().isEmpty()) {
-                this.session.complete();
-            }
+        // Check if here are any pactales on the map.
+        if (!this.map.getAllGameObjects().stream().anyMatch(go -> go instanceof Pactale)) {
+            this.session.gameOver();
         }
 
+        // Check if there are any items on the map.
+        if (this.map.getAllItems().isEmpty()) {
+            this.session.complete();
+        }
+        
         DebugRenderManager.render(DebugLayers.UI);
     }
 

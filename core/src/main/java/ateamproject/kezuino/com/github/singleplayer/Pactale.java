@@ -1,6 +1,6 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
-import ateamproject.kezuino.com.github.network.packet.packets.PacketObjectCollision;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketPlayerDied;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketRemoveItem;
 import ateamproject.kezuino.com.github.network.packet.packets.PacketScoreChanged;
 import ateamproject.kezuino.com.github.network.rmi.Client;
@@ -85,6 +85,7 @@ public class Pactale extends GameObject {
         this.isMoving = false;
         this.lives--;
         if (this.lives <= 0) {
+            Client.getInstance().send(new PacketPlayerDied(Client.getInstance().getId()));
             Assets.playSound("defeat.wav");
             this.setInactive();
         }
