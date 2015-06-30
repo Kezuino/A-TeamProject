@@ -1,6 +1,8 @@
 package ateamproject.kezuino.com.github.singleplayer;
 
 import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
+import ateamproject.kezuino.com.github.network.rmi.Client;
+import ateamproject.kezuino.com.github.render.screens.BaseScreen;
 import java.util.Date;
 import java.util.UUID;
 
@@ -38,6 +40,11 @@ public class GameSession {
         this.score = new Score();
         this.state = GameState.Running;
         this.level = level;
+    }
+    
+    public GameSession(int level, int score) {
+        this(level);
+        this.score = new Score(score);
     }
 
     public int getObjectsToLoad() {
@@ -94,7 +101,7 @@ public class GameSession {
             this.state = GameState.GameOver;
         }
 
-        if (false) {//TODO: if clan
+        if (true == false) {//TODO: if clan
             PacketHighScore packet = new PacketHighScore("jos", this.score.valueOf(),null, new UUID[] { null });
             //TODO: send PacketHighScore
         }

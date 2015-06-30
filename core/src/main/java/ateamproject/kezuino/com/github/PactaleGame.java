@@ -7,12 +7,10 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 
 public class PactaleGame extends Game {
-
     @Override
     public void create() {
         Assets.create("test");
         this.setScreen(new LoginScreen(this));
-
     }
 
     @Override

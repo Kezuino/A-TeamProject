@@ -564,7 +564,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                 client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
 
                 try {
-                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size(), game.getLevel());
+                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size(), game.getLevel(), packet.getScore());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
@@ -804,7 +804,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
         });
         
-        packets.registerAction(PacketObjectSetPosition.class, packet -> {
+        packets.registerAction(PacketObjectMove.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             if (game == null) {
                 System.out.println("Could not set direction for client: " + packet.getSender());
