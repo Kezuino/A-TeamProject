@@ -84,7 +84,7 @@ public class Portal implements IRenderable, IPositionable {
     @Override
     public void draw(SpriteBatch batch) {
         if (texture == null) {
-            this.setTexture(new TextureRegion(Assets.getTexture("portal.png", Texture.class)));
+            this.setTexture(new TextureRegion(Assets.getTexture("portal.png")));
         }
 
         Color oldColor = batch.getColor();
@@ -93,7 +93,7 @@ public class Portal implements IRenderable, IPositionable {
         float xOffset = (32 - texture.getRegionWidth()) / 2f;
         float yOffset = (32 - texture.getRegionHeight()) / 2f;
         float rotation = this.getDirection().getRotation();
-        batch.draw(texture, this.node.getX() * 32 + xOffset, this.node.getY() * 32 + yOffset, texture.getRegionWidth() / 2, texture.getRegionHeight() / 2, texture.getRegionWidth(), texture.getRegionHeight(), 1, 1, rotation, false);
+        batch.draw(texture, this.node.getX() * 32 + xOffset, this.node.getY() * 32 + yOffset, texture.getRegionWidth() / 2, texture.getRegionHeight() / 2, texture.getRegionWidth(), texture.getRegionHeight(), 1, 1, rotation);
 
         batch.setColor(oldColor);
     }

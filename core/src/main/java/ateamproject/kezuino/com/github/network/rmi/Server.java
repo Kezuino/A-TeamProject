@@ -773,7 +773,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
             for (IProtocolClient receiver : receivers) {
                 try {
-                    receiver.shootProjectile(getClient(packet.getSender()).getPublicId());
+                    receiver.shootProjectile(packet.getExactPosition(), packet.getDirection(), getClient(packet.getSender()).getPublicId());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }

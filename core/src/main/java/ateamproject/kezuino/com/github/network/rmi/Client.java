@@ -568,7 +568,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 final GameObject finalObject = object;
                 Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(true, Assets.getTexture(finalObject.getClass()
                         .getSimpleName()
-                        .toLowerCase() + ".png", Texture.class))));
+                        .toLowerCase() + ".png"))));
             } else if (object instanceof Enemy) {
                 final Enemy enemy = (Enemy) object;
 
@@ -576,7 +576,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 enemy.setDisablePathfinding(!Client.getInstance().isHost());
                 Gdx.app.postRunnable(() -> enemy.setAnimation(new Animation(Assets.getTexture(enemy.getClass()
                         .getSimpleName()
-                        .toLowerCase() + ".png", Texture.class))));
+                        .toLowerCase() + ".png"))));
             }
 
             session.getMap().addGameObject(object);
@@ -626,7 +626,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
             Gdx.app.postRunnable(() -> item.setTexture(new TextureRegion(Assets.getTexture(item.getItemType()
                     .name()
-                    .toLowerCase() + ".png", Texture.class))));
+                    .toLowerCase() + ".png"))));
             session.getMap().getNode(item.getExactPosition()).setItem(item);
 
             // Update load status.
@@ -747,14 +747,14 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             // If client sended it..send this private id to server.
             if (packet.getSender() != null && packet.getSender().equals(getId())) {
                 try {
-                    getRmi().getServer().shootProjectile(packet.getSender());
+                    getRmi().getServer().shootProjectile(packet.getExactPosition(),packet.getDirection(),packet.getSender());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
             } else {
                 if (BaseScreen.getSession().getPlayer(packet.getSender()) != null) {
                     // Server sended this.
-                    BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile();
+                    BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile(packet.getExactPosition(),packet.getDirection());
                 }
             }
         });

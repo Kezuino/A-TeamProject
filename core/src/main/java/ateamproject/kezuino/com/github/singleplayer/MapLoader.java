@@ -162,7 +162,7 @@ public class MapLoader {
                     }
                     // Create enemy.
                     Enemy enemy = new Enemy(null, curPos, movementSpeed, Direction.Down);
-                    enemy.setAnimation(new Animation(Assets.getTexture("enemy.png", Texture.class)));
+                    enemy.setAnimation(new Animation(Assets.getTexture("enemy.png")));
                     enemy.setMap(map);
                     enemy.setId();
 
@@ -179,7 +179,7 @@ public class MapLoader {
                     if (playerLimit <= 0 || playerIndex + 1 <= playerLimit) {
                         // Create pactale.
                         Pactale pactale = new Pactale(playerIndex, curPos, 1, 3f, Direction.Down, Color.WHITE);
-                        pactale.setAnimation(new Animation(true, Assets.getTexture("pactale.png", Texture.class)));
+                        pactale.setAnimation(new Animation(true, Assets.getTexture("pactale.png")));
                         pactale.setId();
                         map.addGameObject(pactale);
 
