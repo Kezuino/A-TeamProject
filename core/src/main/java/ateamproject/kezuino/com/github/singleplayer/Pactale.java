@@ -10,6 +10,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector2;
 
 public class Pactale extends GameObject {
+
     private int playerIndex;
     private int lives;
     private Portal portal;
@@ -24,14 +25,14 @@ public class Pactale extends GameObject {
     /**
      * Initialize a {@link Pactale}.
      *
-     * @param lives            Times that the
-     *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} can be hit.
-     *                         Defaults to 1 for a multiplayer session.
-     * @param movementSpeed    Amount of seconds that it will take to move to
-     *                         another node.
+     * @param lives Times that the
+     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} can be hit.
+     * Defaults to 1 for a multiplayer session.
+     * @param movementSpeed Amount of seconds that it will take to move to
+     * another node.
      * @param walkingDirection Looking direction to start with.
-     * @param color            Distinct color of this
-     *                         {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
+     * @param color Distinct color of this
+     * {@link ateamproject.kezuino.com.github.singleplayer.Pactale} in the game.
      */
     public Pactale(Vector2 exactPosition, int lives, float movementSpeed, Direction walkingDirection, Color color) {
         super(exactPosition, movementSpeed, walkingDirection, color);
@@ -66,15 +67,20 @@ public class Pactale extends GameObject {
     }
 
     public void setLives(int lives) {
-        if (lives < 0) return;
+        if (lives < 0) {
+            return;
+        }
         this.lives = lives;
     }
 
     /**
-     * Hurts the {@link Pactale} so that it loses one life and resets it's position to spawn.
+     * Hurts the {@link Pactale} so that it loses one life and resets it's
+     * position to spawn.
      */
     public void hurt() {
-        if (this.lives < 0) return;
+        if (this.lives < 0) {
+            return;
+        }
 
         this.isMoving = false;
         this.lives--;
@@ -88,7 +94,7 @@ public class Pactale extends GameObject {
      * If this {@link Pactale} is active, will shoot a portal in the direction
      * that this {@link Pactale} currently is heading.
      */
-    public Projectile shootProjectile(Vector2 position,Direction direction) {
+    public Projectile shootProjectile(Vector2 position, Direction direction) {
         if (this.getActive()) {
             // create projectile
             Projectile proj = new Projectile(position, this, this.getMovementSpeed() * 3, direction, this
@@ -106,9 +112,9 @@ public class Pactale extends GameObject {
 
     @Override
     public boolean collisionWithGameObject(GameObject object) {
-        if (this.getId().equals(Client.getInstance().getPublicId())) {
-            //PacketObjectCollision packet = new PacketObjectCollision(getId(), object.getId(), null);
-            //Client.getInstance().send(packet);
+        if (this.getId().equals(Client.getInstance().getPublicId()) && super.getActive()) {
+            PacketObjectCollision packet = new PacketObjectCollision(getId(), object.getId(), null);
+            Client.getInstance().send(packet);
 
             if (object instanceof Enemy) {
                 Enemy e = (Enemy) object;
@@ -119,6 +125,19 @@ public class Pactale extends GameObject {
 
                     PacketScoreChanged pScore = new PacketScoreChanged(100, PacketScoreChanged.ManipulationType.DECREASE, Client.getInstance().getId());
                     Client.getInstance().send(pScore);
+
+                    Assets.playSound("enemy_eat.mp3");
+                }
+                return true;
+            }
+            //If the pactale is not the player, it is another player and shouldnt update score and send another packet.
+        } else if (!this.getId().equals(Client.getInstance().getPublicId()) && super.getActive()) {
+             if (object instanceof Enemy) {
+                Enemy e = (Enemy) object;
+
+                if (!e.isEdible()) {
+                    this.hurt();
+                    this.setNodePosition(this.getStartingPosition().x / 32, this.getStartingPosition().y / 32);
 
                     Assets.playSound("enemy_eat.mp3");
                 }
@@ -156,11 +175,13 @@ public class Pactale extends GameObject {
     }
 
     /**
-     * If a portal has been set to this {@link Pactale},
-     * will remove the current set {@link Pactale}.
+     * If a portal has been set to this {@link Pactale}, will remove the current
+     * set {@link Pactale}.
      */
     public void removePortal() {
-        if (this.portal == null) return;
+        if (this.portal == null) {
+            return;
+        }
         this.getMap().getNode(portal.getNode().getX(), portal.getNode().getY()).removePortal(portal.getDirection());
         this.portal = null;
     }
