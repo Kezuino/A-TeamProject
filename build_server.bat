@@ -1,4 +1,5 @@
 @echo off
+echo Building server..
 gradlew server:dist
 
-pause
+echo Press any key to continue...
