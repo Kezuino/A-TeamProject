@@ -143,11 +143,7 @@ public class Pactale extends GameObject {
             Client.getInstance().send(new PacketRemoveItem(item.getId(), item.getItemType(), Client.getInstance().getId()));
             item.activate(this);
             item.getNode().removeItem();
-        }/* else if (!Client.getInstance().isRunning()) {
-            // Singleplayer.
-            item.activate(this);
-            item.getNode().removeItem();
-        }*/
+        }
         return true;
     }
 
