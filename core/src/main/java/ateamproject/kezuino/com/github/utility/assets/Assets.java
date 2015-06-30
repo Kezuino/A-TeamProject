@@ -2,9 +2,7 @@ package ateamproject.kezuino.com.github.utility.assets;
 
 import ateamproject.kezuino.com.github.utility.io.FilenameUtils;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
-import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
@@ -15,14 +13,11 @@ import com.badlogic.gdx.graphics.g2d.ParticleEffect;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.GdxRuntimeException;
+
 import java.io.File;
-import java.io.FilenameFilter;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,7 +47,7 @@ public class Assets {
             return String.join("/", args).replace("\\", "/");
         } else {
             try {
-                return Paths.get(Paths.get(new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent(), skin).toString(), args).toString().replace("\\", "/");
+                return Paths.get(Paths.get(new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent(), "Skins", skin).toString(), args).toString().replace("\\", "/");
             } catch (URISyntaxException ex) {
                 Logger.getLogger(Assets.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -131,24 +126,8 @@ public class Assets {
         return manager.get(getSkinPath(asset), type);
     }
 
-    public static <T> T getTexture(String asset, Class<T> type) {
-        if (asset == null || asset.isEmpty()) {
-            throw new IllegalArgumentException("Parameter asset must not be null or empty.");
-        }
-
-        FileHandle file = new FileHandle(getSkinPath("textures", asset));
-        if (!file.exists()) {
-            throw new NullPointerException(String.format("Asset texture '%s' could not be found.", asset));
-        }
-        if (manager == null) {
-            return null;
-        }
-        if (!manager.isLoaded(getSkinPath("textures", asset), type)) {
-            System.out.println(getSkinPath("textures", asset));
-            manager.load(getSkinPath("textures", asset), type);
-            manager.finishLoading();
-        }
-        return manager.get(getSkinPath("textures", asset), type);
+    public static Texture getTexture(String asset) {
+        return get(TEXTURE_DIR + '/' + asset, Texture.class);
     }
 
     /**
@@ -257,8 +236,8 @@ public class Assets {
     public static ShaderProgram getShaderProgram(String shaderName) {
         ShaderProgram.pedantic = false;
         String assetName = FilenameUtils.getFileNameWithoutExtension(shaderName);
-        FileHandle vertexFile = new FileHandle((getSkinPath("shaders/vertex", assetName + ".vsh")));
-        FileHandle fragmentFile = new FileHandle((getSkinPath("shaders/fragment", assetName + ".fsh")));
+        FileHandle vertexFile = new FileHandle((getSkinPath(SHADER_DIR + "vertex", assetName + ".vsh")));
+        FileHandle fragmentFile = new FileHandle((getSkinPath(SHADER_DIR + "fragment", assetName + ".fsh")));
         if (!vertexFile.exists() || !fragmentFile.exists()) {
             throw new GdxRuntimeException("Couldn't find shader files.");
         }
