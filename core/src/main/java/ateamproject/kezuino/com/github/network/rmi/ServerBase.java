@@ -333,7 +333,7 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     }
 
     @Override
-    public Map<String, Integer> getHighscores(UUID sender) throws RemoteException {
+    public LinkedHashMap<String, Integer> getHighscores(UUID sender) throws RemoteException {
         PacketGetHighscores packet = new PacketGetHighscores(sender);
         server.send(packet);
         return packet.getResult();

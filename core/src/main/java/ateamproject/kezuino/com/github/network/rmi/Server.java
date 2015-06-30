@@ -868,9 +868,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerFunc(PacketGetHighscores.class, packet -> {
-            Map<String, Integer> highscores = new HashMap<>();
-
-            ResultSet result = Database.getInstance().query("SELECT Name,Score FROM clan ORDER BY Score LIMIT 10");
+            LinkedHashMap<String, Integer> highscores = new LinkedHashMap<>();
+            
+            ResultSet result = Database.getInstance().query("SELECT Name,Score FROM clan ORDER BY Score DESC LIMIT 10");
 
             try {
                 while (result.next()) {
