@@ -2,6 +2,7 @@ package ateamproject.kezuino.com.github.utility.assets;
 
 import ateamproject.kezuino.com.github.utility.io.FilenameUtils;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.assets.AssetLoaderParameters;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
@@ -21,6 +22,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -29,6 +31,9 @@ public class Assets {
     public static final String AUDIO_SOUND_DIR = "audio/sound/";
     public static final String AUDIO_MUSIC_DIR = "audio/music/";
     public static final String FONTS_DIR = "fonts/";
+    public static final String GUI_DIR = "gui/";
+    public static final String TEXTURE_DIR = "textures/";
+    public static final String SHADER_DIR = "shaders/";
 
     private static String skin;
     public static AssetManager manager;
@@ -83,10 +88,10 @@ public class Assets {
     private static void load() {
 
         // Textures (only load those that aren't loaded by the TmxMapLoader).
-        manager.load(getSkinPath("textures", "projectile.png"), Texture.class);
-        manager.load(getSkinPath("textures", "portal.png"), Texture.class);
-        manager.load(getSkinPath("textures", "pactale.png"), Texture.class);
-        manager.load(getSkinPath("textures", "enemy.png"), Texture.class);
+        manager.load(getSkinPath(TEXTURE_DIR, "projectile.png"), Texture.class);
+        manager.load(getSkinPath(TEXTURE_DIR, "portal.png"), Texture.class);
+        manager.load(getSkinPath(TEXTURE_DIR, "pactale.png"), Texture.class);
+        manager.load(getSkinPath(TEXTURE_DIR, "enemy.png"), Texture.class);
 
         // Particle effects.
         manager.load("textures/particles/projectile", ParticleEffect.class);
@@ -120,14 +125,10 @@ public class Assets {
             return null;
         }
         if (!manager.isLoaded(getSkinPath(asset), type)) {
-            if (type.isAssignableFrom(Skin.class)) {
-                //manager.load(getSkinPath(asset), type, new SkinLoader.SkinParameter(getSkinPath(asset)));
-            } else {
-                manager.load(getSkinPath(asset), type);
-            }            
+            manager.load(getSkinPath(asset), type);
             manager.finishLoading();
         }
-        return manager.get(asset, type);
+        return manager.get(getSkinPath(asset), type);
     }
 
     public static <T> T getTexture(String asset, Class<T> type) {
@@ -157,11 +158,11 @@ public class Assets {
      * @return {@link BitmapFont} if it was found. Or null.
      */
     public static BitmapFont getFont(String asset) {
-        return get("fonts/"+ asset, BitmapFont.class);
+        return get(FONTS_DIR + '/' + asset, BitmapFont.class);
     }
 
     public static Skin getSkin(String asset) {
-        return get("gui/"+ asset, Skin.class);
+        return get(GUI_DIR + '/' + asset, Skin.class);
     }
     
     /**
@@ -181,7 +182,7 @@ public class Assets {
      * @return {@link ParticleEffect} that was loaded from the file.
      */
     public static ParticleEffect getParticleEffect(String name) {
-        return get("textures/particles/" + name, ParticleEffect.class);
+        return get(TEXTURE_DIR + "particles/" + name, ParticleEffect.class);
     }
 
     /**
@@ -277,10 +278,10 @@ public class Assets {
     }
 
     public static void unload() {
-        manager.unload(getSkinPath("textures", "projectile.png"));
-        manager.unload(getSkinPath("textures", "portal.png"));
-        manager.unload(getSkinPath("textures", "pactale.png"));
-        manager.unload(getSkinPath("textures", "enemy.png"));
+        manager.unload(getSkinPath(TEXTURE_DIR, "projectile.png"));
+        manager.unload(getSkinPath(TEXTURE_DIR, "portal.png"));
+        manager.unload(getSkinPath(TEXTURE_DIR, "pactale.png"));
+        manager.unload(getSkinPath(TEXTURE_DIR, "enemy.png"));
     }
 
     public static String[] getSkins() {

@@ -44,14 +44,8 @@ public abstract class BaseScreen implements Screen {
     protected InputMultiplexer inputs;
 
     public BaseScreen(Game game) {
-         System.out.println(Assets.manager.getAssetNames());
-        Assets.unload();
-         System.out.println(Assets.manager.getAssetNames());
-        Assets.create("Skin1");
-         System.out.println(Assets.manager.getAssetNames());
         skin = Assets.getSkin("uiskin.json");
-        System.out.println(Assets.manager.getAssetNames());
-        
+
         // Bootstrap screen.
         renderers = new ArrayList<>();
         inputs = new InputMultiplexer();
@@ -61,7 +55,7 @@ public abstract class BaseScreen implements Screen {
 
         // Bootstrap game objects.
         this.game = game;
-        
+
         // Bootstrap input.
         inputs.addProcessor(stage);
         Gdx.input.setInputProcessor(inputs);
@@ -160,7 +154,7 @@ public abstract class BaseScreen implements Screen {
      * Adds the {@link IRenderer} to the list of renderers.
      *
      * @param renderer {@link IRenderer} to add to the list.
-     * @param <T> Any class that implements the interface {@link IRenderer} to add to the list.
+     * @param <T>      Any class that implements the interface {@link IRenderer} to add to the list.
      * @return {@link IRenderer} that was added for chaining purposes.
      */
     public <T extends IRenderer> T addRenderer(T renderer) {
@@ -172,7 +166,7 @@ public abstract class BaseScreen implements Screen {
      * Removes a specific {@link IRenderer} from this {@link Screen}.
      *
      * @param renderer {@link IRenderer} to remove.
-     * @param <T> Type of instance to remove that extends from {@link IRenderer}.
+     * @param <T>      Type of instance to remove that extends from {@link IRenderer}.
      */
     public <T extends IRenderer> void removeRenderer(T renderer) {
         renderers.remove(renderer);

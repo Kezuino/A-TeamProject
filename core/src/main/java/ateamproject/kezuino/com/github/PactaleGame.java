@@ -16,17 +16,6 @@ public class PactaleGame extends Game {
 
     @Override
     public void create() {
-        File file = new File("out.txt");
-        FileOutputStream fos;
-        try {
-            fos = new FileOutputStream(file);
-            PrintStream ps = new PrintStream(fos);
-            System.setErr(ps);
-            System.setOut(ps);
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(PactaleGame.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
         Assets.create();
         this.setScreen(new LoginScreen(this));
 
