@@ -4,14 +4,18 @@ import ateamproject.kezuino.com.github.render.IRenderer;
 import ateamproject.kezuino.com.github.render.orthographic.camera.Camera;
 import ateamproject.kezuino.com.github.singleplayer.*;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 public class GameUIRenderer implements IRenderer {
     private final SpriteBatch batch;
     private final Camera camera;
     private final BitmapFont font;
+    private final TextureRegion gold;
 
     private final Map map;
     private final GameSession session;
@@ -24,7 +28,10 @@ public class GameUIRenderer implements IRenderer {
         batch = new SpriteBatch();
         batch.setProjectionMatrix(camera.combined);
 
-        font = Assets.getFont("opensans.ttf");
+        font = new BitmapFont(Gdx.files.internal("fonts/credits.fnt"), Gdx.files.internal("fonts/credits_0.png"), false);
+        font.setColor(Color.WHITE);
+        
+        gold = new TextureRegion(Assets.getTexture("smallObject.png"));
 
         this.map = map;
         this.session = map.getSession();
@@ -38,7 +45,9 @@ public class GameUIRenderer implements IRenderer {
     @Override
     public void render() {
         batch.begin();
-        font.draw(batch, "levens: " + pactale.getLives() + ", score: " + session.getScore().valueOf(), 0, 0);
+        batch.draw(gold, 0, -27);
+        font.draw(batch, "score: " + session.getScore().valueOf(), 30, -5);
+        font.draw(batch, "test", camera.viewportWidth - 100, -5);
         batch.end();
     }
 }

@@ -51,11 +51,11 @@ public class HighscoreScreen extends BaseScreen {
 
         Label lblTitle = new Label("Highscore", skin);
         if (top10HighscoreReached) {
-            lblTitle.setText("Gefeliciteerd met een top 10 plek!");
+            lblTitle = new Label("Gefeliciteerd met een top 10 plek!", skin);
             btnBack.setText("Haal mijn prijs op");
         }
         lblTitle.setColor(Color.YELLOW);
-        lblTitle.setPosition((stage.getWidth() / 2) - (lblTitle.getWidth()/ 2), stage.getHeight() - 50);
+        lblTitle.setPosition(stage.getWidth() / 2 - lblTitle.getWidth()/ 2, stage.getHeight() - 50);
 
         PacketGetHighscores packet = new PacketGetHighscores(Client.getInstance().getId());
         Client.getInstance().send(packet);

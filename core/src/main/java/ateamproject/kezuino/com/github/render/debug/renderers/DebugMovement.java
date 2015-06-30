@@ -57,7 +57,7 @@ public class DebugMovement extends DebugRenderer<GameObject> {
 
         // Draw text.
         batch.begin();
-        font.draw(batch, "Score: " + BaseScreen.getSession().getScore().valueOf(), 0, camera.viewportHeight - 50);
+        font.draw(batch, "Direction:" + gameObject.getDirection(), 0, camera.viewportHeight - 50);
         batch.end();
     }
 }
