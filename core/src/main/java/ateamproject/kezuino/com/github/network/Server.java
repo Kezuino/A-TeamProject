@@ -149,28 +149,10 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         Game game = games.get(gameId);
         if (game == null) return null;
 
-        // Notify all connected clients that the game is closing.
-        send(new PacketKick(PacketKick.KickReasonType.GAME, "Lobby is gesloten.", null, game
-                .getClients()
-                .stream()
-//                .filter(c -> !c
-//                        .equals(game.getHostId()))
-                .map(c -> getClient(c).getPublicId())
-                .toArray(UUID[]::new)));
-
         // Unregister client on game.
-        for (UUID clientId : game.getClients()) {
-            IClientInfo client = getClient(clientId);
-            client.setGame(null);
-        }
+        game.getClients().safeForEach(game::removeClient);
 
         Game removedGame = games.remove(gameId);
-
-        // Update lobbylistscreen for all clients.
-        if (removedGame != null) {
-            PacketScreenUpdate tmp = new PacketScreenUpdate(LobbyListScreen.class, null, this.getClients().stream().map(IClientInfo::getPublicId).toArray(UUID[]::new));
-            send(tmp);
-        }
 
         // Remove the game.
         return removedGame;
@@ -221,11 +203,6 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
         if (privateId == null) throw new IllegalArgumentException("Parameter privateId must not be null.");
 
         TClient client = clients.get(privateId);
-//        if (client == null) {
-//            if (getClientFromPublic(privateId) != null) {
-//                throw new IllegalArgumentException("Possible public id was given to getClient.");
-//            }
-//        }
         return client;
     }
 

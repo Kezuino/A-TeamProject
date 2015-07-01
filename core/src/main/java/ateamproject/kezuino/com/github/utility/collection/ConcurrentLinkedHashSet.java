@@ -8,6 +8,7 @@ package ateamproject.kezuino.com.github.utility.collection;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.function.Consumer;
 
 /**
  * Preservers insert order in a thread-safe manner.
@@ -43,6 +44,18 @@ public class ConcurrentLinkedHashSet<E extends Object> extends LinkedHashSet<E> 
     @Override
     public synchronized boolean remove(Object o) {
         return super.remove(o);
+    }
+
+    /**
+     * Thread-safe foreach iteration.
+     *
+     * @param consumer {@link Consumer} to run for each {@link E}.
+     */
+    public synchronized void safeForEach(Consumer<E> consumer) {
+        for (int i = this.size() - 1; i >= 0; i--) {
+            E e = this.get(i);
+            consumer.accept(e);
+        }
     }
 
     public synchronized E get(int i) {

@@ -8,7 +8,6 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.singleplayer.ItemType;
 import ateamproject.kezuino.com.github.utility.game.Direction;
-import com.badlogic.gdx.assets.loaders.SkinLoader;
 import com.badlogic.gdx.math.Vector2;
 
 import java.rmi.RemoteException;
@@ -39,7 +38,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
     @Override
     public boolean drop(PacketKick.KickReasonType kick, String reason) throws RemoteException {
-        PacketKick packet = new PacketKick(kick, reason, null, new UUID[]{null});
+        PacketKick packet = new PacketKick(kick, reason, null, new UUID[] {null});
         client.send(packet);
         return packet.getResult();
     }
@@ -58,7 +57,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     public void loadGame(String mapName, boolean isMaster, int playerLimit, int level) throws RemoteException {
         client.send(new PacketLoadGame(mapName, isMaster, playerLimit, level, null));
     }
-    
+
     @Override
     public void loadGame(String mapName, boolean isMaster, int playerLimit, int level, int score) throws RemoteException {
         client.send(new PacketLoadGame(mapName, isMaster, playerLimit, level, score, null));
@@ -73,7 +72,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
     @Override
     public void screenRefresh(Class<?> refreshableScreen) throws RemoteException {
-        client.send(new PacketScreenUpdate(refreshableScreen, null, new UUID[]{null}));
+        client.send(new PacketScreenUpdate(refreshableScreen, null, new UUID[] {null}));
     }
 
     @Override
@@ -85,7 +84,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     @Override
     public void launchGame(boolean paused) throws RemoteException {
         // Null, null is needed so this client doesn't automatically assign itself as sender (see Packet.send).
-        PacketLaunchGame packet = new PacketLaunchGame(paused, null, new UUID[]{null});
+        PacketLaunchGame packet = new PacketLaunchGame(paused, null, new UUID[] {null});
         client.send(packet);
     }
 
@@ -104,13 +103,13 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
 
     @Override
     public void removeItem(UUID sender, UUID player, UUID itemId, ItemType itemType) {
-        PacketRemoveItem packet = new PacketRemoveItem(player, itemId, itemType, null, new UUID[] { null });
+        PacketRemoveItem packet = new PacketRemoveItem(player, itemId, itemType, null, new UUID[] {null});
         client.send(packet);
     }
 
     @Override
     public void changeScore(UUID sender, PacketScoreChanged.ManipulationType manipulationType, int change) throws RemoteException {
-        PacketScoreChanged packet = new PacketScoreChanged(change, manipulationType, sender, new UUID[]{null});
+        PacketScoreChanged packet = new PacketScoreChanged(change, manipulationType, sender, new UUID[] {null});
         client.send(packet);
     }
 
@@ -122,9 +121,9 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketBalloonMessage packet;
 
         if (followTarget != null) {
-            packet = new PacketBalloonMessage(typeName, followTarget, null, new UUID[] { null });
+            packet = new PacketBalloonMessage(typeName, followTarget, null, new UUID[] {null});
         } else {
-            packet = new PacketBalloonMessage(typeName, position, null, new UUID[] { null });
+            packet = new PacketBalloonMessage(typeName, position, null, new UUID[] {null});
         }
         client.send(packet);
     }
@@ -134,7 +133,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketPlayerSetDirection packet = new PacketPlayerSetDirection(direction, sender);
         client.send(packet);
     }
-    
+
     @Override
     public void objectSetDirection(UUID sender, UUID object, Vector2 from, Vector2 to) throws RemoteException {
         PacketObjectMove packet = new PacketObjectMove(from, to, object, sender);
@@ -146,7 +145,7 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketPlayerSetPosition packet = new PacketPlayerSetPosition(position, sender);
         client.send(packet);
     }
-    
+
     @Override
     public void playerDied(UUID sender) throws RemoteException {
         PacketPlayerDied packet = new PacketPlayerDied(sender);
@@ -154,21 +153,21 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void shootProjectile(Vector2 pos, Direction dir,UUID sender) throws RemoteException {
-        PacketShootProjectile packet = new PacketShootProjectile(pos,dir,sender);
+    public void shootProjectile(Vector2 pos, Direction dir, UUID sender) throws RemoteException {
+        PacketShootProjectile packet = new PacketShootProjectile(pos, dir, sender);
         client.send(packet);
     }
 
     @Override
     public void setAIPath(UUID sender, UUID objectId, Vector2 position, Collection<Vector2> nodes) throws RemoteException {
         PacketSetAIPath packet = new PacketSetAIPath(objectId,
-                nodes, position, sender, new UUID[]{null});
+                                                     nodes, position, sender, new UUID[] {null});
         client.send(packet);
     }
 
     @Override
     public void objectCollision(UUID sender, UUID collider, UUID target) throws RemoteException {
-        PacketObjectCollision packet = new PacketObjectCollision(collider, target, sender, new UUID[]{null});
+        PacketObjectCollision packet = new PacketObjectCollision(collider, target, sender, new UUID[] {null});
         client.send(packet);
     }
 

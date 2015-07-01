@@ -1,16 +1,11 @@
 package ateamproject.kezuino.com.github.utility.io;
 
-import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.sql.*;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class Database {
 
@@ -42,6 +37,13 @@ public class Database {
         return instance;
     }
 
+    /**
+     * Loads the connection settings for this {@link Database} from a file.<br/>
+     * Returns default database settings if file doesn't contain three lines or doesn't exist.
+     *
+     * @param file {@link File} to load the settings from.
+     * @return {@link Database} with loaded settings (or default settings if failed).
+     */
     public static Database from(File file) {
         try {
             List<String> lines = Files.lines(file.toPath()).collect(Collectors.toList());
@@ -99,7 +101,7 @@ public class Database {
      *
      * @param query Query command to run on the database.
      * @param parms Parameters to prepare with the command to counter SQL
-     * Injection and increase performance.
+     *              Injection and increase performance.
      * @return Executed {@link ResultSet} to get results from.
      */
     public ResultSet query(String query, Object... parms) {
@@ -125,7 +127,7 @@ public class Database {
      *
      * @param query Query command to run on the database.
      * @param parms Parameters to prepare with the command to counter SQL
-     * Injection and increase performance.
+     *              Injection and increase performance.
      * @return Amount of rows modified or -1 if query failed.
      */
     public int update(String query, Object... parms) {
@@ -139,7 +141,7 @@ public class Database {
                 statement.setObject(i + 1, parm);
             }
             return statement.executeUpdate();
-        } catch (SQLException e) {
+        } catch (SQLException ignored) {
         }
 
         return -1;
