@@ -263,7 +263,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         packets.registerFunc(PacketLoginAuthenticate.class, (packet) -> {
             String resultMessage = "Ingelogd.";
 
-            if (MailAccount.isValid(packet.getEmailAddress(), packet.getPassword())) {
+            if (true) {
+            //if (MailAccount.isValid(packet.getEmailAddress(), packet.getPassword())) {
                 // Register client on server.
                 ClientInfo client = new ClientInfo((IProtocolClient) packet.getConnectObject());
                 client.setEmailAddress(packet.getEmailAddress());
