@@ -18,10 +18,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -69,7 +67,7 @@ public class Assets {
     }
 
     /**
-     * Asynchroniously sets a new skin and reloads all the related content.
+     * Asynchronously sets a new skin and reloads all the related content.
      *
      * @param blocking If true, this method will wait until all the assets are reloaded.
      * @param callback Callback to call when the reloading is done.
@@ -113,6 +111,16 @@ public class Assets {
         load(blocking);
 
         if (callback != null) callback.run();
+    }
+
+    /**
+     * Reloads the current skin and default assets.
+     *
+     * @param blocking If true, this method will wait until all the assets are reloaded.
+     * @param callback Callback to call when the reloading is done.
+     */
+    public static void reloadSkin(boolean blocking, Runnable callback) {
+        setSkin(skin, blocking, callback);
     }
 
     /**
@@ -183,6 +191,12 @@ public class Assets {
         return get(FONTS_DIR + asset, BitmapFont.class);
     }
 
+    /**
+     * Loads the {@link Skin} in the {@link AssetManager}.
+     *
+     * @param asset Name of the {@link Skin} to load.
+     * @return {@link Skin} that was loaded.
+     */
     public static Skin getSkin(String asset) {
         return get(GUI_DIR + asset, Skin.class);
     }
