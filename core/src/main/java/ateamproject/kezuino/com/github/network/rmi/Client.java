@@ -88,7 +88,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         try {
             registerPackets();
 
-            String rmiHost = System.getProperty("java.rmi.server.hostname");
+            String rmiHost = System.getProperty("pactales.client.servername");
             String rmiObject = System.getProperty("pactales.client.serverobject");
 
             this.rmi.setServer((IProtocolServer) Naming.lookup(String.format("//%s/%s", rmiHost, rmiObject)));

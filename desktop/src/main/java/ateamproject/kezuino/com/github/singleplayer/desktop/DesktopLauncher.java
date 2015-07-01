@@ -25,9 +25,10 @@ import java.util.logging.Logger;
 public class DesktopLauncher {
 
     public static void main(String[] args) {
-        if(args.length > 0)
+        if(args.length > 1)
         {
             System.setProperty("java.rmi.server.hostname", args[0]);
+            System.setProperty("pactales.client.servername", args[1]);
         }
         else{
             System.setProperty("java.rmi.server.hostname", "localhost");
