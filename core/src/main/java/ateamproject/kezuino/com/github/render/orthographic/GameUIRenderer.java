@@ -47,7 +47,7 @@ public class GameUIRenderer implements IRenderer {
         batch.begin();
         batch.draw(gold, 0, -27);
         font.draw(batch, "score: " + session.getScore().valueOf(), 30, -5);
-        font.draw(batch, "test", camera.viewportWidth - 100, -5);
+        //font.draw(batch, "test", camera.viewportWidth - 100, -5);
         batch.end();
     }
 }

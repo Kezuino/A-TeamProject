@@ -197,13 +197,11 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
         // Render Game and UI.
         super.render(delta);
 
-        //If player has 0 lives he is GameOVer
-        /*if (player.getLives()==0){
-         getSession().gameOver();
-         }*/
         switch (getSession().getState()) {
             case GameOverHighscoreReached:
-                //getSession().end();
+                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, null, null);
+                Client.getInstance().send(packet);
+
                 game.setScreen(new HighscoreScreen(game,true));
                 break;
             case GameOver:

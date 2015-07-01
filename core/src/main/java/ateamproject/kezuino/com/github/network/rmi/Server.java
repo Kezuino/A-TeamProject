@@ -145,6 +145,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                                     // Notify.
                                     for (ClientInfo gameClient : gameClients) {
                                         try {
+                                            if (gameClient == null) continue;
                                             gameClient.getRmi().drop(packet.getReasonType(), packet.getReason());
                                         } catch (RemoteException e) {
                                             e.printStackTrace();
