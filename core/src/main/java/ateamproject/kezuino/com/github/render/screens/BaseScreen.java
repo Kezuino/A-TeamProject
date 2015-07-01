@@ -16,10 +16,13 @@ import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +58,48 @@ public abstract class BaseScreen implements Screen {
 
         // Bootstrap input.
         inputs.addProcessor(stage);
+        inputs.addProcessor(new InputAdapter() {
+            @Override
+            public boolean keyDown(int keycode) {
+                switch (keycode) {
+                    case Input.Keys.F12:
+                        // Reset the screen.
+                        try {
+                            Constructor<? extends BaseScreen> constructor = BaseScreen.this.getClass().getConstructor(Game.class);
+
+                            final BaseScreen[] screen = {null};
+                            // Reload content.
+                            Assets.reloadSkin(false, () -> {
+                                try {
+                                    screen[0] = constructor.newInstance(game);
+                                    game.setScreen(screen[0]);
+                                } catch (InstantiationException | IllegalAccessException | InvocationTargetException ignored) {
+                                }
+
+                                if (screen[0] != null) {
+                                    // Show dialog.
+                                    new Dialog("Reload", screen[0].skin) {
+                                        {
+                                            text("Skin was reloaded.");
+                                            button("Oke");
+                                        }
+                                    }.show(screen[0].stage);
+                                }
+                            });
+                        } catch (NoSuchMethodException e) {
+                            // Show dialog.
+                            new Dialog("Error", skin) {
+                                {
+                                    text("Couldn't reload the skin.");
+                                    button("Oke");
+                                }
+                            }.show(stage);
+                        }
+                        return true;
+                }
+                return super.keyDown(keycode);
+            }
+        });
         Gdx.input.setInputProcessor(inputs);
 
         // Bootstrap view.
