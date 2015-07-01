@@ -32,7 +32,7 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
     private static Server instance;
     protected ServerBase rmi;
-    private ClanFunctions clanFunctions;
+    private final ClanFunctions clanFunctions;
 
     public Server() throws RemoteException {
         super();
@@ -187,17 +187,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
         });
 
-        packets.registerAction(PacketClientLeft.class, packet -> {
-            for (UUID id : packet.getReceivers()) {
-                ClientInfo client = getClient(id);
-                try {
-                    client.getRmi().clientLeft(packet.getClientThatLeft(), packet.getUsername());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-
         packets.registerFunc(PacketCreateClan.class, (packet) -> clanFunctions.createClan(packet.getClanName(), getClient(packet.getSender()).getEmailAddress()));
 
         packets.registerFunc(PacketGetLobbies.class, (packet -> {
@@ -244,9 +233,8 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketGetClans.class, (p) -> getClient(p.getSender()).getClans());
 
-        packets.registerAction(PacketReloadClans.class, (p) -> getClient(p.getSender()).setClans(clanFunctions.getClansByUserName(getClient(p
-                                                                                                                                                    .getSender()).getUsername())));
-
+        packets.registerAction(PacketReloadClans.class, (p) -> getClient(p.getSender()).setClans(clanFunctions.getClansByUserName(getClient(p.getSender()).getUsername())));
+        
         packets.registerFunc(PacketFillTable.class, (packet) -> clanFunctions.getClansByEmailAddress(packet.getEmailadres()));
 
         packets.registerFunc(PacketGetEmail.class, (packet) -> clanFunctions.getEmail(getClient(packet.getSender()).getUsername()));
@@ -259,12 +247,9 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
 
         packets.registerFunc(PacketGetUsername.class, (packet) -> clanFunctions.getUsername(packet.getEmailadres()));
 
-        packets.registerFunc(PacketHandleInvitation.class, (packet) -> clanFunctions.handleInvitation(packet.getInvite(), packet
-                .getClanName(), packet.getEmailadres(), packet
-                                                                                                              .getNameOfInvitee()));
+        packets.registerFunc(PacketHandleInvitation.class, (packet) -> clanFunctions.handleInvitation(packet.getInvite(), packet.getClanName(), packet.getEmailadres(), packet.getNameOfInvitee()));
 
-        packets.registerFunc(PacketHandleManagement.class, (packet) -> clanFunctions.handleManagement(packet.getManage(), packet
-                .getClanName(), packet.getEmailadres()));
+        packets.registerFunc(PacketHandleManagement.class, (packet) -> clanFunctions.handleManagement(packet.getManage(), packet.getClanName(), packet.getEmailadres()));
 
         packets.registerFunc(PacketSetUsername.class, (packet) -> {
             boolean setUsername = clanFunctions.setUsername(packet.getName(), packet.getEmailaddress());
@@ -390,70 +375,67 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         });
 
         packets.registerAction(PacketHeartbeat.class, packet -> {
-                                   if (packet.getSender()
-                                           == null) {
-                                       return;
-                                   }
-                                   IClientInfo client = getClient(packet.getSender());
-                                   if (client
-                                           != null) {
-                                       client.resetSecondsActive();
-                                   }
-                               }
-        );
+            if (packet.getSender()
+                    == null) {
+                return;
+            }
+            IClientInfo client = getClient(packet.getSender());
+            if (client
+                    != null) {
+                client.resetSecondsActive();
+            }
+        });
 
         packets.registerFunc(PacketCreateLobby.class, packet -> {
-                                 Game newGame = new Game(this, packet.getLobbyname(), packet.getClanname(), packet.getSender());
+            Game newGame = new Game(this, packet.getLobbyname(), packet.getClanname(), packet.getSender());
 
-                                 addGame(newGame);
+            addGame(newGame);
 
-                                 getClient(packet.getSender()).setGame(newGame);
-                                 return newGame.getId();
-                             }
-        );
+            getClient(packet.getSender()).setGame(newGame);
+            return newGame.getId();
+        });
 
         packets.registerFunc(PacketJoinLobby.class, packet -> {
-                                 Game lobby = getGame(packet.getLobbyId());
-                                 if (lobby
-                                         == null) {
-                                     return null;
-                                 }
+            Game lobby = getGame(packet.getLobbyId());
+            if (lobby
+                    == null) {
+                return null;
+            }
 
-                                 // Add new client to game.
-                                 IClientInfo client = getClient(packet.getSender());
-                                 if (client
-                                         == null) {
-                                     System.out.printf("Cannot let NULL client: Join lobby %s%n", lobby);
-                                     return null;
-                                 }
+            // Add new client to game.
+            IClientInfo client = getClient(packet.getSender());
+            if (client
+                    == null) {
+                System.out.printf("Cannot let NULL client: Join lobby %s%n", lobby);
+                return null;
+            }
 
-                                 lobby.getClients()
-                                         .add(packet.getSender());
-                                 client.setGame(lobby);
+            lobby.getClients()
+                    .add(packet.getSender());
+            client.setGame(lobby);
 
-                                 // Get all clients currently in the game.
-                                 PacketJoinLobby.PacketJoinLobbyData data = new PacketJoinLobby.PacketJoinLobbyData();
+            // Get all clients currently in the game.
+            PacketJoinLobby.PacketJoinLobbyData data = new PacketJoinLobby.PacketJoinLobbyData();
 
-                                 data.setLobbyName(lobby.getName());
-                                 data.setMap(lobby.getMap());
+            data.setLobbyName(lobby.getName());
+            data.setMap(lobby.getMap());
 
-                                 for (UUID clientId
-                                         : lobby.getClients()) {
-                                     IClientInfo c = getClient(clientId);
-                                     data.getMembers().put(c.getPublicId(), c.getUsername());
-                                 }
+            for (UUID clientId
+                    : lobby.getClients()) {
+                IClientInfo c = getClient(clientId);
+                data.getMembers().put(c.getPublicId(), c.getUsername());
+            }
 
-                                 // Notify other users that someone joined the lobby (excluding itself).
-                                 PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername(), null);
+            // Notify other users that someone joined the lobby (excluding itself).
+            PacketClientJoined p = new PacketClientJoined(client.getPublicId(), client.getUsername(), null);
 
-                                 p.setReceivers(lobby.getClients()
-                                                        .stream()
-                                                        .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
-                                 send(p);
+            p.setReceivers(lobby.getClients()
+                                   .stream()
+                                   .filter(id -> !id.equals(client.getPrivateId())).toArray(UUID[]::new));
+            send(p);
 
-                                 return data;
-                             }
-        );
+            return data;
+        });
 
         packets.registerFunc(PacketLobbyMembers.class, packet -> {
                                  // return all current members in the lobby
@@ -475,139 +457,134 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
         );
 
         packets.registerFunc(PacketGetKickInformation.class, packet -> {
-                                 ArrayList<String> peoples = new ArrayList<>();
+            ArrayList<String> peoples = new ArrayList<>();
 
-                                 System.out.println(
-                                         "sender:" + packet.getSender().toString());
-                                 for (UUID personId
-                                         : getGameFromClientId(packet.getSender()).getClients()) {//for all clients in this game
-                                     if (!personId.equals(packet.getSender()) && !getGameFromClientId(packet.getSender()).getClients().get(0).equals(personId)) {//if not sender and if not host == true
-                                         boolean hasVotedForCurrentPerson = false;
-                                         int amountOfVotesForCurrentPerson = 0;
-                                         int amountOfVotesNeededForKick = (int) Math.ceil((float) getGameFromClientId(packet.getSender()).getClients()
-                                                 .size() / 2);
+            System.out.println(
+                    "sender:" + packet.getSender().toString());
+            for (UUID personId
+                    : getGameFromClientId(packet.getSender()).getClients()) {//for all clients in this game
+                if (!personId.equals(packet.getSender()) && !getGameFromClientId(packet.getSender()).getClients().get(0).equals(personId)) {//if not sender and if not host == true
+                    boolean hasVotedForCurrentPerson = false;
+                    int amountOfVotesForCurrentPerson = 0;
+                    int amountOfVotesNeededForKick = (int) Math.ceil((float) getGameFromClientId(packet.getSender()).getClients()
+                            .size() / 2);
 
-                                         for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
-                                             if (voteCombination[0].equals(packet.getSender()) && voteCombination[1].equals(personId)) {
-                                                 hasVotedForCurrentPerson = true;
-                                                 break;
-                                             }
-                                         }
+                    for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
+                        if (voteCombination[0].equals(packet.getSender()) && voteCombination[1].equals(personId)) {
+                            hasVotedForCurrentPerson = true;
+                            break;
+                        }
+                    }
 
-                                         for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
-                                             if (voteCombination[1].equals(personId)) {
-                                                 amountOfVotesForCurrentPerson++;
-                                             }
-                                         }
+                    for (UUID[] voteCombination : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
+                        if (voteCombination[1].equals(personId)) {
+                            amountOfVotesForCurrentPerson++;
+                        }
+                    }
 
-                                         if (amountOfVotesForCurrentPerson >= amountOfVotesNeededForKick) {
-                                             PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Uitgestemd", null, getClient(personId).getPublicId());
-                                             this.send(packetKick);
-                                         } else {
-                                             peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String
-                                                     .valueOf(hasVotedForCurrentPerson + " " + personId));
-                                         }
-                                     }
-                                 }
+                    if (amountOfVotesForCurrentPerson >= amountOfVotesNeededForKick) {
+                        PacketKick packetKick = new PacketKick(PacketKick.KickReasonType.GAME, "Uitgestemd", null, getClient(personId).getPublicId());
+                        this.send(packetKick);
+                    } else {
+                        peoples.add(getClient(personId).getUsername() + " " + amountOfVotesForCurrentPerson + " " + amountOfVotesNeededForKick + " " + String
+                                .valueOf(hasVotedForCurrentPerson + " " + personId));
+                    }
+                }
+            }
 
-                                 return peoples;
-                             }
-        );
+            return peoples;
+        });
 
         packets.registerAction(PacketSetKickInformation.class, packet -> {
-                                   boolean hasVotedForSpecificPerson = false;
+            boolean hasVotedForSpecificPerson = false;
 
-                                   for (UUID[] voteCombination
-                                           : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
-                                       if (voteCombination[0] == packet.getSender() && voteCombination[1] == packet.getPersonToVoteFor()) {
-                                           hasVotedForSpecificPerson = true;
-                                           break;
-                                       }
-                                   }
+            for (UUID[] voteCombination
+                    : getGameFromClientId(packet.getSender()).getVotes()) {//for all votecombination in this game
+                if (voteCombination[0] == packet.getSender() && voteCombination[1] == packet.getPersonToVoteFor()) {
+                    hasVotedForSpecificPerson = true;
+                    break;
+                }
+            }
 
-                                   if (!hasVotedForSpecificPerson) {
-                                       getGameFromClientId(packet.getSender()).getVotes()
-                                               .add(new UUID[] {packet.getSender(), packet.getPersonToVoteFor()});
-                                   }
-                               }
-        );
+            if (!hasVotedForSpecificPerson) {
+                getGameFromClientId(packet.getSender()).getVotes()
+                        .add(new UUID[] {packet.getSender(), packet.getPersonToVoteFor()});
+            }
+        });
 
         packets.registerAction(PacketLobbySetDetails.class, packet -> {
-                                   Game game = getGameFromClientId(packet.getSender());
-                                   if (game
-                                           == null) {
-                                       return;
-                                   }
+            Game game = getGameFromClientId(packet.getSender());
+            if (game
+                    == null) {
+                return;
+            }
 
-                                   String newName = packet.getData().getName();
-                                   String newMap = packet.getData().getMap();
-                                   if (newMap
-                                           != null && !newMap.isEmpty()) {
-                                       game.setMap(newMap);
-                                   }
-                                   if (newName
-                                           != null && !newName.isEmpty()) {
-                                       game.setName(newName);
-                                   }
+            String newName = packet.getData().getName();
+            String newMap = packet.getData().getMap();
+            if (newMap
+                    != null && !newMap.isEmpty()) {
+                game.setMap(newMap);
+            }
+            if (newName
+                    != null && !newName.isEmpty()) {
+                game.setName(newName);
+            }
 
-                                   // Notify all connected clients (but host) that the game details have changed.
-                                   for (UUID uuid
-                                           : game.getClientsAsArray()) {
-                                       if (game.getHostId().equals(uuid)) {
-                                           continue;
-                                       }
+            // Notify all connected clients (but host) that the game details have changed.
+            for (UUID uuid
+                    : game.getClientsAsArray()) {
+                if (game.getHostId().equals(uuid)) {
+                    continue;
+                }
 
-                                       ClientInfo client = getClient(uuid);
-                                       try {
-                                           client.getRmi().setLobbyDetails(packet.getData());
-                                       } catch (RemoteException e) {
-                                           e.printStackTrace();
-                                       }
-                                   }
-                               }
-        );
+                ClientInfo client = getClient(uuid);
+                try {
+                    client.getRmi().setLobbyDetails(packet.getData());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         packets.registerFunc(PacketLobbyGetDetails.class, packet -> {
-                                 Game game = getGameFromClientId(packet.getSender());
-                                 if (game
-                                         == null) {
-                                     return null;
-                                 }
+            Game game = getGameFromClientId(packet.getSender());
+            if (game
+                    == null) {
+                return null;
+            }
 
-                                 PacketLobbySetDetails.Data data = new PacketLobbySetDetails.Data();
+            PacketLobbySetDetails.Data data = new PacketLobbySetDetails.Data();
 
-                                 data.setName(game.getName());
-                                 data.setMap(game.getMap());
+            data.setName(game.getName());
+            data.setMap(game.getMap());
 
-                                 return data;
-                             }
-        );
+            return data;
+        });
 
         packets.registerAction(PacketLaunchGame.class, packet -> {
-                                   Game game = getGameFromClientId(packet.getSender());
-                                   if (game
-                                           == null) {
-                                       System.out.println("Cannot launch game. The game was not found.");
-                                       return;
-                                   }
+            Game game = getGameFromClientId(packet.getSender());
+            if (game
+                    == null) {
+                System.out.println("Cannot launch game. The game was not found.");
+                return;
+            }
 
-                                   // Increase level.
-                                   game.setLevel(packet.getLevel() == -1 ? 1 : packet.getLevel());
+            // Increase level.
+            game.setLevel(packet.getLevel() == -1 ? 1 : packet.getLevel());
 
-                                   // Set the loading states of everyone to empty and notify everyone to start loading the map.
-                                   for (UUID uuid
-                                           : game.getClients()) {
-                                       ClientInfo client = getClient(uuid);
-                                       client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
+            // Set the loading states of everyone to empty and notify everyone to start loading the map.
+            for (UUID uuid
+                    : game.getClients()) {
+                ClientInfo client = getClient(uuid);
+                client.setLoadStatus(PacketSetLoadStatus.LoadStatus.Empty);
 
-                                       try {
-                                           client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size(), game.getLevel(), packet.getScore());
-                                       } catch (RemoteException e) {
-                                           e.printStackTrace();
-                                       }
-                                   }
-                               }
-        );
+                try {
+                    client.getRmi().loadGame(game.getMap(), game.getHostId().equals(uuid), game.getClients().size(), game.getLevel(), packet.getScore());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         packets.registerAction(PacketCreateGameObject.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
@@ -622,28 +599,6 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             game.getLoadQueue()
                     .add(packet);
         });
-
-        packets.registerAction(PacketSetAIPath.class, packet -> {
-                                   if (packet.getSender()
-                                           == null) {
-                                       return;
-                                   }
-                                   ClientInfo client = getClient(packet.getSender());
-                                   if (client
-                                           != null) {
-                                       Game game = client.getGame();
-                                       if (game != null) {
-                                           game.getClientsWithoutHost().map(this::getClient).forEach(c -> {
-                                               try {
-                                                   c.getRmi().setAIPath(null, packet.getObjId(), packet.getPosition(), packet.getPath());
-                                               } catch (RemoteException ignored) {
-                                                   ignored.printStackTrace();
-                                               }
-                                           });
-                                       }
-                                   }
-                               }
-        );
 
         packets.registerAction(PacketCreateItem.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
@@ -675,218 +630,167 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
             }
         });
 
-        packets.registerAction(PacketObjectCollision.class, packet -> {
-                                   if (packet.getSender()
-                                           != null) {
-                                       ClientInfo client = getClient(packet.getSender());
-                                       if (client != null) {
-                                           Game game = client.getGame();
-                                           if (game != null) {
-                                               game.getClientsExclude(packet.getSender()).forEach(id -> {
-                                                   ClientInfo c = getClient(id);
-                                                   if (c != null) {
-                                                       try {
-                                                           c.getRmi().objectCollision(null, packet.getCollider(), packet.getTarget());
-                                                       } catch (RemoteException e) {
-                                                           e.printStackTrace();
-                                                       }
-                                                   }
-                                               });
-                                           }
-                                       }
-                                   }
-                               }
-        );
-
         packets.registerAction(PacketScoreChanged.class, packet -> {
-                                   Game game = getGameFromClientId(packet.getSender());
-                                   if (game
-                                           == null) {
-                                       System.out.println("Could not change score since game is not active");
-                                       return;
-                                   }
+            Game game = getGameFromClientId(packet.getSender());
+            if (game
+                    == null) {
+                System.out.println("Could not change score since game is not active");
+                return;
+            }
 
-                                   //Calculate the score based on the level of the game. For every level above 1, add 5% more score.
-                                   int score = packet.getChange();
-                                   if (game.getLevel() > 1) {
-                                       double factor = Math.pow(1.05, game.getLevel() - 1);
-                                       score *= factor;
-                                   }
+            //Calculate the score based on the level of the game. For every level above 1, add 5% more score.
+            int score = packet.getChange();
+            if (game.getLevel() > 1) {
+                double factor = Math.pow(1.05, game.getLevel() - 1);
+                score *= factor;
+            }
 
-                                   IProtocolClient[] receivers = game.getClients()
-                                           .stream()
-                                           .map(id -> getClient(id).getRmi())
-                                           .toArray(IProtocolClient[]::new);
+            IProtocolClient[] receivers = game.getClients()
+                    .stream()
+                    .map(id -> getClient(id).getRmi())
+                    .toArray(IProtocolClient[]::new);
 
-                                   for (IProtocolClient receiver : receivers) {
-                                       try {
-                                           receiver.changeScore(null, packet.getManipulationType(), score);
-                                       } catch (RemoteException e) {
-                                           e.printStackTrace();
-                                       }
-                                   }
-                               }
-        );
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.changeScore(null, packet.getManipulationType(), score);
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         packets.registerAction(PacketSetLoadStatus.class, packet -> {
-                                   ClientInfo client = getClient(packet.getSender());
+            ClientInfo client = getClient(packet.getSender());
 
-                                   client.setLoadStatus(packet.getStatus());
+            client.setLoadStatus(packet.getStatus());
 
-                                   // Find game with the player that sended the new load status.
-                                   Game game = getGameFromClientId(packet.getSender());
-                                   if (game
-                                           == null) {
-                                       System.out.println(String.format("Error: Client '%s' tried to load a game while not in a lobby.", packet
-                                               .getSender()));
-                                       return;
-                                   }
+            // Find game with the player that sended the new load status.
+            Game game = getGameFromClientId(packet.getSender());
+            if (game
+                    == null) {
+                System.out.println(String.format("Error: Client '%s' tried to load a game while not in a lobby.", packet
+                        .getSender()));
+                return;
+            }
 
-                                   if (game.getClients()
-                                           .stream()
-                                           .map(this::getClient)
-                                           .allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
+            if (game.getClients()
+                    .stream()
+                    .map(this::getClient)
+                    .allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded)) {
 
-                                       // Launch the game (everyone is done loading).
-                                       game.getClients().stream().map(id -> getClient(id).getRmi()).forEach(rmi -> {
-                                           try {
-                                               game.setInGame(true);
-                                               rmi.launchGame(true);
-                                           } catch (RemoteException e) {
-                                               e.printStackTrace();
-                                           }
-                                       });
+                // Launch the game (everyone is done loading).
+                game.getClients().stream().map(id -> getClient(id).getRmi()).forEach(rmi -> {
+                    try {
+                        game.setInGame(true);
+                        rmi.launchGame(true);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                });
 
-                                   } else if (game.getClients()
-                                           .stream()
-                                           .map(this::getClient)
-                                           .filter(info -> !info.getPrivateId().equals(game.getHostId()))
-                                           .allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded) && getClient(game.getHostId()).getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded) {
-                                       // Send all packets that were queued from the host to all the other clients (so, excluding the host).
-                                       int objectsToSend = game.getLoadQueue().size();
+            } else if (game.getClients()
+                    .stream()
+                    .map(this::getClient)
+                    .filter(info -> !info.getPrivateId().equals(game.getHostId()))
+                    .allMatch(info -> info.getLoadStatus() == PacketSetLoadStatus.LoadStatus.MapLoaded) && getClient(game.getHostId()).getLoadStatus() == PacketSetLoadStatus.LoadStatus.ObjectsLoaded) {
+                // Send all packets that were queued from the host to all the other clients (so, excluding the host).
+                int objectsToSend = game.getLoadQueue().size();
 
-                                       // Get all connected clients (excluding the host).
-                                       IProtocolClient[] receivers = game.getClients()
-                                               .stream()
-                                               .filter(c -> !c.equals(game.getHostId()))
-                                               .map(id -> getClient(id).getRmi())
-                                               .toArray(IProtocolClient[]::new);
+                // Get all connected clients (excluding the host).
+                IProtocolClient[] receivers = game.getClients()
+                        .stream()
+                        .filter(c -> !c.equals(game.getHostId()))
+                        .map(id -> getClient(id).getRmi())
+                        .toArray(IProtocolClient[]::new);
 
-                                       // Tell clients that they should announce when they reached the right amount of objects created.
-                                       for (IProtocolClient receiver : receivers) {
-                                           try {
-                                               receiver.requestCompleted("game_load_objects", objectsToSend);
-                                           } catch (RemoteException e) {
-                                               e.printStackTrace();
-                                           }
-                                       }
+                // Tell clients that they should announce when they reached the right amount of objects created.
+                for (IProtocolClient receiver : receivers) {
+                    try {
+                        receiver.requestCompleted("game_load_objects", objectsToSend);
+                    } catch (RemoteException e) {
+                        e.printStackTrace();
+                    }
+                }
 
-                                       // Unload all queued createObject packets to all connected clients of the lobby.
-                                       while (!game.getLoadQueue().isEmpty()) {
-                                           // Remove one packet from queue.
-                                           Packet p = game.getLoadQueue().remove();
+                // Unload all queued createObject packets to all connected clients of the lobby.
+                while (!game.getLoadQueue().isEmpty()) {
+                    // Remove one packet from queue.
+                    Packet p = game.getLoadQueue().remove();
 
-                                           if (p instanceof PacketCreateGameObject) {
-                                               PacketCreateGameObject pObject = (PacketCreateGameObject) p;
-                                               // Send it to all receivers.
-                                               for (IProtocolClient receiver : receivers) {
-                                                   try {
-                                                       if (pObject.getTypeName().equalsIgnoreCase("pactale")) {
-                                                           receiver.createObject(null, pObject.getTypeName(), pObject.getPosition(), pObject
-                                                                   .getDirection(), pObject
-                                                                                         .getSpeed(), pObject.getId(), Color.rgba8888(Game.SELECTABLE_COLORS[pObject.getIndex()]), pObject.getIndex());
-                                                       } else {
-                                                           receiver.createObject(null, pObject.getTypeName(), pObject.getPosition(), pObject
-                                                                   .getDirection(), pObject
-                                                                                         .getSpeed(), pObject.getId(), pObject.getColor(), pObject.getIndex());
-                                                       }
-                                                   } catch (RemoteException e) {
-                                                       e.printStackTrace();
-                                                   }
-                                               }
-                                           } else if (p instanceof PacketCreateItem) {
-                                               PacketCreateItem pItem = (PacketCreateItem) p;
-                                               // Send it to all receivers.
-                                               for (IProtocolClient receiver : receivers) {
-                                                   try {
-                                                       receiver.createItem(null, pItem.getObjId(), pItem.getType(), pItem.getPosition());
-                                                   } catch (RemoteException e) {
-                                                       e.printStackTrace();
-                                                   }
-                                               }
-                                           }
-                                       }
-                                   }
-                               }
-        );
+                    if (p instanceof PacketCreateGameObject) {
+                        PacketCreateGameObject pObject = (PacketCreateGameObject) p;
+                        // Send it to all receivers.
+                        for (IProtocolClient receiver : receivers) {
+                            try {
+                                if (pObject.getTypeName().equalsIgnoreCase("pactale")) {
+                                    receiver.createObject(null, pObject.getTypeName(), pObject.getPosition(), pObject
+                                            .getDirection(), pObject
+                                                                  .getSpeed(), pObject.getId(), Color.rgba8888(Game.SELECTABLE_COLORS[pObject.getIndex()]), pObject.getIndex());
+                                } else {
+                                    receiver.createObject(null, pObject.getTypeName(), pObject.getPosition(), pObject
+                                            .getDirection(), pObject
+                                                                  .getSpeed(), pObject.getId(), pObject.getColor(), pObject.getIndex());
+                                }
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    } else if (p instanceof PacketCreateItem) {
+                        PacketCreateItem pItem = (PacketCreateItem) p;
+                        // Send it to all receivers.
+                        for (IProtocolClient receiver : receivers) {
+                            try {
+                                receiver.createItem(null, pItem.getObjId(), pItem.getType(), pItem.getPosition());
+                            } catch (RemoteException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        });
 
         packets.registerAction(PacketShootProjectile.class, packet -> {
-                                   Game game = getGameFromClientId(packet.getSender());
-                                   IProtocolClient[] receivers = game.getClients()
-                                           .stream()
-                                           .filter(c -> !c.equals(packet.getSender()))
-                                           .map(id -> getClient(id).getRmi())
-                                           .toArray(IProtocolClient[]::new);
+            Game game = getGameFromClientId(packet.getSender());
+            IProtocolClient[] receivers = game.getClients()
+                    .stream()
+                    .filter(c -> !c.equals(packet.getSender()))
+                    .map(id -> getClient(id).getRmi())
+                    .toArray(IProtocolClient[]::new);
 
-                                   for (IProtocolClient receiver : receivers) {
-                                       try {
-                                           receiver.shootProjectile(packet.getExactPosition(), packet.getDirection(), getClient(packet.getSender()).getPublicId());
-                                       } catch (RemoteException e) {
-                                           e.printStackTrace();
-                                       }
-                                   }
-                               }
-        );
-
-        packets.registerAction(PacketPlayerSetDirection.class, packet -> {
-                                   Game game = getGameFromClientId(packet.getSender());
-                                   if (game
-                                           == null) {
-                                       System.out.println("Could not set direction for client: " + packet.getSender());
-                                       return;
-                                   }
-
-                                   IProtocolClient[] receivers = game.getClients()
-                                           .stream()
-                                           .filter(c -> !c.equals(packet.getSender()))
-                                           .map(id -> getClient(id).getRmi())
-                                           .toArray(IProtocolClient[]::new);
-
-                                   for (IProtocolClient receiver : receivers) {
-                                       try {
-                                           receiver.playerSetDirection(getClient(packet.getSender()).getPublicId(), packet.getDirection());
-                                       } catch (RemoteException e) {
-                                           e.printStackTrace();
-                                       }
-                                   }
-                               }
-        );
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.shootProjectile(packet.getExactPosition(), packet.getDirection(), getClient(packet.getSender()).getPublicId());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         packets.registerAction(PacketObjectMove.class, packet -> {
-                                   Game game = getGameFromClientId(packet.getSender());
-                                   if (game
-                                           == null) {
-                                       System.out.println("Could not set direction for client: " + packet.getSender());
-                                       return;
-                                   }
+            Game game = getGameFromClientId(packet.getSender());
+            if (game
+                    == null) {
+                System.out.println("Could not set direction for client: " + packet.getSender());
+                return;
+            }
 
-                                   IProtocolClient[] receivers = game.getClients()
-                                           .stream()
-                                           .filter(c -> !c.equals(packet.getSender()))
-                                           .map(id -> getClient(id).getRmi())
-                                           .toArray(IProtocolClient[]::new);
+            IProtocolClient[] receivers = game.getClients()
+                    .stream()
+                    .filter(c -> !c.equals(packet.getSender()))
+                    .map(id -> getClient(id).getRmi())
+                    .toArray(IProtocolClient[]::new);
 
-                                   for (IProtocolClient receiver : receivers) {
-                                       try {
-                                           receiver.objectSetDirection(packet.getSender(), packet.getObject(), packet.getFrom(), packet.getTo());
-                                       } catch (RemoteException e) {
-                                           e.printStackTrace();
-                                       }
-                                   }
-                               }
-        );
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.objectSetDirection(packet.getSender(), packet.getObject(), packet.getFrom(), packet.getTo());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
-        packets.registerAction(PacketPlayerSetPosition.class, packet -> {
+        packets.registerAction(PacketPlayerDied.class, packet -> {
             Game game = getGameFromClientId(packet.getSender());
             if (game
                     == null) {
@@ -900,104 +804,73 @@ public class Server extends ateamproject.kezuino.com.github.network.Server<Clien
                     .map(id -> getClient(id).getRmi())
                     .toArray(IProtocolClient[]::new);
 
-            executor.submit(
-                    () -> {
-                        for (IProtocolClient receiver : receivers) {
-                            try {
-                                receiver.playerSetPosition(getClient(packet.getSender()).getPublicId(), packet.getPosition());
-                            } catch (RemoteException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    }
-            );
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.playerDied(getClient(packet.getSender()).getPublicId());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
         });
 
-        packets.registerAction(PacketPlayerDied.class, packet -> {
-                                   Game game = getGameFromClientId(packet.getSender());
-                                   if (game
-                                           == null) {
-                                       System.out.println("Could not set position for client: " + packet.getSender());
-                                       return;
-                                   }
-
-                                   IProtocolClient[] receivers = game.getClients()
-                                           .stream()
-                                           .filter(c -> !c.equals(packet.getSender()))
-                                           .map(id -> getClient(id).getRmi())
-                                           .toArray(IProtocolClient[]::new);
-
-                                   for (IProtocolClient receiver : receivers) {
-                                       try {
-                                           receiver.playerDied(getClient(packet.getSender()).getPublicId());
-                                       } catch (RemoteException e) {
-                                           e.printStackTrace();
-                                       }
-                                   }
-                               }
-        );
-
         packets.registerFunc(PacketGetGameClients.class, packet -> {
-                                 Game game = getGameFromClientId(packet.getSender());
-                                 if (game
-                                         == null) {
-                                     System.out.println("Game was not found for the sender.");
-                                     return null;
-                                 }
-                                 List<PacketGetGameClients.Data> result = new ArrayList<>();
-                                 int num = 0;
-                                 for (UUID uuid
-                                         : game.getClients()) {
-                                     result.add(new PacketGetGameClients.Data(num++, getClient(uuid).getPublicId(), game.getHostId().equals(uuid)));
-                                 }
-                                 return result;
-                             }
-        );
+            Game game = getGameFromClientId(packet.getSender());
+            if (game
+                    == null) {
+                System.out.println("Game was not found for the sender.");
+                return null;
+            }
+            List<PacketGetGameClients.Data> result = new ArrayList<>();
+            int num = 0;
+            for (UUID uuid
+                    : game.getClients()) {
+                result.add(new PacketGetGameClients.Data(num++, getClient(uuid).getPublicId(), game.getHostId().equals(uuid)));
+            }
+            return result;
+        });
 
         packets.registerAction(PacketBalloonMessage.class, packet -> {
-                                   if (packet.getSender()
-                                           == null) {
-                                       throw new IllegalStateException("Sender must not be null.");
-                                   }
+            if (packet.getSender()
+                    == null) {
+                throw new IllegalStateException("Sender must not be null.");
+            }
 
-                                   Game game = getGameFromClientId(packet.getSender());
-                                   if (game
-                                           == null) {
-                                       System.out.println("Game was not found for sender.");
-                                       return;
-                                   }
+            Game game = getGameFromClientId(packet.getSender());
+            if (game
+                    == null) {
+                System.out.println("Game was not found for sender.");
+                return;
+            }
 
-                                   IProtocolClient[] receivers = game.getClients()
-                                           .stream()
-                                           .filter(c -> !c.equals(packet.getSender()))
-                                           .map(id -> getClient(id).getRmi())
-                                           .toArray(IProtocolClient[]::new);
+            IProtocolClient[] receivers = game.getClients()
+                    .stream()
+                    .filter(c -> !c.equals(packet.getSender()))
+                    .map(id -> getClient(id).getRmi())
+                    .toArray(IProtocolClient[]::new);
 
-                                   for (IProtocolClient receiver : receivers) {
-                                       try {
-                                           receiver.balloonMessage(null, packet.getTypeName(), packet.getPosition(), packet.getFollowTarget());
-                                       } catch (RemoteException e) {
-                                           e.printStackTrace();
-                                       }
-                                   }
-                               }
-        );
+            for (IProtocolClient receiver : receivers) {
+                try {
+                    receiver.balloonMessage(null, packet.getTypeName(), packet.getPosition(), packet.getFollowTarget());
+                } catch (RemoteException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         packets.registerFunc(PacketGetHighscores.class, packet -> {
-                                 LinkedHashMap<String, Integer> highscores = new LinkedHashMap<>();
+            LinkedHashMap<String, Integer> highscores = new LinkedHashMap<>();
 
-                                 ResultSet result = Database.getInstance().query("SELECT Name,Score FROM clan ORDER BY Score DESC LIMIT 10");
+            ResultSet result = Database.getInstance().query("SELECT Name,Score FROM clan ORDER BY Score DESC LIMIT 10");
 
-                                 try {
-                                     while (result.next()) {
-                                         highscores.put(result.getString(1), result.getInt(2));
-                                     }
-                                 } catch (SQLException ex) {
-                                     Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
-                                 }
-                                 return highscores;
-                             }
-        );
+            try {
+                while (result.next()) {
+                    highscores.put(result.getString(1), result.getInt(2));
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(Server.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return highscores;
+        });
     }
 
     @Override

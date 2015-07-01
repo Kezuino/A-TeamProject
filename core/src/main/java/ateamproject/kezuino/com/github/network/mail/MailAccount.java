@@ -8,10 +8,6 @@ package ateamproject.kezuino.com.github.network.mail;
 import javax.mail.Session;
 import javax.mail.Transport;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  *

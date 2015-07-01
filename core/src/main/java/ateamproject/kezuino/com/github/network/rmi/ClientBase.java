@@ -49,11 +49,6 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void clientLeft(UUID clientThatLeft, String username) throws RemoteException {
-        client.send(new PacketClientLeft(clientThatLeft, username, null));
-    }
-
-    @Override
     public void loadGame(String mapName, boolean isMaster, int playerLimit, int level) throws RemoteException {
         client.send(new PacketLoadGame(mapName, isMaster, playerLimit, level, null));
     }
@@ -129,20 +124,8 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
     }
 
     @Override
-    public void playerSetDirection(UUID sender, Direction direction) throws RemoteException {
-        PacketPlayerSetDirection packet = new PacketPlayerSetDirection(direction, sender);
-        client.send(packet);
-    }
-
-    @Override
     public void objectSetDirection(UUID sender, UUID object, Vector2 from, Vector2 to) throws RemoteException {
         PacketObjectMove packet = new PacketObjectMove(from, to, object, sender);
-        client.send(packet);
-    }
-
-    @Override
-    public void playerSetPosition(UUID sender, Vector2 position) throws RemoteException {
-        PacketPlayerSetPosition packet = new PacketPlayerSetPosition(position, sender);
         client.send(packet);
     }
 
@@ -157,20 +140,6 @@ public class ClientBase extends UnicastRemoteObject implements IProtocolClient {
         PacketShootProjectile packet = new PacketShootProjectile(pos, dir, sender);
         client.send(packet);
     }
-
-    @Override
-    public void setAIPath(UUID sender, UUID objectId, Vector2 position, Collection<Vector2> nodes) throws RemoteException {
-        PacketSetAIPath packet = new PacketSetAIPath(objectId,
-                                                     nodes, position, sender, new UUID[] {null});
-        client.send(packet);
-    }
-
-    @Override
-    public void objectCollision(UUID sender, UUID collider, UUID target) throws RemoteException {
-        PacketObjectCollision packet = new PacketObjectCollision(collider, target, sender, new UUID[] {null});
-        client.send(packet);
-    }
-
 
     @Override
     public Map<String, Integer> getHighscores(UUID sender) throws RemoteException {

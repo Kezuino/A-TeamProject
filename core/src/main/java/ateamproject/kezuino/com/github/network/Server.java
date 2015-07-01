@@ -6,10 +6,6 @@ import ateamproject.kezuino.com.github.admin.input.command.IAdministrable;
 import ateamproject.kezuino.com.github.network.packet.IPacketSender;
 import ateamproject.kezuino.com.github.network.packet.Packet;
 import ateamproject.kezuino.com.github.network.packet.PacketManager;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketKick;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketScreenUpdate;
-import ateamproject.kezuino.com.github.render.screens.LobbyListScreen;
-import com.badlogic.gdx.Gdx;
 
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -17,7 +13,6 @@ import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.stream.Stream;
 
 public abstract class Server<TClient extends IClientInfo> implements INetworkComponent, IPacketSender, IAdministrable<Server> {
     /**

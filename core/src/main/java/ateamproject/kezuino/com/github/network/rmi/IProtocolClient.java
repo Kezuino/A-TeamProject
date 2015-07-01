@@ -39,15 +39,6 @@ public interface IProtocolClient extends IProtocol {
      */
     void clientJoined(UUID id, String username) throws RemoteException;
 
-    /**
-     * Notifies the {@link IProtocolClient} that a {@link IProtocolClient} has
-     * left the session.
-     *
-     * @param clientThatLeft Public id that left.
-     * @param username Username of the {@link IProtocolClient} that left.
-     */
-    void clientLeft(UUID clientThatLeft, String username) throws RemoteException;
-
     void screenRefresh(Class<?> refreshableScreen) throws RemoteException;
 
     /**

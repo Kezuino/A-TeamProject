@@ -294,18 +294,6 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
         PacketScreenUpdate tmp = new PacketScreenUpdate(GameScreen.class, null, this.server.getClients().stream().map(info -> info.getPublicId()).toArray(UUID[]::new));
         server.send(tmp);
     }
-
-    @Override
-    public void playerSetDirection(UUID sender, Direction direction) throws RemoteException {
-        PacketPlayerSetDirection packet = new PacketPlayerSetDirection(direction, sender);
-        server.send(packet);
-    }
-
-    @Override
-    public void playerSetPosition(UUID sender, Vector2 position) throws RemoteException {
-        PacketPlayerSetPosition packet = new PacketPlayerSetPosition(position, sender);
-        server.send(packet);
-    }
     
     @Override
     public void playerDied(UUID sender) throws RemoteException {
@@ -322,18 +310,6 @@ public class ServerBase extends UnicastRemoteObject implements IProtocolServer {
     @Override
     public void shootProjectile(Vector2 pos, Direction dir,UUID sender) throws RemoteException {
         PacketShootProjectile packet = new PacketShootProjectile(pos,dir,sender);
-        server.send(packet);
-    }
-;
-    @Override
-    public void setAIPath(UUID sender, UUID objectId, Vector2 position, Collection<Vector2> nodes) throws RemoteException {
-        PacketSetAIPath packet = new PacketSetAIPath(objectId, nodes, position, sender, new UUID[] { null });
-        server.send(packet);
-    }
-
-    @Override
-    public void objectCollision(UUID sender, UUID collider, UUID target) throws RemoteException {
-        PacketObjectCollision packet = new PacketObjectCollision(collider, target, sender);
         server.send(packet);
     }
 

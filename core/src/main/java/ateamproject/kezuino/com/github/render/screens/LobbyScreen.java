@@ -203,15 +203,6 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen {
         this.reloadMembers();
     }
 
-    public void removeMember(UUID client) {
-        UUID i = this.members.keySet().stream().filter(uuid -> uuid.equals(client)).findFirst().orElse(null);
-
-        if (i != null) {
-            this.members.remove(i);
-            this.reloadMembers();
-        }
-    }
-
     @Override
     public void refresh() {
         reloadMembers();

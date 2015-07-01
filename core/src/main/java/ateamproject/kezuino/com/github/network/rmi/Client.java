@@ -93,25 +93,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
             this.rmi.setServer((IProtocolServer) Naming.lookup(String.format("//%s/%s", rmiHost, rmiObject)));
 
-            updateTimer = new Timer();
-            updateTimer.scheduleTask(new Timer.Task() {
-                @Override
-                public void run() {
-                    // Update position constantly when in-game.
-                    if (BaseScreen.getSession() != null && game.getScreen() instanceof GameScreen) {
-                        try {
-                            /*rmi.getServer()
-                                    .playerSetPosition(getId(), BaseScreen.getSession()
-                                            .getPlayer(getPublicId())
-                                            .getExactPosition());*/
-                        } catch (Exception ex) {
-                            System.out.println("Error: Cannot set position, possibly not in game or offline.");
-                        }
-                    }
-                }
-            }, 0, 1);
-            updateTimer.start();
-
             // Start updating.
             if (updateThread != null) {
                 updateThread.interrupt();
@@ -467,15 +448,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
         });
 
-        packets.registerAction(PacketClientLeft.class, p -> {
-            if (game.getScreen() instanceof LobbyScreen) {
-                LobbyScreen t = (LobbyScreen) game.getScreen();
-                t.removeMember(p.getClientThatLeft());
-            }
-
-            System.out.println("Client left: " + p.getUsername());
-        });
-
         packets.registerFunc(PacketLobbyMembers.class, packet -> {
             try {
                 // return all current members in the lobby
@@ -579,28 +551,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
             if (session.getObjectsToLoad() == session.getObjectsLoaded()) {
                 send(new PacketSetLoadStatus(PacketSetLoadStatus.LoadStatus.ObjectsLoaded, null));
-            }
-        });
-
-        packets.registerAction(PacketSetAIPath.class, packet -> {
-            if (packet.getSender() != null) {
-                try {
-                    getRmi().getServer().setAIPath(packet.getSender(), packet.getObjId(), packet.getPosition(), packet.getPath());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                // Server sended this.
-                Optional.of(BaseScreen.getSession().findObject(packet.getObjId())).ifPresent(obj -> {
-                    if (!(obj instanceof Enemy)) {
-                        return;
-                    }
-                    Enemy enemy = (Enemy) obj;
-                    Gdx.app.postRunnable(() -> {
-                        enemy.setExactPosition(packet.getPosition());
-                        enemy.setPath(packet.getPath());
-                    });
-                });
             }
         });
 
@@ -753,23 +703,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
         });
 
-        packets.registerAction(PacketPlayerSetDirection.class, packet -> {
-            if (packet.getSender() != null && packet.getSender().equals(getId())) {
-                try {
-                    getRmi().getServer().playerSetDirection(packet.getSender(), packet.getDirection());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                // Server sended this.
-                Pactale player = BaseScreen.getSession().getPlayer(packet.getSender());
-                if (player != null) {
-                    player.setDirection(packet.getDirection());
-                }
-            }
-        });
-        
-        
         packets.registerAction(PacketObjectMove.class, packet -> {
             if (packet.getSender() != null && packet.getSender().equals(getId())) {
                 try {
@@ -787,20 +720,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             }
         });
 
-        packets.registerAction(PacketPlayerSetPosition.class, packet -> {
-            if (packet.getSender() != null && packet.getSender().equals(getId())) {
-                try {
-                    getRmi().getServer().playerSetPosition(packet.getSender(), packet.getPosition());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
-                }
-            } else {
-                // Server sended this.
-                BaseScreen.getSession().getPlayer(packet.getSender()).setExactPosition(packet.getPosition());
-            }
-        });
-        
-        
         packets.registerAction(PacketPlayerDied.class, packet -> {
             if (packet.getSender() != null && packet.getSender().equals(getId())) {
                 try {
@@ -854,23 +773,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 if ((foundItem = BaseScreen.getSession().findItem(packet.getItemId())) != null) {
                     foundItem.activate(BaseScreen.getSession().getPlayer(packet.getPlayer()));
                     foundItem.getNode().removeItem();
-                }
-            }
-        });
-
-        packets.registerAction(PacketObjectCollision.class, packet -> {
-            if (packet.getSender() == null) {
-                GameObject collider = BaseScreen.getSession().findObject(packet.getCollider());
-                GameObject target = BaseScreen.getSession().findObject(packet.getTarget());
-                if (collider == null || target == null) {
-                    return;
-                }
-                Gdx.app.postRunnable(() -> collider.collisionWithGameObject(target));
-            } else {
-                try {
-                    getRmi().getServer().objectCollision(packet.getSender(), packet.getCollider(), packet.getTarget());
-                } catch (RemoteException e) {
-                    e.printStackTrace();
                 }
             }
         });
