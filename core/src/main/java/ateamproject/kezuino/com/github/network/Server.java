@@ -124,9 +124,9 @@ public abstract class Server<TClient extends IClientInfo> implements INetworkCom
     public void send(Packet packet) {
         if (!packet.getClass().getSimpleName().contains("Heartbeat")) {
             if (packet.getSender() == null) {
-                //System.out.println("NET: Outgoing: " + packet);
+                System.out.println("NET: Outgoing: " + packet);
             } else {
-                //System.out.println("NET: Incoming: " + packet);
+                System.out.println("NET: Incoming: " + packet);
             }
         }
 
