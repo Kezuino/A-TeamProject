@@ -31,7 +31,7 @@ public class GameUIRenderer implements IRenderer {
         font = new BitmapFont(Gdx.files.internal("fonts/credits.fnt"), Gdx.files.internal("fonts/credits_0.png"), false);
         font.setColor(Color.WHITE);
         
-        gold = new TextureRegion(Assets.getTexture("smallObject.png"));
+        gold = new TextureRegion(Assets.getTexture("smallobject.png"));
 
         this.map = map;
         this.session = map.getSession();

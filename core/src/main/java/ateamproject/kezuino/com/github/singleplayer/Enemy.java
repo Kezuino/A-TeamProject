@@ -187,9 +187,6 @@ public class Enemy extends GameObject {
         if (this.edible) {
             float secondsFromStart = (TimeUtils.nanoTime() - this.edibleStartTime) / 1000000000.0f;
 
-            System.out.println(secondsFromStart + " // " + this.edibleTime);
-            
-            
             if (secondsFromStart >= this.edibleTime) {
                 this.edible = false;
                 this.setColor(this.previousColor);
