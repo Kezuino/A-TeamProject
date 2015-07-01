@@ -16,7 +16,6 @@ import ateamproject.kezuino.com.github.utility.game.balloons.BalloonMessage;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
@@ -39,7 +38,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     private static ateamproject.kezuino.com.github.network.rmi.Client instance;
     protected ClientBase rmi;
     protected Timer updateTimer;
-    private String skin = "Skin1";
 
     public boolean isRunning() {
         return updateTimer != null;
@@ -74,14 +72,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     public ClientBase getRmi() {
         return rmi;
-    }
-
-    public String getSkin() {
-        return this.skin;
-    }
-
-    public void setSkin(String skin) {
-        this.skin = skin;
     }
 
     @Override
@@ -156,8 +146,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
     @Override
     public void close() {
-        updateTimer.stop();
-        updateTimer.clear();
+        if (updateTimer != null) {
+            updateTimer.stop();
+            updateTimer.clear();
+        }
         // Required for isRunning() to work.
         updateTimer = null;
 
@@ -166,8 +158,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         }
 
         try {
-            this.rmi.getServer()
-                    .kickClient(this.getId(), null, PacketKick.KickReasonType.QUIT, "Client disconnected.");
+            if (isRunning()) {
+                this.rmi.getServer()
+                        .kickClient(this.getId(), null, PacketKick.KickReasonType.QUIT, "Client disconnected.");
+            }
         } catch (RemoteException e) {
             e.printStackTrace();
         } finally {
@@ -215,7 +209,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             PacketLoginAuthenticate.ReturnData data = null;
             try {
                 data = getRmi().getServer().login(packet.getEmailAddress(), packet.getPassword(), getRmi());
-            } catch (RemoteException e) {
+            } catch (Exception e) {
                 data = new PacketLoginAuthenticate.ReturnData(null, null, null, null, "Server is niet online.", false);
             }
 

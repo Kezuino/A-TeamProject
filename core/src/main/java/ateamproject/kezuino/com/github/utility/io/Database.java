@@ -2,13 +2,19 @@ package ateamproject.kezuino.com.github.utility.io;
 
 import ateamproject.kezuino.com.github.render.screens.ClanManagementScreen;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.sql.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Database {
 
-    private static final Database instance = new Database("jdbc:mysql://192.168.1.101:3306/pactales", "root", "p@2015");
+    private static final Database instance = Database.from(new File("db.pconf"));
     /**
      * {@link Connection} used for executing queries on the database.
      */
@@ -34,6 +40,17 @@ public class Database {
 
     public static Database getInstance() {
         return instance;
+    }
+
+    public static Database from(File file) {
+        try {
+            List<String> lines = Files.lines(file.toPath()).collect(Collectors.toList());
+            if (lines.size() >= 3) {
+                return new Database(String.format("jdbc:mysql://%s/pactales", lines.get(0)), lines.get(1), lines.get(2));
+            }
+        } catch (IOException ignored) {
+        }
+        return new Database("jdbc:mysql://localhost:3306/pactales", "root", "");
     }
 
     /**

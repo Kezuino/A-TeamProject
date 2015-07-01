@@ -9,7 +9,7 @@ import com.badlogic.gdx.Gdx;
 public class PactaleGame extends Game {
     @Override
     public void create() {
-        Assets.create();
+        Assets.setSkin(Gdx.app.getPreferences("user").getString("skin"), true, null);
         this.setScreen(new LoginScreen(this));
     }
 
@@ -20,6 +20,10 @@ public class PactaleGame extends Game {
 
     @Override
     public void dispose() {
+        Gdx.app.debug("APP", "Saving settings..");
+        Gdx.app.getPreferences("user").flush();
+        Gdx.app.debug("APP", "Settings saved.");
+
         Gdx.app.debug("APP", "Game is closing..");
         Client.getInstance().stop();
         Gdx.app.debug("APP", "Network client stopped.");

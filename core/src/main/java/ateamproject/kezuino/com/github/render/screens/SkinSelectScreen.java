@@ -5,18 +5,14 @@
  */
 package ateamproject.kezuino.com.github.render.screens;
 
-import ateamproject.kezuino.com.github.network.packet.packets.PacketGetClans;
-import ateamproject.kezuino.com.github.network.packet.packets.PacketHighScore;
-import ateamproject.kezuino.com.github.network.rmi.Client;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.assets.AssetManager;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.Touchable;
-import com.badlogic.gdx.scenes.scene2d.ui.Dialog;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import java.util.ArrayList;
+
+import java.nio.file.Path;
 
 /**
  * @author David
@@ -25,19 +21,16 @@ public class SkinSelectScreen extends BaseScreen {
 
     public SkinSelectScreen(Game game) {
         super(game);
-        String[] Skins = Assets.getSkins();
         float x = stage.getWidth() / 2 - 300 / 2;
         float y = stage.getHeight() - 100;
 
-        for (String SkinString : Skins) {
-
-            TextButton tbChangeLook = new TextButton(SkinString, skin);
+        for (Path path : Assets.getSkins()) {
+            TextButton tbChangeLook = new TextButton(path.getFileName().toString(), skin);
             tbChangeLook.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-                    Assets.unload();
-                    Assets.create(SkinString);
-                    Assets.getSkins();
+                    Gdx.app.getPreferences("user").putString("skin", path.getFileName().toString());
+                    Assets.setSkin(path.getFileName().toString(), true, () -> game.setScreen(new MainScreen(game)));
                 }
             });
             tbChangeLook.setSize(300, 40);

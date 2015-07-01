@@ -18,10 +18,14 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Assets {
 
@@ -65,14 +69,24 @@ public class Assets {
     }
 
     /**
-     * Loads the fonts and textures used by the
-     * {@link ateamproject.kezuino.com.github.PactaleGame}.
+     * Asynchroniously sets a new skin and reloads all the related content.
+     *
+     * @param blocking If true, this method will wait until all the assets are reloaded.
+     * @param callback Callback to call when the reloading is done.
      */
-    public static void create() {
-        create(null);
+    public static void setSkin(boolean blocking, Runnable callback) {
+        setSkin(null, blocking, callback);
     }
 
-    public static void create(String skin) {
+    /**
+     * Asynchroniously sets a new skin and reloads all the related content.
+     *
+     * @param skin     Name of the skin directory to look for and load content from.<br>
+     *                 Missing content in the skin directory will backed-up by internal assets.
+     * @param blocking If true, this method will wait until all the assets are reloaded.
+     * @param callback Callback to call when the reloading is done.
+     */
+    public static void setSkin(String skin, boolean blocking, Runnable callback) {
         if (debug) {
             try {
                 File file = new File("out.txt");
@@ -88,26 +102,28 @@ public class Assets {
             }
         }
 
+        // Clear assets if one or more are loaded.
+        if (manager != null && manager.getLoadedAssets() > 0) {
+            clean();
+        }
+
         Assets.skin = skin;
-        loadFonts();
 
         // Load all the skin assets.
-        load();
-    }
+        load(blocking);
 
-    /**
-     * Loads all the fonts used throughout the
-     * {@link ateamproject.kezuino.com.github.PactaleGame}.
-     */
-    private static void loadFonts() {
-        manager.load(getFileName(FONTS_DIR, "opensans.ttf"), BitmapFont.class);
+        if (callback != null) callback.run();
     }
 
     /**
      * Loads all the basic textures required for the
      * {@link ateamproject.kezuino.com.github.PactaleGame}.
+     *
+     * @param block If true, this method will block until all assets are loaded.
      */
-    private static void load() {
+    private static void load(boolean block) {
+        // Fonts.
+        manager.load(getFileName(FONTS_DIR, "opensans.ttf"), BitmapFont.class);
 
         // Textures (only load those that aren't loaded by the TmxMapLoader).
         manager.load(getFileName(TEXTURE_DIR, "projectile.png"), Texture.class);
@@ -125,8 +141,11 @@ public class Assets {
         manager.load(getFileName(AUDIO_SOUND_DIR, "enemy_eat.mp3"), Sound.class);
 
         // Music (Do not load music. Music is streamed when needed.) See getMusicStream.
-        // Wait for assets to load.
-        manager.finishLoading();
+
+        if (block) {
+            // Wait for assets to load.
+            manager.finishLoading();
+        }
     }
 
     /**
@@ -282,36 +301,31 @@ public class Assets {
     }
 
     /**
-     * Releases the resources hold by assets. Cannot be reloaded.
+     * Gets the {@link Path paths} of all the skin directories.
+     *
+     * @return {@link Path paths} of all the skin directories. Or empty (not null!) if no directories were found.
      */
-    public static void dispose() {
-        manager.dispose();
-    }
+    public static List<Path> getSkins() {
+        ArrayList<Path> result = new ArrayList<>();
 
-    public static void unload() {
-        manager.unload(getFileName(TEXTURE_DIR, "projectile.png"));
-        manager.unload(getFileName(TEXTURE_DIR, "portal.png"));
-        manager.unload(getFileName(TEXTURE_DIR, "pactale.png"));
-        manager.unload(getFileName(TEXTURE_DIR, "enemy.png"));
-    }
+        File skins = Gdx.files.local("skins").file();
+        if (!skins.exists()) return result;
 
-    public static String[] getSkins() {
-
-        String path;
-        File file;
-        try {
-            path = new File(Assets.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getParent() + "/Skins/";
-            file = new File(path);
-            System.out.println(file.getPath());
-            String[] directories = file.list((File current, String name) -> new File(current, name).isDirectory());
-            return directories;
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(Assets.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return null;
+        File[] files = skins.listFiles();
+        return files == null ? result : Stream.of(files).map(File::toPath).collect(Collectors.toList());
     }
 
     public static void setDebug(boolean debug) {
         Assets.debug = debug;
+    }
+
+    public static void clean() {
+        musicInstances.clear();
+        manager.clear();
+    }
+
+    public static void close() {
+        musicInstances.clear();
+        manager.dispose();
     }
 }

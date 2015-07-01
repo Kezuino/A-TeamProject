@@ -327,7 +327,7 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
     @Override
     public void dispose() {
         // Once disposed. Assets cannot be reloaded.
-        Assets.dispose();
+        Assets.close();
         clearRenderers();
     }
 

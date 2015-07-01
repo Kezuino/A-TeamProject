@@ -74,7 +74,6 @@ public class MainScreen extends BaseScreen {
         tbChangeLook.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                Client.getInstance().setSkin("Skin2");
                game.setScreen(new SkinSelectScreen(game));
                   
             }
