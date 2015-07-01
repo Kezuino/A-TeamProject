@@ -110,7 +110,7 @@ public class LobbyScreen extends BaseScreen implements RefreshableScreen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 // Quit lobby
-                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, null, null);
+                PacketKick packet = new PacketKick(PacketKick.KickReasonType.GAME, "Spel afgesloten door beheerder.", null, null);
                 client.send(packet);
 
                 boolean succeeded = packet.getResult();

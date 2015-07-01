@@ -6,6 +6,8 @@
 package ateamproject.kezuino.com.github.network;
 
 import ateamproject.kezuino.com.github.network.packet.Packet;
+import ateamproject.kezuino.com.github.network.packet.packets.PacketScreenUpdate;
+import ateamproject.kezuino.com.github.render.screens.LobbyScreen;
 import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.utility.collection.ConcurrentLinkedHashSet;
 import com.badlogic.gdx.graphics.Color;
@@ -213,25 +215,22 @@ public class Game {
         IClientInfo client = server.getClient(id);
         if (client == null) return false;
 
-        if (client.getPrivateId().equals(getHostId())) {
-            this.server.removeGame(this.getId());
-        } else {
-            // Destroy game and client relation.
-            client.setGame(null);
-            getClients().remove(id);
+        // Destroy game and client relation.
+        client.setGame(null);
+        getClients().remove(id);
 
-            // Remove votes that are open.
-            CopyOnWriteArrayList<UUID[]> allVotes = getVotes();
-            for (UUID[] voteCollection : allVotes) {
-                if (voteCollection[0].equals(client) || voteCollection[1].equals(client)) {
-                    allVotes.remove(voteCollection);
-                }
-            }
-
-            if (getClients().isEmpty()) {
-                server.removeGame(getId());
+        // Remove votes that are open.
+        CopyOnWriteArrayList<UUID[]> allVotes = getVotes();
+        for (UUID[] voteCollection : allVotes) {
+            if (voteCollection[0].equals(client) || voteCollection[1].equals(client)) {
+                allVotes.remove(voteCollection);
             }
         }
+
+        if (getClients().isEmpty()) {
+            server.removeGame(getId());
+        }
+
         return true;
     }
 

@@ -29,6 +29,11 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
      * {@link ParticleEffect} used with this {@link GameObject}.
      */
     protected ParticleEffect particleEffect;
+
+    /**
+     * Copy of the {@link ParticleEffect} that was set. Is used for look-up values while updating and drawing the real {@link #particleEffect}.
+     */
+    protected ParticleEffect initialParticleEffect;
     /**
      * Unique id of this {@link GameObject} for synchronization on multiple clients.
      */
@@ -217,6 +222,10 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
      */
     public Vector2 getStartingPosition() {
         return startingPosition;
+    }
+
+    public void setStartingPosition(Vector2 startingPosition) {
+        this.startingPosition = startingPosition;
     }
 
     /**
@@ -496,8 +505,8 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
             isMoving = true;
             moveStartNode = getNode();
             moveEndNode = getNode().getAdjacentNode(this.direction);
-            
-            if(this.getId().equals(Client.getInstance().getPublicId())) {
+
+            if (this.getId().equals(Client.getInstance().getPublicId())) {
                 Client.getInstance().send(new PacketObjectMove(moveStartNode.getExactPosition(), moveEndNode.getExactPosition(), this.getId(), Client.getInstance().getId()));
             }
 
@@ -517,6 +526,7 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
     public void createParticleEffect() {
         if (particleEffect != null) destroyPartileEffect();
         particleEffect = new ParticleEffect(Assets.getParticleEffect(particleEffectName));
+        initialParticleEffect = new ParticleEffect(particleEffect);
         particleEffect.start();
     }
 
@@ -525,6 +535,7 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
         if (particleEffect != null) {
             particleEffect.reset();
             particleEffect = null;
+            initialParticleEffect = null;
         }
     }
 
@@ -535,14 +546,20 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
 
         // Update color.
         for (ParticleEmitter emitter : particleEffect.getEmitters()) {
-            emitter.getTint().setColors(new float[] { getColor().r, getColor().g, getColor().b });
+            emitter.getTint().setColors(new float[] {getColor().r, getColor().g, getColor().b});
         }
 
-        // TODO: Update rotation.
-//        for (ParticleEmitter emitter : particleEffect.getEmitters()) {
-//            emitter.getAngle().setLow(getDirection().getRotation());
-//            emitter.getAngle().setHigh(getDirection().getRotation());
-//        }
+        // Update rotation.
+        for (ParticleEmitter emitter : particleEffect.getEmitters()) {
+            ParticleEmitter.ScaledNumericValue val = emitter.getAngle();
+
+            float amplitude = (val.getHighMax() - val.getHighMin()) / 2f;
+            float rot = getDirection().getRotation() + 90;
+            float h1 = rot + amplitude;
+            float h2 = rot - amplitude;
+            val.setHigh(h1, h2);
+            val.setLow(rot);
+        }
 
         particleEffect.update(Gdx.graphics.getDeltaTime());
         if (particleEffect.isComplete()) particleEffect.reset();
@@ -645,9 +662,5 @@ public abstract class GameObject implements IRenderable, IPositionable, IPactile
      */
     public void move(Node targetNode) {
         throw new UnsupportedOperationException();
-    }
-
-    public void setStartingPosition(Vector2 startingPosition) {
-        this.startingPosition = startingPosition;
     }
 }

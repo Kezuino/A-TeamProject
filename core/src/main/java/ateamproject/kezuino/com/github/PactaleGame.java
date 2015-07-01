@@ -28,6 +28,6 @@ public class PactaleGame extends Game {
         Client.getInstance().stop();
         Gdx.app.debug("APP", "Network client stopped.");
         super.dispose();
-        Gdx.app.debug("APP", "Game is closed.");
+        Gdx.app.debug("APP", "Game has closed.");
     }
 }
