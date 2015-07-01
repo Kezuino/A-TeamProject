@@ -53,7 +53,9 @@ public class GameOverScreen extends BaseScreen {
         btnBack.setPosition((stage.getWidth() / 2) - (btnBack.getWidth() / 2) - (btnRetry.getWidth() / 2) - 5, stage.getHeight() / 4 - btnBack.getHeight() / 2);
 
 
-        stage.addActor(btnRetry);
+        if(Client.getInstance().isHost()) {
+            stage.addActor(btnRetry);
+        }
         stage.addActor(btnBack);
         stage.addActor(lblEndGameText);
         stage.addActor(lblScore);
