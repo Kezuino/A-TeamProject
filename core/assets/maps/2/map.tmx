@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="156">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="20" height="20" tilewidth="32" tileheight="32" nextobjectid="176">
  <tileset firstgid="1" name="tiles" tilewidth="32" tileheight="32">
   <tile id="0">
    <properties>
@@ -746,16 +746,40 @@
    <image width="32" height="32" source="objects/1464.png"/>
   </tile>
   <tile id="2">
-   <image width="32" height="32" source="objects/1047.png"/>
-  </tile>
-  <tile id="3">
-   <image width="32" height="32" source="objects/28623.png"/>
-  </tile>
-  <tile id="4">
    <properties>
     <property name="item" value="SmallObject"/>
    </properties>
    <image width="32" height="32" source="objects/28631.png"/>
+  </tile>
+  <tile id="3">
+   <properties>
+    <property name="item" value="sapphire"/>
+   </properties>
+   <image width="32" height="32" source="objects/4120.png"/>
+  </tile>
+  <tile id="4">
+   <properties>
+    <property name="item" value="emerald"/>
+   </properties>
+   <image width="32" height="32" source="objects/4121.png"/>
+  </tile>
+  <tile id="5">
+   <properties>
+    <property name="item" value="ruby"/>
+   </properties>
+   <image width="32" height="32" source="objects/4122.png"/>
+  </tile>
+  <tile id="6">
+   <properties>
+    <property name="item" value="diamond"/>
+   </properties>
+   <image width="32" height="32" source="objects/4123.png"/>
+  </tile>
+  <tile id="7">
+   <properties>
+    <property name="item" value="bigObject"/>
+   </properties>
+   <image width="32" height="32" source="objects/4124.png"/>
   </tile>
  </tileset>
  <layer name="tiles" width="20" height="20">
@@ -769,149 +793,132 @@
   </data>
  </layer>
  <objectgroup name="objects">
-  <object id="5" gid="207" x="576" y="288"/>
-  <object id="6" gid="207" x="544" y="288"/>
-  <object id="7" gid="207" x="544" y="320"/>
-  <object id="8" gid="207" x="576" y="320"/>
-  <object id="9" gid="207" x="576" y="352"/>
-  <object id="10" gid="207" x="544" y="352"/>
-  <object id="11" gid="207" x="544" y="384"/>
-  <object id="12" gid="207" x="576" y="384"/>
-  <object id="13" gid="207" x="576" y="416"/>
-  <object id="14" gid="207" x="544" y="416"/>
-  <object id="15" gid="207" x="544" y="448"/>
-  <object id="16" gid="207" x="576" y="448"/>
-  <object id="17" gid="207" x="576" y="480"/>
-  <object id="18" gid="207" x="544" y="480"/>
-  <object id="19" gid="207" x="544" y="512"/>
-  <object id="21" gid="207" x="576" y="512"/>
-  <object id="22" gid="207" x="544" y="544"/>
-  <object id="24" gid="207" x="512" y="544"/>
-  <object id="25" gid="207" x="512" y="576"/>
-  <object id="26" gid="207" x="512" y="608"/>
-  <object id="27" gid="207" x="480" y="608"/>
-  <object id="28" gid="207" x="480" y="576"/>
-  <object id="29" gid="207" x="480" y="544"/>
-  <object id="30" gid="207" x="448" y="544"/>
-  <object id="31" gid="207" x="448" y="576"/>
-  <object id="32" gid="207" x="448" y="608"/>
-  <object id="33" gid="207" x="416" y="608"/>
-  <object id="34" gid="207" x="416" y="576"/>
-  <object id="35" gid="207" x="384" y="608"/>
-  <object id="36" gid="207" x="352" y="608"/>
-  <object id="37" gid="207" x="320" y="608"/>
-  <object id="38" gid="207" x="288" y="608"/>
-  <object id="39" gid="207" x="256" y="608"/>
-  <object id="40" gid="207" x="224" y="608"/>
-  <object id="41" gid="207" x="192" y="608"/>
-  <object id="42" gid="207" x="160" y="608"/>
-  <object id="43" gid="207" x="128" y="608"/>
-  <object id="44" gid="207" x="128" y="576"/>
-  <object id="45" gid="207" x="96" y="576"/>
-  <object id="46" gid="207" x="96" y="608"/>
-  <object id="47" gid="207" x="64" y="608"/>
-  <object id="48" gid="207" x="64" y="576"/>
-  <object id="49" gid="207" x="32" y="608"/>
-  <object id="50" gid="207" x="32" y="576"/>
-  <object id="51" gid="207" x="32" y="512"/>
-  <object id="52" gid="207" x="32" y="480"/>
-  <object id="53" gid="207" x="192" y="384"/>
-  <object id="54" gid="207" x="160" y="384"/>
-  <object id="55" gid="207" x="160" y="416"/>
-  <object id="56" gid="207" x="192" y="416"/>
-  <object id="57" gid="207" x="192" y="448"/>
-  <object id="58" gid="207" x="160" y="448"/>
-  <object id="59" gid="207" x="192" y="480"/>
-  <object id="60" gid="207" x="224" y="480"/>
-  <object id="61" gid="207" x="256" y="480"/>
-  <object id="63" gid="207" x="288" y="480"/>
-  <object id="64" gid="207" x="288" y="448"/>
-  <object id="65" gid="207" x="288" y="416"/>
-  <object id="66" gid="207" x="288" y="384"/>
-  <object id="67" gid="207" x="320" y="384"/>
-  <object id="68" gid="207" x="352" y="384"/>
-  <object id="69" gid="207" x="384" y="384"/>
-  <object id="70" gid="207" x="384" y="352"/>
-  <object id="71" gid="207" x="416" y="384"/>
-  <object id="72" gid="207" x="448" y="384"/>
-  <object id="73" gid="207" x="448" y="416"/>
-  <object id="74" gid="207" x="480" y="416"/>
-  <object id="75" gid="207" x="512" y="416"/>
-  <object id="76" gid="207" x="384" y="320"/>
-  <object id="77" gid="207" x="384" y="288"/>
-  <object id="78" gid="207" x="384" y="256"/>
-  <object id="79" gid="207" x="416" y="256"/>
-  <object id="80" gid="207" x="416" y="224"/>
-  <object id="81" gid="207" x="384" y="224"/>
-  <object id="82" gid="207" x="384" y="192"/>
-  <object id="83" gid="207" x="416" y="192"/>
-  <object id="84" gid="207" x="352" y="192"/>
-  <object id="85" gid="207" x="320" y="192"/>
-  <object id="86" gid="207" x="256" y="192"/>
-  <object id="87" gid="207" x="288" y="192"/>
-  <object id="88" gid="207" x="224" y="192"/>
-  <object id="89" gid="207" x="192" y="192"/>
-  <object id="90" gid="207" x="192" y="224"/>
-  <object id="91" gid="207" x="192" y="256"/>
-  <object id="92" gid="207" x="192" y="288"/>
-  <object id="93" gid="207" x="192" y="320"/>
-  <object id="94" gid="207" x="192" y="352"/>
-  <object id="95" gid="207" x="128" y="384"/>
-  <object id="96" gid="207" x="96" y="384"/>
-  <object id="97" gid="207" x="64" y="384"/>
-  <object id="98" gid="207" x="32" y="384"/>
-  <object id="99" gid="207" x="32" y="416"/>
-  <object id="100" gid="207" x="32" y="448"/>
-  <object id="101" gid="207" x="32" y="544"/>
-  <object id="102" gid="207" x="576" y="544"/>
-  <object id="103" gid="207" x="576" y="256"/>
-  <object id="104" gid="207" x="544" y="256"/>
-  <object id="105" gid="207" x="544" y="224"/>
-  <object id="106" gid="207" x="576" y="224"/>
-  <object id="107" gid="207" x="576" y="192"/>
-  <object id="108" gid="207" x="544" y="192"/>
-  <object id="109" gid="207" x="512" y="192"/>
-  <object id="110" gid="207" x="480" y="192"/>
-  <object id="111" gid="207" x="448" y="192"/>
-  <object id="112" gid="207" x="384" y="160"/>
-  <object id="113" gid="207" x="384" y="128"/>
-  <object id="114" gid="207" x="384" y="96"/>
-  <object id="115" gid="207" x="416" y="96"/>
-  <object id="116" gid="207" x="448" y="96"/>
-  <object id="117" gid="207" x="480" y="96"/>
-  <object id="118" gid="207" x="480" y="64"/>
-  <object id="119" gid="207" x="512" y="64"/>
-  <object id="120" gid="207" x="544" y="64"/>
-  <object id="121" gid="207" x="576" y="64"/>
-  <object id="122" gid="207" x="576" y="96"/>
-  <object id="123" gid="207" x="576" y="128"/>
-  <object id="124" gid="207" x="576" y="160"/>
-  <object id="125" gid="207" x="352" y="96"/>
-  <object id="126" gid="207" x="320" y="96"/>
-  <object id="127" gid="207" x="256" y="96"/>
-  <object id="128" gid="207" x="288" y="96"/>
-  <object id="129" gid="207" x="224" y="96"/>
-  <object id="130" gid="207" x="192" y="96"/>
-  <object id="131" gid="207" x="160" y="96"/>
-  <object id="132" gid="207" x="128" y="96"/>
-  <object id="133" gid="207" x="96" y="96"/>
-  <object id="134" gid="207" x="64" y="96"/>
-  <object id="135" gid="207" x="64" y="64"/>
-  <object id="136" gid="207" x="32" y="64"/>
-  <object id="137" gid="207" x="32" y="96"/>
-  <object id="138" gid="207" x="32" y="128"/>
-  <object id="139" gid="207" x="64" y="128"/>
-  <object id="140" gid="207" x="96" y="128"/>
-  <object id="141" gid="207" x="96" y="160"/>
-  <object id="142" gid="207" x="96" y="192"/>
-  <object id="143" gid="207" x="96" y="224"/>
-  <object id="144" gid="207" x="96" y="256"/>
-  <object id="145" gid="207" x="96" y="288"/>
-  <object id="146" gid="207" x="96" y="320"/>
-  <object id="147" gid="207" x="96" y="352"/>
-  <object id="148" gid="203" x="576" y="64"/>
-  <object id="149" gid="203" x="576" y="544"/>
-  <object id="150" gid="203" x="32" y="608"/>
+  <object id="5" gid="205" x="576" y="288"/>
+  <object id="6" gid="205" x="544" y="288"/>
+  <object id="7" gid="205" x="544" y="320"/>
+  <object id="8" gid="205" x="576" y="320"/>
+  <object id="9" gid="205" x="576" y="352"/>
+  <object id="10" gid="205" x="544" y="352"/>
+  <object id="11" gid="205" x="544" y="384"/>
+  <object id="12" gid="205" x="576" y="384"/>
+  <object id="14" gid="205" x="544" y="416"/>
+  <object id="15" gid="205" x="544" y="448"/>
+  <object id="16" gid="205" x="576" y="448"/>
+  <object id="17" gid="205" x="576" y="480"/>
+  <object id="18" gid="205" x="544" y="480"/>
+  <object id="19" gid="205" x="544" y="512"/>
+  <object id="21" gid="205" x="576" y="512"/>
+  <object id="22" gid="205" x="544" y="544"/>
+  <object id="24" gid="205" x="512" y="544"/>
+  <object id="25" gid="205" x="512" y="576"/>
+  <object id="27" gid="205" x="480" y="608"/>
+  <object id="28" gid="205" x="480" y="576"/>
+  <object id="29" gid="205" x="480" y="544"/>
+  <object id="30" gid="205" x="448" y="544"/>
+  <object id="31" gid="205" x="448" y="576"/>
+  <object id="32" gid="205" x="448" y="608"/>
+  <object id="33" gid="205" x="416" y="608"/>
+  <object id="34" gid="205" x="416" y="576"/>
+  <object id="35" gid="205" x="384" y="608"/>
+  <object id="36" gid="205" x="352" y="608"/>
+  <object id="37" gid="205" x="320" y="608"/>
+  <object id="38" gid="205" x="288" y="608"/>
+  <object id="39" gid="205" x="256" y="608"/>
+  <object id="40" gid="205" x="224" y="608"/>
+  <object id="41" gid="205" x="192" y="608"/>
+  <object id="42" gid="205" x="160" y="608"/>
+  <object id="43" gid="205" x="128" y="608"/>
+  <object id="44" gid="205" x="128" y="576"/>
+  <object id="45" gid="205" x="96" y="576"/>
+  <object id="46" gid="205" x="96" y="608"/>
+  <object id="47" gid="205" x="64" y="608"/>
+  <object id="48" gid="205" x="64" y="576"/>
+  <object id="50" gid="205" x="32" y="576"/>
+  <object id="51" gid="205" x="32" y="512"/>
+  <object id="52" gid="205" x="32" y="480"/>
+  <object id="53" gid="205" x="192" y="384"/>
+  <object id="54" gid="205" x="160" y="384"/>
+  <object id="55" gid="205" x="160" y="416"/>
+  <object id="56" gid="205" x="192" y="416"/>
+  <object id="57" gid="205" x="192" y="448"/>
+  <object id="58" gid="205" x="160" y="448"/>
+  <object id="60" gid="205" x="224" y="480"/>
+  <object id="61" gid="205" x="256" y="480"/>
+  <object id="63" gid="205" x="288" y="480"/>
+  <object id="64" gid="205" x="288" y="448"/>
+  <object id="65" gid="205" x="288" y="416"/>
+  <object id="66" gid="205" x="288" y="384"/>
+  <object id="67" gid="205" x="320" y="384"/>
+  <object id="68" gid="205" x="352" y="384"/>
+  <object id="70" gid="205" x="384" y="352"/>
+  <object id="71" gid="205" x="416" y="384"/>
+  <object id="72" gid="205" x="448" y="384"/>
+  <object id="73" gid="205" x="448" y="416"/>
+  <object id="74" gid="205" x="480" y="416"/>
+  <object id="75" gid="205" x="512" y="416"/>
+  <object id="76" gid="205" x="384" y="320"/>
+  <object id="77" gid="205" x="384" y="288"/>
+  <object id="78" gid="205" x="384" y="256"/>
+  <object id="79" gid="205" x="416" y="256"/>
+  <object id="80" gid="205" x="416" y="224"/>
+  <object id="81" gid="205" x="384" y="224"/>
+  <object id="83" gid="205" x="416" y="192"/>
+  <object id="84" gid="205" x="352" y="192"/>
+  <object id="85" gid="205" x="320" y="192"/>
+  <object id="86" gid="205" x="256" y="192"/>
+  <object id="87" gid="205" x="288" y="192"/>
+  <object id="88" gid="205" x="224" y="192"/>
+  <object id="90" gid="205" x="192" y="224"/>
+  <object id="91" gid="205" x="192" y="256"/>
+  <object id="92" gid="205" x="192" y="288"/>
+  <object id="93" gid="205" x="192" y="320"/>
+  <object id="94" gid="205" x="192" y="352"/>
+  <object id="95" gid="205" x="128" y="384"/>
+  <object id="96" gid="205" x="96" y="384"/>
+  <object id="97" gid="205" x="64" y="384"/>
+  <object id="99" gid="205" x="32" y="416"/>
+  <object id="100" gid="205" x="32" y="448"/>
+  <object id="101" gid="205" x="32" y="544"/>
+  <object id="103" gid="205" x="576" y="256"/>
+  <object id="104" gid="205" x="544" y="256"/>
+  <object id="105" gid="205" x="544" y="224"/>
+  <object id="107" gid="205" x="576" y="192"/>
+  <object id="108" gid="205" x="544" y="192"/>
+  <object id="109" gid="205" x="512" y="192"/>
+  <object id="110" gid="205" x="480" y="192"/>
+  <object id="111" gid="205" x="448" y="192"/>
+  <object id="112" gid="205" x="384" y="160"/>
+  <object id="113" gid="205" x="384" y="128"/>
+  <object id="114" gid="205" x="384" y="96"/>
+  <object id="115" gid="205" x="416" y="96"/>
+  <object id="116" gid="205" x="448" y="96"/>
+  <object id="117" gid="205" x="480" y="96"/>
+  <object id="118" gid="205" x="480" y="64"/>
+  <object id="119" gid="205" x="512" y="64"/>
+  <object id="120" gid="205" x="544" y="64"/>
+  <object id="122" gid="205" x="576" y="96"/>
+  <object id="123" gid="205" x="576" y="128"/>
+  <object id="124" gid="205" x="576" y="160"/>
+  <object id="125" gid="205" x="352" y="96"/>
+  <object id="126" gid="205" x="320" y="96"/>
+  <object id="127" gid="205" x="256" y="96"/>
+  <object id="129" gid="205" x="224" y="96"/>
+  <object id="130" gid="205" x="192" y="96"/>
+  <object id="131" gid="205" x="160" y="96"/>
+  <object id="132" gid="205" x="128" y="96"/>
+  <object id="133" gid="205" x="96" y="96"/>
+  <object id="134" gid="205" x="64" y="96"/>
+  <object id="135" gid="205" x="64" y="64"/>
+  <object id="137" gid="205" x="32" y="96"/>
+  <object id="138" gid="205" x="32" y="128"/>
+  <object id="139" gid="205" x="64" y="128"/>
+  <object id="140" gid="205" x="96" y="128"/>
+  <object id="141" gid="205" x="96" y="160"/>
+  <object id="142" gid="205" x="96" y="192"/>
+  <object id="143" gid="205" x="96" y="224"/>
+  <object id="145" gid="205" x="96" y="288"/>
+  <object id="146" gid="205" x="96" y="320"/>
+  <object id="147" gid="205" x="96" y="352"/>
   <object id="151" gid="204" x="64" y="96">
    <properties>
     <property name="index" value="0"/>
@@ -932,5 +939,22 @@
     <property name="index" value="3"/>
    </properties>
   </object>
+  <object id="159" gid="210" x="32" y="384"/>
+  <object id="160" gid="210" x="32" y="608"/>
+  <object id="161" gid="210" x="512" y="608"/>
+  <object id="162" gid="210" x="576" y="544"/>
+  <object id="163" gid="210" x="576" y="64"/>
+  <object id="164" gid="210" x="32" y="64"/>
+  <object id="165" gid="207" x="288" y="96"/>
+  <object id="166" gid="208" x="576" y="224"/>
+  <object id="167" gid="206" x="576" y="416"/>
+  <object id="168" gid="209" x="192" y="192"/>
+  <object id="169" gid="209" x="384" y="384"/>
+  <object id="170" gid="208" x="384" y="192"/>
+  <object id="171" gid="208" x="192" y="480"/>
+  <object id="172" gid="206" x="96" y="256"/>
+  <object id="173" gid="203" x="576" y="544"/>
+  <object id="174" gid="203" x="32" y="608"/>
+  <object id="175" gid="203" x="576" y="64"/>
  </objectgroup>
 </map>

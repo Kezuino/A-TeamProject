@@ -11,8 +11,10 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.TimeUtils;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 public class Enemy extends GameObject {
 
@@ -58,7 +60,7 @@ public class Enemy extends GameObject {
     public Enemy() {
         isActive = true;
         this.edible = false;
-        this.edibleTime = 2000f;
+        this.edibleTime = 5f;
     }
 
     /**
@@ -78,7 +80,7 @@ public class Enemy extends GameObject {
         this.respawnPosition = exactPosition.cpy();
         this.dead = false;
         this.edible = false;
-        this.edibleTime = 2000f;
+        this.edibleTime = 5f;
         this.graphPath = new DefaultGraphPath<>();
         this.drawOnDirection = false;
 
@@ -185,6 +187,9 @@ public class Enemy extends GameObject {
         if (this.edible) {
             float secondsFromStart = (TimeUtils.nanoTime() - this.edibleStartTime) / 1000000000.0f;
 
+            System.out.println(secondsFromStart + " // " + this.edibleTime);
+            
+            
             if (secondsFromStart >= this.edibleTime) {
                 this.edible = false;
                 this.setColor(this.previousColor);
@@ -193,14 +198,31 @@ public class Enemy extends GameObject {
 
         if(Client.getInstance().isHost()) {
             // Set first Pactale as target.
-            this.objectToFollow = this.getMap()
+            
+            if(!this.edible) {
+                this.objectToFollow = this.getMap()
                     .getAllGameObjects()
                     .stream()
                     .filter(go -> go instanceof Pactale)
-                    .map(go -> (Pactale) go)
-                    .max((p1, p2) -> (int) Vector2.len(p2.getExactPosition().x, p2.getExactPosition().y))
+                    .min(Comparator.comparing(p1 -> this.getExactPosition().dst(p1.getExactPosition())))
                     .orElse(null);
+            } else {
+                this.objectToFollow = this.getMap()
+                    .getAllGameObjects()
+                    .stream()
+                    .filter(go -> go instanceof Pactale)
+                    .max(Comparator.comparing(p1 -> this.getExactPosition().dst(p1.getExactPosition())))
+                    .orElse(null);
+            }
 
+            /*System.out.println(this.getMap()
+                    .getAllGameObjects()
+                    .stream()
+                    .filter(go -> go instanceof Pactale)
+                    .map(go -> (int)this.getExactPosition().dst(go.getExactPosition()))
+                    .min(Integer::min)
+                    .get());*/
+            
             if (!this.isMoving) {
                 //If an object is followed create path using the aStar pathfinder in the map of the Enemy.
                 if (!this.disablePathfinding && this.objectToFollow != null) {

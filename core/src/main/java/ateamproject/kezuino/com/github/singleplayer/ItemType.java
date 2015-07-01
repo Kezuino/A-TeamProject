@@ -3,14 +3,11 @@ package ateamproject.kezuino.com.github.singleplayer;
 import java.io.Serializable;
 
 public enum ItemType implements Serializable {
-    //BigNugget item/consumable. grants 100 score
+    //BigNugget item/consumable. grants 150 score. Also will make the enemies vurnerable
     BigObject(150),
-    //SmallNugget item/consumable. grants 50 score
+    //SmallNugget item/consumable. grants 10 score
     SmallObject(10),
-
-    //test for object
-    Watch(0),
-
+    
     //PowerUps
     Diamond(300),
     Emerald(200),
