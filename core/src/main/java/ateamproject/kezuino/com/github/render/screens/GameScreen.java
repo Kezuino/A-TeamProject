@@ -230,7 +230,9 @@ public class GameScreen extends BaseScreen implements RefreshableScreen {
                 btnContinue.setPosition(stage.getWidth() / 2 - btnContinue.getWidth() / 2, stage.getHeight() / 4 - btnContinue
                         .getHeight() / 2);
 
-                stage.addActor(btnContinue);
+                if(Client.getInstance().isHost()) {
+                    stage.addActor(btnContinue);
+                }
                 stage.addActor(lblEndGameText);
                 stage.addActor(lblScore);
                 getSession().end();
