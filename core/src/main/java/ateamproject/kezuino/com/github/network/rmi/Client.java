@@ -8,7 +8,6 @@ package ateamproject.kezuino.com.github.network.rmi;
 import ateamproject.kezuino.com.github.network.packet.packets.*;
 import ateamproject.kezuino.com.github.render.screens.*;
 import ateamproject.kezuino.com.github.singleplayer.*;
-import ateamproject.kezuino.com.github.singleplayer.Map;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import ateamproject.kezuino.com.github.utility.game.Animation;
 import ateamproject.kezuino.com.github.utility.game.Direction;
@@ -26,7 +25,10 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
-import java.util.*;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -38,10 +40,6 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     private static ateamproject.kezuino.com.github.network.rmi.Client instance;
     protected ClientBase rmi;
     protected Timer updateTimer;
-
-    public boolean isRunning() {
-        return updateTimer != null;
-    }
 
     protected Client() {
         super(null);
@@ -70,6 +68,10 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
         return instance;
     }
 
+    public boolean isRunning() {
+        return updateTimer != null;
+    }
+
     public ClientBase getRmi() {
         return rmi;
     }
@@ -77,6 +79,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
     @Override
     public void start() {
         System.out.println("Client starting...");
+
 
         System.setProperty("pactales.client.serverobject", "server");
         try {
@@ -223,7 +226,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
 
         packets.registerFunc(PacketHighScore.class, (packet) -> {
             try {
-                return getRmi().getServer().setScore(packet.getSender(),packet.getScore());
+                return getRmi().getServer().setScore(packet.getSender(), packet.getScore());
             } catch (RemoteException ex) {
                 Logger.getLogger(MainScreen.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -531,16 +534,16 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 pactale.setPlayerIndex(p.getIndex());
                 final GameObject finalObject = object;
                 Gdx.app.postRunnable(() -> finalObject.setAnimation(new Animation(true, Assets.getTexture(finalObject.getClass()
-                        .getSimpleName()
-                        .toLowerCase() + ".png"))));
+                                                                                                                  .getSimpleName()
+                                                                                                                  .toLowerCase() + ".png"))));
             } else if (object instanceof Enemy) {
                 final Enemy enemy = (Enemy) object;
 
                 // Only host should generate enemy paths. Clients will receive them from the host.
                 enemy.setDisablePathfinding(!Client.getInstance().isHost());
                 Gdx.app.postRunnable(() -> enemy.setAnimation(new Animation(Assets.getTexture(enemy.getClass()
-                        .getSimpleName()
-                        .toLowerCase() + ".png"))));
+                                                                                                      .getSimpleName()
+                                                                                                      .toLowerCase() + ".png"))));
             }
 
             session.getMap().addGameObject(object);
@@ -567,8 +570,8 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             item.setMap(session.getMap());
 
             Gdx.app.postRunnable(() -> item.setTexture(new TextureRegion(Assets.getTexture(item.getItemType()
-                    .name()
-                    .toLowerCase() + ".png"))));
+                                                                                                   .name()
+                                                                                                   .toLowerCase() + ".png"))));
             session.getMap().getNode(item.getExactPosition()).setItem(item);
 
             // Update load status.
@@ -689,16 +692,16 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
             // If client sended it..send this private id to server.
             if (packet.getSender() != null && packet.getSender().equals(getId())) {
                 try {
-                    getRmi().getServer().shootProjectile(packet.getExactPosition(),packet.getDirection(),packet.getSender());
+                    getRmi().getServer().shootProjectile(packet.getExactPosition(), packet.getDirection(), packet.getSender());
                 } catch (RemoteException e) {
                     e.printStackTrace();
                 }
             } else {
                 if (BaseScreen.getSession().getPlayer(packet.getSender()) != null) {
-                   Gdx.app.postRunnable(() -> {
+                    Gdx.app.postRunnable(() -> {
                         // Server sended this.
-                        BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile(packet.getExactPosition(),packet.getDirection()); 
-                   });
+                        BaseScreen.getSession().getPlayer(packet.getSender()).shootProjectile(packet.getExactPosition(), packet.getDirection());
+                    });
                 }
             }
         });
@@ -715,7 +718,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 GameObject object = BaseScreen.getSession().findObject(packet.getObject());
                 if (object != null) {
                     object.setExactPosition(packet.getFrom());
-                    object.setDirection(Direction.getDirection((int)packet.getFrom().x, (int)packet.getFrom().y, (int)packet.getTo().x, (int)packet.getTo().y));
+                    object.setDirection(Direction.getDirection((int) packet.getFrom().x, (int) packet.getFrom().y, (int) packet.getTo().x, (int) packet.getTo().y));
                 }
             }
         });
@@ -745,7 +748,7 @@ public class Client extends ateamproject.kezuino.com.github.network.Client {
                 Gdx.app.postRunnable(() -> {
                     try {
                         BalloonMessage message = ((BalloonMessage) Class.forName(BalloonMessage.class.getPackage()
-                                .getName() + ".messages.Balloon" + packet
+                                                                                         .getName() + ".messages.Balloon" + packet
                                 .getTypeName()).newInstance());
                         if (packet.getFollowTarget() != null) {
                             message.setFollowObject(BaseScreen.getSession().findObject(packet.getFollowTarget()));

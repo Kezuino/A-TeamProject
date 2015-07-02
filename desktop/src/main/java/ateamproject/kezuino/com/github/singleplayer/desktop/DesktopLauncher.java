@@ -2,36 +2,26 @@ package ateamproject.kezuino.com.github.singleplayer.desktop;
 
 import ateamproject.kezuino.com.github.PactaleGame;
 import ateamproject.kezuino.com.github.network.rmi.Client;
-import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.PrintStream;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.SocketException;
-import java.nio.file.Paths;
 import java.util.Enumeration;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class DesktopLauncher {
 
     public static void main(String[] args) {
-        if(args.length > 1)
-        {
+        if (args.length > 1) {
             System.setProperty("java.rmi.server.hostname", args[0]);
             System.setProperty("pactales.client.servername", args[1]);
-        }
-        else{
+        } else {
             System.setProperty("java.rmi.server.hostname", "localhost");
+            System.setProperty("pactales.client.servername", "localhost");
         }
 
         LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
@@ -40,7 +30,7 @@ public class DesktopLauncher {
         cfg.useGL30 = false;
 
         //cfg.samples = 8;
-            
+
         //frameRateTest(cfg);
         PactaleGame game = new PactaleGame();
         new LwjglApplication(game, cfg);
@@ -61,7 +51,7 @@ public class DesktopLauncher {
         cfg.forceExit = true;
         cfg.vSyncEnabled = false;
     }
-    
+
     public static String getLocalIP() {
         String ipAddress = null;
         Enumeration<NetworkInterface> net;
@@ -71,14 +61,14 @@ public class DesktopLauncher {
             throw new RuntimeException(e);
         }
 
-        while(net.hasMoreElements()){
+        while (net.hasMoreElements()) {
             NetworkInterface element = net.nextElement();
             Enumeration<InetAddress> addresses = element.getInetAddresses();
 
-            while (addresses.hasMoreElements()){
+            while (addresses.hasMoreElements()) {
                 InetAddress ip = addresses.nextElement();
-                if (ip instanceof Inet4Address){
-                    if (ip.isSiteLocalAddress()){
+                if (ip instanceof Inet4Address) {
+                    if (ip.isSiteLocalAddress()) {
                         ipAddress = ip.getHostAddress();
                     }
                 }
