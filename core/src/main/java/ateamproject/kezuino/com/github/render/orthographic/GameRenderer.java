@@ -136,11 +136,4 @@ public class GameRenderer implements IRenderer {
         
         DebugRenderManager.render(DebugLayers.UI);
     }
-
-    /**
-     * Toggles the game to run in fullscreen or back to windowed.
-     */
-    public void toggleFullscreen() {
-        Gdx.graphics.setDisplayMode(Gdx.graphics.getWidth(), Gdx.graphics.getHeight(), !Gdx.graphics.isFullscreen());
-    }
 }

@@ -11,6 +11,7 @@ import ateamproject.kezuino.com.github.render.debug.DebugRenderManager;
 import ateamproject.kezuino.com.github.singleplayer.GameSession;
 import ateamproject.kezuino.com.github.utility.assets.Assets;
 import com.badlogic.gdx.*;
+import com.badlogic.gdx.Graphics.DisplayMode;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
@@ -62,6 +63,9 @@ public abstract class BaseScreen implements Screen {
             @Override
             public boolean keyDown(int keycode) {
                 switch (keycode) {
+                    case Input.Keys.F2:
+                        Gdx.graphics.setDisplayMode(Gdx.graphics.getDesktopDisplayMode().width, Gdx.graphics.getDesktopDisplayMode().height, !Gdx.graphics.isFullscreen());
+                        break;
                     case Input.Keys.F12:
                         // Reset the screen.
                         try {
@@ -161,7 +165,8 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void resize(int width, int height) {
-        viewport.update(width, height);
+        stage.getViewport().update(width, height, true);
+
     }
 
     @Override
@@ -187,6 +192,7 @@ public abstract class BaseScreen implements Screen {
 
     @Override
     public void dispose() {
+        stage.dispose();
         if (backgroundMusic != null) {
             backgroundMusic.dispose();
         }
