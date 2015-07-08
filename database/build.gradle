@@ -1,0 +1,102 @@
+import java.nio.channels.Channels
+import java.nio.channels.ReadableByteChannel
+import java.nio.file.Paths
+import java.util.function.Function
+import java.util.function.Predicate
+import java.util.stream.Collectors
+
+def execProcess(String command) {
+    Runtime run = Runtime.getRuntime()
+    Process proc = run.exec(command)
+
+    List<String> result = new ArrayList<>();
+    BufferedReader input = new BufferedReader(new InputStreamReader(proc.getInputStream()));
+    String line = null
+    while ((line = input.readLine()) != null) {
+        result.add(line);
+    }
+    return result;
+}
+
+def getProcessNames(String filter) {
+    def lower = filter.toLowerCase();
+    return execProcess("tasklist /FO CSV /NH").stream().filter(new Predicate<String>() {
+        @Override
+        boolean test(String s) {
+            return s.toLowerCase().contains(lower)
+        }
+    }).map(new Function() {
+        @Override
+        Object apply(Object o) {
+            String s = (String)o;
+            return s.split(",")[0].replace("\"", "")
+        }
+    }).collect(Collectors.toList())
+}
+
+def queryReg(String filter) {
+    String path = execProcess(String.format("reg query HKLM\\SOFTWARE /s /f \"%s\" /k", filter))
+    println path
+}
+
+task installWAMP << {
+    description "Downloads the WAMP server"
+    String arch = System.getenv("PROCESSOR_ARCHITECTURE")
+    String wow64Arch = System.getenv("PROCESSOR_ARCHITEW6432")
+
+    boolean is64Bit = arch.endsWith("64") || wow64Arch != null && wow64Arch.endsWith("64") ? true : false
+
+    def bit32 = new URL("http://downloads.sourceforge.net/project/wampserver/WampServer%202/Wampserver%202.5/wampserver2.5-Apache-2.4.9-Mysql-5.6.17-php5.5.12-32b.exe?r=&ts=1435833344&use_mirror=garr")
+    def bit64 = new URL("http://downloads.sourceforge.net/project/wampserver/WampServer%202/Wampserver%202.5/wampserver2.5-Apache-2.4.9-Mysql-5.6.17-php5.5.12-64b.exe?r=&ts=1435833407&use_mirror=netcologne")
+
+    URL url = !is64Bit ? bit32 : bit64
+    ReadableByteChannel rbc = null
+    FileOutputStream fos = null
+    def file = new File(Paths.get(System.getProperty("user.home"), "Desktop", "setup.exe").toString())
+    try {
+        if (!file.exists()) {
+            print "Downloading setup.."
+            rbc = Channels.newChannel(url.openStream())
+            fos = new FileOutputStream(file)
+            fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE)
+            fos.flush();
+
+            println "Done."
+        }
+    } catch (IOException ex) {
+        ex.printStackTrace()
+    } finally {
+        if (rbc != null) {
+            rbc.close()
+        }
+        if (fos != null) {
+            fos.close()
+        }
+    }
+
+    // Run setup.
+    print "Running setup.."
+    def runtime = Runtime.getRuntime()
+    Process proc = null
+    while (true) {
+        try {
+            proc = runtime.exec(file.absolutePath)
+        } catch (IOException ignored) {
+            Thread.sleep(500)
+            continue
+        }
+        break
+    }
+    if (proc != null) proc.waitFor()
+    println "Done."
+}
+
+task runWAMP << {
+    queryReg('wamp')
+    def isRunning = getProcessNames('wamp').size() > 0;
+    if (!isRunning) {
+        print "Running wamp.."
+
+        println "Done."
+    }
+}
